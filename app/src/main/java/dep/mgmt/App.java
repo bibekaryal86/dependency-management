@@ -3,12 +3,35 @@
  */
 package dep.mgmt;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import dep.mgmt.config.ScheduleConfig;
+import dep.mgmt.util.ConstantUtils;
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+public class App {
+  private static final Logger log = LoggerFactory.getLogger(App.class);
+
+  public static void main(String[] args) {
+    log.info("Starting Dependency Management Service...");
+    ScheduleConfig.init();
+    log.info("Started Dependency Management Service...");
+  }
+
+  private static void init() {
+    final Map<String, String> properties =
+        CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
+    final List<String> requiredEnvProperties =
+        ConstantUtils.ENV_KEY_NAMES.stream()
+            .filter(key -> !ConstantUtils.ENV_SERVER_PORT.equals(key))
+            .toList();
+    final List<String> errors =
+        requiredEnvProperties.stream().filter(key -> properties.get(key) == null).toList();
+    if (!errors.isEmpty()) {
+      throw new IllegalStateException(
+          "One or more environment configurations could not be accessed...");
     }
+  }
 }

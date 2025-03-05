@@ -16,7 +16,6 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
-    id 'io.freefair.lombok' version '8.11'
     id 'com.diffplug.spotless' version '7.0.0'
 }
 
@@ -41,8 +40,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'ch.qos.logback:logback-classic:1.5.16'
 
-    implementation 'ch.qos.logback:logback-core:1.5.16'
-    implementation 'ch.qos.logback:logback-classic:1.5.16'
+    implementation 'org.mongodb:mongodb-driver-sync:5.2.1'
     implementation 'com.mailjet:mailjet-client:5.2.5'
     implementation 'org.jsoup:jsoup:1.18.3'
 }
