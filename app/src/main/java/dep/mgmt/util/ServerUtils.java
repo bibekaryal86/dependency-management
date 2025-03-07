@@ -1,7 +1,8 @@
 package dep.mgmt.util;
 
+import dep.mgmt.model.RequestMetadata;
+import dep.mgmt.model.ResponseWithMetadata;
 import dep.mgmt.model.enums.RequestParams;
-import dep.mgmt.model.http.RequestMetadata;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseMetadata;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import io.netty.buffer.Unpooled;
@@ -23,12 +24,13 @@ public class ServerUtils {
 
   public static void sendErrorResponse(
       final ChannelHandlerContext ctx, final String errMsg, final HttpResponseStatus status) {
-    final ResponseMetadata responseMetadata =
-        new ResponseMetadata(
-            new ResponseMetadata.ResponseStatusInfo(errMsg),
-            ResponseMetadata.emptyResponseCrudInfo(),
-            ResponseMetadata.emptyResponsePageInfo());
-    sendResponse(ctx, responseMetadata, status);
+    final ResponseWithMetadata responseWithMetadata =
+        new ResponseWithMetadata(
+            new ResponseMetadata(
+                new ResponseMetadata.ResponseStatusInfo(errMsg),
+                ResponseMetadata.emptyResponseCrudInfo(),
+                ResponseMetadata.emptyResponsePageInfo()));
+    sendResponse(ctx, responseWithMetadata, status);
   }
 
   private static void sendResponse(
