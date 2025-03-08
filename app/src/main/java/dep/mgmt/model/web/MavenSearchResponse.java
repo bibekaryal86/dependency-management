@@ -1,12 +1,16 @@
 package dep.mgmt.model.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class MavenSearchResponse implements Serializable {
   private final MavenResponse response;
 
-  public MavenSearchResponse(final MavenResponse response) {
+  @JsonCreator
+  public MavenSearchResponse(@JsonProperty("response") final MavenResponse response) {
     this.response = response;
   }
 
@@ -22,7 +26,8 @@ public class MavenSearchResponse implements Serializable {
   public static class MavenResponse implements Serializable {
     private final List<MavenDoc> docs;
 
-    public MavenResponse(final List<MavenDoc> docs) {
+    @JsonCreator
+    public MavenResponse(@JsonProperty("docs") final List<MavenDoc> docs) {
       this.docs = docs;
     }
 
@@ -40,7 +45,8 @@ public class MavenSearchResponse implements Serializable {
       private final String a;
       private final String v;
 
-      public MavenDoc(final String g, final String a, final String v) {
+      @JsonCreator
+      public MavenDoc(@JsonProperty("g") final String g, @JsonProperty("a") final String a, @JsonProperty("v") final String v) {
         this.g = g;
         this.a = a;
         this.v = v;

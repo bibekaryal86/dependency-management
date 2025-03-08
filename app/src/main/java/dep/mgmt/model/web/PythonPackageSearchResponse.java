@@ -1,11 +1,15 @@
 package dep.mgmt.model.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 public class PythonPackageSearchResponse implements Serializable {
   private final PypiInfo info;
 
-  public PythonPackageSearchResponse(final PypiInfo info) {
+  @JsonCreator
+  public PythonPackageSearchResponse(@JsonProperty("info") final PypiInfo info) {
     this.info = info;
   }
 
@@ -23,7 +27,8 @@ public class PythonPackageSearchResponse implements Serializable {
     private final String version;
     private final Boolean yanked;
 
-    public PypiInfo(final String name, final String version, final boolean yanked) {
+    @JsonCreator
+    public PypiInfo(@JsonProperty("name") final String name, @JsonProperty("version") final String version, @JsonProperty("yanked") final Boolean yanked) {
       this.name = name;
       this.version = version;
       this.yanked = yanked;

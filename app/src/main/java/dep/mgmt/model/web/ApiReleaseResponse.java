@@ -1,21 +1,22 @@
 package dep.mgmt.model.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiReleaseResponse implements Serializable {
-  @JsonProperty("tag_name")
   private final String tagName;
-
   private final String name;
   private final Boolean draft;
   private final Boolean prerelease;
 
   // @JsonIgnoreProperties(ignoreUnknown = true)
+  @JsonCreator
   public ApiReleaseResponse(
-      final String tagName, final String name, final Boolean draft, final Boolean prerelease) {
+          @JsonProperty("tag_name")
+      final String tagName, @JsonProperty("name") final String name, @JsonProperty("draft") final Boolean draft, @JsonProperty("prerelease") final Boolean prerelease) {
     this.tagName = tagName;
     this.name = name;
     this.draft = draft;

@@ -1,12 +1,16 @@
 package dep.mgmt.model.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 public class NodeReleaseResponse implements Serializable {
   private final String version;
   private final String lts;
 
-  public NodeReleaseResponse(final String version, final String lts) {
+  @JsonCreator
+  public NodeReleaseResponse(@JsonProperty("version") final String version, @JsonProperty("lts") final String lts) {
     this.version = version;
     this.lts = lts;
   }

@@ -16,7 +16,7 @@ public class DockerVersionService {
     return getDockerImageTagName(library, tag) != null;
   }
 
-  public String getDockerImageTagName(final String library, final String tag) {
+  private String getDockerImageTagName(final String library, final String tag) {
     final String url = String.format(ConstantUtils.DOCKER_TAG_LOOKUP_ENDPOINT, library, tag);
     try {
       ApiReleaseResponse apiReleaseResponse =
