@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GithubApiReleaseResponse implements Serializable {
+public class ApiReleaseResponse implements Serializable {
   @JsonProperty("tag_name")
   private final String tagName;
 
@@ -13,8 +13,8 @@ public class GithubApiReleaseResponse implements Serializable {
   private final Boolean draft;
   private final Boolean prerelease;
 
-  //@JsonIgnoreProperties(ignoreUnknown = true)
-  public GithubApiReleaseResponse(
+  // @JsonIgnoreProperties(ignoreUnknown = true)
+  public ApiReleaseResponse(
       final String tagName, final String name, final Boolean draft, final Boolean prerelease) {
     this.tagName = tagName;
     this.name = name;
@@ -40,7 +40,7 @@ public class GithubApiReleaseResponse implements Serializable {
 
   @Override
   public String toString() {
-    return "GithubApiReleaseResponse{"
+    return "ApiReleaseResponse{"
         + "tagName='"
         + tagName
         + '\''
