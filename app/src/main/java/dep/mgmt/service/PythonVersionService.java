@@ -1,6 +1,5 @@
 package dep.mgmt.service;
 
-
 import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.web.ApiReleaseResponse;
 import dep.mgmt.util.ConstantUtils;
@@ -19,8 +18,10 @@ public class PythonVersionService extends VersionLookupGithubApi {
     this.dockerVersionService = new DockerVersionService();
   }
 
-  public LatestVersion getLatestPythonVersion(final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
-    ApiReleaseResponse apiReleaseResponse = getGithubApiReleaseResponse("python", "cpython", Boolean.TRUE);
+  public LatestVersion getLatestPythonVersion(
+      final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
+    ApiReleaseResponse apiReleaseResponse =
+        getGithubApiReleaseResponse("python", "cpython", Boolean.TRUE);
 
     if (apiReleaseResponse == null) {
       return null;
@@ -49,7 +50,8 @@ public class PythonVersionService extends VersionLookupGithubApi {
       final String versionFull, final String latestDockerVersionFromMongo) {
     final String library = "python";
     final String tag = versionFull + "-" + ConstantUtils.DOCKER_ALPINE;
-    final boolean isNewDockerImageExists = dockerVersionService.checkDockerVersionExists(library, tag);
+    final boolean isNewDockerImageExists =
+        dockerVersionService.checkDockerVersionExists(library, tag);
     if (isNewDockerImageExists) {
       return library + ":" + tag;
     }
@@ -62,7 +64,8 @@ public class PythonVersionService extends VersionLookupGithubApi {
    */
   private String getVersionGcp(final String versionFull, final String latestGcpRuntimeVersion) {
     final String versionMajorMinor = VersionUtils.getVersionMajorMinor(versionFull, false);
-    if (CommonUtilities.parseIntNoEx(versionMajorMinor) > CommonUtilities.parseIntNoEx(latestGcpRuntimeVersion)) {
+    if (CommonUtilities.parseIntNoEx(versionMajorMinor)
+        > CommonUtilities.parseIntNoEx(latestGcpRuntimeVersion)) {
       return "python" + latestGcpRuntimeVersion;
     }
     return "python" + versionMajorMinor;

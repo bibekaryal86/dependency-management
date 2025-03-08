@@ -1,9 +1,6 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.AppDataScriptFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -12,12 +9,17 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScriptUtils {
 
   private static final Logger log = LoggerFactory.getLogger(ScriptUtils.class);
 
-  private static final String TEMP_SCRIPTS_DIRECTORY = ConstantUtils.JAVA_SYSTEM_TMPDIR + ConstantUtils.PATH_DELIMITER + ConstantUtils.SCRIPTS_DIRECTORY;
+  private static final String TEMP_SCRIPTS_DIRECTORY =
+      ConstantUtils.JAVA_SYSTEM_TMPDIR
+          + ConstantUtils.PATH_DELIMITER
+          + ConstantUtils.SCRIPTS_DIRECTORY;
   private final Path tempScriptsDirectoryPath = Path.of(TEMP_SCRIPTS_DIRECTORY);
 
   public void deleteTempScriptFiles() {
@@ -62,7 +64,10 @@ public class ScriptUtils {
       List<AppDataScriptFile> scriptFiles = AppDataUtils.setAppData().getScriptFiles();
       for (final AppDataScriptFile scriptFile : scriptFiles) {
         Path filePath =
-            Path.of(TEMP_SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName());
+            Path.of(
+                TEMP_SCRIPTS_DIRECTORY
+                    + ConstantUtils.PATH_DELIMITER
+                    + scriptFile.getScriptFileName());
         if (!Files.exists(filePath)) {
           return true;
         }
@@ -100,12 +105,17 @@ public class ScriptUtils {
     try {
       Path filePath =
           Files.createFile(
-              Path.of(TEMP_SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName()));
+              Path.of(
+                  TEMP_SCRIPTS_DIRECTORY
+                      + ConstantUtils.PATH_DELIMITER
+                      + scriptFile.getScriptFileName()));
       try (InputStream inputStream =
           getClass()
               .getClassLoader()
               .getResourceAsStream(
-                      ConstantUtils.SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName())) {
+                  ConstantUtils.SCRIPTS_DIRECTORY
+                      + ConstantUtils.PATH_DELIMITER
+                      + scriptFile.getScriptFileName())) {
         assert inputStream != null;
         Files.write(filePath, inputStream.readAllBytes(), StandardOpenOption.WRITE);
         log.info("Written to file: [ {} ]", filePath);
@@ -120,14 +130,16 @@ public class ScriptUtils {
   private void giveExecutePermissionToFile(final AppDataScriptFile scriptFile) {
     try {
       String scriptPath =
-              ConstantUtils.JAVA_SYSTEM_TMPDIR
+          ConstantUtils.JAVA_SYSTEM_TMPDIR
               + ConstantUtils.PATH_DELIMITER
               + ConstantUtils.SCRIPTS_DIRECTORY
               + ConstantUtils.PATH_DELIMITER
               + scriptFile.getScriptFileName();
-      new ProcessBuilder(ConstantUtils.COMMAND_PATH, ConstantUtils.CHMOD_COMMAND + scriptPath).start();
+      new ProcessBuilder(ConstantUtils.COMMAND_PATH, ConstantUtils.CHMOD_COMMAND + scriptPath)
+          .start();
     } catch (IOException ex) {
-      log.error("Error on Give Execute Permission to File: [ {} ]", scriptFile.getScriptFileName(), ex);
+      log.error(
+          "Error on Give Execute Permission to File: [ {} ]", scriptFile.getScriptFileName(), ex);
     }
   }
 }

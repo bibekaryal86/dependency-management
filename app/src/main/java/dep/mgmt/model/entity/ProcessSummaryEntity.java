@@ -1,5 +1,6 @@
 package dep.mgmt.model.entity;
 
+import dep.mgmt.model.ProcessSummary;
 import dep.mgmt.model.enums.RequestParams;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class ProcessSummaryEntity implements Serializable {
   private final Integer totalPrCreatedCount;
   private final Integer totalPrCreateErrorsCount;
   private final Integer totalPrMergedCount;
-  private final List<ProcessedRepositories> processedRepositories;
+  private final List<ProcessSummary.Summary.Repository> processedRepositories;
   private final Boolean isErrorsOrExceptions;
 
   public ProcessSummaryEntity(
@@ -35,7 +36,7 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
-      final List<ProcessedRepositories> processedRepositories,
+      final List<ProcessSummary.Summary.Repository> processedRepositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
     this.updateDateTime = updateDateTime;
@@ -92,7 +93,7 @@ public class ProcessSummaryEntity implements Serializable {
     return totalPrMergedCount;
   }
 
-  public List<ProcessedRepositories> getProcessedRepositories() {
+  public List<ProcessSummary.Summary.Repository> getProcessedRepositories() {
     return processedRepositories;
   }
 
@@ -102,7 +103,7 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaries{"
+    return "ProcessSummaryEntity{"
         + "id="
         + id
         + ", updateDateTime="

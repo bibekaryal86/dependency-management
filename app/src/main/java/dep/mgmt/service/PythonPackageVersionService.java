@@ -27,7 +27,14 @@ public class PythonPackageVersionService {
   private PythonPackageSearchResponse getPythonPackageSearchResponse(final String name) {
     try {
       final String url = String.format(ConstantUtils.PYPI_SEARCH_ENDPOINT, name);
-      return Connector.sendRequest(url, Enums.HttpMethod.GET, new TypeReference<PythonPackageSearchResponse>() {}, null, null, null).responseBody();
+      return Connector.sendRequest(
+              url,
+              Enums.HttpMethod.GET,
+              new TypeReference<PythonPackageSearchResponse>() {},
+              null,
+              null,
+              null)
+          .responseBody();
     } catch (Exception ex) {
       log.error("ERROR in Get Python Package Search Response: [ {} ]", name, ex);
     }

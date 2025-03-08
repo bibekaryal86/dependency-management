@@ -1,16 +1,13 @@
 package dep.mgmt.util;
 
 import dep.mgmt.config.CacheConfig;
+import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
-import dep.mgmt.model.AppData;
 import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -25,6 +22,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AppDataUtils {
 
@@ -54,22 +53,27 @@ public class AppDataUtils {
 
   private static Map<String, String> validateInputAndMakeArgsMap() {
     log.debug("Make Args Map...");
-    final Map<String, String> properties = CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
-    final List<String> errors = ConstantUtils.ENV_KEY_NAMES.stream()
-            .filter(key -> !ConstantUtils.ENV_SERVER_PORT.equals(key) && properties.get(key) == null)
+    final Map<String, String> properties =
+        CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
+    final List<String> errors =
+        ConstantUtils.ENV_KEY_NAMES.stream()
+            .filter(
+                key -> !ConstantUtils.ENV_SERVER_PORT.equals(key) && properties.get(key) == null)
             .toList();
     log.info("Args Map After Conversion: [ {} ]", properties.size());
     if (errors.isEmpty()) {
       return properties;
     }
-    throw new IllegalStateException("One or more environment configurations could not be accessed...");
+    throw new IllegalStateException(
+        "One or more environment configurations could not be accessed...");
   }
 
   private static List<AppDataRepository> getRepositoryLocations(final Map<String, String> argsMap) {
     log.debug("Get Repository Locations...");
 
     List<Path> repoPaths;
-    try (Stream<Path> pathStream = Files.walk(Paths.get(argsMap.get(ConstantUtils.ENV_REPO_NAME)), 2)) {
+    try (Stream<Path> pathStream =
+        Files.walk(Paths.get(argsMap.get(ConstantUtils.ENV_REPO_NAME)), 2)) {
       repoPaths = pathStream.filter(Files::isDirectory).toList();
     } catch (Exception ex) {
       throw new RuntimeException("Repositories not found in the repo path provided!", ex);
@@ -88,7 +92,9 @@ public class AppDataUtils {
         npmRepositories.addAll(
             pathStream
                 .filter(stream -> "package.json".equals(stream.getFileName().toString()))
-                .map(mapper -> new AppDataRepository(path, RequestParams.UpdateType.NPM_DEPENDENCIES))
+                .map(
+                    mapper ->
+                        new AppDataRepository(path, RequestParams.UpdateType.NPM_DEPENDENCIES))
                 .toList());
       } catch (Exception ex) {
         throw new RuntimeException("NPM Files not found in the repo path provided!", ex);
@@ -101,7 +107,8 @@ public class AppDataUtils {
                 .map(
                     mapper -> {
                       List<String> gradleModules = readGradleModules(mapper);
-                      return new AppDataRepository(path, RequestParams.UpdateType.GRADLE_DEPENDENCIES, gradleModules);
+                      return new AppDataRepository(
+                          path, RequestParams.UpdateType.GRADLE_DEPENDENCIES, gradleModules);
                     })
                 .toList());
       } catch (Exception ex) {
@@ -115,7 +122,8 @@ public class AppDataUtils {
                 .map(
                     mapper -> {
                       List<String> requirementsTxts = readRequirementsTxts(path);
-                      return new AppDataRepository(path, RequestParams.UpdateType.PYTHON_DEPENDENCIES, requirementsTxts);
+                      return new AppDataRepository(
+                          path, RequestParams.UpdateType.PYTHON_DEPENDENCIES, requirementsTxts);
                     })
                 .toList());
       } catch (Exception ex) {
@@ -150,7 +158,8 @@ public class AppDataUtils {
   private static List<String> readGradleModules(final Path settingsGradlePath) {
     try {
       List<String> allLines = Files.readAllLines(settingsGradlePath);
-      Pattern pattern = Pattern.compile(String.format(ConstantUtils.GRADLE_BUILD_DEPENDENCIES_REGEX, "'", "'"));
+      Pattern pattern =
+          Pattern.compile(String.format(ConstantUtils.GRADLE_BUILD_DEPENDENCIES_REGEX, "'", "'"));
 
       return allLines.stream()
           .filter(line -> line.contains("include"))
@@ -189,7 +198,8 @@ public class AppDataUtils {
       }
 
       try (Stream<Path> files = Files.list(resourcesPath)) {
-        scriptFiles = files
+        scriptFiles =
+            files
                 .filter(path -> path.endsWith(".sh"))
                 .map(path -> new AppDataScriptFile(path.getFileName().toString()))
                 .toList();
@@ -203,12 +213,14 @@ public class AppDataUtils {
       log.debug("Script files: [ {} ]", scriptFiles);
       return scriptFiles;
     } catch (Exception ex) {
-        throw new RuntimeException(ex);
+      throw new RuntimeException(ex);
     }
   }
 
   private static String getCurrentGradleVersionInRepo(final AppDataRepository repository) {
-    Path wrapperPath = Path.of(repository.getRepoPath().toString().concat(ConstantUtils.GRADLE_WRAPPER_PROPERTIES));
+    Path wrapperPath =
+        Path.of(
+            repository.getRepoPath().toString().concat(ConstantUtils.GRADLE_WRAPPER_PROPERTIES));
     try {
       List<String> allLines = Files.readAllLines(wrapperPath);
       String distributionUrl =
@@ -248,7 +260,8 @@ public class AppDataUtils {
           .map(stream -> stream.getFileName().toString())
           .toList();
     } catch (Exception ex) {
-      throw new RuntimeException("Requirements Texts Files not found in the repo path provided!", ex);
+      throw new RuntimeException(
+          "Requirements Texts Files not found in the repo path provided!", ex);
     }
   }
 
@@ -265,7 +278,8 @@ public class AppDataUtils {
         if (field.getType().equals(LatestVersion.class)) {
           LatestVersion value = (LatestVersion) field.get(latestVersion);
           if (value == null) {
-            throw new RuntimeException(String.format("Field %s doesn't have value", field.getName()));
+            throw new RuntimeException(
+                String.format("Field %s doesn't have value", field.getName()));
           }
         }
       }

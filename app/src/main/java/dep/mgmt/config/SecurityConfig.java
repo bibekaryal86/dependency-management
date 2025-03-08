@@ -45,15 +45,16 @@ public class SecurityConfig extends ChannelDuplexHandler {
         return;
       }
 
-      if (!isBasicAuthenticated(authHeader)) {
+      if (isBasicAuthenticated(authHeader)) {
+        super.channelRead(channelHandlerContext, object);
+      } else {
         log.error("[{}] No Basic Auth...", requestId);
         ServerUtils.sendErrorResponse(
             channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
-        return;
       }
+    } else {
+      super.channelRead(channelHandlerContext, object);
     }
-
-    super.channelRead(channelHandlerContext, object);
   }
 
   private boolean isNoAuthCheck(final String requestUri) {
@@ -61,8 +62,8 @@ public class SecurityConfig extends ChannelDuplexHandler {
   }
 
   private boolean isBasicAuthenticated(final String actualAuth) {
-    final String username = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_SELF_USERNAME);
-    final String password = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_SELF_PASSWORD);
+    final String username = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_SELF_USER);
+    final String password = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_SELF_PWD);
     final String expectedAuth = CommonUtilities.getBasicAuth(username, password);
     return Objects.equals(expectedAuth, actualAuth);
   }

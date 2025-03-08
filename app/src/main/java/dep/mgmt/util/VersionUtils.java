@@ -14,12 +14,12 @@ public class VersionUtils {
       versionLowercase = versionLowercase.replace("release", "");
     }
     return !versionLowercase.contains("alpha")
-            && !versionLowercase.contains("a")
-            && !versionLowercase.contains("beta")
-            && !versionLowercase.contains("b")
-            && !versionLowercase.contains("rc")
-            && !versionLowercase.contains("m")
-            && !versionLowercase.contains("snapshot");
+        && !versionLowercase.contains("a")
+        && !versionLowercase.contains("beta")
+        && !versionLowercase.contains("b")
+        && !versionLowercase.contains("rc")
+        && !versionLowercase.contains("m")
+        && !versionLowercase.contains("snapshot");
   }
 
   public static String getVersionToCompare(final String version) {
