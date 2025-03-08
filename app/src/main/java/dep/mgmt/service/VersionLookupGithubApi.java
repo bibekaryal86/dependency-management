@@ -45,7 +45,7 @@ public abstract class VersionLookupGithubApi {
       apiReleaseResponse =
           isTags
               ? apiReleaseResponses.stream()
-                  .filter(arr -> !VersionUtils.isCheckPreReleaseVersion(arr.getName()))
+                  .filter(arr -> VersionUtils.isCheckPreReleaseVersion(arr.getName()))
                   .findFirst()
                   .orElse(null)
               : apiReleaseResponses.stream()

@@ -13,13 +13,13 @@ public class VersionUtils {
       // eg: nginx
       versionLowercase = versionLowercase.replace("release", "");
     }
-    return versionLowercase.contains("alpha")
-        || versionLowercase.contains("a")
-        || versionLowercase.contains("beta")
-        || versionLowercase.contains("b")
-        || versionLowercase.contains("rc")
-        || versionLowercase.contains("m")
-        || versionLowercase.contains("snapshot");
+    return !versionLowercase.contains("alpha")
+            && !versionLowercase.contains("a")
+            && !versionLowercase.contains("beta")
+            && !versionLowercase.contains("b")
+            && !versionLowercase.contains("rc")
+            && !versionLowercase.contains("m")
+            && !versionLowercase.contains("snapshot");
   }
 
   public static String getVersionToCompare(final String version) {

@@ -52,7 +52,7 @@ public class GradleDependenciesVersionService {
                 && !CommonUtilities.isEmpty(mavenSearchResponse.getResponse().getDocs())) {
             MavenSearchResponse.MavenResponse mavenResponse = mavenSearchResponse.getResponse();
             return mavenResponse.getDocs().stream()
-                    .filter(mavenDoc -> !VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
+                    .filter(mavenDoc -> VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
                     .max(
                             Comparator.comparing(
                                     MavenSearchResponse.MavenResponse.MavenDoc::getV, Comparator.comparing(VersionUtils::getVersionToCompare)))
