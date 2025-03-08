@@ -16,6 +16,11 @@ public class GradleVersionService extends VersionLookupGithubApi {
       final String latestJavaVersionMajor, final String latestDockerVersionFromMongo) {
     final ApiReleaseResponse apiReleaseResponse =
         getGithubApiReleaseResponse("gradle", "gradle", Boolean.FALSE);
+
+    if (apiReleaseResponse == null) {
+      return null;
+    }
+
     final String versionFull = apiReleaseResponse.getName();
     final String versionDocker =
         getGradleVersionDocker(versionFull, latestJavaVersionMajor, latestDockerVersionFromMongo);

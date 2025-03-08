@@ -2,10 +2,10 @@ package dep.mgmt.model.web;
 
 import java.io.Serializable;
 
-public class PypiSearchResponse implements Serializable {
+public class PythonPackageSearchResponse implements Serializable {
   private final PypiInfo info;
 
-  public PypiSearchResponse(final PypiInfo info) {
+  public PythonPackageSearchResponse(final PypiInfo info) {
     this.info = info;
   }
 
@@ -15,7 +15,7 @@ public class PypiSearchResponse implements Serializable {
 
   @Override
   public String toString() {
-    return "PyPiSearchResponse{" + "info=" + info + '}';
+    return "PythonPackageSearchResponse{" + "info=" + info + '}';
   }
 
   public static class PypiInfo implements Serializable {
