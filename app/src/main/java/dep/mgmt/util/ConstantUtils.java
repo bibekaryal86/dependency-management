@@ -6,25 +6,27 @@ import java.util.List;
 public class ConstantUtils {
   // provided at runtime
   public static final String ENV_SERVER_PORT = "PORT";
-  public static final String ENV_SELF_USERNAME = "SELF_USERNAME";
-  public static final String ENV_SELF_PASSWORD = "SELF_PASSWORD";
+  public static final String ENV_SELF_USER = "SELF_USERNAME";
+  public static final String ENV_SELF_PWD = "SELF_PASSWORD";
   public static final String ENV_DB_HOST = "DB_HOST";
   public static final String ENV_DB_NAME = "DB_NAME";
-  public static final String ENV_DB_USERNAME = "DB_USERNAME";
-  public static final String ENV_DB_PASSWORD = "DB_PASSWORD";
+  public static final String ENV_DB_USER = "DB_USERNAME";
+  public static final String ENV_DB_PWD = "DB_PASSWORD";
+  public static final String ENV_REPO_NAME = "REPO_HOME";
   public static final String ENV_SEND_EMAIL = "SEND_EMAIL";
   public static final String ENV_MAILJET_PUBLIC_KEY = "MJ_PUBLIC";
-  public static final String ENV_MAILJET_PRIVATE_KEY = "MJ_PRIVATE";
+  public static final String ENV_MAILJET_PRIVATE_KEY = "MJ_PUBLIC";
   public static final String ENV_MAILJET_EMAIL_ADDRESS = "MJ_EMAIL";
   public static final List<String> ENV_KEY_NAMES =
       List.of(
           ENV_SERVER_PORT,
-          ENV_SELF_USERNAME,
-          ENV_SELF_PASSWORD,
+          ENV_SELF_USER,
+          ENV_SELF_PWD,
           ENV_DB_HOST,
           ENV_DB_NAME,
-          ENV_DB_USERNAME,
-          ENV_DB_PASSWORD,
+          ENV_DB_USER,
+          ENV_DB_PWD,
+          ENV_REPO_NAME,
           ENV_SEND_EMAIL,
           ENV_MAILJET_PUBLIC_KEY,
           ENV_MAILJET_PRIVATE_KEY,

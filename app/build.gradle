@@ -81,7 +81,7 @@ def loadAppCredentialsEnvVariables() {
 
         if (data?.env_variables) {
             data.env_variables.each { key, value ->
-                if (key != 'ENV_SERVER_PORT') {
+                if (key != 'PORT') {
                     properties.setProperty(key, value)
                 }
             }

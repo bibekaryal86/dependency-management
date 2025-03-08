@@ -25,3 +25,8 @@
 
 * Example:
     * java -jar -Drepo_home=/home/pi/zava/projects -Ddb_host=some-host -Ddb_name=some-name -Ddb_username=some_user -Ddb_password=some_password dep-mgmt.jar
+
+
+options to view which tasks running
+options to kill a long running task
+option to run on one repo

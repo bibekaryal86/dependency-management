@@ -7,17 +7,17 @@ public class AppInitData {
   private final Map<String, String> argsMap;
   private final List<AppDataScriptFile> scriptFiles;
   private final List<AppDataRepository> repositories;
-  private final AppDataLatestVersions latestVersionsModel;
+  private final AppDataLatestVersions latestVersions;
 
   public AppInitData(
       final Map<String, String> argsMap,
       final List<AppDataScriptFile> scriptFiles,
       final List<AppDataRepository> repositories,
-      final AppDataLatestVersions latestVersionsModel) {
+      final AppDataLatestVersions latestVersions) {
     this.argsMap = argsMap;
     this.scriptFiles = scriptFiles;
     this.repositories = repositories;
-    this.latestVersionsModel = latestVersionsModel;
+    this.latestVersions = latestVersions;
   }
 
   public Map<String, String> getArgsMap() {
@@ -32,8 +32,8 @@ public class AppInitData {
     return repositories;
   }
 
-  public AppDataLatestVersions getLatestVersionsModel() {
-    return latestVersionsModel;
+  public AppDataLatestVersions getLatestVersions() {
+    return latestVersions;
   }
 
   @Override
@@ -45,8 +45,8 @@ public class AppInitData {
         + scriptFiles
         + ", repositories="
         + repositories
-        + ", latestVersionsModel="
-        + latestVersionsModel
+        + ", latestVersions="
+        + latestVersions
         + '}';
   }
 }
