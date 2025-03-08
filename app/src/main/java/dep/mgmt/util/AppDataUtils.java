@@ -3,19 +3,21 @@ package dep.mgmt.util;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
-import dep.mgmt.model.AppInitData;
+import dep.mgmt.model.AppData;
+import dep.mgmt.model.LatestVersion;
+import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,115 +29,76 @@ public class AppDataUtils {
 
   private static final Logger log = LoggerFactory.getLogger(AppDataUtils.class);
 
-  private static AppInitData appInitDataCache = null;
+  private static AppData appDataCache = null;
 
-  public static AppInitData appInitData() {
-    if (appInitDataCache == null) {
-      appInitDataCache = setAppInitData();
+  public static AppData appData() {
+    if (appDataCache == null) {
+      appDataCache = setAppData();
     }
-    return appInitDataCache;
+    return appDataCache;
   }
 
-  public static AppInitData setAppInitData() {
+  public static AppData setAppData() {
     log.info("Set App Init Data...");
     // get the input arguments
-    Map<String, String> argsMap = makeArgsMap();
+    Map<String, String> argsMap = validateInputAndMakeArgsMap();
     // get the list of repositories and their type
     List<AppDataRepository> repositories = getRepositoryLocations(argsMap);
     // get the scripts included in resources folder
-    List<AppDataScriptFile> scriptFiles = getScriptsInResources();
+    List<AppDataScriptFile> scriptFiles = getScriptFilesInResources();
     // get the latest versions of tools and runtimes
     AppDataLatestVersions latestVersions = getLatestVersions();
     // return
-    return new AppInitData(argsMap, scriptFiles, repositories, latestVersions);
+    return new AppData(argsMap, scriptFiles, repositories, latestVersions);
   }
 
-  public static void clearAppInitData() {
-    log.info("Clear App Init Data...");
-    appInitDataCache = null;
+  public static void clearAppData() {
+    log.info("Clear App Data...");
+    appDataCache = null;
   }
 
-  private static Map<String, String> makeArgsMap() {
+  private static Map<String, String> validateInputAndMakeArgsMap() {
     log.debug("Make Args Map...");
-    Map<String, String> map = validateInputAndMakeArgsMap();
-    log.info("Args Map After Conversion: [ {} ]", map.size());
-    return map;
-  }
-
-  public static Map<String, String> validateInputAndMakeArgsMap() {
-    Map<String, String> map = new HashMap<>();
-    final String envRepoName = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_REPO_NAME);
-    if (CommonUtilities.isEmpty(envRepoName)) {
-      throw new RuntimeException("repo_home env property must be provided");
+    final Map<String, String> properties = CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
+    final List<String> errors = ConstantUtils.ENV_KEY_NAMES.stream()
+            .filter(key -> !ConstantUtils.ENV_SERVER_PORT.equals(key) && properties.get(key) == null)
+            .toList();
+    log.info("Args Map After Conversion: [ {} ]", properties.size());
+    if (errors.isEmpty()) {
+      return properties;
     }
-    final String envMongoUsername = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_MONGO_USERNAME);
-
-    if (CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_REPO_NAME) == null) {
-
-    }
-    map.put(ConstantUtils.ENV_REPO_NAME, getSystemEnvProperty(ENV_REPO_NAME));
-
-    if (getSystemEnvProperty(ENV_MONGO_USERNAME) == null) {
-      throw new AppDependencyUpdateRuntimeException("mongo_user env property must be provided");
-    }
-    map.put(ENV_MONGO_USERNAME, getSystemEnvProperty(ENV_MONGO_USERNAME));
-
-    if (getSystemEnvProperty(ENV_MONGO_PASSWORD) == null) {
-      throw new AppDependencyUpdateRuntimeException("mongo_pwd env property must be provided");
-    }
-    map.put(ENV_MONGO_PASSWORD, getSystemEnvProperty(ENV_MONGO_PASSWORD));
-
-    if ("true".equals(getSystemEnvProperty(ENV_SEND_EMAIL))) {
-      map.put(ENV_SEND_EMAIL, getSystemEnvProperty(ENV_SEND_EMAIL));
-
-      if (getSystemEnvProperty(ENV_MAILJET_EMAIL_ADDRESS) == null) {
-        throw new AppDependencyUpdateRuntimeException("mj_email env property must be provided");
-      }
-      map.put(ENV_MAILJET_PUBLIC_KEY, getSystemEnvProperty(ENV_MAILJET_PUBLIC_KEY));
-
-      if (getSystemEnvProperty(ENV_MAILJET_PUBLIC_KEY) == null) {
-        throw new AppDependencyUpdateRuntimeException("mj_public env property must be provided");
-      }
-      map.put(ENV_MAILJET_PRIVATE_KEY, getSystemEnvProperty(ENV_MAILJET_PRIVATE_KEY));
-
-      if (getSystemEnvProperty(ENV_MAILJET_PRIVATE_KEY) == null) {
-        throw new AppDependencyUpdateRuntimeException("mj_private env property must be provided");
-      }
-      map.put(ENV_MAILJET_EMAIL_ADDRESS, getSystemEnvProperty(ENV_MAILJET_EMAIL_ADDRESS));
-    }
-
-    return map;
+    throw new IllegalStateException("One or more environment configurations could not be accessed...");
   }
 
   private static List<AppDataRepository> getRepositoryLocations(final Map<String, String> argsMap) {
     log.debug("Get Repository Locations...");
+
     List<Path> repoPaths;
     try (Stream<Path> pathStream = Files.walk(Paths.get(argsMap.get(ConstantUtils.ENV_REPO_NAME)), 2)) {
       repoPaths = pathStream.filter(Files::isDirectory).toList();
     } catch (Exception ex) {
-      throw new AppDependencyUpdateRuntimeException(
-          "Repositories not found in the repo path provided!", ex);
+      throw new RuntimeException("Repositories not found in the repo path provided!", ex);
     }
 
     if (repoPaths.isEmpty()) {
-      throw new AppDependencyUpdateRuntimeException(
-          "Repositories not found in the repo path provided!");
+      throw new RuntimeException("Repositories not found in the repo path provided...");
     }
 
-    List<Repository> npmRepositories = new ArrayList<>();
-    List<Repository> gradleRepositories = new ArrayList<>();
-    List<Repository> pythonRepositories = new ArrayList<>();
+    List<AppDataRepository> npmRepositories = new ArrayList<>();
+    List<AppDataRepository> gradleRepositories = new ArrayList<>();
+    List<AppDataRepository> pythonRepositories = new ArrayList<>();
+
     for (Path path : repoPaths) {
       try (Stream<Path> pathStream = Files.list(path)) {
         npmRepositories.addAll(
             pathStream
                 .filter(stream -> "package.json".equals(stream.getFileName().toString()))
-                .map(mapper -> new Repository(path, UpdateType.NPM_DEPENDENCIES))
+                .map(mapper -> new AppDataRepository(path, RequestParams.UpdateType.NPM_DEPENDENCIES))
                 .toList());
       } catch (Exception ex) {
-        throw new AppDependencyUpdateRuntimeException(
-            "NPM Files not found in the repo path provided!", ex);
+        throw new RuntimeException("NPM Files not found in the repo path provided!", ex);
       }
+
       try (Stream<Path> pathStream = Files.list(path)) {
         gradleRepositories.addAll(
             pathStream
@@ -143,13 +106,13 @@ public class AppDataUtils {
                 .map(
                     mapper -> {
                       List<String> gradleModules = readGradleModules(mapper);
-                      return new Repository(path, UpdateType.GRADLE_DEPENDENCIES, gradleModules);
+                      return new AppDataRepository(path, RequestParams.UpdateType.GRADLE_DEPENDENCIES, gradleModules);
                     })
                 .toList());
       } catch (Exception ex) {
-        throw new AppDependencyUpdateRuntimeException(
-            "Gradle Repositories not found in the repo path provided!", ex);
+        throw new RuntimeException("Gradle Repositories not found in the repo path provided!", ex);
       }
+
       try (Stream<Path> pathStream = Files.list(path)) {
         pythonRepositories.addAll(
             pathStream
@@ -157,22 +120,21 @@ public class AppDataUtils {
                 .map(
                     mapper -> {
                       List<String> requirementsTxts = readRequirementsTxts(path);
-                      return new Repository(path, UpdateType.PYTHON_DEPENDENCIES, requirementsTxts);
+                      return new AppDataRepository(path, RequestParams.UpdateType.PYTHON_DEPENDENCIES, requirementsTxts);
                     })
                 .toList());
       } catch (Exception ex) {
-        throw new AppDependencyUpdateRuntimeException(
-            "Python Files not found in the repo path provided!", ex);
+        throw new RuntimeException("Python Files not found in the repo path provided!", ex);
       }
     }
 
     // add gradle wrapper version data
-    List<Repository> gradleWrapperRepositories =
+    List<AppDataRepository> gradleWrapperRepositories =
         gradleRepositories.stream()
             .map(
                 repository -> {
                   String currentGradleVersion = getCurrentGradleVersionInRepo(repository);
-                  return new Repository(
+                  return new AppDataRepository(
                       repository.getRepoPath(),
                       repository.getType(),
                       repository.getGradleModules(),
@@ -180,7 +142,7 @@ public class AppDataUtils {
                 })
             .toList();
 
-    List<Repository> repositories = new ArrayList<>();
+    List<AppDataRepository> repositories = new ArrayList<>();
     repositories.addAll(npmRepositories);
     repositories.addAll(gradleWrapperRepositories);
     repositories.addAll(pythonRepositories);
@@ -193,7 +155,7 @@ public class AppDataUtils {
   private static List<String> readGradleModules(final Path settingsGradlePath) {
     try {
       List<String> allLines = Files.readAllLines(settingsGradlePath);
-      Pattern pattern = Pattern.compile(String.format(GRADLE_BUILD_DEPENDENCIES_REGEX, "'", "'"));
+      Pattern pattern = Pattern.compile(String.format(ConstantUtils.GRADLE_BUILD_DEPENDENCIES_REGEX, "'", "'"));
 
       return allLines.stream()
           .filter(line -> line.contains("include"))
@@ -209,36 +171,49 @@ public class AppDataUtils {
           .toList();
     } catch (IOException ex) {
       log.error("Error in Read Gradle Modules: [ {} ]", settingsGradlePath, ex);
-      return Collections.singletonList(APP_MAIN_MODULE);
+      return Collections.singletonList(ConstantUtils.APP_MAIN_MODULE);
     }
   }
 
-  private static List<ScriptFile> getScriptsInResources() {
-    log.debug("Get Scripts in Resources...");
-    List<ScriptFile> scriptFiles = new ArrayList<>();
+  private static List<AppDataScriptFile> getScriptFilesInResources() {
+    log.debug("Get Script files in Resources...");
+    List<AppDataScriptFile> scriptFiles = new ArrayList<>();
 
     try {
-      Resource[] resources =
-          new PathMatchingResourcePatternResolver().getResources("classpath:scripts/*.sh");
-      for (Resource resource : resources) {
-        scriptFiles.add(new ScriptFile(Objects.requireNonNull(resource.getFilename())));
+      ClassLoader classLoader = AppDataUtils.class.getClassLoader();
+      URL resourcesUrl = classLoader.getResource("scripts");
+
+      if (resourcesUrl == null) {
+        throw new RuntimeException("scripts directory not found in resources...");
       }
+
+      Path resourcesPath = Paths.get(resourcesUrl.toURI());
+
+      if (!Files.exists(resourcesPath) || !Files.isDirectory(resourcesPath)) {
+        throw new RuntimeException("scripts directory is not a valid directory...");
+      }
+
+      try (Stream<Path> files = Files.list(resourcesPath)) {
+        scriptFiles = files
+                .filter(path -> path.endsWith(".sh"))
+                .map(path -> new AppDataScriptFile(path.getFileName().toString()))
+                .toList();
+      }
+
+      if (scriptFiles.isEmpty()) {
+        throw new RuntimeException("Script files not found in resources...");
+      }
+
+      log.info("Script files: [ {} ]", scriptFiles.size());
+      log.debug("Script files: [ {} ]", scriptFiles);
+      return scriptFiles;
     } catch (Exception ex) {
-      throw new AppDependencyUpdateRuntimeException("Error reading script files in resources", ex);
+        throw new RuntimeException(ex);
     }
-
-    if (scriptFiles.isEmpty()) {
-      throw new AppDependencyUpdateRuntimeException("Script files not found in resources");
-    }
-
-    log.info("Script files: [ {} ]", scriptFiles.size());
-    log.debug("Script files: [ {} ]", scriptFiles);
-    return scriptFiles;
   }
 
-  private static String getCurrentGradleVersionInRepo(final Repository repository) {
-    Path wrapperPath =
-        Path.of(repository.getRepoPath().toString().concat(GRADLE_WRAPPER_PROPERTIES));
+  private static String getCurrentGradleVersionInRepo(final AppDataRepository repository) {
+    Path wrapperPath = Path.of(repository.getRepoPath().toString().concat(ConstantUtils.GRADLE_WRAPPER_PROPERTIES));
     try {
       List<String> allLines = Files.readAllLines(wrapperPath);
       String distributionUrl =
@@ -259,7 +234,7 @@ public class AppDataUtils {
   private static String parseDistributionUrlForGradleVersion(final String distributionUrl) {
     // matches text between two hyphens
     // eg: distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
-    Pattern pattern = Pattern.compile(GRADLE_WRAPPER_REGEX);
+    Pattern pattern = Pattern.compile(ConstantUtils.GRADLE_WRAPPER_REGEX);
     Matcher matcher = pattern.matcher(distributionUrl);
     if (matcher.find()) {
       return matcher.group();
@@ -278,19 +253,13 @@ public class AppDataUtils {
           .map(stream -> stream.getFileName().toString())
           .toList();
     } catch (Exception ex) {
-      throw new AppDependencyUpdateRuntimeException(
-          "Requirements Texts Files not found in the repo path provided!", ex);
+      throw new RuntimeException("Requirements Texts Files not found in the repo path provided!", ex);
     }
   }
 
-  private static LatestVersionsModel getLatestVersions() {
-    LatestVersionsModel latestVersionsModel =
-        ApplicationContextUtil.getBean(LatestVersionsService.class).getLatestVersions();
-    validateLatestVersion(latestVersionsModel.getLatestVersionServers());
-    validateLatestVersion(latestVersionsModel.getLatestVersionTools());
-    validateLatestVersion(latestVersionsModel.getLatestVersionGithubActions());
-    validateLatestVersion(latestVersionsModel.getLatestVersionLanguages());
-    return latestVersionsModel;
+  // TODO latest versions service
+  private static AppDataLatestVersions getLatestVersions() {
+    return null;
   }
 
   private static void validateLatestVersion(final Object latestVersion) {
@@ -301,14 +270,13 @@ public class AppDataUtils {
         if (field.getType().equals(LatestVersion.class)) {
           LatestVersion value = (LatestVersion) field.get(latestVersion);
           if (value == null) {
-            throw new AppDependencyUpdateRuntimeException(
-                String.format("Field %s doesn't have value", field.getName()));
+            throw new RuntimeException(String.format("Field %s doesn't have value", field.getName()));
           }
         }
       }
     } catch (Exception ex) {
       log.error("Validate Latest Version: [{}]", latestVersion, ex);
-      throw new AppDependencyUpdateRuntimeException("Latest Version Value Check Exception");
+      throw new RuntimeException("Latest Version Value Check Exception");
     }
   }
 }

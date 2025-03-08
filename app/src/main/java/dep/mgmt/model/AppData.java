@@ -3,13 +3,13 @@ package dep.mgmt.model;
 import java.util.List;
 import java.util.Map;
 
-public class AppInitData {
+public class AppData {
   private final Map<String, String> argsMap;
   private final List<AppDataScriptFile> scriptFiles;
   private final List<AppDataRepository> repositories;
   private final AppDataLatestVersions latestVersions;
 
-  public AppInitData(
+  public AppData(
       final Map<String, String> argsMap,
       final List<AppDataScriptFile> scriptFiles,
       final List<AppDataRepository> repositories,
@@ -38,7 +38,7 @@ public class AppInitData {
 
   @Override
   public String toString() {
-    return "AppInitData{"
+    return "AppData{"
         + "argsMap="
         + argsMap
         + ", scriptFiles="

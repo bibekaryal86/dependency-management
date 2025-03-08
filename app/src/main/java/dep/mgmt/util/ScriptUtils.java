@@ -40,11 +40,11 @@ public class ScriptUtils {
       throw new RuntimeException("Unable to create temp directory to store scripts...");
     }
 
-    List<AppDataScriptFile> scriptFiles = AppInitDataUtils.appInitData().getScriptFiles();
-    for (final ScriptFile scriptFile : scriptFiles) {
+    List<AppDataScriptFile> scriptFiles = AppDataUtils.appData().getScriptFiles();
+    for (final AppDataScriptFile scriptFile : scriptFiles) {
       isError = createTempScriptFile(scriptFile);
       if (isError) {
-        throw new AppDependencyUpdateRuntimeException(
+        throw new RuntimeException(
             String.format(
                 "Unable to create and temp script file %s...", scriptFile.getScriptFileName()));
       } else {
@@ -59,15 +59,15 @@ public class ScriptUtils {
         return true;
       }
 
-      List<ScriptFile> scriptFiles = AppInitDataUtils.appInitData().getScriptFiles();
-      for (final ScriptFile scriptFile : scriptFiles) {
+      List<AppDataScriptFile> scriptFiles = AppDataUtils.setAppData().getScriptFiles();
+      for (final AppDataScriptFile scriptFile : scriptFiles) {
         Path filePath =
-            Path.of(TEMP_SCRIPTS_DIRECTORY + PATH_DELIMITER + scriptFile.getScriptFileName());
+            Path.of(TEMP_SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName());
         if (!Files.exists(filePath)) {
           return true;
         }
       }
-    } catch (AppDependencyUpdateRuntimeException ex) {
+    } catch (RuntimeException ex) {
       log.error("Error checking if Script files exist in Directory", ex);
       return true;
     }
@@ -96,16 +96,16 @@ public class ScriptUtils {
     }
   }
 
-  private boolean createTempScriptFile(final ScriptFile scriptFile) {
+  private boolean createTempScriptFile(final AppDataScriptFile scriptFile) {
     try {
       Path filePath =
           Files.createFile(
-              Path.of(TEMP_SCRIPTS_DIRECTORY + PATH_DELIMITER + scriptFile.getScriptFileName()));
+              Path.of(TEMP_SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName()));
       try (InputStream inputStream =
           getClass()
               .getClassLoader()
               .getResourceAsStream(
-                  SCRIPTS_DIRECTORY + PATH_DELIMITER + scriptFile.getScriptFileName())) {
+                      ConstantUtils.SCRIPTS_DIRECTORY + ConstantUtils.PATH_DELIMITER + scriptFile.getScriptFileName())) {
         assert inputStream != null;
         Files.write(filePath, inputStream.readAllBytes(), StandardOpenOption.WRITE);
         log.info("Written to file: [ {} ]", filePath);
@@ -117,18 +117,17 @@ public class ScriptUtils {
     }
   }
 
-  private void giveExecutePermissionToFile(final ScriptFile scriptFile) {
+  private void giveExecutePermissionToFile(final AppDataScriptFile scriptFile) {
     try {
       String scriptPath =
-          JAVA_SYSTEM_TMPDIR
-              + PATH_DELIMITER
-              + SCRIPTS_DIRECTORY
-              + PATH_DELIMITER
+              ConstantUtils.JAVA_SYSTEM_TMPDIR
+              + ConstantUtils.PATH_DELIMITER
+              + ConstantUtils.SCRIPTS_DIRECTORY
+              + ConstantUtils.PATH_DELIMITER
               + scriptFile.getScriptFileName();
-      new ProcessBuilder(COMMAND_PATH, CHMOD_COMMAND + scriptPath).start();
+      new ProcessBuilder(ConstantUtils.COMMAND_PATH, ConstantUtils.CHMOD_COMMAND + scriptPath).start();
     } catch (IOException ex) {
-      log.error(
-          "Error on Give Execute Permission to File: [ {} ]", scriptFile.getScriptFileName(), ex);
+      log.error("Error on Give Execute Permission to File: [ {} ]", scriptFile.getScriptFileName(), ex);
     }
   }
 }
