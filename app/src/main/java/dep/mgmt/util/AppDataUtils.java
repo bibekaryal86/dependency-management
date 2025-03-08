@@ -1,5 +1,6 @@
 package dep.mgmt.util;
 
+import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
@@ -29,32 +30,26 @@ public class AppDataUtils {
 
   private static final Logger log = LoggerFactory.getLogger(AppDataUtils.class);
 
-  private static AppData appDataCache = null;
-
   public static AppData appData() {
+    final AppData appDataCache = CacheConfig.getAppData();
     if (appDataCache == null) {
-      appDataCache = setAppData();
+      return setAppData();
     }
     return appDataCache;
   }
 
   public static AppData setAppData() {
-    log.info("Set App Init Data...");
+    log.info("Set App Data...");
     // get the input arguments
-    Map<String, String> argsMap = validateInputAndMakeArgsMap();
+    final Map<String, String> argsMap = validateInputAndMakeArgsMap();
     // get the list of repositories and their type
-    List<AppDataRepository> repositories = getRepositoryLocations(argsMap);
+    final List<AppDataRepository> repositories = getRepositoryLocations(argsMap);
     // get the scripts included in resources folder
-    List<AppDataScriptFile> scriptFiles = getScriptFilesInResources();
+    final List<AppDataScriptFile> scriptFiles = getScriptFilesInResources();
     // get the latest versions of tools and runtimes
-    AppDataLatestVersions latestVersions = getLatestVersions();
-    // return
-    return new AppData(argsMap, scriptFiles, repositories, latestVersions);
-  }
-
-  public static void clearAppData() {
-    log.info("Clear App Data...");
-    appDataCache = null;
+    final AppDataLatestVersions latestVersions = getLatestVersions();
+    // set app data cache and return
+    return CacheConfig.setAppData(argsMap, scriptFiles, repositories, latestVersions);
   }
 
   private static Map<String, String> validateInputAndMakeArgsMap() {
