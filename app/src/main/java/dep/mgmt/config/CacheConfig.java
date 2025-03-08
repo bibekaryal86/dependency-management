@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CacheConfig {
+    // TODO dependencies map, packages map, plugins map, etc
+
     private static AppData APP_DATA = null;
 
     public static AppData getAppData() {
