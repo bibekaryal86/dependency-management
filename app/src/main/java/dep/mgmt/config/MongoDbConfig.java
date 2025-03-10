@@ -19,22 +19,26 @@ public class MongoDbConfig {
     final String dbName = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_DB_NAME);
     final String dbUser = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_DB_USER);
     final String dbPwd = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_DB_PWD);
-    final String connectionString = String.format(dbHost, dbUser, dbPwd, dbName, dbName);
+    final String connectionString =
+        String.format(dbHost, dbUser, dbPwd, dbName, dbName.toUpperCase());
 
     CodecRegistry pojoCodecRegistry =
         CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
     CodecRegistry codecRegistry =
         CodecRegistries.fromRegistries(
             MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
-    try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-      database =
-          mongoClient
-              .getDatabase(ConstantUtils.MONGODB_DATABASE_NAME)
-              .withCodecRegistry(codecRegistry);
-    }
+    MongoClient mongoClient = MongoClients.create(connectionString);
+    database =
+        mongoClient
+            .getDatabase(ConstantUtils.MONGODB_DATABASE_NAME)
+            .withCodecRegistry(codecRegistry);
   }
 
   public static MongoDatabase getDatabase() {
     return database;
+  }
+
+  public static String init() {
+    return database.getName();
   }
 }

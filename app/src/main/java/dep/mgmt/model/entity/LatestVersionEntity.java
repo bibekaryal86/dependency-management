@@ -7,25 +7,28 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
 public class LatestVersionEntity implements Serializable {
-  @BsonId private final ObjectId id;
-  private final LocalDateTime updateDateTime;
+  @BsonId private ObjectId id;
+  private LocalDateTime updateDateTime;
 
   // servers
-  private final LatestVersion nginx;
+  private LatestVersion nginx;
   // tools
-  private final LatestVersion gradle;
-  private final LatestVersion flyway;
+  private LatestVersion gradle;
+  private LatestVersion flyway;
   // actions
-  private final LatestVersion checkout;
-  private final LatestVersion setupJava;
-  private final LatestVersion setupGradle;
-  private final LatestVersion setupNode;
-  private final LatestVersion setupPython;
-  private final LatestVersion codeql;
+  private LatestVersion checkout;
+  private LatestVersion setupJava;
+  private LatestVersion setupGradle;
+  private LatestVersion setupNode;
+  private LatestVersion setupPython;
+  private LatestVersion codeql;
   // languages
-  private final LatestVersion java;
-  private final LatestVersion node;
-  private final LatestVersion python;
+  private LatestVersion java;
+  private LatestVersion node;
+  private LatestVersion python;
+
+  public LatestVersionEntity() {
+  }
 
   public LatestVersionEntity(
       final ObjectId id,
@@ -62,56 +65,112 @@ public class LatestVersionEntity implements Serializable {
     return id;
   }
 
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
+
   public LocalDateTime getUpdateDateTime() {
     return updateDateTime;
+  }
+
+  public void setUpdateDateTime(LocalDateTime updateDateTime) {
+    this.updateDateTime = updateDateTime;
   }
 
   public LatestVersion getNginx() {
     return nginx;
   }
 
+  public void setNginx(LatestVersion nginx) {
+    this.nginx = nginx;
+  }
+
   public LatestVersion getGradle() {
     return gradle;
+  }
+
+  public void setGradle(LatestVersion gradle) {
+    this.gradle = gradle;
   }
 
   public LatestVersion getFlyway() {
     return flyway;
   }
 
+  public void setFlyway(LatestVersion flyway) {
+    this.flyway = flyway;
+  }
+
   public LatestVersion getCheckout() {
     return checkout;
+  }
+
+  public void setCheckout(LatestVersion checkout) {
+    this.checkout = checkout;
   }
 
   public LatestVersion getSetupJava() {
     return setupJava;
   }
 
+  public void setSetupJava(LatestVersion setupJava) {
+    this.setupJava = setupJava;
+  }
+
   public LatestVersion getSetupGradle() {
     return setupGradle;
+  }
+
+  public void setSetupGradle(LatestVersion setupGradle) {
+    this.setupGradle = setupGradle;
   }
 
   public LatestVersion getSetupNode() {
     return setupNode;
   }
 
+  public void setSetupNode(LatestVersion setupNode) {
+    this.setupNode = setupNode;
+  }
+
   public LatestVersion getSetupPython() {
     return setupPython;
+  }
+
+  public void setSetupPython(LatestVersion setupPython) {
+    this.setupPython = setupPython;
   }
 
   public LatestVersion getCodeql() {
     return codeql;
   }
 
+  public void setCodeql(LatestVersion codeql) {
+    this.codeql = codeql;
+  }
+
   public LatestVersion getJava() {
     return java;
+  }
+
+  public void setJava(LatestVersion java) {
+    this.java = java;
   }
 
   public LatestVersion getNode() {
     return node;
   }
 
+  public void setNode(LatestVersion node) {
+    this.node = node;
+  }
+
   public LatestVersion getPython() {
     return python;
+  }
+
+  public void setPython(LatestVersion python) {
+    this.python = python;
   }
 
   @Override

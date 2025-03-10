@@ -3,6 +3,7 @@
  */
 package dep.mgmt;
 
+import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
@@ -18,6 +19,7 @@ public class App {
     log.info("Starting Dependency Management Service...");
     App.init();
     ScheduleConfig.init();
+    log.info("MongoDb Database Initialized: [{}]", MongoDbConfig.init());
     log.info("Started Dependency Management Service...");
   }
 

@@ -5,10 +5,13 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
 public class DependencyEntity implements Serializable {
-  @BsonId private final ObjectId id;
-  private final String name;
-  private final String version;
-  private final Boolean skipVersion;
+  @BsonId private ObjectId id;
+  private String name;
+  private String version;
+  private Boolean skipVersion;
+
+  public DependencyEntity() {
+  }
 
   public DependencyEntity(
       final ObjectId id, final String name, final String version, final Boolean skipVersion) {
@@ -36,16 +39,32 @@ public class DependencyEntity implements Serializable {
     return id;
   }
 
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
+
   public String getName() {
     return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getVersion() {
     return version;
   }
 
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
   public Boolean getSkipVersion() {
     return skipVersion;
+  }
+
+  public void setSkipVersion(Boolean skipVersion) {
+    this.skipVersion = skipVersion;
   }
 
   @Override
