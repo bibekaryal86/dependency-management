@@ -2,7 +2,6 @@ package dep.mgmt.model.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,7 +27,9 @@ public class JavaReleaseResponse implements Serializable {
     private final String optional;
 
     @JsonCreator
-    public JavaVersion(@JsonProperty("semver") final String semver, @JsonProperty("optional") final String optional) {
+    public JavaVersion(
+        @JsonProperty("semver") final String semver,
+        @JsonProperty("optional") final String optional) {
       this.semver = semver;
       this.optional = optional;
     }

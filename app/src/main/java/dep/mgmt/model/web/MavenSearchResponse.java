@@ -2,7 +2,6 @@ package dep.mgmt.model.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -46,7 +45,10 @@ public class MavenSearchResponse implements Serializable {
       private final String v;
 
       @JsonCreator
-      public MavenDoc(@JsonProperty("g") final String g, @JsonProperty("a") final String a, @JsonProperty("v") final String v) {
+      public MavenDoc(
+          @JsonProperty("g") final String g,
+          @JsonProperty("a") final String a,
+          @JsonProperty("v") final String v) {
         this.g = g;
         this.a = a;
         this.v = v;

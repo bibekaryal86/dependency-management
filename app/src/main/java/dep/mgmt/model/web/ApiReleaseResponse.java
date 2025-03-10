@@ -14,8 +14,10 @@ public class ApiReleaseResponse implements Serializable {
 
   @JsonCreator
   public ApiReleaseResponse(
-          @JsonProperty("tag_name")
-      final String tagName, @JsonProperty("name") final String name, @JsonProperty("draft") final Boolean draft, @JsonProperty("prerelease") final Boolean prerelease) {
+      @JsonProperty("tag_name") final String tagName,
+      @JsonProperty("name") final String name,
+      @JsonProperty("draft") final Boolean draft,
+      @JsonProperty("prerelease") final Boolean prerelease) {
     this.tagName = tagName;
     this.name = name;
     this.draft = draft;
