@@ -1,14 +1,17 @@
 package dep.mgmt.config;
 
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 
 public class MongoDbConfig {
 
-  private static final MongoClient mongoClient;
   private static final MongoDatabase database;
 
   static {
@@ -18,8 +21,17 @@ public class MongoDbConfig {
     final String dbPwd = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_DB_PWD);
     final String connectionString = String.format(dbHost, dbUser, dbPwd, dbName, dbName);
 
-    mongoClient = MongoClients.create(connectionString);
-    database = mongoClient.getDatabase(ConstantUtils.MONGODB_DATABASE_NAME);
+    CodecRegistry pojoCodecRegistry =
+        CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
+    CodecRegistry codecRegistry =
+        CodecRegistries.fromRegistries(
+            MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+    try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+      database =
+          mongoClient
+              .getDatabase(ConstantUtils.MONGODB_DATABASE_NAME)
+              .withCodecRegistry(codecRegistry);
+    }
   }
 
   public static MongoDatabase getDatabase() {

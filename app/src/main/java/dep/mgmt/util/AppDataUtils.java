@@ -73,7 +73,7 @@ public class AppDataUtils {
 
     List<Path> repoPaths;
     try (Stream<Path> pathStream =
-        Files.walk(Paths.get(argsMap.get(ConstantUtils.ENV_REPO_NAME)), 2)) {
+        Files.walk(Paths.get(argsMap.get(ConstantUtils.ENV_REPO_HOME)), 2)) {
       repoPaths = pathStream.filter(Files::isDirectory).toList();
     } catch (Exception ex) {
       throw new RuntimeException("Repositories not found in the repo path provided!", ex);
