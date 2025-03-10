@@ -12,7 +12,7 @@ public class PythonPackageVersionService {
 
   private static final Logger log = LoggerFactory.getLogger(PythonPackageVersionService.class);
 
-  public String getLatestPackageVersion(final String name) {
+  public String getPythonPackageVersion(final String name) {
     PythonPackageSearchResponse pythonPackageSearchResponse = getPythonPackageSearchResponse(name);
 
     if (pythonPackageSearchResponse == null

@@ -15,7 +15,7 @@ public class GradleDependenciesVersionService {
 
   private static final Logger log = LoggerFactory.getLogger(GradleDependenciesVersionService.class);
 
-  public String getLatestDependencyVersion(
+  public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
     MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
     MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =

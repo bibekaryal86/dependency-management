@@ -23,7 +23,7 @@ public class NodeVersionService {
     this.dockerVersionService = new DockerVersionService();
   }
 
-  public LatestVersion getLatestNodeVersion(
+  public LatestVersion getNodeVersion(
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     List<NodeReleaseResponse> nodeReleaseResponses = getNodeReleases();
     // get rid of non lts and sort by version descending

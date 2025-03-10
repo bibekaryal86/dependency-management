@@ -18,7 +18,7 @@ public class PythonVersionService extends VersionLookupGithubApi {
     this.dockerVersionService = new DockerVersionService();
   }
 
-  public LatestVersion getLatestPythonVersion(
+  public LatestVersion getPythonVersion(
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     ApiReleaseResponse apiReleaseResponse =
         getGithubApiReleaseResponse("python", "cpython", Boolean.TRUE);

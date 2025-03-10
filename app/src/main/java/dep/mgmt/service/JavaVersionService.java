@@ -22,7 +22,7 @@ public class JavaVersionService {
     this.dockerVersionService = new DockerVersionService();
   }
 
-  public LatestVersion getLatestJavaVersion(
+  public LatestVersion getJavaVersion(
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     List<JavaReleaseResponse.JavaVersion> javaReleaseVersions = getJavaReleaseVersions();
 

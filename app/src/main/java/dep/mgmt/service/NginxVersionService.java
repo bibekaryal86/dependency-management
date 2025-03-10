@@ -12,7 +12,7 @@ public class NginxVersionService extends VersionLookupGithubApi {
     this.dockerVersionService = new DockerVersionService();
   }
 
-  public LatestVersion getLatestNginxVersion(final String latestDockerVersionFromMongo) {
+  public LatestVersion getNginxVersion(final String latestDockerVersionFromMongo) {
     final ApiReleaseResponse apiReleaseResponse =
         getGithubApiReleaseResponse("nginx", "nginx", Boolean.TRUE);
 
