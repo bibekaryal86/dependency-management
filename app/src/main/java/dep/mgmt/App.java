@@ -17,7 +17,6 @@ public class App {
   public static void main(String[] args) {
     log.info("Starting Dependency Management Service...");
     App.init();
-    ;
     ScheduleConfig.init();
     log.info("Started Dependency Management Service...");
   }
