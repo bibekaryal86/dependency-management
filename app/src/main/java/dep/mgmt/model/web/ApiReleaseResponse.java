@@ -12,7 +12,6 @@ public class ApiReleaseResponse implements Serializable {
   private final Boolean draft;
   private final Boolean prerelease;
 
-  // @JsonIgnoreProperties(ignoreUnknown = true)
   @JsonCreator
   public ApiReleaseResponse(
           @JsonProperty("tag_name")

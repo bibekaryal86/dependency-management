@@ -1,9 +1,9 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.RequestMetadata;
-import dep.mgmt.model.ResponseWithMetadata;
 import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseMetadata;
+import io.github.bibekaryal86.shdsvc.dtos.ResponseWithMetadata;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
