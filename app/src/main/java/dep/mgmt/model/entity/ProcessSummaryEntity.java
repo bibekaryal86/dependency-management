@@ -25,8 +25,7 @@ public class ProcessSummaryEntity implements Serializable {
   private List<ProcessSummary.Summary.Repository> processedRepositories;
   private Boolean isErrorsOrExceptions;
 
-  public ProcessSummaryEntity() {
-  }
+  public ProcessSummaryEntity() {}
 
   public ProcessSummaryEntity(
       final ObjectId id,
@@ -140,7 +139,8 @@ public class ProcessSummaryEntity implements Serializable {
     return processedRepositories;
   }
 
-  public void setProcessedRepositories(List<ProcessSummary.Summary.Repository> processedRepositories) {
+  public void setProcessedRepositories(
+      List<ProcessSummary.Summary.Repository> processedRepositories) {
     this.processedRepositories = processedRepositories;
   }
 

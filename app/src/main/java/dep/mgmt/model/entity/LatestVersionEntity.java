@@ -27,8 +27,7 @@ public class LatestVersionEntity implements Serializable {
   private LatestVersion node;
   private LatestVersion python;
 
-  public LatestVersionEntity() {
-  }
+  public LatestVersionEntity() {}
 
   public LatestVersionEntity(
       final ObjectId id,

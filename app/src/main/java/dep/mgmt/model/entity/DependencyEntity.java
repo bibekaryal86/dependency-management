@@ -10,8 +10,7 @@ public class DependencyEntity implements Serializable {
   private String version;
   private Boolean skipVersion;
 
-  public DependencyEntity() {
-  }
+  public DependencyEntity() {}
 
   public DependencyEntity(
       final ObjectId id, final String name, final String version, final Boolean skipVersion) {

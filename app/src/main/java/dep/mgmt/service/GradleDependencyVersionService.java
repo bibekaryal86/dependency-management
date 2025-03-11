@@ -1,19 +1,32 @@
 package dep.mgmt.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import dep.mgmt.config.CacheConfig;
+import dep.mgmt.config.MongoDbConfig;
+import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.MavenSearchResponse;
+import dep.mgmt.repository.GradleDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GradleDependenciesVersionService {
+public class GradleDependencyVersionService {
 
-  private static final Logger log = LoggerFactory.getLogger(GradleDependenciesVersionService.class);
+  private static final Logger log = LoggerFactory.getLogger(GradleDependencyVersionService.class);
+  private final GradleDependencyRepository gradleDependencyRepository;
+
+  public GradleDependencyVersionService() {
+    this.gradleDependencyRepository = new GradleDependencyRepository(MongoDbConfig.getDatabase());
+  }
 
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
@@ -68,5 +81,31 @@ public class GradleDependenciesVersionService {
           .orElse(null);
     }
     return null;
+  }
+
+  public Map<String, DependencyEntity> getGradleDependenciesMap() {
+    List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
+    log.info("Gradle Dependencies Map: [ {} ]", gradleDependencies.size());
+
+    Map<String, DependencyEntity> gradleDependenciesMap =
+        gradleDependencies.stream()
+            .collect(Collectors.toMap(DependencyEntity::getName, dependency -> dependency));
+    CacheConfig.setGradleDependenciesMap(gradleDependenciesMap);
+    return gradleDependenciesMap;
+  }
+
+  public void saveGradleDependency(final DependencyEntity dependencyEntity) {
+    log.info("Save Gradle Dependency: [ {} ]", dependencyEntity);
+    CacheConfig.resetGradleDependenciesMap();
+    gradleDependencyRepository.insert(dependencyEntity);
+    CompletableFuture.runAsync(this::getGradleDependenciesMap);
+  }
+
+  public void saveGradleDependency(final String name, final String version) {
+    log.info("Save Gradle Dependency: [ {} ] | [ {} ]", name, version);
+    CacheConfig.resetGradleDependenciesMap();
+    final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
+    gradleDependencyRepository.insert(dependencyEntity);
+    CompletableFuture.runAsync(this::getGradleDependenciesMap);
   }
 }

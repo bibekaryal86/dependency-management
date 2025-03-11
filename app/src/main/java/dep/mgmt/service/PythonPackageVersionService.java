@@ -1,16 +1,29 @@
 package dep.mgmt.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import dep.mgmt.config.CacheConfig;
+import dep.mgmt.config.MongoDbConfig;
+import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.PythonPackageSearchResponse;
+import dep.mgmt.repository.PythonPackageRepository;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PythonPackageVersionService {
 
   private static final Logger log = LoggerFactory.getLogger(PythonPackageVersionService.class);
+  private final PythonPackageRepository pythonPackageRepository;
+
+  public PythonPackageVersionService() {
+    this.pythonPackageRepository = new PythonPackageRepository(MongoDbConfig.getDatabase());
+  }
 
   public String getPythonPackageVersion(final String name) {
     PythonPackageSearchResponse pythonPackageSearchResponse = getPythonPackageSearchResponse(name);
@@ -39,5 +52,31 @@ public class PythonPackageVersionService {
       log.error("ERROR in Get Python Package Search Response: [ {} ]", name, ex);
     }
     return null;
+  }
+
+  public Map<String, DependencyEntity> getPythonPackagesMap() {
+    List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
+    log.info("Python Packages Map: [ {} ]", pythonPackages.size());
+
+    Map<String, DependencyEntity> gradlePluginsMap =
+        pythonPackages.stream()
+            .collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
+    CacheConfig.setPythonPackagesMap(gradlePluginsMap);
+    return gradlePluginsMap;
+  }
+
+  public void savePythonPackage(final DependencyEntity dependencyEntity) {
+    log.info("Save Python Package: [ {} ]", dependencyEntity);
+    CacheConfig.resetPythonPackagesMap();
+    pythonPackageRepository.insert(dependencyEntity);
+    CompletableFuture.runAsync(this::getPythonPackagesMap);
+  }
+
+  public void savePythonPackage(final String name, final String version) {
+    log.info("Save Python Package: [ {} ] | [ {} ]", name, version);
+    CacheConfig.resetGradleDependenciesMap();
+    final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
+    pythonPackageRepository.insert(dependencyEntity);
+    CompletableFuture.runAsync(this::getPythonPackagesMap);
   }
 }
