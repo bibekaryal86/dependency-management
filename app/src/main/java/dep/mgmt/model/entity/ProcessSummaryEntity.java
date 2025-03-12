@@ -15,14 +15,14 @@ public class ProcessSummaryEntity implements Serializable {
 
   // same as ProcessSummary
   private RequestParams.UpdateType updateType;
-  private Integer mongoPluginsToUpdate;
-  private Integer mongoDependenciesToUpdate;
-  private Integer mongoPackagesToUpdate;
-  private Integer mongoNpmSkipsActive;
+  private Integer gradlePluginsToUpdate;
+  private Integer gradleDependenciesToUpdate;
+  private Integer pythonPackagesToUpdate;
+  private Integer npmDependenciesToUpdate;
   private Integer totalPrCreatedCount;
   private Integer totalPrCreateErrorsCount;
   private Integer totalPrMergedCount;
-  private List<ProcessSummary.Summary.Repository> processedRepositories;
+  private List<ProcessSummary.Summary.Repository> repositories;
   private Boolean isErrorsOrExceptions;
 
   public ProcessSummaryEntity() {}
@@ -31,27 +31,26 @@ public class ProcessSummaryEntity implements Serializable {
       final ObjectId id,
       final LocalDateTime updateDateTime,
       final RequestParams.UpdateType updateType,
-      final Integer mongoPluginsToUpdate,
-      final Integer mongoDependenciesToUpdate,
-      final Integer mongoPackagesToUpdate,
-      final Integer mongoNpmSkipsActive,
+      final Integer gradlePluginsToUpdate,
+  final Integer gradleDependenciesToUpdate,
+  final Integer pythonPackagesToUpdate,
+  final Integer npmDependenciesToUpdate,
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
-      final List<ProcessSummary.Summary.Repository> processedRepositories,
+      final List<ProcessSummary.Summary.Repository> repositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.updateType = updateType;
-    this.mongoPluginsToUpdate = mongoPluginsToUpdate;
-    this.mongoDependenciesToUpdate = mongoDependenciesToUpdate;
-    this.mongoPackagesToUpdate = mongoPackagesToUpdate;
-    this.mongoNpmSkipsActive = mongoNpmSkipsActive;
+    this.gradlePluginsToUpdate = gradlePluginsToUpdate;
+    this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
+    this.pythonPackagesToUpdate = pythonPackagesToUpdate;
+    this.npmDependenciesToUpdate = npmDependenciesToUpdate;
     this.totalPrCreatedCount = totalPrCreatedCount;
     this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
     this.totalPrMergedCount = totalPrMergedCount;
-    this.processedRepositories =
-        processedRepositories == null ? Collections.emptyList() : processedRepositories;
+    this.repositories = repositories == null ? Collections.emptyList() : repositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
   }
 
@@ -79,36 +78,36 @@ public class ProcessSummaryEntity implements Serializable {
     this.updateType = updateType;
   }
 
-  public Integer getMongoPluginsToUpdate() {
-    return mongoPluginsToUpdate;
+  public Integer getGradlePluginsToUpdate() {
+    return gradlePluginsToUpdate;
   }
 
-  public void setMongoPluginsToUpdate(Integer mongoPluginsToUpdate) {
-    this.mongoPluginsToUpdate = mongoPluginsToUpdate;
+  public void setGradlePluginsToUpdate(Integer gradlePluginsToUpdate) {
+    this.gradlePluginsToUpdate = gradlePluginsToUpdate;
   }
 
-  public Integer getMongoDependenciesToUpdate() {
-    return mongoDependenciesToUpdate;
+  public Integer getGradleDependenciesToUpdate() {
+    return gradleDependenciesToUpdate;
   }
 
-  public void setMongoDependenciesToUpdate(Integer mongoDependenciesToUpdate) {
-    this.mongoDependenciesToUpdate = mongoDependenciesToUpdate;
+  public void setGradleDependenciesToUpdate(Integer gradleDependenciesToUpdate) {
+    this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
   }
 
-  public Integer getMongoPackagesToUpdate() {
-    return mongoPackagesToUpdate;
+  public Integer getPythonPackagesToUpdate() {
+    return pythonPackagesToUpdate;
   }
 
-  public void setMongoPackagesToUpdate(Integer mongoPackagesToUpdate) {
-    this.mongoPackagesToUpdate = mongoPackagesToUpdate;
+  public void setPythonPackagesToUpdate(Integer pythonPackagesToUpdate) {
+    this.pythonPackagesToUpdate = pythonPackagesToUpdate;
   }
 
-  public Integer getMongoNpmSkipsActive() {
-    return mongoNpmSkipsActive;
+  public Integer getNpmDependenciesToUpdate() {
+    return npmDependenciesToUpdate;
   }
 
-  public void setMongoNpmSkipsActive(Integer mongoNpmSkipsActive) {
-    this.mongoNpmSkipsActive = mongoNpmSkipsActive;
+  public void setNpmDependenciesToUpdate(Integer npmDependenciesToUpdate) {
+    this.npmDependenciesToUpdate = npmDependenciesToUpdate;
   }
 
   public Integer getTotalPrCreatedCount() {
@@ -135,13 +134,12 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrMergedCount = totalPrMergedCount;
   }
 
-  public List<ProcessSummary.Summary.Repository> getProcessedRepositories() {
-    return processedRepositories;
+  public List<ProcessSummary.Summary.Repository> getRepositories() {
+    return repositories;
   }
 
-  public void setProcessedRepositories(
-      List<ProcessSummary.Summary.Repository> processedRepositories) {
-    this.processedRepositories = processedRepositories;
+  public void setProcessRepositories(List<ProcessSummary.Summary.Repository> repositories) {
+    this.repositories = repositories;
   }
 
   public Boolean getErrorsOrExceptions() {
@@ -154,31 +152,19 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{"
-        + "id="
-        + id
-        + ", updateDateTime="
-        + updateDateTime
-        + ", updateType="
-        + updateType
-        + ", mongoPluginsToUpdate="
-        + mongoPluginsToUpdate
-        + ", mongoDependenciesToUpdate="
-        + mongoDependenciesToUpdate
-        + ", mongoPackagesToUpdate="
-        + mongoPackagesToUpdate
-        + ", mongoNpmSkipsActive="
-        + mongoNpmSkipsActive
-        + ", totalPrCreatedCount="
-        + totalPrCreatedCount
-        + ", totalPrCreateErrorsCount="
-        + totalPrCreateErrorsCount
-        + ", totalPrMergedCount="
-        + totalPrMergedCount
-        + ", processedRepositories="
-        + processedRepositories.size()
-        + ", isErrorsOrExceptions="
-        + isErrorsOrExceptions
-        + '}';
+    return "ProcessSummaryEntity{" +
+            "id=" + id +
+            ", updateDateTime=" + updateDateTime +
+            ", updateType=" + updateType +
+            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
+            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
+            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
+            ", npmDependenciesToUpdate=" + npmDependenciesToUpdate +
+            ", totalPrCreatedCount=" + totalPrCreatedCount +
+            ", totalPrCreateErrorsCount=" + totalPrCreateErrorsCount +
+            ", totalPrMergedCount=" + totalPrMergedCount +
+            ", repositories=" + repositories +
+            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
+            '}';
   }
 }
