@@ -7,10 +7,13 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.MavenSearchResponse;
 import dep.mgmt.repository.GradleDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -105,5 +108,34 @@ public class GradleDependencyVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradleDependencyRepository.insert(dependencyEntity);
+  }
+
+  public void updateGradleDependencies(final Map<String, DependencyEntity> gradleDependenciesLocal) {
+    final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
+    List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
+
+    gradleDependencies.forEach(
+            gradleDependency -> {
+              String[] mavenIdArray = gradleDependency.getName().split(":");
+              String currentVersion = gradleDependency.getVersion();
+              String latestVersion = getGradleDependencyVersion(mavenIdArray[0], mavenIdArray[1], currentVersion);
+
+              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+                gradleDependenciesToUpdate.add(new DependencyEntity(gradleDependenciesLocal.get(gradleDependency.getName()).getId(), gradleDependency.getName(), latestVersion, Boolean.FALSE));
+              }
+            });
+
+    log.info(
+            "Gradle Dependencies to Update: [{}]\n[{}]",
+            gradleDependenciesToUpdate.size(),
+            gradleDependenciesToUpdate);
+
+    if (!gradleDependenciesToUpdate.isEmpty()) {
+      for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {
+        gradleDependencyRepository.update(gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
+      }
+      log.info("Gradle Dependencies Updated...");
+      ProcessUtils.setMongoDependenciesToUpdate(gradleDependenciesToUpdate.size());
+    }
   }
 }

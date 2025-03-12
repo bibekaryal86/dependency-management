@@ -19,10 +19,6 @@ public class MongoRepository<T> {
     collection.insertOne(entity);
   }
 
-  public void insertAll(List<T> entities) {
-    collection.insertMany(entities);
-  }
-
   // READ
   public List<T> findAll() {
     return collection.find().into(new ArrayList<>());
@@ -32,7 +28,7 @@ public class MongoRepository<T> {
     return collection.find(Filters.eq("_id", id)).first();
   }
 
-  // UPDATE (Assumes entity has an _id field)
+  // UPDATE
   public void update(ObjectId id, T updatedEntity) {
     collection.replaceOne(Filters.eq("_id", id), updatedEntity);
   }

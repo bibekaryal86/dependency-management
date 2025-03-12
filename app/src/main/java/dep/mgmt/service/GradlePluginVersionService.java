@@ -5,11 +5,12 @@ import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.repository.GradlePluginRepository;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
@@ -96,5 +97,31 @@ public class GradlePluginVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradlePluginRepository.insert(dependencyEntity);
+  }
+
+  public void updateGradlePlugins(final Map<String, DependencyEntity> gradlePluginsLocal) {
+    final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
+    List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();
+
+    gradlePlugins.forEach(
+            gradlePlugin -> {
+              String group = gradlePlugin.getName();
+              String currentVersion = gradlePlugin.getVersion();
+              String latestVersion = getGradlePluginVersion(group);
+
+              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+                gradlePluginsToUpdate.add(new DependencyEntity(gradlePluginsLocal.get(gradlePlugin.getName()).getId(), gradlePlugin.getName(), latestVersion, Boolean.FALSE));
+              }
+            });
+
+    log.info("Gradle Plugins to Update: [{}]\n[{}]", gradlePluginsToUpdate.size(), gradlePluginsToUpdate);
+
+    if (!gradlePluginsToUpdate.isEmpty()) {
+      for (DependencyEntity gradlePluginToUpdate : gradlePluginsToUpdate) {
+        gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
+      }
+      log.info("Gradle Plugins Updated...");
+      ProcessUtils.setMongoPluginsToUpdate(gradlePluginsToUpdate.size());
+    }
   }
 }

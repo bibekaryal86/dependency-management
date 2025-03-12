@@ -7,8 +7,12 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.PythonPackageSearchResponse;
 import dep.mgmt.repository.PythonPackageRepository;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ProcessUtils;
+import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -78,5 +82,31 @@ public class PythonPackageVersionService {
     CacheConfig.resetPythonPackagesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     pythonPackageRepository.insert(dependencyEntity);
+  }
+
+  public void updatePythonPackages(final Map<String, DependencyEntity> pythonPackagesLocal) {
+    final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
+    List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
+
+    pythonPackages.forEach(
+            pythonPackage -> {
+              String name = pythonPackage.getName();
+              String currentVersion = pythonPackage.getVersion();
+              String latestVersion = getPythonPackageVersion(name);
+
+              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+                pythonPackagesToUpdate.add(new DependencyEntity(pythonPackagesLocal.get(pythonPackage.getName()).getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
+              }
+            });
+
+    log.info("Python Packages to Update: [{}]\n[{}]", pythonPackagesToUpdate.size(), pythonPackagesToUpdate);
+
+    if (!pythonPackagesToUpdate.isEmpty()) {
+      for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {
+        pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
+      }
+      log.info("Python Packages Updated...");
+      ProcessUtils.setMongoPackagesToUpdate(pythonPackagesToUpdate.size());
+    }
   }
 }

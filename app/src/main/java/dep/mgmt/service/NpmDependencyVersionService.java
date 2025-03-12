@@ -7,11 +7,14 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.PythonPackageSearchResponse;
 import dep.mgmt.repository.NpmDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ProcessUtils;
+import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
@@ -28,12 +31,12 @@ public class NpmDependencyVersionService {
   }
 
   // TODO
-  public String getPythonPackageVersion(final String name) {
+  public String getNpmDependencyVersion(final String name) {
     return null;
   }
 
   // TODO
-  private PythonPackageSearchResponse getPythonPackageSearchResponse(final String name) {
+  private PythonPackageSearchResponse getNpmDependencySearchResponse(final String name) {
     try {
       final String url = String.format(ConstantUtils.PYPI_SEARCH_ENDPOINT, name);
       return Connector.sendRequest(
@@ -63,7 +66,7 @@ public class NpmDependencyVersionService {
 
   public void saveNpmDependency(final DependencyEntity dependencyEntity) {
     log.info("Save NPM Dependency: [ {} ]", dependencyEntity);
-    CacheConfig.resetPythonPackagesMap();
+    CacheConfig.resetNpmDependenciesMap();
     npmDependencyRepository.insert(dependencyEntity);
   }
 
@@ -72,5 +75,31 @@ public class NpmDependencyVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     npmDependencyRepository.insert(dependencyEntity);
+  }
+
+  public void updateNpmDependencies(final Map<String, DependencyEntity> npmDependenciesLocal) {
+    final List<DependencyEntity> npmDependencies = npmDependencyRepository.findAll();
+    List<DependencyEntity> npmDependenciesToUpdate = new ArrayList<>();
+
+    npmDependencies.forEach(
+            npmDependency -> {
+              String name = npmDependency.getName();
+              String currentVersion = npmDependency.getVersion();
+              String latestVersion = getNpmDependencyVersion(name);
+
+              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+                npmDependenciesToUpdate.add(new DependencyEntity(npmDependenciesLocal.get(npmDependency.getName()).getId(), npmDependency.getName(), latestVersion, Boolean.FALSE));
+              }
+            });
+
+    log.info("NPM Dependencies to Update: [{}]\n[{}]", npmDependenciesToUpdate.size(), npmDependenciesToUpdate);
+
+    if (!npmDependenciesToUpdate.isEmpty()) {
+      for (DependencyEntity npmDependencyToUpdate : npmDependenciesToUpdate) {
+        npmDependencyRepository.update(npmDependencyToUpdate.getId(), npmDependencyToUpdate);
+      }
+      log.info("NPM Dependencies Updated...");
+      ProcessUtils.setMongoPackagesToUpdate(npmDependenciesToUpdate.size());
+    }
   }
 }

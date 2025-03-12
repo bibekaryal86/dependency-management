@@ -124,30 +124,38 @@ public class ProcessSummary implements Serializable {
 
     public static class Repository implements Serializable {
       private final String repoName;
-      private final String repoType;
       private final Boolean isPrCreated;
       private final Boolean isPrCreateError;
-      private final Boolean isPrMerged;
+
+      private String repoType;
+      private Boolean isPrMerged;
 
       public Repository(
           final String repoName,
-          final String repoType,
           final Boolean isPrCreated,
           final Boolean isPrCreateError,
+          final String repoType,
           final Boolean isPrMerged) {
         this.repoName = repoName;
-        this.repoType = repoType;
         this.isPrCreated = isPrCreated;
         this.isPrCreateError = isPrCreateError;
+        this.repoType = repoType;
         this.isPrMerged = isPrMerged;
+      }
+
+      public Repository(
+              final String repoName,
+              final Boolean isPrCreated,
+              final Boolean isPrCreateError) {
+        this.repoName = repoName;
+        this.repoType = null;
+        this.isPrCreated = isPrCreated;
+        this.isPrCreateError = isPrCreateError;
+        this.isPrMerged = Boolean.FALSE;
       }
 
       public String getRepoName() {
         return repoName;
-      }
-
-      public String getRepoType() {
-        return repoType;
       }
 
       public Boolean getPrCreated() {
@@ -158,8 +166,20 @@ public class ProcessSummary implements Serializable {
         return isPrCreateError;
       }
 
+      public String getRepoType() {
+        return repoType;
+      }
+
+      public void setRepoType(final String repoType) {
+        this.repoType = repoType;
+      }
+
       public Boolean getPrMerged() {
         return isPrMerged;
+      }
+
+      public void setPrMerged(final boolean isPrMerged) {
+        this.isPrMerged = isPrMerged;
       }
 
       @Override
