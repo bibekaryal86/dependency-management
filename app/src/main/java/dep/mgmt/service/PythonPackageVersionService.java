@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,28 +57,26 @@ public class PythonPackageVersionService {
   }
 
   public Map<String, DependencyEntity> getPythonPackagesMap() {
-    List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
-    log.info("Python Packages Map: [ {} ]", pythonPackages.size());
-
-    Map<String, DependencyEntity> gradlePluginsMap =
-        pythonPackages.stream()
-            .collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
-    CacheConfig.setPythonPackagesMap(gradlePluginsMap);
-    return gradlePluginsMap;
+    Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
+    if (CommonUtilities.isEmpty(pythonPackagesMap)) {
+      final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
+      log.info("Python Packages List: [ {} ]", pythonPackages.size());
+      pythonPackagesMap = pythonPackages.stream().collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
+      CacheConfig.setPythonPackagesMap(pythonPackagesMap);
+    }
+    return pythonPackagesMap;
   }
 
   public void savePythonPackage(final DependencyEntity dependencyEntity) {
     log.info("Save Python Package: [ {} ]", dependencyEntity);
     CacheConfig.resetPythonPackagesMap();
     pythonPackageRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getPythonPackagesMap);
   }
 
   public void savePythonPackage(final String name, final String version) {
     log.info("Save Python Package: [ {} ] | [ {} ]", name, version);
-    CacheConfig.resetGradleDependenciesMap();
+    CacheConfig.resetPythonPackagesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     pythonPackageRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getPythonPackagesMap);
   }
 }

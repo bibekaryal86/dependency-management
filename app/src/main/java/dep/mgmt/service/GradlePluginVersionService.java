@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -73,12 +75,13 @@ public class GradlePluginVersionService {
   }
 
   public Map<String, DependencyEntity> getGradlePluginsMap() {
-    List<DependencyEntity> plugins = gradlePluginRepository.findAll();
-    log.info("Gradle Plugins Map: [ {} ]", plugins.size());
-
-    Map<String, DependencyEntity> gradlePluginsMap =
-        plugins.stream().collect(Collectors.toMap(DependencyEntity::getName, plugin -> plugin));
-    CacheConfig.setGradlePluginsMap(gradlePluginsMap);
+    Map<String, DependencyEntity> gradlePluginsMap = CacheConfig.getGradlePluginsMap();
+    if (CommonUtilities.isEmpty(gradlePluginsMap)) {
+      final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
+      log.info("Gradle Plugins List: [ {} ]", gradlePlugins.size());
+      gradlePluginsMap = gradlePlugins.stream().collect(Collectors.toMap(DependencyEntity::getName, gradlePlugin -> gradlePlugin));
+      CacheConfig.setGradlePluginsMap(gradlePluginsMap);
+    }
     return gradlePluginsMap;
   }
 
@@ -86,7 +89,6 @@ public class GradlePluginVersionService {
     log.info("Save Gradle Plugin: [ {} ]", dependencyEntity);
     CacheConfig.resetGradlePluginsMap();
     gradlePluginRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getGradlePluginsMap);
   }
 
   public void saveGradlePlugin(final String name, final String version) {
@@ -94,6 +96,5 @@ public class GradlePluginVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradlePluginRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getGradlePluginsMap);
   }
 }

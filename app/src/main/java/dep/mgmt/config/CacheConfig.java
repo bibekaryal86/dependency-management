@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class CacheConfig {
-  // TODO dependencies map, packages map, plugins map, etc
-
   private static AppData APP_DATA = null;
-  private static Map<String, DependencyEntity> GRADLE_PLUGINS_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> GRADLE_DEPENDENCIES_MAP = Collections.emptyMap();
+  private static Map<String, DependencyEntity> GRADLE_PLUGINS_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> NPM_DEPENDENCIES_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> PYTHON_PACKAGES_MAP = Collections.emptyMap();
 
@@ -35,20 +33,6 @@ public class CacheConfig {
     APP_DATA = null;
   }
 
-  public static Map<String, DependencyEntity> getGradlePluginsMap() {
-    return GRADLE_PLUGINS_MAP;
-  }
-
-  public static Map<String, DependencyEntity> setGradlePluginsMap(
-      final Map<String, DependencyEntity> gradlePluginsMap) {
-    GRADLE_PLUGINS_MAP = Map.copyOf(gradlePluginsMap);
-    return GRADLE_PLUGINS_MAP;
-  }
-
-  public static void resetGradlePluginsMap() {
-    GRADLE_PLUGINS_MAP = Collections.emptyMap();
-  }
-
   public static Map<String, DependencyEntity> getGradleDependenciesMap() {
     return GRADLE_DEPENDENCIES_MAP;
   }
@@ -61,6 +45,20 @@ public class CacheConfig {
 
   public static void resetGradleDependenciesMap() {
     GRADLE_DEPENDENCIES_MAP = Collections.emptyMap();
+  }
+
+  public static Map<String, DependencyEntity> getGradlePluginsMap() {
+    return GRADLE_PLUGINS_MAP;
+  }
+
+  public static Map<String, DependencyEntity> setGradlePluginsMap(
+          final Map<String, DependencyEntity> gradlePluginsMap) {
+    GRADLE_PLUGINS_MAP = Map.copyOf(gradlePluginsMap);
+    return GRADLE_PLUGINS_MAP;
+  }
+
+  public static void resetGradlePluginsMap() {
+    GRADLE_PLUGINS_MAP = Collections.emptyMap();
   }
 
   public static Map<String, DependencyEntity> getNpmDependenciesMap() {

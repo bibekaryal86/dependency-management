@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,13 +51,13 @@ public class NpmDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getNpmDependenciesMap() {
-    List<DependencyEntity> npmDependencies = npmDependencyRepository.findAll();
-    log.info("NPM Dependencies Map: [ {} ]", npmDependencies.size());
-
-    Map<String, DependencyEntity> npmDependenciesMap =
-        npmDependencies.stream()
-            .collect(Collectors.toMap(DependencyEntity::getName, plugin -> plugin));
-    CacheConfig.setNpmDependenciesMap(npmDependenciesMap);
+    Map<String, DependencyEntity> npmDependenciesMap = CacheConfig.getNpmDependenciesMap();
+    if (CommonUtilities.isEmpty(npmDependenciesMap)) {
+      final List<DependencyEntity> npmDependencies = npmDependencyRepository.findAll();
+      log.info("NPM Dependencies List: [ {} ]", npmDependencies.size());
+      npmDependenciesMap = npmDependencies.stream().collect(Collectors.toMap(DependencyEntity::getName, npmDependency -> npmDependency));
+      CacheConfig.setNpmDependenciesMap(npmDependenciesMap);
+    }
     return npmDependenciesMap;
   }
 
@@ -63,7 +65,6 @@ public class NpmDependencyVersionService {
     log.info("Save NPM Dependency: [ {} ]", dependencyEntity);
     CacheConfig.resetPythonPackagesMap();
     npmDependencyRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getNpmDependenciesMap);
   }
 
   public void saveNpmDependency(final String name, final String version) {
@@ -71,6 +72,5 @@ public class NpmDependencyVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     npmDependencyRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getNpmDependenciesMap);
   }
 }

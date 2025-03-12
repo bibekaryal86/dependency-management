@@ -84,13 +84,13 @@ public class GradleDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getGradleDependenciesMap() {
-    List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
-    log.info("Gradle Dependencies Map: [ {} ]", gradleDependencies.size());
-
-    Map<String, DependencyEntity> gradleDependenciesMap =
-        gradleDependencies.stream()
-            .collect(Collectors.toMap(DependencyEntity::getName, dependency -> dependency));
-    CacheConfig.setGradleDependenciesMap(gradleDependenciesMap);
+    Map<String, DependencyEntity> gradleDependenciesMap = CacheConfig.getGradleDependenciesMap();
+    if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
+      final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
+      log.info("Gradle Dependencies List: [ {} ]", gradleDependencies.size());
+      gradleDependenciesMap = gradleDependencies.stream().collect(Collectors.toMap(DependencyEntity::getName, gradleDependency -> gradleDependency));
+      CacheConfig.setGradleDependenciesMap(gradleDependenciesMap);
+    }
     return gradleDependenciesMap;
   }
 
@@ -98,7 +98,6 @@ public class GradleDependencyVersionService {
     log.info("Save Gradle Dependency: [ {} ]", dependencyEntity);
     CacheConfig.resetGradleDependenciesMap();
     gradleDependencyRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getGradleDependenciesMap);
   }
 
   public void saveGradleDependency(final String name, final String version) {
@@ -106,6 +105,5 @@ public class GradleDependencyVersionService {
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradleDependencyRepository.insert(dependencyEntity);
-    CompletableFuture.runAsync(this::getGradleDependenciesMap);
   }
 }
