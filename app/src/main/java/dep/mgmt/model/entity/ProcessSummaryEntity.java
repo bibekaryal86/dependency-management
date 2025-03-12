@@ -22,7 +22,7 @@ public class ProcessSummaryEntity implements Serializable {
   private Integer totalPrCreatedCount;
   private Integer totalPrCreateErrorsCount;
   private Integer totalPrMergedCount;
-  private List<ProcessSummary.Summary.Repository> repositories;
+  private List<ProcessSummary.ProcessRepository> processRepositories;
   private Boolean isErrorsOrExceptions;
 
   public ProcessSummaryEntity() {}
@@ -38,7 +38,7 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
-      final List<ProcessSummary.Summary.Repository> repositories,
+      final List<ProcessSummary.ProcessRepository> processRepositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
     this.updateDateTime = updateDateTime;
@@ -50,7 +50,7 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrCreatedCount = totalPrCreatedCount;
     this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
     this.totalPrMergedCount = totalPrMergedCount;
-    this.repositories = repositories == null ? Collections.emptyList() : repositories;
+    this.processRepositories = processRepositories == null ? Collections.emptyList() : processRepositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
   }
 
@@ -134,12 +134,12 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrMergedCount = totalPrMergedCount;
   }
 
-  public List<ProcessSummary.Summary.Repository> getRepositories() {
-    return repositories;
+  public List<ProcessSummary.ProcessRepository> getProcessRepositories() {
+    return processRepositories;
   }
 
-  public void setProcessRepositories(List<ProcessSummary.Summary.Repository> repositories) {
-    this.repositories = repositories;
+  public void setProcessRepositories(List<ProcessSummary.ProcessRepository> processRepositories) {
+    this.processRepositories = processRepositories;
   }
 
   public Boolean getErrorsOrExceptions() {
@@ -163,7 +163,7 @@ public class ProcessSummaryEntity implements Serializable {
             ", totalPrCreatedCount=" + totalPrCreatedCount +
             ", totalPrCreateErrorsCount=" + totalPrCreateErrorsCount +
             ", totalPrMergedCount=" + totalPrMergedCount +
-            ", repositories=" + repositories +
+            ", processRepositories=" + processRepositories +
             ", isErrorsOrExceptions=" + isErrorsOrExceptions +
             '}';
   }

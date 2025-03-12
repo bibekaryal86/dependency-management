@@ -42,6 +42,7 @@ public class ConstantUtils {
   public static final int CONNECT_TIMEOUT_MILLIS = 5000; // 5 seconds
   public static final int MAX_CONTENT_LENGTH = 1048576; // 1MB
   public static final String CONTENT_LENGTH_DEFAULT = "0";
+  public static final int CLEANUP_BEFORE_DAYS = 45;
 
   // SECURITY
   public static final List<String> NO_AUTH_URIS = List.of("/tests/ping");

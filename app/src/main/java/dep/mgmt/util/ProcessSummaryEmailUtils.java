@@ -1,32 +1,33 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.entity.ProcessSummaryEntity;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class ProcessSummaryEmailUtils {
 
-  public static synchronized String getProcessSummaryContent(ProcessSummary.Summary processSummary) {
-    List<ProcessSummary.Summary.Repository> allProcessedRepositories = processSummary.getRepositories();
-    List<ProcessSummary.Summary.Repository> prCreatedAndMerged =
-        processSummary.getRepositories().stream()
+  public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
+    List<ProcessSummary.ProcessRepository> allProcessedRepositories = processSummary.getProcessRepositories();
+    List<ProcessSummary.ProcessRepository> prCreatedAndMerged =
+        processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummary.Summary.Repository::getRepoName))
+            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
             .toList();
-    List<ProcessSummary.Summary.Repository> prCreatedNotMerged =
-        processSummary.getRepositories().stream()
+    List<ProcessSummary.ProcessRepository> prCreatedNotMerged =
+        processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && !processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummary.Summary.Repository::getRepoName))
+            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
             .toList();
-    List<ProcessSummary.Summary.Repository> prCreateError =
-        processSummary.getRepositories().stream()
-            .filter(ProcessSummary.Summary.Repository::getPrCreateError)
-            .sorted(Comparator.comparing(ProcessSummary.Summary.Repository::getRepoName))
+    List<ProcessSummary.ProcessRepository> prCreateError =
+        processSummary.getProcessRepositories().stream()
+            .filter(ProcessSummary.ProcessRepository::getPrCreateError)
+            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
             .toList();
 
     StringBuilder html = new StringBuilder();
@@ -216,8 +217,8 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedRepositoryTable(
-      List<ProcessSummary.Summary.Repository> processedRepositories, StringBuilder html) {
-    for (ProcessSummary.Summary.Repository processedRepository : processedRepositories) {
+      List<ProcessSummary.ProcessRepository> processedRepositories, StringBuilder html) {
+    for (ProcessSummary.ProcessRepository processedRepository : processedRepositories) {
       html.append("<tr>");
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");
