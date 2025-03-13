@@ -43,7 +43,8 @@ public class SecurityConfig extends ChannelDuplexHandler {
       if (isBasicAuthenticated(authHeader)) {
         super.channelRead(channelHandlerContext, object);
       } else {
-        ServerUtils.sendErrorResponse(channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
+        ServerUtils.sendErrorResponse(
+            channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
       }
     } else {
       super.channelRead(channelHandlerContext, object);

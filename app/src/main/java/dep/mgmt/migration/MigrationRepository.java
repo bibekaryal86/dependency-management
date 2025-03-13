@@ -2,10 +2,9 @@ package dep.mgmt.migration;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.bson.Document;
 
 public class MigrationRepository<T> {
   protected final MongoCollection<T> collection;

@@ -31,7 +31,10 @@ public abstract class VersionLookupGithubApi {
     try {
       final String url =
           String.format(
-              ConstantUtils.GITHUB_RELEASES_ENDPOINT, owner, repo, isTags ? ConstantUtils.GITHUB_ENDPOINT_TAGS : ConstantUtils.GITHUB_ENDPOINT_RELEASES);
+              ConstantUtils.GITHUB_RELEASES_ENDPOINT,
+              owner,
+              repo,
+              isTags ? ConstantUtils.GITHUB_ENDPOINT_TAGS : ConstantUtils.GITHUB_ENDPOINT_RELEASES);
       final List<ApiReleaseResponse> apiReleaseResponses =
           Connector.sendRequest(
                   url,

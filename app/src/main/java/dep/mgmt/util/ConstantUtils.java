@@ -59,12 +59,16 @@ public class ConstantUtils {
   public static final String MONGODB_COLUMN_UPDATE_TYPE = "updateType";
 
   // ENDPOINTS
-  public static final String JAVA_RELEASES_ENDPOINT = "https://api.adoptium.net/v3/info/release_versions?heap_size=normal&image_type=jdk&lts=true&page=0&page_size=50&project=jdk&release_type=ga&semver=false&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse";
+  public static final String JAVA_RELEASES_ENDPOINT =
+      "https://api.adoptium.net/v3/info/release_versions?heap_size=normal&image_type=jdk&lts=true&page=0&page_size=50&project=jdk&release_type=ga&semver=false&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse";
   public static final String NODE_RELEASES_ENDPOINT = "https://nodejs.org/dist/index.json";
-  public static final String MAVEN_SEARCH_ENDPOINT = "https://search.maven.org/solrsearch/select?core=gav&rows=5&wt=json&q=g:%s+AND+a:%s";
+  public static final String MAVEN_SEARCH_ENDPOINT =
+      "https://search.maven.org/solrsearch/select?core=gav&rows=5&wt=json&q=g:%s+AND+a:%s";
   public static final String PYPI_SEARCH_ENDPOINT = "https://pypi.org/pypi/%s/json";
-  public static final String GCP_RUNTIME_SUPPORT_ENDPOINT = "https://cloud.google.com/appengine/docs/standard/lifecycle/support-schedule";
-  public static final String DOCKER_TAG_LOOKUP_ENDPOINT = "https://hub.docker.com/v2/repositories/library/%s/tags/%s/";
+  public static final String GCP_RUNTIME_SUPPORT_ENDPOINT =
+      "https://cloud.google.com/appengine/docs/standard/lifecycle/support-schedule";
+  public static final String DOCKER_TAG_LOOKUP_ENDPOINT =
+      "https://hub.docker.com/v2/repositories/library/%s/tags/%s/";
   public static final String GITHUB_RELEASES_ENDPOINT = "https://api.github.com/repos/%s/%s/%s";
   public static final String GRADLE_PLUGINS_ENDPOINT = "https://plugins.gradle.org/plugin/%s";
 
@@ -83,7 +87,8 @@ public class ConstantUtils {
   public static final String CHMOD_COMMAND = "chmod +x ";
   public static final String JAVA_SYSTEM_TMPDIR = System.getProperty("java.io.tmpdir");
   public static final String APP_MAIN_MODULE = "app";
-  public static final String GRADLE_WRAPPER_PROPERTIES = "/gradle/wrapper/gradle-wrapper.properties";
+  public static final String GRADLE_WRAPPER_PROPERTIES =
+      "/gradle/wrapper/gradle-wrapper.properties";
   public static final String BUILD_GRADLE = "build.gradle";
   public static final String PYPROJECT_TOML = "pyproject.toml";
   public static final String PACKAGE_JSON = "package.json";

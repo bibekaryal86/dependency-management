@@ -5,11 +5,10 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import dep.mgmt.model.ProcessSummary;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
+import dep.mgmt.util.ConstantUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import dep.mgmt.util.ConstantUtils;
 import org.bson.conversions.Bson;
 
 public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEntity> {
@@ -66,7 +65,8 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
       final LocalDateTime startOfDay, final LocalDateTime endOfDay) {
     final Bson filter =
         Filters.and(
-            Filters.gte(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, startOfDay), Filters.lt(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, endOfDay));
+            Filters.gte(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, startOfDay),
+            Filters.lt(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, endOfDay));
     return collection.find(filter).into(new ArrayList<>());
   }
 

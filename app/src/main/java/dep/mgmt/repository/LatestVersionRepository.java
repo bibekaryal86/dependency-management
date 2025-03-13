@@ -11,6 +11,10 @@ public class LatestVersionRepository extends MongoRepository<LatestVersionEntity
   }
 
   public LatestVersionEntity findFirstByOrderByUpdateDateTimeDesc() {
-    return this.collection.find().sort(Sorts.descending(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME)).limit(1).first();
+    return this.collection
+        .find()
+        .sort(Sorts.descending(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME))
+        .limit(1)
+        .first();
   }
 }

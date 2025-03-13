@@ -8,8 +8,7 @@ import java.util.List;
 public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessRepository> allProcessedRepositories =
-        processSummary.getProcessRepositories();
+    List<ProcessRepository> allProcessedRepositories = processSummary.getProcessRepositories();
     List<ProcessRepository> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(

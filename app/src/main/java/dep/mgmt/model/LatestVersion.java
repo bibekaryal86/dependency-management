@@ -9,8 +9,7 @@ public class LatestVersion implements Serializable {
   private String versionDocker;
   private String versionGcp;
 
-  public LatestVersion() {
-  }
+  public LatestVersion() {}
 
   public LatestVersion(
       final String versionActual,
