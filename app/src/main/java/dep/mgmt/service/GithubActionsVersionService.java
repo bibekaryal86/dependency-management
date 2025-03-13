@@ -5,26 +5,26 @@ import dep.mgmt.model.LatestVersion;
 public class GithubActionsVersionService extends VersionLookupGithubApi {
 
   public LatestVersion getGithubActionsCheckoutVersion() {
-    return getGithubApiLatestVersion("actions", "checkout", Boolean.FALSE);
+    return getGithubApiLatestVersion("actions", "checkout");
   }
 
   public LatestVersion getGithubActionsSetupJavaVersion() {
-    return getGithubApiLatestVersion("actions", "setup-java", Boolean.FALSE);
+    return getGithubApiLatestVersion("actions", "setup-java");
   }
 
   public LatestVersion getGithubActionsSetupNodeVersion() {
-    return getGithubApiLatestVersion("actions", "setup-node", Boolean.FALSE);
+    return getGithubApiLatestVersion("actions", "setup-node");
   }
 
   public LatestVersion getGithubActionsSetupPythonVersion() {
-    return getGithubApiLatestVersion("actions", "setup-python", Boolean.FALSE);
+    return getGithubApiLatestVersion("actions", "setup-python");
   }
 
   public LatestVersion getGithubActionsGradleVersion() {
-    return getGithubApiLatestVersion("gradle", "actions", Boolean.FALSE);
+    return getGithubApiLatestVersion("gradle", "actions");
   }
 
   public LatestVersion getGithubActionsCodeqlActionVersion() {
-    return getGithubApiLatestVersion("github", "codeql-action", Boolean.FALSE);
+    return getGithubApiLatestVersion("github", "codeql-action");
   }
 }

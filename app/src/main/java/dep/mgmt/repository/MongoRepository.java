@@ -5,6 +5,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import java.util.ArrayList;
 import java.util.List;
+
+import dep.mgmt.util.ConstantUtils;
 import org.bson.types.ObjectId;
 
 public class MongoRepository<T> {
@@ -25,16 +27,16 @@ public class MongoRepository<T> {
   }
 
   public T findById(ObjectId id) {
-    return collection.find(Filters.eq("_id", id)).first();
+    return collection.find(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id)).first();
   }
 
   // UPDATE
   public void update(ObjectId id, T updatedEntity) {
-    collection.replaceOne(Filters.eq("_id", id), updatedEntity);
+    collection.replaceOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id), updatedEntity);
   }
 
   // DELETE
   public void delete(ObjectId id) {
-    collection.deleteOne(Filters.eq("_id", id));
+    collection.deleteOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id));
   }
 }

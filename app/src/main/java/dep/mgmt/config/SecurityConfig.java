@@ -10,18 +10,14 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SecurityConfig extends ChannelDuplexHandler {
-  private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
   @Override
   public void channelRead(
       @NotNull final ChannelHandlerContext channelHandlerContext, @NotNull final Object object)
       throws Exception {
     if (object instanceof FullHttpRequest fullHttpRequest) {
-      final String requestId = channelHandlerContext.channel().attr(ConstantUtils.REQUEST_ID).get();
       final String requestUri = fullHttpRequest.uri();
 
       final boolean isNoAuth = isNoAuthCheck(requestUri);
@@ -37,7 +33,6 @@ public class SecurityConfig extends ChannelDuplexHandler {
       }
 
       if (CommonUtilities.isEmpty(authHeader)) {
-        log.error("[{}] No Header Auth...", requestId);
         ServerUtils.sendErrorResponse(
             channelHandlerContext,
             ConstantUtils.NOT_AUTHENTICATED,
@@ -48,9 +43,7 @@ public class SecurityConfig extends ChannelDuplexHandler {
       if (isBasicAuthenticated(authHeader)) {
         super.channelRead(channelHandlerContext, object);
       } else {
-        log.error("[{}] No Basic Auth...", requestId);
-        ServerUtils.sendErrorResponse(
-            channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
+        ServerUtils.sendErrorResponse(channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
       }
     } else {
       super.channelRead(channelHandlerContext, object);

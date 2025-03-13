@@ -14,9 +14,8 @@ import org.slf4j.LoggerFactory;
 public abstract class VersionLookupGithubApi {
   private static final Logger log = LoggerFactory.getLogger(VersionLookupGithubApi.class);
 
-  protected LatestVersion getGithubApiLatestVersion(
-      final String owner, final String repo, final boolean isTags) {
-    ApiReleaseResponse apiReleaseResponse = getGithubApiReleaseResponse(owner, repo, isTags);
+  protected LatestVersion getGithubApiLatestVersion(final String owner, final String repo) {
+    ApiReleaseResponse apiReleaseResponse = getGithubApiReleaseResponse(owner, repo, Boolean.FALSE);
     if (apiReleaseResponse == null) {
       return null;
     }
@@ -32,7 +31,7 @@ public abstract class VersionLookupGithubApi {
     try {
       final String url =
           String.format(
-              ConstantUtils.GITHUB_RELEASES_ENDPOINT, owner, repo, isTags ? "tags" : "releases");
+              ConstantUtils.GITHUB_RELEASES_ENDPOINT, owner, repo, isTags ? ConstantUtils.GITHUB_ENDPOINT_TAGS : ConstantUtils.GITHUB_ENDPOINT_RELEASES);
       final List<ApiReleaseResponse> apiReleaseResponses =
           Connector.sendRequest(
                   url,
