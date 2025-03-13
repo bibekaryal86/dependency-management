@@ -25,6 +25,8 @@ public class App {
       migrationService.migrateLatestVersions(Boolean.TRUE);
       migrationService.migrateGradleDependencies(Boolean.TRUE);
       migrationService.migrateGradlePlugins(Boolean.TRUE);
+      migrationService.migratePythonPlugins(Boolean.TRUE);
+      log.info("Completed Data Migration...");
     } else {
       App.init();
       ScheduleConfig.init();
