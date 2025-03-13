@@ -16,8 +16,7 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNpmSkipsActive = new AtomicInteger(0);
   private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessSummary.Summary.Repository> processedRepositories =
-      new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -79,7 +78,7 @@ public class ProcessUtils {
       String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
     processedRepositories.put(
         repoName,
-        new ProcessSummary.Summary.Repository(
+        new ProcessSummary.ProcessRepository(
             repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
   }
 
@@ -101,8 +100,7 @@ public class ProcessUtils {
         });
   }
 
-  public static ConcurrentMap<String, ProcessSummary.Summary.Repository>
-      getProcessedRepositoriesMap() {
+  public static ConcurrentMap<String, ProcessSummary.ProcessRepository> getProcessedRepositoriesMap() {
     return processedRepositories;
   }
 

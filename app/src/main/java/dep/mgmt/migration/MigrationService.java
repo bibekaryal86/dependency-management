@@ -2,18 +2,70 @@ package dep.mgmt.migration;
 
 import dep.mgmt.migration.entities_new.ProcessSummaryEntity;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
+import dep.mgmt.migration.entities_old.ProcessedRepository;
+import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MigrationService {
 
-    private final MigrationRepository processSummaryRepoOld;
-    private final MigrationRepository processSummaryRepoNew;
+    private final MigrationRepository<ProcessSummaries> processSummaryRepoOld;
+    private final MigrationRepository<ProcessSummaryEntity> processSummaryRepoNew;
 
     public MigrationService() {
         this.processSummaryRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_PROCESS_SUMMARIES, ProcessSummaries.class);
         this.processSummaryRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_PROCESS_SUMMARY, ProcessSummaryEntity.class);
     }
 
+    public void migrateProcessSummaries(boolean isDeleteAllNewFirst) {
+        if (isDeleteAllNewFirst) {
+            processSummaryRepoNew.deleteAll();
+            return;
+        }
+        // from old
+        List<ProcessSummaries> processSummariesOld = processSummaryRepoOld.findAll();
 
+        // to new
+        List<ProcessSummaryEntity> processSummariesNew = new ArrayList<>();
 
+        for (ProcessSummaries processSummaryOld : processSummariesOld) {
+            ProcessSummaryEntity processSummaryNew = new ProcessSummaryEntity(
+                    null,
+                    processSummaryOld.getUpdateDateTime(),
+                    RequestParams.UpdateType.valueOf(processSummaryOld.getUpdateType()),
+                    processSummaryOld.getMongoPluginsToUpdate(),
+                    processSummaryOld.getMongoDependenciesToUpdate(),
+                    processSummaryOld.getMongoPackagesToUpdate(),
+                    0,
+                    processSummaryOld.getTotalPrCreatedCount(),
+                    processSummaryOld.getTotalPrCreateErrorsCount(),
+                    processSummaryOld.getTotalPrMergedCount(),
+                    getProcessedRepositories(processSummaryOld.getProcessedRepositories()),
+                    processSummaryOld.isErrorsOrExceptions()
+            );
+            processSummariesNew.add(processSummaryNew);
+        }
+
+        if (!processSummariesNew.isEmpty()) {
+            processSummaryRepoNew.insertAll(processSummariesNew);
+        }
+    }
+
+    private List<ProcessSummary.ProcessRepository> getProcessedRepositories(List<ProcessedRepository> processedRepositoriesOld) {
+        List<ProcessSummary.ProcessRepository> processRepositoriesNew = new ArrayList<>();
+        for (ProcessedRepository processedRepositoryOld : processedRepositoriesOld) {
+            ProcessSummary.ProcessRepository processRepositoryNew = new ProcessSummary.ProcessRepository(
+                    processedRepositoryOld.getRepoName(),
+                    processedRepositoryOld.isPrCreated(),
+                    processedRepositoryOld.isPrCreateError(),
+                    processedRepositoryOld.getRepoType(),
+                    processedRepositoryOld.isPrMerged()
+            );
+            processRepositoriesNew.add(processRepositoryNew);
+        }
+        return processRepositoriesNew;
+    }
 }
