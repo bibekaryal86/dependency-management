@@ -1,6 +1,8 @@
 package dep.mgmt.migration;
 
+import dep.mgmt.migration.entities_new.LatestVersionEntity;
 import dep.mgmt.migration.entities_new.ProcessSummaryEntity;
+import dep.mgmt.migration.entities_old.LatestVersionsEntity;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
 import dep.mgmt.migration.entities_old.ProcessedRepository;
 import dep.mgmt.model.ProcessSummary;
@@ -15,9 +17,15 @@ public class MigrationService {
     private final MigrationRepository<ProcessSummaries> processSummaryRepoOld;
     private final MigrationRepository<ProcessSummaryEntity> processSummaryRepoNew;
 
+    private final MigrationRepository<LatestVersionsEntity> latestVersionRepoOld;
+    private final MigrationRepository<LatestVersionEntity> latestVersionRepoNew;
+
     public MigrationService() {
         this.processSummaryRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_PROCESS_SUMMARIES, ProcessSummaries.class);
         this.processSummaryRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_PROCESS_SUMMARY, ProcessSummaryEntity.class);
+
+        this.latestVersionRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_LATEST_VERSIONS, LatestVersionsEntity.class);
+        this.latestVersionRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_LATEST_VERSION, LatestVersionEntity.class);
     }
 
     public void migrateProcessSummaries(boolean isDeleteAllNewFirst) {
@@ -64,5 +72,38 @@ public class MigrationService {
             processRepositoriesNew.add(processRepositoryNew);
         }
         return processRepositoriesNew;
+    }
+
+    public void migrateLatestVersions(boolean isDeleteAllNewFirst) {
+        if (isDeleteAllNewFirst) {
+            latestVersionRepoNew.deleteAll();
+        }
+
+        List<LatestVersionsEntity> latestVersionsOld = latestVersionRepoOld.findAll();
+        List<LatestVersionEntity> latestVersionsNew = new ArrayList<>();
+
+        for (LatestVersionsEntity latestVersionOld : latestVersionsOld) {
+            LatestVersionEntity latestVersionNew = new LatestVersionEntity(
+                    null,
+                    latestVersionOld.getUpdateDateTime(),
+                    latestVersionOld.getNginx(),
+                    latestVersionOld.getGradle(),
+                    latestVersionOld.getFlyway(),
+                    latestVersionOld.getCheckout(),
+                    latestVersionOld.getSetupJava(),
+                    latestVersionOld.getSetupGradle(),
+                    latestVersionOld.getSetupNode(),
+                    latestVersionOld.getSetupPython(),
+                    latestVersionOld.getCodeql(),
+                    latestVersionOld.getJava(),
+                    latestVersionOld.getNode(),
+                    latestVersionOld.getPython()
+            );
+            latestVersionsNew.add(latestVersionNew);
+        }
+
+        if (!latestVersionsNew.isEmpty()) {
+            latestVersionRepoNew.insertAll(latestVersionsNew);
+        }
     }
 }

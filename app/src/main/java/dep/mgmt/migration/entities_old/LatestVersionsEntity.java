@@ -1,6 +1,8 @@
 package dep.mgmt.migration.entities_old;
 
 import java.time.LocalDateTime;
+
+import dep.mgmt.model.LatestVersion;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 

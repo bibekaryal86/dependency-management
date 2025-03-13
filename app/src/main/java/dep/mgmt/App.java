@@ -22,6 +22,7 @@ public class App {
       log.info("Starting Data Migration...");
       MigrationService migrationService = new MigrationService();
       migrationService.migrateProcessSummaries(Boolean.TRUE);
+      migrationService.migrateLatestVersions(Boolean.TRUE);
     } else {
       App.init();
       ScheduleConfig.init();

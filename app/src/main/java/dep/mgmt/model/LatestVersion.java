@@ -3,11 +3,14 @@ package dep.mgmt.model;
 import java.io.Serializable;
 
 public class LatestVersion implements Serializable {
-  private final String versionActual;
-  private final String versionFull;
-  private final String versionMajor;
-  private final String versionDocker;
-  private final String versionGcp;
+  private String versionActual;
+  private String versionFull;
+  private String versionMajor;
+  private String versionDocker;
+  private String versionGcp;
+
+  public LatestVersion() {
+  }
 
   public LatestVersion(
       final String versionActual,
@@ -26,20 +29,40 @@ public class LatestVersion implements Serializable {
     return versionActual;
   }
 
+  public void setVersionActual(String versionActual) {
+    this.versionActual = versionActual;
+  }
+
   public String getVersionFull() {
     return versionFull;
+  }
+
+  public void setVersionFull(String versionFull) {
+    this.versionFull = versionFull;
   }
 
   public String getVersionMajor() {
     return versionMajor;
   }
 
+  public void setVersionMajor(String versionMajor) {
+    this.versionMajor = versionMajor;
+  }
+
   public String getVersionDocker() {
     return versionDocker;
   }
 
+  public void setVersionDocker(String versionDocker) {
+    this.versionDocker = versionDocker;
+  }
+
   public String getVersionGcp() {
     return versionGcp;
+  }
+
+  public void setVersionGcp(String versionGcp) {
+    this.versionGcp = versionGcp;
   }
 
   @Override
