@@ -1,11 +1,13 @@
 package dep.mgmt.migration;
 
-import dep.mgmt.migration.entities_new.LatestVersionEntity;
-import dep.mgmt.migration.entities_new.ProcessSummaryEntity;
+import dep.mgmt.migration.entities_old.Dependencies;
 import dep.mgmt.migration.entities_old.LatestVersionsEntity;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
 import dep.mgmt.migration.entities_old.ProcessedRepository;
 import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.entity.DependencyEntity;
+import dep.mgmt.model.entity.LatestVersionEntity;
+import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
 
@@ -20,12 +22,19 @@ public class MigrationService {
     private final MigrationRepository<LatestVersionsEntity> latestVersionRepoOld;
     private final MigrationRepository<LatestVersionEntity> latestVersionRepoNew;
 
+    private final MigrationRepository<Dependencies> gradleDependencyRepoOld;
+    private final MigrationRepository<DependencyEntity> gradleDependencyRepoNew;
+
     public MigrationService() {
         this.processSummaryRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_PROCESS_SUMMARIES, ProcessSummaries.class);
         this.processSummaryRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_PROCESS_SUMMARY, ProcessSummaryEntity.class);
 
         this.latestVersionRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_LATEST_VERSIONS, LatestVersionsEntity.class);
         this.latestVersionRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_LATEST_VERSION, LatestVersionEntity.class);
+
+        this.gradleDependencyRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_DEPENDENCIES, Dependencies.class);
+        this.gradleDependencyRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_GRADLE_DEPENDENCY, DependencyEntity.class);
+
     }
 
     public void migrateProcessSummaries(boolean isDeleteAllNewFirst) {
@@ -104,6 +113,26 @@ public class MigrationService {
 
         if (!latestVersionsNew.isEmpty()) {
             latestVersionRepoNew.insertAll(latestVersionsNew);
+        }
+    }
+
+    public void migrateGradleDependencies(boolean isDeleteAllNewFirst) {
+        if (isDeleteAllNewFirst) {
+            gradleDependencyRepoNew.deleteAll();
+        }
+
+        List<Dependencies> gradleDependenciesOld = gradleDependencyRepoOld.findAll();
+        List<DependencyEntity> gradleDependenciesNew = new ArrayList<>();
+
+        for (Dependencies gradleDependencyOld : gradleDependenciesOld) {
+            DependencyEntity gradleDependencyNew = new DependencyEntity(
+                    gradleDependencyOld.getMavenId(), gradleDependencyOld.getLatestVersion(), gradleDependencyOld.isSkipVersion()
+            );
+            gradleDependenciesNew.add(gradleDependencyNew);
+        }
+
+        if (!gradleDependenciesNew.isEmpty()) {
+            gradleDependencyRepoNew.insertAll(gradleDependenciesNew);
         }
     }
 }
