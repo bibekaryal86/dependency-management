@@ -23,12 +23,9 @@ public class MigrationService {
     public void migrateProcessSummaries(boolean isDeleteAllNewFirst) {
         if (isDeleteAllNewFirst) {
             processSummaryRepoNew.deleteAll();
-            return;
         }
-        // from old
-        List<ProcessSummaries> processSummariesOld = processSummaryRepoOld.findAll();
 
-        // to new
+        List<ProcessSummaries> processSummariesOld = processSummaryRepoOld.findAll();
         List<ProcessSummaryEntity> processSummariesNew = new ArrayList<>();
 
         for (ProcessSummaries processSummaryOld : processSummariesOld) {

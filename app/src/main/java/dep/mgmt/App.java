@@ -5,6 +5,7 @@ package dep.mgmt;
 
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.config.ScheduleConfig;
+import dep.mgmt.migration.MigrationService;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.List;
@@ -17,10 +18,16 @@ public class App {
 
   public static void main(String[] args) {
     log.info("Starting Dependency Management Service...");
-    App.init();
-    ScheduleConfig.init();
-    log.info("MongoDb Database Initialized: [{}]", MongoDbConfig.init());
-    log.info("Started Dependency Management Service...");
+    if (isMigration(args)) {
+      log.info("Starting Data Migration...");
+      MigrationService migrationService = new MigrationService();
+      migrationService.migrateProcessSummaries(Boolean.TRUE);
+    } else {
+      App.init();
+      ScheduleConfig.init();
+      log.info("MongoDb Database Initialized: [{}]", MongoDbConfig.init());
+      log.info("Started Dependency Management Service...");
+    }
   }
 
   private static void init() {
@@ -36,5 +43,12 @@ public class App {
       throw new IllegalStateException(
           "One or more environment configurations could not be accessed...");
     }
+  }
+
+  private static boolean isMigration(String[] args) {
+    if (args.length == 1) {
+      return Boolean.parseBoolean(args[0]);
+    }
+    return false;
   }
 }
