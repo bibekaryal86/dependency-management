@@ -23,6 +23,7 @@ public class App {
       MigrationService migrationService = new MigrationService();
       migrationService.migrateProcessSummaries(Boolean.TRUE);
       migrationService.migrateLatestVersions(Boolean.TRUE);
+      migrationService.migrateGradleDependencies(Boolean.TRUE);
     } else {
       App.init();
       ScheduleConfig.init();
