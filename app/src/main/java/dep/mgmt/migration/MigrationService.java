@@ -2,6 +2,7 @@ package dep.mgmt.migration;
 
 import dep.mgmt.migration.entities_old.Dependencies;
 import dep.mgmt.migration.entities_old.LatestVersionsEntity;
+import dep.mgmt.migration.entities_old.Plugins;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
 import dep.mgmt.migration.entities_old.ProcessedRepository;
 import dep.mgmt.model.ProcessRepository;
@@ -25,6 +26,9 @@ public class MigrationService {
     private final MigrationRepository<Dependencies> gradleDependencyRepoOld;
     private final MigrationRepository<DependencyEntity> gradleDependencyRepoNew;
 
+    private final MigrationRepository<Plugins> gradlePluginRepoOld;
+    private final MigrationRepository<DependencyEntity> gradlePluginRepoNew;
+
     public MigrationService() {
         this.processSummaryRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_PROCESS_SUMMARIES, ProcessSummaries.class);
         this.processSummaryRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_PROCESS_SUMMARY, ProcessSummaryEntity.class);
@@ -34,6 +38,9 @@ public class MigrationService {
 
         this.gradleDependencyRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_DEPENDENCIES, Dependencies.class);
         this.gradleDependencyRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_GRADLE_DEPENDENCY, DependencyEntity.class);
+
+        this.gradlePluginRepoOld = new MigrationRepository<>(MigrationConfig.getOldDatabase(), MigrationConstants.MONGODB_COLLECTION_PLUGINS, Plugins.class);
+        this.gradlePluginRepoNew = new MigrationRepository<>(MigrationConfig.getNewDatabase(), ConstantUtils.MONGODB_COLLECTION_GRADLE_PLUGIN, DependencyEntity.class);
 
     }
 
@@ -133,6 +140,26 @@ public class MigrationService {
 
         if (!gradleDependenciesNew.isEmpty()) {
             gradleDependencyRepoNew.insertAll(gradleDependenciesNew);
+        }
+    }
+
+    public void migrateGradlePlugins(boolean isDeleteAllNewFirst) {
+        if (isDeleteAllNewFirst) {
+            gradlePluginRepoNew.deleteAll();
+        }
+
+        List<Plugins> gradlePluginsOld = gradlePluginRepoOld.findAll();
+        List<DependencyEntity> gradlePluginsNew = new ArrayList<>();
+
+        for (Plugins gradlePluginOld : gradlePluginsOld) {
+            DependencyEntity gradlePluginNew = new DependencyEntity(
+                    gradlePluginOld.getGroup(), gradlePluginOld.getVersion(), gradlePluginOld.isSkipVersion()
+            );
+            gradlePluginsNew.add(gradlePluginNew);
+        }
+
+        if (!gradlePluginsNew.isEmpty()) {
+            gradlePluginRepoNew.insertAll(gradlePluginsNew);
         }
     }
 }

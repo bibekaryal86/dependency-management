@@ -24,6 +24,7 @@ public class App {
       migrationService.migrateProcessSummaries(Boolean.TRUE);
       migrationService.migrateLatestVersions(Boolean.TRUE);
       migrationService.migrateGradleDependencies(Boolean.TRUE);
+      migrationService.migrateGradlePlugins(Boolean.TRUE);
     } else {
       App.init();
       ScheduleConfig.init();
