@@ -32,9 +32,9 @@ public class ProcessSummaryEntity implements Serializable {
       final LocalDateTime updateDateTime,
       final RequestParams.UpdateType updateType,
       final Integer gradlePluginsToUpdate,
-  final Integer gradleDependenciesToUpdate,
-  final Integer pythonPackagesToUpdate,
-  final Integer npmDependenciesToUpdate,
+      final Integer gradleDependenciesToUpdate,
+      final Integer pythonPackagesToUpdate,
+      final Integer npmDependenciesToUpdate,
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
@@ -50,7 +50,8 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrCreatedCount = totalPrCreatedCount;
     this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
     this.totalPrMergedCount = totalPrMergedCount;
-    this.processRepositories = processRepositories == null ? Collections.emptyList() : processRepositories;
+    this.processRepositories =
+        processRepositories == null ? Collections.emptyList() : processRepositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
   }
 
@@ -152,19 +153,31 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{" +
-            "id=" + id +
-            ", updateDateTime=" + updateDateTime +
-            ", updateType=" + updateType +
-            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
-            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
-            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
-            ", npmDependenciesToUpdate=" + npmDependenciesToUpdate +
-            ", totalPrCreatedCount=" + totalPrCreatedCount +
-            ", totalPrCreateErrorsCount=" + totalPrCreateErrorsCount +
-            ", totalPrMergedCount=" + totalPrMergedCount +
-            ", processRepositories=" + processRepositories +
-            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
-            '}';
+    return "ProcessSummaryEntity{"
+        + "id="
+        + id
+        + ", updateDateTime="
+        + updateDateTime
+        + ", updateType="
+        + updateType
+        + ", gradlePluginsToUpdate="
+        + gradlePluginsToUpdate
+        + ", gradleDependenciesToUpdate="
+        + gradleDependenciesToUpdate
+        + ", pythonPackagesToUpdate="
+        + pythonPackagesToUpdate
+        + ", npmDependenciesToUpdate="
+        + npmDependenciesToUpdate
+        + ", totalPrCreatedCount="
+        + totalPrCreatedCount
+        + ", totalPrCreateErrorsCount="
+        + totalPrCreateErrorsCount
+        + ", totalPrMergedCount="
+        + totalPrMergedCount
+        + ", processRepositories="
+        + processRepositories
+        + ", isErrorsOrExceptions="
+        + isErrorsOrExceptions
+        + '}';
   }
 }

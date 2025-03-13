@@ -6,12 +6,11 @@ import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.repository.ProcessSummaryRepository;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProcessSummaryService {
 
@@ -25,7 +24,8 @@ public class ProcessSummaryService {
 
   // TODO add schedule
   public void cleanupOldProcessSummaries() {
-    LocalDateTime cleanupBeforeDate = LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
+    LocalDateTime cleanupBeforeDate =
+        LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
     processSummaryRepository.deleteByUpdateDateTimeBefore(cleanupBeforeDate);
     log.info("Deleted Process Summaries before: [{}]", cleanupBeforeDate);
   }

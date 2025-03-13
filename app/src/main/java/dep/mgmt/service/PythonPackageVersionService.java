@@ -11,14 +11,11 @@ import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
-
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +62,9 @@ public class PythonPackageVersionService {
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
       log.info("Python Packages List: [ {} ]", pythonPackages.size());
-      pythonPackagesMap = pythonPackages.stream().collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
+      pythonPackagesMap =
+          pythonPackages.stream()
+              .collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
       CacheConfig.setPythonPackagesMap(pythonPackagesMap);
     }
     return pythonPackagesMap;
@@ -89,17 +88,25 @@ public class PythonPackageVersionService {
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 
     pythonPackages.forEach(
-            pythonPackage -> {
-              String name = pythonPackage.getName();
-              String currentVersion = pythonPackage.getVersion();
-              String latestVersion = getPythonPackageVersion(name);
+        pythonPackage -> {
+          String name = pythonPackage.getName();
+          String currentVersion = pythonPackage.getVersion();
+          String latestVersion = getPythonPackageVersion(name);
 
-              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-                pythonPackagesToUpdate.add(new DependencyEntity(pythonPackagesLocal.get(pythonPackage.getName()).getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
-              }
-            });
+          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+            pythonPackagesToUpdate.add(
+                new DependencyEntity(
+                    pythonPackagesLocal.get(pythonPackage.getName()).getId(),
+                    pythonPackage.getName(),
+                    latestVersion,
+                    Boolean.FALSE));
+          }
+        });
 
-    log.info("Python Packages to Update: [{}]\n[{}]", pythonPackagesToUpdate.size(), pythonPackagesToUpdate);
+    log.info(
+        "Python Packages to Update: [{}]\n[{}]",
+        pythonPackagesToUpdate.size(),
+        pythonPackagesToUpdate);
 
     if (!pythonPackagesToUpdate.isEmpty()) {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {

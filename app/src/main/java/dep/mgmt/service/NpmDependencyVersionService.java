@@ -11,13 +11,11 @@ import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
-
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +56,9 @@ public class NpmDependencyVersionService {
     if (CommonUtilities.isEmpty(npmDependenciesMap)) {
       final List<DependencyEntity> npmDependencies = npmDependencyRepository.findAll();
       log.info("NPM Dependencies List: [ {} ]", npmDependencies.size());
-      npmDependenciesMap = npmDependencies.stream().collect(Collectors.toMap(DependencyEntity::getName, npmDependency -> npmDependency));
+      npmDependenciesMap =
+          npmDependencies.stream()
+              .collect(Collectors.toMap(DependencyEntity::getName, npmDependency -> npmDependency));
       CacheConfig.setNpmDependenciesMap(npmDependenciesMap);
     }
     return npmDependenciesMap;
@@ -82,17 +82,25 @@ public class NpmDependencyVersionService {
     List<DependencyEntity> npmDependenciesToUpdate = new ArrayList<>();
 
     npmDependencies.forEach(
-            npmDependency -> {
-              String name = npmDependency.getName();
-              String currentVersion = npmDependency.getVersion();
-              String latestVersion = getNpmDependencyVersion(name);
+        npmDependency -> {
+          String name = npmDependency.getName();
+          String currentVersion = npmDependency.getVersion();
+          String latestVersion = getNpmDependencyVersion(name);
 
-              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-                npmDependenciesToUpdate.add(new DependencyEntity(npmDependenciesLocal.get(npmDependency.getName()).getId(), npmDependency.getName(), latestVersion, Boolean.FALSE));
-              }
-            });
+          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+            npmDependenciesToUpdate.add(
+                new DependencyEntity(
+                    npmDependenciesLocal.get(npmDependency.getName()).getId(),
+                    npmDependency.getName(),
+                    latestVersion,
+                    Boolean.FALSE));
+          }
+        });
 
-    log.info("NPM Dependencies to Update: [{}]\n[{}]", npmDependenciesToUpdate.size(), npmDependenciesToUpdate);
+    log.info(
+        "NPM Dependencies to Update: [{}]\n[{}]",
+        npmDependenciesToUpdate.size(),
+        npmDependenciesToUpdate);
 
     if (!npmDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity npmDependencyToUpdate : npmDependenciesToUpdate) {

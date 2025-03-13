@@ -52,7 +52,7 @@ public class CacheConfig {
   }
 
   public static Map<String, DependencyEntity> setGradlePluginsMap(
-          final Map<String, DependencyEntity> gradlePluginsMap) {
+      final Map<String, DependencyEntity> gradlePluginsMap) {
     GRADLE_PLUGINS_MAP = Map.copyOf(gradlePluginsMap);
     return GRADLE_PLUGINS_MAP;
   }

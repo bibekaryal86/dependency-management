@@ -24,17 +24,20 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
     final int pageNumberToUse = pageNumber > 0 ? pageNumber - 1 : 0;
     final int pageSizeToUse = pageSize < 10 || pageSize > 1000 ? 100 : pageSize;
 
-    final List<ProcessSummaryEntity> processSummaries = collection
+    final List<ProcessSummaryEntity> processSummaries =
+        collection
             .find()
             .sort(sort)
             .skip(pageNumberToUse * pageSizeToUse)
             .limit(pageSizeToUse)
             .into(new ArrayList<>());
 
-    return new ProcessSummary(processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
+    return new ProcessSummary(
+        processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
   }
 
-  public ProcessSummary findByUpdateType(final String updateType, final int pageNumber, final int pageSize) {
+  public ProcessSummary findByUpdateType(
+      final String updateType, final int pageNumber, final int pageSize) {
     final Bson filter = Filters.eq("updateType", updateType);
     final Bson sort = Sorts.descending("updateDateTime");
 
@@ -44,14 +47,16 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
     final int pageNumberToUse = pageNumber > 0 ? pageNumber - 1 : 0;
     final int pageSizeToUse = pageSize < 10 || pageSize > 1000 ? 100 : pageSize;
 
-    final List<ProcessSummaryEntity> processSummaries = collection
-        .find(filter)
-        .sort(sort)
-        .skip(pageNumberToUse * pageSizeToUse)
-        .limit(pageSizeToUse)
-        .into(new ArrayList<>());
+    final List<ProcessSummaryEntity> processSummaries =
+        collection
+            .find(filter)
+            .sort(sort)
+            .skip(pageNumberToUse * pageSizeToUse)
+            .limit(pageSizeToUse)
+            .into(new ArrayList<>());
 
-    return new ProcessSummary(processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
+    return new ProcessSummary(
+        processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
   }
 
   // find by updateType and updateDateTime
@@ -64,7 +69,8 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
   }
 
   // find by updateType and updateDateTime
-  public List<ProcessSummaryEntity> findByUpdateTypeAndUpdateDate(final String updateType, final LocalDateTime startOfDay, final LocalDateTime endOfDay) {
+  public List<ProcessSummaryEntity> findByUpdateTypeAndUpdateDate(
+      final String updateType, final LocalDateTime startOfDay, final LocalDateTime endOfDay) {
     final Bson filter =
         Filters.and(
             Filters.eq("updateType", updateType),

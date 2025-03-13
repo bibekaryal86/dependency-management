@@ -2,14 +2,14 @@ package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummary;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
-
 import java.util.Comparator;
 import java.util.List;
 
 public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessSummary.ProcessRepository> allProcessedRepositories = processSummary.getProcessRepositories();
+    List<ProcessSummary.ProcessRepository> allProcessedRepositories =
+        processSummary.getProcessRepositories();
     List<ProcessSummary.ProcessRepository> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
@@ -223,7 +223,9 @@ public class ProcessSummaryEmailUtils {
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");
       html.append("<td>").append(processedRepository.getPrCreated() ? "Y" : "N").append("</td>");
-      html.append("<td>").append(processedRepository.getPrCreateError() ? "Y" : "N").append("</td>");
+      html.append("<td>")
+          .append(processedRepository.getPrCreateError() ? "Y" : "N")
+          .append("</td>");
       html.append("<td>").append(processedRepository.getPrMerged() ? "Y" : "N").append("</td>");
       html.append("</tr>");
     }

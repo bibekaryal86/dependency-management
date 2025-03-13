@@ -1,7 +1,6 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummary;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +16,8 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNpmSkipsActive = new AtomicInteger(0);
   private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessSummary.Summary.Repository> processedRepositories = new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummary.Summary.Repository> processedRepositories =
+      new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -75,8 +75,12 @@ public class ProcessUtils {
     repositoriesWithPrError = new HashSet<>();
   }
 
-  public static void addProcessedRepositories(String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
-    processedRepositories.put(repoName, new ProcessSummary.Summary.Repository(repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
+  public static void addProcessedRepositories(
+      String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
+    processedRepositories.put(
+        repoName,
+        new ProcessSummary.Summary.Repository(
+            repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
   }
 
   public static void updateProcessedRepositoriesToPrMerged(String repoName) {
@@ -97,7 +101,8 @@ public class ProcessUtils {
         });
   }
 
-  public static ConcurrentMap<String, ProcessSummary.Summary.Repository> getProcessedRepositoriesMap() {
+  public static ConcurrentMap<String, ProcessSummary.Summary.Repository>
+      getProcessedRepositoriesMap() {
     return processedRepositories;
   }
 

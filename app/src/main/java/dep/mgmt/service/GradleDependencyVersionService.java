@@ -12,12 +12,10 @@ import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +89,11 @@ public class GradleDependencyVersionService {
     if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
       final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
       log.info("Gradle Dependencies List: [ {} ]", gradleDependencies.size());
-      gradleDependenciesMap = gradleDependencies.stream().collect(Collectors.toMap(DependencyEntity::getName, gradleDependency -> gradleDependency));
+      gradleDependenciesMap =
+          gradleDependencies.stream()
+              .collect(
+                  Collectors.toMap(
+                      DependencyEntity::getName, gradleDependency -> gradleDependency));
       CacheConfig.setGradleDependenciesMap(gradleDependenciesMap);
     }
     return gradleDependenciesMap;
@@ -110,29 +112,37 @@ public class GradleDependencyVersionService {
     gradleDependencyRepository.insert(dependencyEntity);
   }
 
-  public void updateGradleDependencies(final Map<String, DependencyEntity> gradleDependenciesLocal) {
+  public void updateGradleDependencies(
+      final Map<String, DependencyEntity> gradleDependenciesLocal) {
     final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
 
     gradleDependencies.forEach(
-            gradleDependency -> {
-              String[] mavenIdArray = gradleDependency.getName().split(":");
-              String currentVersion = gradleDependency.getVersion();
-              String latestVersion = getGradleDependencyVersion(mavenIdArray[0], mavenIdArray[1], currentVersion);
+        gradleDependency -> {
+          String[] mavenIdArray = gradleDependency.getName().split(":");
+          String currentVersion = gradleDependency.getVersion();
+          String latestVersion =
+              getGradleDependencyVersion(mavenIdArray[0], mavenIdArray[1], currentVersion);
 
-              if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-                gradleDependenciesToUpdate.add(new DependencyEntity(gradleDependenciesLocal.get(gradleDependency.getName()).getId(), gradleDependency.getName(), latestVersion, Boolean.FALSE));
-              }
-            });
+          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+            gradleDependenciesToUpdate.add(
+                new DependencyEntity(
+                    gradleDependenciesLocal.get(gradleDependency.getName()).getId(),
+                    gradleDependency.getName(),
+                    latestVersion,
+                    Boolean.FALSE));
+          }
+        });
 
     log.info(
-            "Gradle Dependencies to Update: [{}]\n[{}]",
-            gradleDependenciesToUpdate.size(),
-            gradleDependenciesToUpdate);
+        "Gradle Dependencies to Update: [{}]\n[{}]",
+        gradleDependenciesToUpdate.size(),
+        gradleDependenciesToUpdate);
 
     if (!gradleDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {
-        gradleDependencyRepository.update(gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
+        gradleDependencyRepository.update(
+            gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
       log.info("Gradle Dependencies Updated...");
       ProcessUtils.setMongoDependenciesToUpdate(gradleDependenciesToUpdate.size());
