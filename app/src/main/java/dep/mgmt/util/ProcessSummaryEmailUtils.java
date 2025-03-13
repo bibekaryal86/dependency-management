@@ -1,6 +1,6 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.ProcessRepository;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import java.util.Comparator;
 import java.util.List;
@@ -8,26 +8,26 @@ import java.util.List;
 public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessSummary.ProcessRepository> allProcessedRepositories =
+    List<ProcessRepository> allProcessedRepositories =
         processSummary.getProcessRepositories();
-    List<ProcessSummary.ProcessRepository> prCreatedAndMerged =
+    List<ProcessRepository> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
+            .sorted(Comparator.comparing(ProcessRepository::getRepoName))
             .toList();
-    List<ProcessSummary.ProcessRepository> prCreatedNotMerged =
+    List<ProcessRepository> prCreatedNotMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && !processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
+            .sorted(Comparator.comparing(ProcessRepository::getRepoName))
             .toList();
-    List<ProcessSummary.ProcessRepository> prCreateError =
+    List<ProcessRepository> prCreateError =
         processSummary.getProcessRepositories().stream()
-            .filter(ProcessSummary.ProcessRepository::getPrCreateError)
-            .sorted(Comparator.comparing(ProcessSummary.ProcessRepository::getRepoName))
+            .filter(ProcessRepository::getPrCreateError)
+            .sorted(Comparator.comparing(ProcessRepository::getRepoName))
             .toList();
 
     StringBuilder html = new StringBuilder();
@@ -217,8 +217,8 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedRepositoryTable(
-      List<ProcessSummary.ProcessRepository> processedRepositories, StringBuilder html) {
-    for (ProcessSummary.ProcessRepository processedRepository : processedRepositories) {
+      List<ProcessRepository> processedRepositories, StringBuilder html) {
+    for (ProcessRepository processedRepository : processedRepositories) {
       html.append("<tr>");
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");

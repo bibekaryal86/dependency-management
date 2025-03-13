@@ -1,6 +1,6 @@
 package dep.mgmt.model.entity;
 
-import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.ProcessRepository;
 import dep.mgmt.model.enums.RequestParams;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ public class ProcessSummaryEntity implements Serializable {
   private Integer totalPrCreatedCount;
   private Integer totalPrCreateErrorsCount;
   private Integer totalPrMergedCount;
-  private List<ProcessSummary.ProcessRepository> processRepositories;
+  private List<ProcessRepository> processRepositories;
   private Boolean isErrorsOrExceptions;
 
   public ProcessSummaryEntity() {}
@@ -38,7 +38,7 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
-      final List<ProcessSummary.ProcessRepository> processRepositories,
+      final List<ProcessRepository> processRepositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
     this.updateDateTime = updateDateTime;
@@ -135,11 +135,11 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrMergedCount = totalPrMergedCount;
   }
 
-  public List<ProcessSummary.ProcessRepository> getProcessRepositories() {
+  public List<ProcessRepository> getProcessRepositories() {
     return processRepositories;
   }
 
-  public void setProcessRepositories(List<ProcessSummary.ProcessRepository> processRepositories) {
+  public void setProcessRepositories(List<ProcessRepository> processRepositories) {
     this.processRepositories = processRepositories;
   }
 

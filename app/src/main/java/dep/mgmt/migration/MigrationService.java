@@ -4,7 +4,7 @@ import dep.mgmt.migration.entities_old.Dependencies;
 import dep.mgmt.migration.entities_old.LatestVersionsEntity;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
 import dep.mgmt.migration.entities_old.ProcessedRepository;
-import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.ProcessRepository;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
@@ -68,10 +68,10 @@ public class MigrationService {
         }
     }
 
-    private List<ProcessSummary.ProcessRepository> getProcessedRepositories(List<ProcessedRepository> processedRepositoriesOld) {
-        List<ProcessSummary.ProcessRepository> processRepositoriesNew = new ArrayList<>();
+    private List<ProcessRepository> getProcessedRepositories(List<ProcessedRepository> processedRepositoriesOld) {
+        List<ProcessRepository> processRepositoriesNew = new ArrayList<>();
         for (ProcessedRepository processedRepositoryOld : processedRepositoriesOld) {
-            ProcessSummary.ProcessRepository processRepositoryNew = new ProcessSummary.ProcessRepository(
+            ProcessRepository processRepositoryNew = new ProcessRepository(
                     processedRepositoryOld.getRepoName(),
                     processedRepositoryOld.isPrCreated(),
                     processedRepositoryOld.isPrCreateError(),
