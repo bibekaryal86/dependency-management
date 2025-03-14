@@ -36,3 +36,12 @@ TODO:
         * one for dependency update
         * one for old process summary cleanup
     * NPM Dependency Update
+
+Dependency Update:
+(1) GitHub Reset and Pull from Same Script File for one Repo
+(2) Update Dependencies
+(3) Push new branch
+(4) Use GitHub API to create Pull Requests
+(5) Use GitHub API to merge Pull Requests
+(6) GitHub Pull for one repo
+

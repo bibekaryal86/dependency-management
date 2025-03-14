@@ -159,7 +159,7 @@ public class AppDataUtils {
     try {
       List<String> allLines = Files.readAllLines(settingsGradlePath);
       Pattern pattern =
-          Pattern.compile(String.format(ConstantUtils.GRADLE_BUILD_DEPENDENCIES_REGEX, "'", "'"));
+          Pattern.compile(String.format("(?<=\\%s)(.*?)(?=\\%s)", "'", "'"));
 
       return allLines.stream()
           .filter(line -> line.contains("include"))
@@ -241,7 +241,7 @@ public class AppDataUtils {
   private static String parseDistributionUrlForGradleVersion(final String distributionUrl) {
     // matches text between two hyphens
     // eg: distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
-    Pattern pattern = Pattern.compile(ConstantUtils.GRADLE_WRAPPER_REGEX);
+    Pattern pattern = Pattern.compile("(?<=\\-)(.*?)(?=\\-)");
     Matcher matcher = pattern.matcher(distributionUrl);
     if (matcher.find()) {
       return matcher.group();
