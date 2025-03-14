@@ -94,6 +94,9 @@ public class ServerUtils {
     final boolean isDeleteUpdateDependenciesOnly =
         Boolean.parseBoolean(
             queryParams.getOrDefault("isDeleteUpdateDependenciesOnly", List.of("true")).getFirst());
+    final boolean isIncludeDebugLogs =
+            Boolean.parseBoolean(
+                    queryParams.getOrDefault("isIncludeDebugLogs", List.of("true")).getFirst());
     final LocalDate branchDate =
         LocalDate.parse(
             queryParams.getOrDefault("branchDate", List.of(LocalDate.now().toString())).getFirst());
@@ -107,6 +110,7 @@ public class ServerUtils {
         isProcessSummaryRequired,
         isForceCreatePr,
         isDeleteUpdateDependenciesOnly,
+        isIncludeDebugLogs,
         branchDate,
         repoName);
   }

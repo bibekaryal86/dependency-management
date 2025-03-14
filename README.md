@@ -45,3 +45,4 @@ Dependency Update:
 (5) Use GitHub API to merge Pull Requests
 (6) GitHub Pull for one repo
 
+ADD LOG LEVEL TO UPDATE REPOS params

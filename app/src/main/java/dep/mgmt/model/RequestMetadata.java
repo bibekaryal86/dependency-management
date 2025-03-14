@@ -14,6 +14,7 @@ public class RequestMetadata implements Serializable {
   private final Boolean isProcessSummaryRequired;
   private final Boolean isForceCreatePr;
   private final Boolean isDeleteUpdateDependenciesOnly;
+  private final Boolean isIncludeDebugLogs;
   private final LocalDate branchDate;
   private final String repoName;
 
@@ -25,6 +26,7 @@ public class RequestMetadata implements Serializable {
       boolean isProcessSummaryRequired,
       boolean isForceCreatePr,
       boolean isDeleteUpdateDependenciesOnly,
+      boolean isIncludeDebugLogs,
       LocalDate branchDate,
       String repoName) {
     this.updateType = updateType;
@@ -34,6 +36,7 @@ public class RequestMetadata implements Serializable {
     this.isProcessSummaryRequired = isProcessSummaryRequired;
     this.isForceCreatePr = isForceCreatePr;
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
+    this.isIncludeDebugLogs = isIncludeDebugLogs;
     this.branchDate = branchDate;
     this.repoName = repoName;
   }
@@ -50,20 +53,24 @@ public class RequestMetadata implements Serializable {
     return isRecreateScriptFiles;
   }
 
-  public Boolean getForceCreatePr() {
-    return isForceCreatePr;
-  }
-
   public Boolean getGithubResetPullRequired() {
     return isGithubResetPullRequired;
+  }
+
+  public Boolean getProcessSummaryRequired() {
+    return isProcessSummaryRequired;
+  }
+
+  public Boolean getForceCreatePr() {
+    return isForceCreatePr;
   }
 
   public Boolean getDeleteUpdateDependenciesOnly() {
     return isDeleteUpdateDependenciesOnly;
   }
 
-  public Boolean getProcessSummaryRequired() {
-    return isProcessSummaryRequired;
+  public Boolean getIncludeDebugLogs() {
+    return isIncludeDebugLogs;
   }
 
   public LocalDate getBranchDate() {
@@ -75,56 +82,30 @@ public class RequestMetadata implements Serializable {
   }
 
   @Override
-  public String toString() {
-    return "RequestMetadata{"
-        + "updateType="
-        + updateType
-        + ", isRecreateCaches="
-        + isRecreateCaches
-        + ", isRecreateScriptFiles="
-        + isRecreateScriptFiles
-        + ", isForceCreatePr="
-        + isForceCreatePr
-        + ", isGithubResetPullRequired="
-        + isGithubResetPullRequired
-        + ", isDeleteUpdateDependenciesOnly="
-        + isDeleteUpdateDependenciesOnly
-        + ", isProcessSummaryRequired="
-        + isProcessSummaryRequired
-        + ", branchDate="
-        + branchDate
-        + ", repoName='"
-        + repoName
-        + '\''
-        + '}';
-  }
-
-  @Override
   public boolean equals(Object object) {
     if (this == object) return true;
     if (!(object instanceof RequestMetadata that)) return false;
-    return updateType == that.updateType
-        && Objects.equals(isRecreateCaches, that.isRecreateCaches)
-        && Objects.equals(isRecreateScriptFiles, that.isRecreateScriptFiles)
-        && Objects.equals(isForceCreatePr, that.isForceCreatePr)
-        && Objects.equals(isGithubResetPullRequired, that.isGithubResetPullRequired)
-        && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly)
-        && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired)
-        && Objects.equals(branchDate, that.branchDate)
-        && Objects.equals(repoName, that.repoName);
+      return updateType == that.updateType && Objects.equals(isRecreateCaches, that.isRecreateCaches) && Objects.equals(isRecreateScriptFiles, that.isRecreateScriptFiles) && Objects.equals(isGithubResetPullRequired, that.isGithubResetPullRequired) && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired) && Objects.equals(isForceCreatePr, that.isForceCreatePr) && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly) && Objects.equals(isIncludeDebugLogs, that.isIncludeDebugLogs) && Objects.equals(branchDate, that.branchDate) && Objects.equals(repoName, that.repoName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        updateType,
-        isRecreateCaches,
-        isRecreateScriptFiles,
-        isForceCreatePr,
-        isGithubResetPullRequired,
-        isDeleteUpdateDependenciesOnly,
-        isProcessSummaryRequired,
-        branchDate,
-        repoName);
+    return Objects.hash(updateType, isRecreateCaches, isRecreateScriptFiles, isGithubResetPullRequired, isProcessSummaryRequired, isForceCreatePr, isDeleteUpdateDependenciesOnly, isIncludeDebugLogs, branchDate, repoName);
+  }
+
+  @Override
+  public String toString() {
+    return "RequestMetadata{" +
+            "updateType=" + updateType +
+            ", isRecreateCaches=" + isRecreateCaches +
+            ", isRecreateScriptFiles=" + isRecreateScriptFiles +
+            ", isGithubResetPullRequired=" + isGithubResetPullRequired +
+            ", isProcessSummaryRequired=" + isProcessSummaryRequired +
+            ", isForceCreatePr=" + isForceCreatePr +
+            ", isDeleteUpdateDependenciesOnly=" + isDeleteUpdateDependenciesOnly +
+            ", isIncludeDebugLogs=" + isIncludeDebugLogs +
+            ", branchDate=" + branchDate +
+            ", repoName='" + repoName + '\'' +
+            '}';
   }
 }

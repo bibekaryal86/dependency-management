@@ -1,5 +1,7 @@
 package dep.mgmt.util;
 
+import io.netty.util.AttributeKey;
+
 import java.util.List;
 
 public class ConstantUtils {
@@ -80,6 +82,12 @@ public class ConstantUtils {
   public static final String PYPROJECT_TOML = "pyproject.toml";
   public static final String PACKAGE_JSON = "package.json";
   public static final String BRANCH_UPDATE_DEPENDENCIES = "update_dependencies_%s";
+
+  // http requests
+  public static final String HTTP_REQUEST_OPTIONS = "OPTIONS";
+  public static final String HTTP_REQUEST_GET = "GET";
+  public static final String HTTP_REQUEST_POST = "POST";
+  public static final AttributeKey<String> REQUEST_ID = AttributeKey.valueOf("REQUEST_ID");
 
   // OTHERS
   public static final int CLEANUP_BEFORE_DAYS = 45;
