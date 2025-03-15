@@ -1,7 +1,6 @@
 package dep.mgmt.model.entity;
 
 import dep.mgmt.model.ProcessRepository;
-import dep.mgmt.model.enums.RequestParams;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -13,8 +12,7 @@ public class ProcessSummaryEntity implements Serializable {
   @BsonId private ObjectId id;
   private LocalDateTime updateDateTime;
 
-  // same as ProcessSummary
-  private RequestParams.UpdateType updateType;
+  private String updateType;
   private Integer gradlePluginsToUpdate;
   private Integer gradleDependenciesToUpdate;
   private Integer pythonPackagesToUpdate;
@@ -30,7 +28,7 @@ public class ProcessSummaryEntity implements Serializable {
   public ProcessSummaryEntity(
       final ObjectId id,
       final LocalDateTime updateDateTime,
-      final RequestParams.UpdateType updateType,
+      final String updateType,
       final Integer gradlePluginsToUpdate,
       final Integer gradleDependenciesToUpdate,
       final Integer pythonPackagesToUpdate,
@@ -71,11 +69,11 @@ public class ProcessSummaryEntity implements Serializable {
     this.updateDateTime = updateDateTime;
   }
 
-  public RequestParams.UpdateType getUpdateType() {
+  public String getUpdateType() {
     return updateType;
   }
 
-  public void setUpdateType(RequestParams.UpdateType updateType) {
+  public void setUpdateType(String updateType) {
     this.updateType = updateType;
   }
 

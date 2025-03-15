@@ -10,7 +10,6 @@ import dep.mgmt.model.ProcessRepository;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
-import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +101,7 @@ public class MigrationService {
           new ProcessSummaryEntity(
               null,
               processSummaryOld.getUpdateDateTime(),
-              RequestParams.UpdateType.valueOf(processSummaryOld.getUpdateType()),
+              getProcessSummaryUpdateType(processSummaryOld.getUpdateType()),
               processSummaryOld.getMongoPluginsToUpdate(),
               processSummaryOld.getMongoDependenciesToUpdate(),
               processSummaryOld.getMongoPackagesToUpdate(),
@@ -118,6 +117,11 @@ public class MigrationService {
     if (!processSummariesNew.isEmpty()) {
       processSummaryRepoNew.insertAll(processSummariesNew);
     }
+  }
+
+  private String getProcessSummaryUpdateType(final String updateTypeOld) {
+    return updateTypeOld.split("_")[0];
+
   }
 
   private List<ProcessRepository> getProcessedRepositories(
