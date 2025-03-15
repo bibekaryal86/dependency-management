@@ -1,5 +1,7 @@
 package dep.mgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 public class AppDataLatestVersions implements Serializable {
@@ -8,11 +10,13 @@ public class AppDataLatestVersions implements Serializable {
   private final LatestVersionGithubActions latestVersionGithubActions;
   private final LatestVersionLanguages latestVersionLanguages;
 
+  @JsonCreator
   public AppDataLatestVersions(
-      final LatestVersionServers latestVersionServers,
-      final LatestVersionTools latestVersionTools,
-      final LatestVersionGithubActions latestVersionGithubActions,
-      final LatestVersionLanguages latestVersionLanguages) {
+      @JsonProperty("latestVersionServers") final LatestVersionServers latestVersionServers,
+      @JsonProperty("latestVersionTools") final LatestVersionTools latestVersionTools,
+      @JsonProperty("latestVersionGithubActions")
+          final LatestVersionGithubActions latestVersionGithubActions,
+      @JsonProperty("latestVersionLanguages") final LatestVersionLanguages latestVersionLanguages) {
     this.latestVersionServers = latestVersionServers;
     this.latestVersionTools = latestVersionTools;
     this.latestVersionGithubActions = latestVersionGithubActions;
@@ -52,7 +56,8 @@ public class AppDataLatestVersions implements Serializable {
   public static class LatestVersionServers implements Serializable {
     private final LatestVersion nginx;
 
-    public LatestVersionServers(final LatestVersion nginx) {
+    @JsonCreator
+    public LatestVersionServers(@JsonProperty("nginx") final LatestVersion nginx) {
       this.nginx = nginx;
     }
 
@@ -70,7 +75,10 @@ public class AppDataLatestVersions implements Serializable {
     private final LatestVersion gradle;
     private final LatestVersion flyway;
 
-    public LatestVersionTools(final LatestVersion gradle, final LatestVersion flyway) {
+    @JsonCreator
+    public LatestVersionTools(
+        @JsonProperty("gradle") final LatestVersion gradle,
+        @JsonProperty("flyway") final LatestVersion flyway) {
       this.gradle = gradle;
       this.flyway = flyway;
     }
@@ -97,13 +105,14 @@ public class AppDataLatestVersions implements Serializable {
     private final LatestVersion setupPython;
     private final LatestVersion codeql;
 
+    @JsonCreator
     public LatestVersionGithubActions(
-        final LatestVersion checkout,
-        final LatestVersion setupJava,
-        final LatestVersion setupGradle,
-        final LatestVersion setupNode,
-        final LatestVersion setupPython,
-        final LatestVersion codeql) {
+        @JsonProperty("checkout") final LatestVersion checkout,
+        @JsonProperty("setupJava") final LatestVersion setupJava,
+        @JsonProperty("setupGradle") final LatestVersion setupGradle,
+        @JsonProperty("setupNode") final LatestVersion setupNode,
+        @JsonProperty("setupPython") final LatestVersion setupPython,
+        @JsonProperty("codeql") final LatestVersion codeql) {
       this.checkout = checkout;
       this.setupJava = setupJava;
       this.setupGradle = setupGradle;
@@ -160,8 +169,11 @@ public class AppDataLatestVersions implements Serializable {
     private final LatestVersion node;
     private final LatestVersion python;
 
+    @JsonCreator
     public LatestVersionLanguages(
-        final LatestVersion java, final LatestVersion node, final LatestVersion python) {
+        @JsonProperty("java") final LatestVersion java,
+        @JsonProperty("node") final LatestVersion node,
+        @JsonProperty("python") final LatestVersion python) {
       this.java = java;
       this.node = node;
       this.python = python;

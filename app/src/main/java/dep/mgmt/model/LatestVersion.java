@@ -1,5 +1,7 @@
 package dep.mgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 public class LatestVersion implements Serializable {
@@ -11,12 +13,13 @@ public class LatestVersion implements Serializable {
 
   public LatestVersion() {}
 
+  @JsonCreator
   public LatestVersion(
-      final String versionActual,
-      final String versionFull,
-      final String versionMajor,
-      final String versionDocker,
-      final String versionGcp) {
+      @JsonProperty("versionActual") final String versionActual,
+      @JsonProperty("versionFull") final String versionFull,
+      @JsonProperty("versionMajor") final String versionMajor,
+      @JsonProperty("versionDocker") final String versionDocker,
+      @JsonProperty("versionGcp") final String versionGcp) {
     this.versionActual = versionActual;
     this.versionFull = versionFull;
     this.versionMajor = versionMajor;

@@ -97,8 +97,8 @@ public class ServerUtils {
         Boolean.parseBoolean(
             queryParams.getOrDefault("isDeleteUpdateDependenciesOnly", List.of("true")).getFirst());
     final boolean isIncludeDebugLogs =
-            Boolean.parseBoolean(
-                    queryParams.getOrDefault("isIncludeDebugLogs", List.of("true")).getFirst());
+        Boolean.parseBoolean(
+            queryParams.getOrDefault("isIncludeDebugLogs", List.of("true")).getFirst());
     final LocalDate branchDate =
         LocalDate.parse(
             queryParams.getOrDefault("branchDate", List.of(LocalDate.now().toString())).getFirst());
@@ -117,7 +117,15 @@ public class ServerUtils {
         repoName);
   }
 
-  public static List<Dependency> convertDependencyEntities(final List<DependencyEntity> dependencyEntities) {
-    return dependencyEntities.stream().map(dependencyEntity -> new Dependency(dependencyEntity.getName(), dependencyEntity.getVersion(), dependencyEntity.getSkipVersion())).toList();
+  public static List<Dependency> convertDependencyEntities(
+      final List<DependencyEntity> dependencyEntities) {
+    return dependencyEntities.stream()
+        .map(
+            dependencyEntity ->
+                new Dependency(
+                    dependencyEntity.getName(),
+                    dependencyEntity.getVersion(),
+                    dependencyEntity.getSkipVersion()))
+        .toList();
   }
 }

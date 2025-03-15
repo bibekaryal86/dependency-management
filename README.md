@@ -1,6 +1,7 @@
 # dependency-management
 
 * Things to add:
+    * Add Pagination to MongoRepoController GET lookup
     * Tests
     * Documentation
 

@@ -48,7 +48,8 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
         log.info("[{}] Routing to UpdateRepoController...", requestId);
         this.updateRepoController.handleRequest(fullHttpRequest, ctx);
       } else {
-        ServerUtils.sendErrorResponse(ctx, "Servlet Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+        ServerUtils.sendErrorResponse(
+            ctx, "Servlet Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
       }
     } else {
       super.channelRead(ctx, msg);
@@ -63,8 +64,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
 
     ServerUtils.sendErrorResponse(
         channelHandlerContext,
-      "Servlet Handler Exception Caught...",
-        HttpResponseStatus.INTERNAL_SERVER_ERROR
-        );
+        "Servlet Handler Exception Caught...",
+        HttpResponseStatus.INTERNAL_SERVER_ERROR);
   }
 }

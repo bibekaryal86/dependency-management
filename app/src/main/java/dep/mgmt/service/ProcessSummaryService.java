@@ -41,14 +41,19 @@ public class ProcessSummaryService {
         updateDate,
         pageNumber,
         pageSize);
-
-    LocalDateTime startOfDay = updateDate.atStartOfDay();
-    LocalDateTime endOfDay = updateDate.atTime(LocalTime.MAX);
-
-    if (CommonUtilities.isEmpty(updateType)) {
-      return processSummaryRepository.findAll(pageNumber, pageSize);
-    } else {
+    if (!CommonUtilities.isEmpty(updateType) && updateDate == null) {
       return processSummaryRepository.findByUpdateType(updateType, pageNumber, pageSize);
+    } else if (CommonUtilities.isEmpty(updateType) && updateDate != null) {
+      LocalDateTime startOfDay = updateDate.atStartOfDay();
+      LocalDateTime endOfDay = updateDate.atTime(LocalTime.MAX);
+      return processSummaryRepository.findByUpdateDate(startOfDay, endOfDay);
+    } else if (!CommonUtilities.isEmpty(updateType) && updateDate != null) {
+      LocalDateTime startOfDay = updateDate.atStartOfDay();
+      LocalDateTime endOfDay = updateDate.atTime(LocalTime.MAX);
+      return processSummaryRepository.findByUpdateTypeAndUpdateDate(
+          updateType, startOfDay, endOfDay);
+    } else {
+      return processSummaryRepository.findAll(pageNumber, pageSize);
     }
   }
 

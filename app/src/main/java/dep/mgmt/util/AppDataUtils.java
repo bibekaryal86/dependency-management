@@ -158,8 +158,7 @@ public class AppDataUtils {
   private static List<String> readGradleModules(final Path settingsGradlePath) {
     try {
       List<String> allLines = Files.readAllLines(settingsGradlePath);
-      Pattern pattern =
-          Pattern.compile(String.format("(?<=\\%s)(.*?)(?=\\%s)", "'", "'"));
+      Pattern pattern = Pattern.compile(String.format("(?<=\\%s)(.*?)(?=\\%s)", "'", "'"));
 
       return allLines.stream()
           .filter(line -> line.contains("include"))

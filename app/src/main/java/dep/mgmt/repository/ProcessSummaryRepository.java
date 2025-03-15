@@ -60,25 +60,29 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
         processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
   }
 
-  // find by updateType and updateDateTime
-  public List<ProcessSummaryEntity> findByUpdateDate(
+  // find by updateDateTime
+  public ProcessSummary findByUpdateDate(
       final LocalDateTime startOfDay, final LocalDateTime endOfDay) {
     final Bson filter =
         Filters.and(
             Filters.gte(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, startOfDay),
             Filters.lt(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, endOfDay));
-    return collection.find(filter).into(new ArrayList<>());
+    final List<ProcessSummaryEntity> processSummaries =
+        collection.find(filter).into(new ArrayList<>());
+    return new ProcessSummary(processSummaries, -1, -1, -1, -1);
   }
 
   // find by updateType and updateDateTime
-  public List<ProcessSummaryEntity> findByUpdateTypeAndUpdateDate(
+  public ProcessSummary findByUpdateTypeAndUpdateDate(
       final String updateType, final LocalDateTime startOfDay, final LocalDateTime endOfDay) {
     final Bson filter =
         Filters.and(
             Filters.eq(ConstantUtils.MONGODB_COLUMN_UPDATE_TYPE, updateType),
             Filters.gte(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, startOfDay),
             Filters.lt(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, endOfDay));
-    return collection.find(filter).into(new ArrayList<>());
+    final List<ProcessSummaryEntity> processSummaries =
+        collection.find(filter).into(new ArrayList<>());
+    return new ProcessSummary(processSummaries, -1, -1, -1, -1);
   }
 
   // Delete all entities where updateDateTime is before the given date

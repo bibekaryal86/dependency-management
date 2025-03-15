@@ -85,27 +85,57 @@ public class RequestMetadata implements Serializable {
   public boolean equals(Object object) {
     if (this == object) return true;
     if (!(object instanceof RequestMetadata that)) return false;
-      return updateType == that.updateType && Objects.equals(isRecreateCaches, that.isRecreateCaches) && Objects.equals(isRecreateScriptFiles, that.isRecreateScriptFiles) && Objects.equals(isGithubResetPullRequired, that.isGithubResetPullRequired) && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired) && Objects.equals(isForceCreatePr, that.isForceCreatePr) && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly) && Objects.equals(isIncludeDebugLogs, that.isIncludeDebugLogs) && Objects.equals(branchDate, that.branchDate) && Objects.equals(repoName, that.repoName);
+    return updateType == that.updateType
+        && Objects.equals(isRecreateCaches, that.isRecreateCaches)
+        && Objects.equals(isRecreateScriptFiles, that.isRecreateScriptFiles)
+        && Objects.equals(isGithubResetPullRequired, that.isGithubResetPullRequired)
+        && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired)
+        && Objects.equals(isForceCreatePr, that.isForceCreatePr)
+        && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly)
+        && Objects.equals(isIncludeDebugLogs, that.isIncludeDebugLogs)
+        && Objects.equals(branchDate, that.branchDate)
+        && Objects.equals(repoName, that.repoName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(updateType, isRecreateCaches, isRecreateScriptFiles, isGithubResetPullRequired, isProcessSummaryRequired, isForceCreatePr, isDeleteUpdateDependenciesOnly, isIncludeDebugLogs, branchDate, repoName);
+    return Objects.hash(
+        updateType,
+        isRecreateCaches,
+        isRecreateScriptFiles,
+        isGithubResetPullRequired,
+        isProcessSummaryRequired,
+        isForceCreatePr,
+        isDeleteUpdateDependenciesOnly,
+        isIncludeDebugLogs,
+        branchDate,
+        repoName);
   }
 
   @Override
   public String toString() {
-    return "RequestMetadata{" +
-            "updateType=" + updateType +
-            ", isRecreateCaches=" + isRecreateCaches +
-            ", isRecreateScriptFiles=" + isRecreateScriptFiles +
-            ", isGithubResetPullRequired=" + isGithubResetPullRequired +
-            ", isProcessSummaryRequired=" + isProcessSummaryRequired +
-            ", isForceCreatePr=" + isForceCreatePr +
-            ", isDeleteUpdateDependenciesOnly=" + isDeleteUpdateDependenciesOnly +
-            ", isIncludeDebugLogs=" + isIncludeDebugLogs +
-            ", branchDate=" + branchDate +
-            ", repoName='" + repoName + '\'' +
-            '}';
+    return "RequestMetadata{"
+        + "updateType="
+        + updateType
+        + ", isRecreateCaches="
+        + isRecreateCaches
+        + ", isRecreateScriptFiles="
+        + isRecreateScriptFiles
+        + ", isGithubResetPullRequired="
+        + isGithubResetPullRequired
+        + ", isProcessSummaryRequired="
+        + isProcessSummaryRequired
+        + ", isForceCreatePr="
+        + isForceCreatePr
+        + ", isDeleteUpdateDependenciesOnly="
+        + isDeleteUpdateDependenciesOnly
+        + ", isIncludeDebugLogs="
+        + isIncludeDebugLogs
+        + ", branchDate="
+        + branchDate
+        + ", repoName='"
+        + repoName
+        + '\''
+        + '}';
   }
 }
