@@ -17,9 +17,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import okhttp3.Cache;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class AppTestController {
@@ -61,7 +59,6 @@ public class AppTestController {
 
                 sendResponse(TESTS_RESET_RESPONSE, ctx);
             }
-            case Endpoints.APP_TESTS_CHECK -> sendResponse(TESTS_PING_RESPONSE, ctx);
             case null, default ->
                     ServerUtils.sendErrorResponse(ctx, "AppTestController Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
         }

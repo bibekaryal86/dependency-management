@@ -6,7 +6,6 @@ public class Endpoints {
   public static final String APP_TESTS_CONTROLLER = "/" + CONTEXT_PATH + "/tests";
   public static final String APP_TESTS_PING = APP_TESTS_CONTROLLER + "/ping";
   public static final String APP_TESTS_RESET = APP_TESTS_CONTROLLER + "/reset";
-  public static final String APP_TESTS_CHECK = APP_TESTS_CONTROLLER + "/check";
 
   public static final String UPDATE_DEPENDENCIES_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/update";
 

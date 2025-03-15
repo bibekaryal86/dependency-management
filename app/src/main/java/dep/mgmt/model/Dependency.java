@@ -1,5 +1,8 @@
 package dep.mgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 public class Dependency implements Serializable {
@@ -7,16 +10,11 @@ public class Dependency implements Serializable {
   private final String version;
   private final Boolean skipVersion;
 
-  public Dependency(final String name, final String version, final Boolean skipVersion) {
+  @JsonCreator
+  public Dependency(@JsonProperty("name") final String name, @JsonProperty("version") final String version, @JsonProperty("skipVersion") final Boolean skipVersion) {
     this.name = name;
     this.version = version;
     this.skipVersion = skipVersion;
-  }
-
-  public Dependency(final String name, final String version) {
-    this.name = name;
-    this.version = version;
-    this.skipVersion = false;
   }
 
   public String getName() {
