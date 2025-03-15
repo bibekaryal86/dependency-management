@@ -1,7 +1,7 @@
 package dep.mgmt.server;
 
 public class Endpoints {
-  private static final String CONTEXT_PATH = "app-dep-mgmt";
+  private static final String CONTEXT_PATH = "dep-mgmt";
 
   public static final String APP_TESTS_CONTROLLER = "/" + CONTEXT_PATH + "/tests";
   public static final String APP_TESTS_PING = APP_TESTS_CONTROLLER + "/ping";
