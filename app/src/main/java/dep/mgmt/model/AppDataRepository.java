@@ -28,10 +28,10 @@ public class AppDataRepository implements Serializable {
     this.type = type;
     this.repoName = repoPath.getFileName().toString();
     this.currentGradleVersion = "";
-    if (type.equals(RequestParams.UpdateType.GRADLE_DEPENDENCIES)) {
+    if (type.equals(RequestParams.UpdateType.GRADLE)) {
       this.gradleModules = stringList;
       this.requirementsTxts = Collections.emptyList();
-    } else if (type.equals(RequestParams.UpdateType.PYTHON_DEPENDENCIES)) {
+    } else if (type.equals(RequestParams.UpdateType.PYTHON)) {
       this.gradleModules = Collections.emptyList();
       this.requirementsTxts = stringList;
     } else {

@@ -94,7 +94,7 @@ public class AppDataUtils {
                 .filter(stream -> "package.json".equals(stream.getFileName().toString()))
                 .map(
                     mapper ->
-                        new AppDataRepository(path, RequestParams.UpdateType.NPM_DEPENDENCIES))
+                        new AppDataRepository(path, RequestParams.UpdateType.NPM))
                 .toList());
       } catch (Exception ex) {
         throw new RuntimeException("NPM Files not found in the repo path provided!", ex);
@@ -108,7 +108,7 @@ public class AppDataUtils {
                     mapper -> {
                       List<String> gradleModules = readGradleModules(mapper);
                       return new AppDataRepository(
-                          path, RequestParams.UpdateType.GRADLE_DEPENDENCIES, gradleModules);
+                          path, RequestParams.UpdateType.GRADLE, gradleModules);
                     })
                 .toList());
       } catch (Exception ex) {
@@ -123,7 +123,7 @@ public class AppDataUtils {
                     mapper -> {
                       List<String> requirementsTxts = readRequirementsTxts(path);
                       return new AppDataRepository(
-                          path, RequestParams.UpdateType.PYTHON_DEPENDENCIES, requirementsTxts);
+                          path, RequestParams.UpdateType.PYTHON, requirementsTxts);
                     })
                 .toList());
       } catch (Exception ex) {
