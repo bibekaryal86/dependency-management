@@ -64,20 +64,21 @@ public class NpmDependencyVersionService {
     return npmDependenciesMap;
   }
 
-  public void saveNpmDependency(final DependencyEntity dependencyEntity) {
-    log.info("Save NPM Dependency: [ {} ]", dependencyEntity);
-    CacheConfig.resetNpmDependenciesMap();
-    npmDependencyRepository.insert(dependencyEntity);
-  }
-
-  public void saveNpmDependency(final String name, final String version) {
-    log.info("Save NPM Dependency: [ {} ] | [ {} ]", name, version);
+  public void insertNpmDependency(final String name, final String version) {
+    log.info("Insert NPM Dependency: [ {} ] | [ {} ]", name, version);
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     npmDependencyRepository.insert(dependencyEntity);
   }
 
-  public void updateNpmDependencies(final Map<String, DependencyEntity> npmDependenciesLocal) {
+  public void updateNpmDependency(final DependencyEntity dependencyEntity) {
+    log.info("Update NPM Dependency: [ {} ]", dependencyEntity);
+    CacheConfig.resetNpmDependenciesMap();
+    npmDependencyRepository.update(dependencyEntity.getId(), dependencyEntity);
+  }
+
+  public void updateNpmDependencies() {
+    final Map<String, DependencyEntity> npmDependenciesLocal = getNpmDependenciesMap();
     final List<DependencyEntity> npmDependencies = npmDependencyRepository.findAll();
     List<DependencyEntity> npmDependenciesToUpdate = new ArrayList<>();
 

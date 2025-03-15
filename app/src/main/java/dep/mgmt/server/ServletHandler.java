@@ -30,7 +30,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
   public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
     if (msg instanceof FullHttpRequest fullHttpRequest) {
       final HttpMethod httpMethod = fullHttpRequest.method();
-      if (httpMethod.toString().equals(ConstantUtils.HTTP_REQUEST_OPTIONS)) {
+      if (httpMethod.equals(HttpMethod.OPTIONS)) {
         ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
         return;
       }
@@ -40,13 +40,13 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
 
       if (requestUri.startsWith(Endpoints.APP_TESTS_CONTROLLER)) {
         log.info("[{}] Routing to AppTestController...", requestId);
-        this.appTestController.handleRequest(fullHttpRequest, ctx);
+        appTestController.handleRequest(fullHttpRequest, ctx);
       } else if (requestUri.startsWith(Endpoints.MONGO_REPO_CONTROLLER)) {
         log.info("[{}] Routing to MongoRepoController...", requestId);
-        this.mongoRepoController.handleRequest(fullHttpRequest, ctx);
+        mongoRepoController.handleRequest(fullHttpRequest, ctx);
       } else if (requestUri.startsWith(Endpoints.UPDATE_DEPENDENCIES_CONTROLLER)) {
         log.info("[{}] Routing to UpdateRepoController...", requestId);
-        this.updateRepoController.handleRequest(fullHttpRequest, ctx);
+        updateRepoController.handleRequest(fullHttpRequest, ctx);
       } else {
         ServerUtils.sendErrorResponse(
             ctx, "Servlet Mapping Not Found...", HttpResponseStatus.NOT_FOUND);

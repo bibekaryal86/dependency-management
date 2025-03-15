@@ -52,10 +52,10 @@ public class AppTestController {
 
         CompletableFuture.runAsync(
             () -> {
-              this.pythonPackageVersionService.getPythonPackagesMap();
-              this.npmDependencyVersionService.getNpmDependenciesMap();
-              this.gradlePluginVersionService.getGradlePluginsMap();
-              this.gradleDependencyVersionService.getGradleDependenciesMap();
+              pythonPackageVersionService.getPythonPackagesMap();
+              npmDependencyVersionService.getNpmDependenciesMap();
+              gradlePluginVersionService.getGradlePluginsMap();
+              gradleDependencyVersionService.getGradleDependenciesMap();
             });
 
         sendResponse(TESTS_RESET_RESPONSE, ctx);

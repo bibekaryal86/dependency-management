@@ -39,7 +39,7 @@ public class GradleVersionService extends VersionLookupGithubApi {
     final String tag =
         versionFull + "-jdk" + latestJavaVersionMajor + "-" + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
-        this.dockerVersionService.checkDockerVersionExists(library, tag);
+        dockerVersionService.checkDockerVersionExists(library, tag);
     if (isNewDockerImageExists) {
       return library + ":" + tag;
     }

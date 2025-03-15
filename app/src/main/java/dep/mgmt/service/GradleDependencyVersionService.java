@@ -99,21 +99,21 @@ public class GradleDependencyVersionService {
     return gradleDependenciesMap;
   }
 
-  public void saveGradleDependency(final DependencyEntity dependencyEntity) {
-    log.info("Save Gradle Dependency: [ {} ]", dependencyEntity);
-    CacheConfig.resetGradleDependenciesMap();
-    gradleDependencyRepository.insert(dependencyEntity);
-  }
-
-  public void saveGradleDependency(final String name, final String version) {
-    log.info("Save Gradle Dependency: [ {} ] | [ {} ]", name, version);
+  public void insertGradleDependency(final String name, final String version) {
+    log.info("Insert Gradle Dependency: [ {} ] | [ {} ]", name, version);
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradleDependencyRepository.insert(dependencyEntity);
   }
 
-  public void updateGradleDependencies(
-      final Map<String, DependencyEntity> gradleDependenciesLocal) {
+  public void updateGradleDependency(final DependencyEntity dependencyEntity) {
+    log.info("Update Gradle Dependency: [ {} ]", dependencyEntity);
+    CacheConfig.resetGradleDependenciesMap();
+    gradleDependencyRepository.update(dependencyEntity.getId(), dependencyEntity);
+  }
+
+  public void updateGradleDependencies() {
+    final Map<String, DependencyEntity> gradleDependenciesLocal = getGradleDependenciesMap();
     final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
 

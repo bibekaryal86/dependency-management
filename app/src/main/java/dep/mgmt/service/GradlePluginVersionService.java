@@ -87,20 +87,21 @@ public class GradlePluginVersionService {
     return gradlePluginsMap;
   }
 
-  public void saveGradlePlugin(final DependencyEntity dependencyEntity) {
-    log.info("Save Gradle Plugin: [ {} ]", dependencyEntity);
-    CacheConfig.resetGradlePluginsMap();
-    gradlePluginRepository.insert(dependencyEntity);
-  }
-
-  public void saveGradlePlugin(final String name, final String version) {
-    log.info("Save Gradle Plugin: [ {} ] | [ {} ]", name, version);
+  public void insertGradlePlugin(final String name, final String version) {
+    log.info("Insert Gradle Plugin: [ {} ] | [ {} ]", name, version);
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradlePluginRepository.insert(dependencyEntity);
   }
 
-  public void updateGradlePlugins(final Map<String, DependencyEntity> gradlePluginsLocal) {
+  public void updateGradlePlugin(final DependencyEntity dependencyEntity) {
+    log.info("Update Gradle Plugin: [{}]", dependencyEntity);
+    CacheConfig.resetGradleDependenciesMap();
+    gradlePluginRepository.update(dependencyEntity.getId(), dependencyEntity);
+  }
+
+  public void updateGradlePlugins() {
+    final Map<String, DependencyEntity> gradlePluginsLocal = getGradlePluginsMap();
     final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
     List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();
 

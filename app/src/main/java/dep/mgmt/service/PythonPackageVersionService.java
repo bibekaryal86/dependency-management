@@ -70,20 +70,21 @@ public class PythonPackageVersionService {
     return pythonPackagesMap;
   }
 
-  public void savePythonPackage(final DependencyEntity dependencyEntity) {
-    log.info("Save Python Package: [ {} ]", dependencyEntity);
-    CacheConfig.resetPythonPackagesMap();
-    pythonPackageRepository.insert(dependencyEntity);
-  }
-
-  public void savePythonPackage(final String name, final String version) {
-    log.info("Save Python Package: [ {} ] | [ {} ]", name, version);
+  public void insertPythonPackage(final String name, final String version) {
+    log.info("Insert Python Package: [ {} ] | [ {} ]", name, version);
     CacheConfig.resetPythonPackagesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     pythonPackageRepository.insert(dependencyEntity);
   }
 
-  public void updatePythonPackages(final Map<String, DependencyEntity> pythonPackagesLocal) {
+  public void updatePythonPackage(final DependencyEntity dependencyEntity) {
+    log.info("Update Python Package: [ {} ]", dependencyEntity);
+    CacheConfig.resetPythonPackagesMap();
+    pythonPackageRepository.update(dependencyEntity.getId(), dependencyEntity);
+  }
+
+  public void updatePythonPackages() {
+    final Map<String, DependencyEntity> pythonPackagesLocal = getPythonPackagesMap();
     final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 

@@ -88,9 +88,6 @@ public class ConstantUtils {
   public static final String BRANCH_UPDATE_DEPENDENCIES = "update_dependencies_%s";
 
   // http requests
-  public static final String HTTP_REQUEST_OPTIONS = "OPTIONS";
-  public static final String HTTP_REQUEST_GET = "GET";
-  public static final String HTTP_REQUEST_POST = "POST";
   public static final AttributeKey<String> REQUEST_ID = AttributeKey.valueOf("REQUEST_ID");
 
   // OTHERS

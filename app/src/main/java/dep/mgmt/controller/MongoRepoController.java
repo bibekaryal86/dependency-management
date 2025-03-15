@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MongoRepoController {
 
@@ -41,8 +42,6 @@ public class MongoRepoController {
     this.latestVersionService = new LatestVersionService();
     this.processSummaryService = new ProcessSummaryService();
   }
-
-  private static final String SAVE_SUCCESSFUL = "{\"save\": \"successful\"}";
 
   public void handleRequest(
       final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {
@@ -78,35 +77,43 @@ public class MongoRepoController {
                 getProcessSummary(updateType, updateDate, pageNumber, pageSize),
                 HttpResponseStatus.OK);
           } else {
-            ServerUtils.sendErrorResponse(
-                ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
+            ServerUtils.sendErrorResponse(ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
           }
           break;
+        case Endpoints.MONGO_REPO_UPDATE:
+          updateDependenciesInMongo();
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.ACCEPTED);
+          break;
         default:
-          ServerUtils.sendErrorResponse(
-              ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else if (requestMethod.equals(HttpMethod.POST)) {
+      final Dependency dependencyRequest = ServerUtils.getRequestBody(fullHttpRequest, Dependency.class);
+      if (dependencyRequest == null || CommonUtilities.isEmpty(dependencyRequest.getName()) || CommonUtilities.isEmpty(dependencyRequest.getVersion())) {
+        ServerUtils.sendErrorResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
+        return;
+      }
+
       switch (requestUri) {
         case Endpoints.MONGO_GRADLE_PLUGIN:
-          System.out.println("gradle plugin");
+          saveGradlePlugin(dependencyRequest);
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         case Endpoints.MONGO_GRADLE_DEPENDENCY:
-          System.out.println("gradle dependency");
+          saveGradleDependency(dependencyRequest);
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         case Endpoints.MONGO_NPM_DEPENDENCY:
-          System.out.println("npm dependency");
+          saveNpmDependency(dependencyRequest);
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         case Endpoints.MONGO_PYTHON_PACKAGE:
-          System.out.println("python package");
-          break;
-        case Endpoints.MONGO_REPO_UPDATE:
-          System.out.println("mongo repo update");
+          savePythonPackage(dependencyRequest);
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         default:
-          ServerUtils.sendErrorResponse(
-              ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else {
@@ -119,38 +126,82 @@ public class MongoRepoController {
 
   private DependencyResponse getGradlePlugins() {
     final List<DependencyEntity> gradlePluginEntities =
-        this.gradlePluginVersionService.getGradlePluginsMap().values().stream().toList();
+        gradlePluginVersionService.getGradlePluginsMap().values().stream().toList();
     final List<Dependency> gradlePlugins =
         ConvertUtils.convertDependencyEntities(gradlePluginEntities);
     return new DependencyResponse(gradlePlugins);
   }
 
+  private void saveGradlePlugin(final Dependency dependency) {
+    DependencyEntity dependencyEntity = gradlePluginVersionService.getGradlePluginsMap().get(dependency.getName());
+    if (dependencyEntity == null) {
+      gradlePluginVersionService.insertGradlePlugin(dependency.getName(), dependency.getVersion());
+    } else {
+      dependencyEntity.setVersion(dependency.getVersion());
+      dependencyEntity.setSkipVersion(dependency.getSkipVersion());
+      gradlePluginVersionService.updateGradlePlugin(dependencyEntity);
+    }
+  }
+
   private DependencyResponse getGradleDependencies() {
     final List<DependencyEntity> gradleDependencyEntities =
-        this.gradleDependencyVersionService.getGradleDependenciesMap().values().stream().toList();
+        gradleDependencyVersionService.getGradleDependenciesMap().values().stream().toList();
     final List<Dependency> gradleDependencies =
         ConvertUtils.convertDependencyEntities(gradleDependencyEntities);
     return new DependencyResponse(gradleDependencies);
   }
 
+  private void saveGradleDependency(final Dependency dependency) {
+    DependencyEntity dependencyEntity = gradleDependencyVersionService.getGradleDependenciesMap().get(dependency.getName());
+    if (dependencyEntity == null) {
+      gradleDependencyVersionService.insertGradleDependency(dependency.getName(), dependency.getVersion());
+    } else {
+      dependencyEntity.setVersion(dependency.getVersion());
+      dependencyEntity.setSkipVersion(dependency.getSkipVersion());
+      gradleDependencyVersionService.updateGradleDependency(dependencyEntity);
+    }
+  }
+
   private DependencyResponse getNpmDependencies() {
     final List<DependencyEntity> npmDependencyEntities =
-        this.npmDependencyVersionService.getNpmDependenciesMap().values().stream().toList();
+        npmDependencyVersionService.getNpmDependenciesMap().values().stream().toList();
     final List<Dependency> npmDependencies =
         ConvertUtils.convertDependencyEntities(npmDependencyEntities);
     return new DependencyResponse(npmDependencies);
   }
 
+  private void saveNpmDependency(final Dependency dependency) {
+    DependencyEntity dependencyEntity = npmDependencyVersionService.getNpmDependenciesMap().get(dependency.getName());
+    if (dependencyEntity == null) {
+      npmDependencyVersionService.insertNpmDependency(dependency.getName(), dependency.getVersion());
+    } else {
+      dependencyEntity.setVersion(dependency.getVersion());
+      dependencyEntity.setSkipVersion(dependency.getSkipVersion());
+      npmDependencyVersionService.updateNpmDependency(dependencyEntity);
+    }
+  }
+
   private DependencyResponse getPythonPackages() {
     final List<DependencyEntity> pythonPackageEntities =
-        this.pythonPackageVersionService.getPythonPackagesMap().values().stream().toList();
+        pythonPackageVersionService.getPythonPackagesMap().values().stream().toList();
     final List<Dependency> pythonPackages =
         ConvertUtils.convertDependencyEntities(pythonPackageEntities);
     return new DependencyResponse(pythonPackages);
   }
 
+  private void savePythonPackage(final Dependency dependency) {
+    DependencyEntity dependencyEntity = pythonPackageVersionService.getPythonPackagesMap().get(dependency.getName());
+    if (dependencyEntity == null) {
+      pythonPackageVersionService.insertPythonPackage(dependency.getName(), dependency.getVersion());
+    } else {
+      dependencyEntity.setVersion(dependency.getVersion());
+      dependencyEntity.setSkipVersion(dependency.getSkipVersion());
+      pythonPackageVersionService.updatePythonPackage(dependencyEntity);
+    }
+  }
+
   private AppDataLatestVersions getLatestVersion() {
-    return this.latestVersionService.getLatestVersion();
+    return latestVersionService.getLatestVersion();
   }
 
   private ProcessSummaries getProcessSummary(
@@ -158,7 +209,7 @@ public class MongoRepoController {
       final String updateDate,
       final String pageNumber,
       final String pageSize) {
-    return this.processSummaryService.getProcessSummaries(
+    return processSummaryService.getProcessSummaries(
         updateType,
         getLocalDateNoEx(updateDate),
         CommonUtilities.parseIntNoEx(pageNumber),
@@ -184,5 +235,12 @@ public class MongoRepoController {
     } catch (DateTimeParseException ex) {
       return null;
     }
+  }
+
+  private void updateDependenciesInMongo() {
+    CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
+    CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+    CompletableFuture.runAsync(npmDependencyVersionService::updateNpmDependencies);
+    CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
   }
 }

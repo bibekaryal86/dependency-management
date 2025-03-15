@@ -5,6 +5,8 @@ import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseMetadata;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseWithMetadata;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,6 +18,8 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
+
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +46,22 @@ public class ServerUtils {
     fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, jsonResponse.length);
     fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
     ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+  }
+
+  public static <T> T getRequestBody(final FullHttpRequest fullHttpRequest, final Class<T> tClass) {
+    T requestBody = null;
+    try {
+      ByteBuf byteBuf = fullHttpRequest.content();
+      if (byteBuf != null) {
+        requestBody =
+                CommonUtilities.objectMapperProvider()
+                        .readValue((InputStream) new ByteBufInputStream(byteBuf), tClass);
+      }
+    } catch (Exception ex) {
+      throw new RuntimeException("Error Serializing Request Body...");
+    }
+
+    return requestBody;
   }
 
   public static Map<String, List<String>> getQueryParams(final String requestUri) {
