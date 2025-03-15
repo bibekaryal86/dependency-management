@@ -67,7 +67,6 @@ public class MongoRepoController {
           ServerUtils.sendResponse(ctx, getLatestVersion(), HttpResponseStatus.OK);
           break;
         case Endpoints.MONGO_PROCESS_SUMMARY:
-          System.out.println("process summary");
           final String updateType = ServerUtils.getQueryParam(requestUri, "updateType", "");
           final String updateDate = ServerUtils.getQueryParam(requestUri, "updateDate", "");
           final String pageNumber = ServerUtils.getQueryParam(requestUri, "pageNumber", "1");

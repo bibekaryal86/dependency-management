@@ -1,5 +1,8 @@
 package dep.mgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,25 +14,49 @@ public class ProcessSummaries implements Serializable {
   private final Integer totalElements;
   private final Integer pageSize;
 
-  public ProcessSummaries(List<ProcessSummary> processSummaries) {
-    this.processSummaries = processSummaries;
-    this.currentPage = 1;
-    this.totalPages = 0;
-    this.totalElements = 0;
-    this.pageSize = 100;
-  }
-
+  @JsonCreator
   public ProcessSummaries(
-      List<ProcessSummary> processSummaries,
-      Integer currentPage,
-      Integer totalPages,
-      Integer totalElements,
-      Integer pageSize) {
+     @JsonProperty("processSummaries") List<ProcessSummary> processSummaries,
+     @JsonProperty("currentPage") Integer currentPage,
+     @JsonProperty("totalPages") Integer totalPages,
+     @JsonProperty("totalElements") Integer totalElements,
+     @JsonProperty("pageSize") Integer pageSize) {
     this.processSummaries = processSummaries;
     this.currentPage = currentPage;
     this.totalPages = totalPages;
     this.totalElements = totalElements;
     this.pageSize = pageSize;
+  }
+
+  public List<ProcessSummary> getProcessSummaries() {
+    return processSummaries;
+  }
+
+  public Integer getCurrentPage() {
+    return currentPage;
+  }
+
+  public Integer getTotalPages() {
+    return totalPages;
+  }
+
+  public Integer getTotalElements() {
+    return totalElements;
+  }
+
+  public Integer getPageSize() {
+    return pageSize;
+  }
+
+  @Override
+  public String toString() {
+    return "ProcessSummaries{" +
+            "processSummaries=" + processSummaries +
+            ", currentPage=" + currentPage +
+            ", totalPages=" + totalPages +
+            ", totalElements=" + totalElements +
+            ", pageSize=" + pageSize +
+            '}';
   }
 
   public static class ProcessSummary {
@@ -45,18 +72,19 @@ public class ProcessSummaries implements Serializable {
     private final List<ProcessRepository> processRepositories;
     private final Boolean isErrorsOrExceptions;
 
+    @JsonCreator
     public ProcessSummary(
-        final LocalDateTime updateDateTime,
-        final String updateType,
-        final Integer gradlePluginsToUpdate,
-        final Integer gradleDependenciesToUpdate,
-        final Integer pythonPackagesToUpdate,
-        final Integer npmDependenciesToUpdate,
-        final Integer totalPrCreatedCount,
-        final Integer totalPrCreateErrorsCount,
-        final Integer totalPrMergedCount,
-        final List<ProcessRepository> processRepositories,
-        final Boolean isErrorsOrExceptions) {
+            @JsonProperty("updateDateTime") final LocalDateTime updateDateTime,
+            @JsonProperty("updateType")  final String updateType,
+            @JsonProperty("gradlePluginsToUpdate") final Integer gradlePluginsToUpdate,
+            @JsonProperty("gradleDependenciesToUpdate")  final Integer gradleDependenciesToUpdate,
+            @JsonProperty("pythonPackagesToUpdate")  final Integer pythonPackagesToUpdate,
+            @JsonProperty("npmDependenciesToUpdate")  final Integer npmDependenciesToUpdate,
+            @JsonProperty("totalPrCreatedCount")  final Integer totalPrCreatedCount,
+            @JsonProperty("totalPrCreateErrorsCount")  final Integer totalPrCreateErrorsCount,
+            @JsonProperty("totalPrMergedCount")  final Integer totalPrMergedCount,
+            @JsonProperty("processRepositories")  final List<ProcessRepository> processRepositories,
+            @JsonProperty("isErrorsOrExceptions")  final Boolean isErrorsOrExceptions) {
       this.updateDateTime = updateDateTime;
       this.updateType = updateType;
       this.gradlePluginsToUpdate = gradlePluginsToUpdate;
@@ -151,12 +179,13 @@ public class ProcessSummaries implements Serializable {
       private String repoType;
       private Boolean isPrMerged;
 
+      @JsonCreator
       public ProcessRepository(
-          final String repoName,
-          final Boolean isPrCreated,
-          final Boolean isPrCreateError,
-          final String repoType,
-          final Boolean isPrMerged) {
+        @JsonProperty("repoName")  final String repoName,
+        @JsonProperty("isPrCreated")  final Boolean isPrCreated,
+        @JsonProperty("isPrCreateError")  final Boolean isPrCreateError,
+        @JsonProperty("repoType")  final String repoType,
+        @JsonProperty("isPrMerged")  final Boolean isPrMerged) {
         this.repoName = repoName;
         this.isPrCreated = isPrCreated;
         this.isPrCreateError = isPrCreateError;

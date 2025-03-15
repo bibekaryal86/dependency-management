@@ -36,7 +36,7 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
     final List<ProcessSummaries.ProcessSummary> processSummaries =
         ConvertUtils.convertProcessSummaryEntities(processSummaryEntities);
     return new ProcessSummaries(
-        processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
+        processSummaries, pageNumber, totalPages, totalItems, pageSizeToUse);
   }
 
   public ProcessSummaries findByUpdateType(
@@ -61,7 +61,7 @@ public class ProcessSummaryRepository extends MongoRepository<ProcessSummaryEnti
         ConvertUtils.convertProcessSummaryEntities(processSummaryEntities);
 
     return new ProcessSummaries(
-        processSummaries, pageNumberToUse, totalPages, totalItems, pageSizeToUse);
+        processSummaries, pageNumber, totalPages, totalItems, pageSizeToUse);
   }
 
   // find by updateDateTime
