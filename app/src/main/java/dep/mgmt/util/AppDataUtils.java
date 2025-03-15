@@ -92,9 +92,7 @@ public class AppDataUtils {
         npmRepositories.addAll(
             pathStream
                 .filter(stream -> "package.json".equals(stream.getFileName().toString()))
-                .map(
-                    mapper ->
-                        new AppDataRepository(path, RequestParams.UpdateType.NPM))
+                .map(mapper -> new AppDataRepository(path, RequestParams.UpdateType.NPM))
                 .toList());
       } catch (Exception ex) {
         throw new RuntimeException("NPM Files not found in the repo path provided!", ex);

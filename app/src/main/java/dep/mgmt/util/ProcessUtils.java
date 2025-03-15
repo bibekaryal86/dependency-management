@@ -1,6 +1,7 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.ProcessRepository;
+import dep.mgmt.model.ProcessSummaries;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,7 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNpmSkipsActive = new AtomicInteger(0);
   private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessRepository> processedRepositories =
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories =
       new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
@@ -79,7 +80,7 @@ public class ProcessUtils {
       String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
     processedRepositories.put(
         repoName,
-        new ProcessRepository(repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
+        new ProcessSummaries.ProcessSummary.ProcessRepository(repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
   }
 
   public static void updateProcessedRepositoriesToPrMerged(String repoName) {
@@ -100,7 +101,7 @@ public class ProcessUtils {
         });
   }
 
-  public static ConcurrentMap<String, ProcessRepository> getProcessedRepositoriesMap() {
+  public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> getProcessedRepositoriesMap() {
     return processedRepositories;
   }
 

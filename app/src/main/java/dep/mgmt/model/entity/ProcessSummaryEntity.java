@@ -1,6 +1,5 @@
 package dep.mgmt.model.entity;
 
-import dep.mgmt.model.ProcessRepository;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -20,7 +19,7 @@ public class ProcessSummaryEntity implements Serializable {
   private Integer totalPrCreatedCount;
   private Integer totalPrCreateErrorsCount;
   private Integer totalPrMergedCount;
-  private List<ProcessRepository> processRepositories;
+  private List<ProcessRepositoryEntity> processRepositories;
   private Boolean isErrorsOrExceptions;
 
   public ProcessSummaryEntity() {}
@@ -36,7 +35,7 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrCreatedCount,
       final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
-      final List<ProcessRepository> processRepositories,
+      final List<ProcessRepositoryEntity> processRepositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
     this.updateDateTime = updateDateTime;
@@ -133,11 +132,11 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrMergedCount = totalPrMergedCount;
   }
 
-  public List<ProcessRepository> getProcessRepositories() {
+  public List<ProcessRepositoryEntity> getProcessRepositories() {
     return processRepositories;
   }
 
-  public void setProcessRepositories(List<ProcessRepository> processRepositories) {
+  public void setProcessRepositories(List<ProcessRepositoryEntity> processRepositories) {
     this.processRepositories = processRepositories;
   }
 
@@ -177,5 +176,86 @@ public class ProcessSummaryEntity implements Serializable {
         + ", isErrorsOrExceptions="
         + isErrorsOrExceptions
         + '}';
+  }
+
+  public static class ProcessRepositoryEntity {
+    private String repoName;
+    private Boolean isPrCreated;
+    private Boolean isPrCreateError;
+    private String repoType;
+    private Boolean isPrMerged;
+
+    public ProcessRepositoryEntity() {}
+
+    public ProcessRepositoryEntity(
+        String repoName,
+        Boolean isPrCreated,
+        Boolean isPrCreateError,
+        String repoType,
+        Boolean isPrMerged) {
+      this.repoName = repoName;
+      this.isPrCreated = isPrCreated;
+      this.isPrCreateError = isPrCreateError;
+      this.repoType = repoType;
+      this.isPrMerged = isPrMerged;
+    }
+
+    public String getRepoName() {
+      return repoName;
+    }
+
+    public void setRepoName(String repoName) {
+      this.repoName = repoName;
+    }
+
+    public Boolean getPrCreated() {
+      return isPrCreated;
+    }
+
+    public void setPrCreated(Boolean prCreated) {
+      isPrCreated = prCreated;
+    }
+
+    public Boolean getPrCreateError() {
+      return isPrCreateError;
+    }
+
+    public void setPrCreateError(Boolean prCreateError) {
+      isPrCreateError = prCreateError;
+    }
+
+    public String getRepoType() {
+      return repoType;
+    }
+
+    public void setRepoType(String repoType) {
+      this.repoType = repoType;
+    }
+
+    public Boolean getPrMerged() {
+      return isPrMerged;
+    }
+
+    public void setPrMerged(Boolean prMerged) {
+      isPrMerged = prMerged;
+    }
+
+    @Override
+    public String toString() {
+      return "ProcessRepositoryEntity{"
+          + "repoName='"
+          + repoName
+          + '\''
+          + ", isPrCreated="
+          + isPrCreated
+          + ", isPrCreateError="
+          + isPrCreateError
+          + ", repoType='"
+          + repoType
+          + '\''
+          + ", isPrMerged="
+          + isPrMerged
+          + '}';
+    }
   }
 }

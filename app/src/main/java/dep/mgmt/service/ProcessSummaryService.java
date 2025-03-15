@@ -1,7 +1,7 @@
 package dep.mgmt.service;
 
 import dep.mgmt.config.MongoDbConfig;
-import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.repository.ProcessSummaryRepository;
 import dep.mgmt.util.ConstantUtils;
@@ -30,7 +30,7 @@ public class ProcessSummaryService {
     log.info("Deleted Process Summaries before: [{}]", cleanupBeforeDate);
   }
 
-  public ProcessSummary getProcessSummaries(
+  public ProcessSummaries getProcessSummaries(
       final String updateType,
       final LocalDate updateDate,
       final int pageNumber,

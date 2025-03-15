@@ -1,8 +1,6 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.Dependency;
 import dep.mgmt.model.RequestMetadata;
-import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseMetadata;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseWithMetadata;
@@ -115,17 +113,5 @@ public class ServerUtils {
         isIncludeDebugLogs,
         branchDate,
         repoName);
-  }
-
-  public static List<Dependency> convertDependencyEntities(
-      final List<DependencyEntity> dependencyEntities) {
-    return dependencyEntities.stream()
-        .map(
-            dependencyEntity ->
-                new Dependency(
-                    dependencyEntity.getName(),
-                    dependencyEntity.getVersion(),
-                    dependencyEntity.getSkipVersion()))
-        .toList();
   }
 }

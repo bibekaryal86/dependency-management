@@ -6,7 +6,6 @@ import dep.mgmt.migration.entities_old.Packages;
 import dep.mgmt.migration.entities_old.Plugins;
 import dep.mgmt.migration.entities_old.ProcessSummaries;
 import dep.mgmt.migration.entities_old.ProcessedRepository;
-import dep.mgmt.model.ProcessRepository;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
@@ -121,15 +120,14 @@ public class MigrationService {
 
   private String getProcessSummaryUpdateType(final String updateTypeOld) {
     return updateTypeOld.split("_")[0];
-
   }
 
-  private List<ProcessRepository> getProcessedRepositories(
+  private List<ProcessSummaryEntity.ProcessRepositoryEntity> getProcessedRepositories(
       List<ProcessedRepository> processedRepositoriesOld) {
-    List<ProcessRepository> processRepositoriesNew = new ArrayList<>();
+    List<ProcessSummaryEntity.ProcessRepositoryEntity> processRepositoriesNew = new ArrayList<>();
     for (ProcessedRepository processedRepositoryOld : processedRepositoriesOld) {
-      ProcessRepository processRepositoryNew =
-          new ProcessRepository(
+      ProcessSummaryEntity.ProcessRepositoryEntity processRepositoryNew =
+          new ProcessSummaryEntity.ProcessRepositoryEntity(
               processedRepositoryOld.getRepoName(),
               processedRepositoryOld.isPrCreated(),
               processedRepositoryOld.isPrCreateError(),

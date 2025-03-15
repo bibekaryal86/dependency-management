@@ -3,7 +3,7 @@ package dep.mgmt.controller;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.Dependency;
 import dep.mgmt.model.DependencyResponse;
-import dep.mgmt.model.ProcessSummary;
+import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.server.Endpoints;
@@ -13,6 +13,7 @@ import dep.mgmt.service.LatestVersionService;
 import dep.mgmt.service.NpmDependencyVersionService;
 import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.service.PythonPackageVersionService;
+import dep.mgmt.util.ConvertUtils;
 import dep.mgmt.util.ServerUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import io.netty.channel.ChannelHandlerContext;
@@ -121,7 +122,7 @@ public class MongoRepoController {
     final List<DependencyEntity> gradlePluginEntities =
         this.gradlePluginVersionService.getGradlePluginsMap().values().stream().toList();
     final List<Dependency> gradlePlugins =
-        ServerUtils.convertDependencyEntities(gradlePluginEntities);
+        ConvertUtils.convertDependencyEntities(gradlePluginEntities);
     return new DependencyResponse(gradlePlugins);
   }
 
@@ -129,7 +130,7 @@ public class MongoRepoController {
     final List<DependencyEntity> gradleDependencyEntities =
         this.gradleDependencyVersionService.getGradleDependenciesMap().values().stream().toList();
     final List<Dependency> gradleDependencies =
-        ServerUtils.convertDependencyEntities(gradleDependencyEntities);
+        ConvertUtils.convertDependencyEntities(gradleDependencyEntities);
     return new DependencyResponse(gradleDependencies);
   }
 
@@ -137,7 +138,7 @@ public class MongoRepoController {
     final List<DependencyEntity> npmDependencyEntities =
         this.npmDependencyVersionService.getNpmDependenciesMap().values().stream().toList();
     final List<Dependency> npmDependencies =
-        ServerUtils.convertDependencyEntities(npmDependencyEntities);
+        ConvertUtils.convertDependencyEntities(npmDependencyEntities);
     return new DependencyResponse(npmDependencies);
   }
 
@@ -145,7 +146,7 @@ public class MongoRepoController {
     final List<DependencyEntity> pythonPackageEntities =
         this.pythonPackageVersionService.getPythonPackagesMap().values().stream().toList();
     final List<Dependency> pythonPackages =
-        ServerUtils.convertDependencyEntities(pythonPackageEntities);
+        ConvertUtils.convertDependencyEntities(pythonPackageEntities);
     return new DependencyResponse(pythonPackages);
   }
 
@@ -153,7 +154,7 @@ public class MongoRepoController {
     return this.latestVersionService.getLatestVersion();
   }
 
-  private ProcessSummary getProcessSummary(
+  private ProcessSummaries getProcessSummary(
       final String updateType,
       final String updateDate,
       final String pageNumber,
