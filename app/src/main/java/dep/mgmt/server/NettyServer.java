@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class NettyServer {
   private static final Logger log = LoggerFactory.getLogger(NettyServer.class);
 
-  public void start() throws Exception {
+  public static void init() throws Exception {
     final EventLoopGroup bossGroup = new NioEventLoopGroup(ConstantUtils.BOSS_GROUP_THREADS);
     final EventLoopGroup workerGroup = new NioEventLoopGroup(ConstantUtils.WORKER_GROUP_THREADS);
 

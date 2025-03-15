@@ -52,7 +52,7 @@ public class SecurityConfig extends ChannelDuplexHandler {
   }
 
   private boolean isNoAuthCheck(final String requestUri) {
-    return requestUri.matches("^.*(?:/tests/ping|/tests/status|/tests/error).*");
+    return requestUri.matches("^.*(?:/tests/ping|/tests/status|/tests/check).*");
   }
 
   private boolean isBasicAuthenticated(final String actualAuth) {

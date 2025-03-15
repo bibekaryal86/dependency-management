@@ -6,6 +6,7 @@ package dep.mgmt;
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.migration.MigrationService;
+import dep.mgmt.server.NettyServer;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class App {
   private static final Logger log = LoggerFactory.getLogger(App.class);
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     log.info("Starting Dependency Management Service...");
     if (isMigration(args)) {
       log.info("Starting Data Migration...");
@@ -30,6 +31,7 @@ public class App {
     } else {
       App.init();
       ScheduleConfig.init();
+      NettyServer.init();
       log.info("MongoDb Database Initialized: [{}]", MongoDbConfig.init());
       log.info("Started Dependency Management Service...");
     }
