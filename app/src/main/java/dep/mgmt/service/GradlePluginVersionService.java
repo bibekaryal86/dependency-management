@@ -89,14 +89,14 @@ public class GradlePluginVersionService {
 
   public void insertGradlePlugin(final String name, final String version) {
     log.info("Insert Gradle Plugin: [ {} ] | [ {} ]", name, version);
-    CacheConfig.resetGradleDependenciesMap();
+    CacheConfig.resetGradlePluginsMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradlePluginRepository.insert(dependencyEntity);
   }
 
   public void updateGradlePlugin(final DependencyEntity dependencyEntity) {
     log.info("Update Gradle Plugin: [{}]", dependencyEntity);
-    CacheConfig.resetGradleDependenciesMap();
+    CacheConfig.resetGradlePluginsMap();
     gradlePluginRepository.update(dependencyEntity.getId(), dependencyEntity);
   }
 

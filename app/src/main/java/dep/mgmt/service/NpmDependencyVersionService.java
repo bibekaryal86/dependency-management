@@ -66,7 +66,7 @@ public class NpmDependencyVersionService {
 
   public void insertNpmDependency(final String name, final String version) {
     log.info("Insert NPM Dependency: [ {} ] | [ {} ]", name, version);
-    CacheConfig.resetGradleDependenciesMap();
+    CacheConfig.resetNpmDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     npmDependencyRepository.insert(dependencyEntity);
   }
