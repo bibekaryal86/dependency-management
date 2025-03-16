@@ -39,14 +39,12 @@ if ! git status | grep "nothing to commit" > /dev/null 2>&1; then
 	git add . 2>&1
 	git commit -am 'Dependencies Updated (https://bit.ly/app-dependency-update)' 2>&1
 	git push origin -u "$branch_name" 2>&1
-	branch_pushed="yes"
+	echo "Pushed new branch"
 fi
 
 # Cleanup
 echo "Cleaning up"
 git checkout main 2>&1
-if [ $branch_pushed = "yes" ]; then
-  git branch -D "$branch_name" 2>&1
-fi
+git branch -D "$branch_name" 2>&1
 
 echo "Finished: $repo_loc"

@@ -17,6 +17,8 @@ public class ConstantUtils {
   public static final String ENV_MAILJET_PUBLIC_KEY = "MJ_PUBLIC";
   public static final String ENV_MAILJET_PRIVATE_KEY = "MJ_PUBLIC";
   public static final String ENV_MAILJET_EMAIL_ADDRESS = "MJ_EMAIL";
+  public static final String ENV_GITHUB_OWNER = "GH_OWNER";
+  public static final String ENV_GITHUB_TOKEN = "GH_TOKEN";
   public static final List<String> ENV_KEY_NAMES =
       List.of(
           ENV_SERVER_PORT,
@@ -30,7 +32,9 @@ public class ConstantUtils {
           ENV_SEND_EMAIL,
           ENV_MAILJET_PUBLIC_KEY,
           ENV_MAILJET_PRIVATE_KEY,
-          ENV_MAILJET_EMAIL_ADDRESS);
+          ENV_MAILJET_EMAIL_ADDRESS,
+          ENV_GITHUB_OWNER,
+          ENV_GITHUB_TOKEN);
 
   // NGINX
   public static final String ENV_PORT_DEFAULT = "8080";
@@ -39,9 +43,6 @@ public class ConstantUtils {
   public static final int CONNECT_TIMEOUT_MILLIS = 5000; // 5 seconds
   public static final int MAX_CONTENT_LENGTH = 1048576; // 1MB
   public static final String CONTENT_LENGTH_DEFAULT = "0";
-
-  // SECURITY
-  public static final List<String> NO_AUTH_URIS = List.of("/tests/ping");
 
   // RESPONSES
   public static final String NOT_AUTHENTICATED = "Not Authenticated...";
@@ -60,18 +61,21 @@ public class ConstantUtils {
   public static final String MONGODB_COLUMN_UPDATE_TYPE = "updateType";
 
   // ENDPOINTS
-  public static final String JAVA_RELEASES_ENDPOINT =
-      "https://api.adoptium.net/v3/info/release_versions?heap_size=normal&image_type=jdk&lts=true&page=0&page_size=50&project=jdk&release_type=ga&semver=false&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse";
+  public static final String JAVA_RELEASES_ENDPOINT = "https://api.adoptium.net/v3/info/release_versions?heap_size=normal&image_type=jdk&lts=true&page=0&page_size=50&project=jdk&release_type=ga&semver=false&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse";
   public static final String NODE_RELEASES_ENDPOINT = "https://nodejs.org/dist/index.json";
-  public static final String MAVEN_SEARCH_ENDPOINT =
-      "https://search.maven.org/solrsearch/select?core=gav&rows=5&wt=json&q=g:%s+AND+a:%s";
+  public static final String MAVEN_SEARCH_ENDPOINT = "https://search.maven.org/solrsearch/select?core=gav&rows=5&wt=json&q=g:%s+AND+a:%s";
   public static final String PYPI_SEARCH_ENDPOINT = "https://pypi.org/pypi/%s/json";
-  public static final String GCP_RUNTIME_SUPPORT_ENDPOINT =
-      "https://cloud.google.com/appengine/docs/standard/lifecycle/support-schedule";
-  public static final String DOCKER_TAG_LOOKUP_ENDPOINT =
-      "https://hub.docker.com/v2/repositories/library/%s/tags/%s/";
+  public static final String GCP_RUNTIME_SUPPORT_ENDPOINT = "https://cloud.google.com/appengine/docs/standard/lifecycle/support-schedule";
+  public static final String DOCKER_TAG_LOOKUP_ENDPOINT = "https://hub.docker.com/v2/repositories/library/%s/tags/%s/";
   public static final String GITHUB_RELEASES_ENDPOINT = "https://api.github.com/repos/%s/%s/%s";
   public static final String GRADLE_PLUGINS_ENDPOINT = "https://plugins.gradle.org/plugin/%s";
+
+  public static final String GITHUB_RATE_LIMIT_ENDPOINT = "https://api.github.com/rate_limit";
+  public static final String GITHUB_CREATE_PR_ENDPOINT = "https://api.github.com/repos/%s/%s/pulls";
+  public static final String GITHUB_MERGE_PR_ENDPOINT = "https://api.github.com/repos/%s/%s/pulls/%s/merge";
+  public static final String GITHUB_PR_TITLE_BODY = "Dependencies Updated (https://bit.ly/dep-mgmt)";
+  public static final String GITHUB_PR_BASE_BRANCH = "main";
+  public static final String GITHUB_PR_MERGE_METHOD = "squash";
 
   // RUNNABLES
   public static final String APP_MAIN_MODULE = "app";
