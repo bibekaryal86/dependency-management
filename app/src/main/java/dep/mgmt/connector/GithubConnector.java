@@ -42,7 +42,7 @@ public class GithubConnector {
                 "Authorization", String.format("Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
         final GithubPullRequestApi.MergeRequest requestBody = new GithubPullRequestApi.MergeRequest(ConstantUtils.GITHUB_PR_MERGE_METHOD);
 
-        HttpResponse<GithubPullRequestApi.MergeResponse> response = Connector.sendRequest(url, Enums.HttpMethod.POST, new TypeReference<GithubPullRequestApi.MergeResponse>() {}, null, headers, requestBody);
+        HttpResponse<GithubPullRequestApi.MergeResponse> response = Connector.sendRequest(url, Enums.HttpMethod.PUT, new TypeReference<GithubPullRequestApi.MergeResponse>() {}, null, headers, requestBody);
         if (response.statusCode() == 200) {
             return response.responseBody();
         }

@@ -72,7 +72,7 @@ public class GithubPullRequestApi implements Serializable {
         }
     }
 
-    public static class MergeRequest implements Serializable{
+    public static class MergeRequest implements Serializable {
         private final String mergeMethod;
 
         @JsonCreator
