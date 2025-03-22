@@ -21,7 +21,7 @@ public class PythonVersionService extends VersionLookupGithubApi {
   public LatestVersion getPythonVersion(
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     ApiReleaseResponse apiReleaseResponse =
-        getGithubApiReleaseResponse("python", "cpython", Boolean.TRUE);
+        getGithubApiReleaseResponse(ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE);
 
     if (apiReleaseResponse == null) {
       return null;
@@ -48,7 +48,7 @@ public class PythonVersionService extends VersionLookupGithubApi {
    */
   private String getVersionDocker(
       final String versionFull, final String latestDockerVersionFromMongo) {
-    final String library = "python";
+    final String library = ConstantUtils.PYTHON_NAME;
     final String tag = versionFull + "-" + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
@@ -66,8 +66,8 @@ public class PythonVersionService extends VersionLookupGithubApi {
     final String versionMajorMinor = VersionUtils.getVersionMajorMinor(versionFull, false);
     if (CommonUtilities.parseIntNoEx(versionMajorMinor)
         > CommonUtilities.parseIntNoEx(latestGcpRuntimeVersion)) {
-      return "python" + latestGcpRuntimeVersion;
+      return ConstantUtils.PYTHON_NAME + latestGcpRuntimeVersion;
     }
-    return "python" + versionMajorMinor;
+    return ConstantUtils.PYTHON_NAME + versionMajorMinor;
   }
 }

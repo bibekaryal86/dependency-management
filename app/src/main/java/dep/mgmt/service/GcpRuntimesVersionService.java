@@ -19,7 +19,7 @@ public class GcpRuntimesVersionService {
   private static final Logger log = LoggerFactory.getLogger(GcpRuntimesVersionService.class);
 
   public Map<String, String> getGcpRuntimesVersions() {
-    final List<String> validKeys = List.of("java", "nodejs", "python");
+    final List<String> validKeys = List.of(ConstantUtils.JAVA_NAME, ConstantUtils.NODEJS_NAME, ConstantUtils.PYTHON_NAME);
     Map<String, String> latestRuntimesMap = new HashMap<>();
 
     final Document document = getGcpRuntimeSupportSchedule();
@@ -92,7 +92,7 @@ public class GcpRuntimesVersionService {
   private int getRuntimeIdIndex(final Elements headers) {
     int runtimeIdIndex = -1;
     for (int i = 0; i < headers.size(); i++) {
-      if (headers.get(i).text().equalsIgnoreCase("Runtime ID")) {
+      if (headers.get(i).text().equalsIgnoreCase(ConstantUtils.GCP_RUNTIME_ID)) {
         runtimeIdIndex = i;
         break;
       }

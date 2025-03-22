@@ -84,8 +84,7 @@ public class ConstantUtils {
   public static final String SCRIPTS_DIRECTORY = "scripts";
   public static final String CHMOD_COMMAND = "chmod +x ";
   public static final String JAVA_SYSTEM_TMPDIR = System.getProperty("java.io.tmpdir");
-  public static final String GRADLE_WRAPPER_PROPERTIES =
-      "/gradle/wrapper/gradle-wrapper.properties";
+  public static final String GRADLE_WRAPPER_PROPERTIES = "/gradle/wrapper/gradle-wrapper.properties";
   public static final String BUILD_GRADLE = "build.gradle";
   public static final String PYPROJECT_TOML = "pyproject.toml";
   public static final String PACKAGE_JSON = "package.json";
@@ -94,7 +93,7 @@ public class ConstantUtils {
   // http requests
   public static final AttributeKey<String> REQUEST_ID = AttributeKey.valueOf("REQUEST_ID");
 
-  // OTHERS
+  // UPDATES
   public static final int CLEANUP_BEFORE_DAYS = 45;
   public static final int SCHEDULER_TIMEOUT = 5;
   public static final int SCHEDULER_START_HOUR = 20;
@@ -104,4 +103,23 @@ public class ConstantUtils {
   public static final String DOCKER_ALPINE = "alpine";
   public static final String GITHUB_ENDPOINT_TAGS = "tags";
   public static final String GITHUB_ENDPOINT_RELEASES = "releases";
+  public static final String JAVA_JDK = "jdk";
+  public static final String JAVA_JRE = "jre";
+  public static final String VERSION_LTS = "LTS";
+  public static final String GCP_RUNTIME_ID = "Runtime ID";
+  public static final String FLYWAY_NAME = "flyway";
+  public static final String JAVA_NAME = "java";
+  public static final String NODE_NAME = "node";
+  public static final String NODEJS_NAME = "nodejs";
+  public static final String PYTHON_NAME = "python";
+  public static final String CPYTHON_NAME = "cpython";
+  public static final String GRADLE_NAME = "gradle";
+  public static final String GITHUB_NAME = "github";
+  public static final String NGINX_NAME = "nginx";
+  public static final String GITHUB_ACTIONS_NAME = "actions";
+  public static final String GITHUB_ACTIONS_CHECKOUT = "checkout";
+  public static final String GITHUB_ACTIONS_SETUP_JAVA = "setup-java";
+  public static final String GITHUB_ACTIONS_SETUP_NODE = "setup-node";
+  public static final String GITHUB_ACTIONS_SETUP_PYTHON = "setup-python";
+  public static final String GITHUB_ACTIONS_CODEQL = "codeql-action";
 }

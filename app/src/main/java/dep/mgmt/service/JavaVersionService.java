@@ -29,7 +29,7 @@ public class JavaVersionService {
     // get rid of non lts and sort by version descending
     JavaReleaseResponse.JavaVersion latestJavaRelease =
         javaReleaseVersions.stream()
-            .filter(javaVersion -> "LTS".equals(javaVersion.getOptional()))
+            .filter(javaVersion -> ConstantUtils.VERSION_LTS.equals(javaVersion.getOptional()))
             .findFirst()
             .orElse(null);
 
@@ -89,7 +89,7 @@ public class JavaVersionService {
   private String getVersionDocker(
       final String versionMajor, final String latestDockerVersionFromMongo) {
     final String library = ConstantUtils.DOCKER_JRE;
-    final String tag = versionMajor + "-jre-" + ConstantUtils.DOCKER_ALPINE;
+    final String tag = versionMajor + "-" + ConstantUtils.JAVA_JRE + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
     if (isNewDockerImageExists) {
@@ -105,8 +105,8 @@ public class JavaVersionService {
   private String getVersionGcp(final String versionMajor, final String latestGcpRuntimeVersion) {
     if (CommonUtilities.parseIntNoEx(versionMajor)
         > CommonUtilities.parseIntNoEx(latestGcpRuntimeVersion)) {
-      return "java" + latestGcpRuntimeVersion;
+      return ConstantUtils.JAVA_NAME + latestGcpRuntimeVersion;
     }
-    return "java" + versionMajor;
+    return ConstantUtils.JAVA_NAME + versionMajor;
   }
 }

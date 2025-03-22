@@ -7,6 +7,8 @@ import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.repository.LatestVersionRepository;
 import java.time.LocalDateTime;
 import java.util.Map;
+
+import dep.mgmt.util.ConstantUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +50,9 @@ public class LatestVersionService {
 
     Map<String, String> latestGcpRuntimesVersions =
         gcpRuntimesVersionService.getGcpRuntimesVersions();
-    final String latestGcpVersionPython = latestGcpRuntimesVersions.get("python");
-    final String latestGcpVersionJava = latestGcpRuntimesVersions.get("java");
-    final String latestGcpVersionNode = latestGcpRuntimesVersions.get("node");
+    final String latestGcpVersionPython = latestGcpRuntimesVersions.get(ConstantUtils.PYTHON_NAME);
+    final String latestGcpVersionJava = latestGcpRuntimesVersions.get(ConstantUtils.JAVA_NAME);
+    final String latestGcpVersionNode = latestGcpRuntimesVersions.get(ConstantUtils.NODE_NAME);
     final String currentDockerVersionPython = latestVersionEntity.getPython().getVersionDocker();
     final String currentDockerVersionJava = latestVersionEntity.getJava().getVersionDocker();
     final String currentDockerVersionNode = latestVersionEntity.getNode().getVersionDocker();

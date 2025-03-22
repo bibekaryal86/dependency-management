@@ -86,7 +86,7 @@ public class NodeVersionService {
    */
   private String getVersionDocker(
       final String versionMajor, final String latestDockerVersionFromMongo) {
-    final String library = "node";
+    final String library = ConstantUtils.NODE_NAME;
     final String tag = versionMajor + "-" + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
@@ -103,8 +103,8 @@ public class NodeVersionService {
   private String getVersionGcp(final String versionMajor, final String latestGcpRuntimeVersion) {
     if (CommonUtilities.parseIntNoEx(versionMajor)
         > CommonUtilities.parseIntNoEx(latestGcpRuntimeVersion)) {
-      return "nodejs" + latestGcpRuntimeVersion;
+      return ConstantUtils.NODEJS_NAME + latestGcpRuntimeVersion;
     }
-    return "nodejs" + versionMajor;
+    return ConstantUtils.NODEJS_NAME + versionMajor;
   }
 }

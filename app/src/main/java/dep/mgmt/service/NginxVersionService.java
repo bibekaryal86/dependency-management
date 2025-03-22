@@ -14,7 +14,7 @@ public class NginxVersionService extends VersionLookupGithubApi {
 
   public LatestVersion getNginxVersion(final String latestDockerVersionFromMongo) {
     final ApiReleaseResponse apiReleaseResponse =
-        getGithubApiReleaseResponse("nginx", "nginx", Boolean.TRUE);
+        getGithubApiReleaseResponse(ConstantUtils.NGINX_NAME, ConstantUtils.NGINX_NAME, Boolean.TRUE);
 
     if (apiReleaseResponse == null) {
       return null;
@@ -41,7 +41,7 @@ public class NginxVersionService extends VersionLookupGithubApi {
    */
   private String getVersionDocker(
       final String versionFull, final String latestDockerVersionFromMongo) {
-    final String library = "nginx";
+    final String library = ConstantUtils.NGINX_NAME;
     final String tag = versionFull + "-" + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
