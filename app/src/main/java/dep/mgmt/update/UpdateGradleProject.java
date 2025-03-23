@@ -52,8 +52,8 @@ public class UpdateGradleProject {
     this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
-    this.pluginsMap = new GradlePluginVersionService().getGradlePluginsMap();
-    this.dependenciesMap = new GradleDependencyVersionService().getGradleDependenciesMap();
+    this.dependenciesMap = this.gradleDependencyVersionService.getGradleDependenciesMap();
+    this.pluginsMap = this.gradlePluginVersionService.getGradlePluginsMap();
   }
 
   private boolean executeGradleUpdate() {
@@ -80,8 +80,6 @@ public class UpdateGradleProject {
    * BUILD.GRADLE UPDATE
    */
 
-  // suppressing sonarlint rule for cognitive complexity of method too high
-  @SuppressWarnings("java:S3776")
   private boolean executeBuildGradleUpdate() {
     boolean isBuildGradleUpdated = false;
 
@@ -158,9 +156,6 @@ public class UpdateGradleProject {
     return null;
   }
 
-  // suppressing sonarlint rule to not use more than break or continue statement
-  // suppressing sonarlint rule for cognitive complexity of method too high
-  @SuppressWarnings({"java:S135", "java:S3776"})
   private BuildGradleConfigs.GradleConfigBlock getPluginsBlock(final List<String> allLines) {
     List<BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin> plugins = new ArrayList<>();
     int pluginsBeginPosition = allLines.indexOf("plugins {");
@@ -223,8 +218,6 @@ public class UpdateGradleProject {
     return dependenciesBeginPosition;
   }
 
-  // suppressing sonarlint rule for cognitive complexity of method too high
-  @SuppressWarnings("java:S3776")
   private BuildGradleConfigs.GradleConfigBlock getDependenciesBlock(
       final List<String> allLines, final int buildscriptDependenciesBeginPosition) {
     List<BuildGradleConfigs.GradleConfigBlock.GradleDefinition> gradleDefinitions = new ArrayList<>();
@@ -447,8 +440,6 @@ public class UpdateGradleProject {
     }
   }
 
-  // suppressing sonarlint rule for cognitive complexity of method too high
-  @SuppressWarnings("java:S3776")
   private void modifyPluginsBlock(
           final BuildGradleConfigs.GradleConfigBlock pluginsBlock, final List<String> originals) {
     List<String> updatedPlugins = new ArrayList<>();
@@ -495,8 +486,6 @@ public class UpdateGradleProject {
     }
   }
 
-  // suppressing sonarlint rule for cognitive complexity of method too high
-  @SuppressWarnings("java:S3776")
   private void modifyDependenciesBlock(
           final BuildGradleConfigs.GradleConfigBlock dependenciesBlock, final List<String> originals) {
     List<String> updatedDefinitions = new ArrayList<>();
