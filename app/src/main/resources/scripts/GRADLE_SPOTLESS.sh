@@ -38,7 +38,7 @@ if [[ ("$branch_checkout" = *"set up to track remote branch"*) ]]; then
 
 	if ! git status | grep "nothing to commit" > /dev/null 2>&1; then
 		git add . 2>&1
-		git commit -am 'Dependencies Updated (https://bit.ly/app-dependency-update)' 2>&1
+		git commit -am 'Dependencies Updated (https://bit.ly/dep-mgmt)' 2>&1
 		git push 2>&1
 	fi
 

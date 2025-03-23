@@ -34,10 +34,9 @@ git checkout -b "$branch_name" 2>&1
 
 # Commit and push
 echo "Committing and pushing"
-branch_pushed="no"
 if ! git status | grep "nothing to commit" > /dev/null 2>&1; then
 	git add . 2>&1
-	git commit -am 'Dependencies Updated (https://bit.ly/app-dependency-update)' 2>&1
+	git commit -am 'Dependencies Updated (https://bit.ly/dep-mgmt)' 2>&1
 	git push origin -u "$branch_name" 2>&1
 	echo "Pushed new branch"
 fi
