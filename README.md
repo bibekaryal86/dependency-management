@@ -47,3 +47,4 @@ Dependency Update:
 (6) GitHub Pull for one repo
 
 ADD LOG LEVEL TO UPDATE REPOS params
+CHECK FLYWAY VERSION UPDATE

@@ -148,18 +148,6 @@ public class BuildGradleConfigs implements Serializable {
         this.skipVersion = skipVersion;
       }
 
-      public GradleDependencyPlugin(
-          final String original,
-          final String group,
-          final String version,
-          final Boolean skipVersion) {
-        this.original = original;
-        this.group = group;
-        this.artifact = null;
-        this.version = version;
-        this.skipVersion = skipVersion;
-      }
-
       public String getOriginal() {
         return original;
       }
