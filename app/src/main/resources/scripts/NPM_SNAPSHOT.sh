@@ -33,7 +33,7 @@ branch_checkout=$(git checkout "$branch_name") 2>&1
 echo "$branch_checkout"
 
 if [[ ("$branch_checkout" = *"set up to track remote branch"*) ]]; then
-	echo "Run NPM Tests"
+	echo "Run Node Tests"
 	npm run test:u 2>&1
 
 	if ! git status | grep "nothing to commit" > /dev/null 2>&1; then

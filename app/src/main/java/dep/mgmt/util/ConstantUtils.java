@@ -53,7 +53,7 @@ public class ConstantUtils {
   public static final String MONGODB_COLLECTION_GRADLE_DEPENDENCY = "gradle_dependency";
   public static final String MONGODB_COLLECTION_GRADLE_PLUGIN = "gradle_plugin";
   public static final String MONGODB_COLLECTION_LATEST_VERSION = "latest_version";
-  public static final String MONGODB_COLLECTION_NPM_DEPENDENCY = "npm_dependency";
+  public static final String MONGODB_COLLECTION_NODE_DEPENDENCY = "node_dependency";
   public static final String MONGODB_COLLECTION_PROCESS_SUMMARY = "process_summary";
   public static final String MONGODB_COLLECTION_PYTHON_PACKAGE = "python_package";
   public static final String MONGODB_COLUMN_ID = "_id";

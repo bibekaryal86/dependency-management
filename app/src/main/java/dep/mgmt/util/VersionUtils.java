@@ -49,7 +49,7 @@ public class VersionUtils {
   public static boolean checkDependenciesUpdate(final RequestParams.UpdateType updateType) {
     return updateType == RequestParams.UpdateType.ALL
         || updateType == RequestParams.UpdateType.GRADLE
-        || updateType == RequestParams.UpdateType.NPM
+        || updateType == RequestParams.UpdateType.NODE
         || updateType == RequestParams.UpdateType.PYTHON;
   }
 

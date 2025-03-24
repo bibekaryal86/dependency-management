@@ -12,7 +12,7 @@ public class Endpoints {
   public static final String MONGO_REPO_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/mongo";
   public static final String MONGO_GRADLE_DEPENDENCY = MONGO_REPO_CONTROLLER + "/gradle-dependency";
   public static final String MONGO_GRADLE_PLUGIN = MONGO_REPO_CONTROLLER + "/gradle-plugin";
-  public static final String MONGO_NPM_DEPENDENCY = MONGO_REPO_CONTROLLER + "/npm-dependency";
+  public static final String MONGO_NODE_DEPENDENCY = MONGO_REPO_CONTROLLER + "/node-dependency";
   public static final String MONGO_PYTHON_PACKAGE = MONGO_REPO_CONTROLLER + "/python-package";
   public static final String MONGO_REPO_UPDATE = MONGO_REPO_CONTROLLER + "/update";
   public static final String MONGO_LATEST_VERSION = MONGO_REPO_CONTROLLER + "/latest-version";

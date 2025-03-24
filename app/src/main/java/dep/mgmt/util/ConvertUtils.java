@@ -31,7 +31,7 @@ public class ConvertUtils {
                     processSummaryEntity.getGradlePluginsToUpdate(),
                     processSummaryEntity.getGradleDependenciesToUpdate(),
                     processSummaryEntity.getPythonPackagesToUpdate(),
-                    processSummaryEntity.getNpmDependenciesToUpdate(),
+                    processSummaryEntity.getNodeDependenciesToUpdate(),
                     processSummaryEntity.getTotalPrCreatedCount(),
                     processSummaryEntity.getTotalPrCreateErrorsCount(),
                     processSummaryEntity.getTotalPrMergedCount(),

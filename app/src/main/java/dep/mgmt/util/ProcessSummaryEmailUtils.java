@@ -78,7 +78,7 @@ public class ProcessSummaryEmailUtils {
                   <td>%d</td>
                 </tr>
                 <tr>
-                  <td>NPM Dependencies To Update</td>
+                  <td>Node Dependencies To Update</td>
                   <td>%d</td>
                 </tr>
                 <tr>
@@ -100,7 +100,7 @@ public class ProcessSummaryEmailUtils {
                 processSummary.getGradlePluginsToUpdate(),
                 processSummary.getGradleDependenciesToUpdate(),
                 processSummary.getPythonPackagesToUpdate(),
-                processSummary.getNpmDependenciesToUpdate(),
+                processSummary.getNodeDependenciesToUpdate(),
                 processSummary.getTotalPrCreatedCount(),
                 processSummary.getTotalPrCreateErrorsCount(),
                 processSummary.getTotalPrMergedCount()));

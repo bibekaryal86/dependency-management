@@ -13,7 +13,7 @@ public class CacheConfig {
   private static AppData APP_DATA = null;
   private static Map<String, DependencyEntity> GRADLE_DEPENDENCIES_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> GRADLE_PLUGINS_MAP = Collections.emptyMap();
-  private static Map<String, DependencyEntity> NPM_DEPENDENCIES_MAP = Collections.emptyMap();
+  private static Map<String, DependencyEntity> NODE_DEPENDENCIES_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> PYTHON_PACKAGES_MAP = Collections.emptyMap();
 
   public static AppData getAppData() {
@@ -61,18 +61,18 @@ public class CacheConfig {
     GRADLE_PLUGINS_MAP = Collections.emptyMap();
   }
 
-  public static Map<String, DependencyEntity> getNpmDependenciesMap() {
-    return NPM_DEPENDENCIES_MAP;
+  public static Map<String, DependencyEntity> getNodeDependenciesMap() {
+    return NODE_DEPENDENCIES_MAP;
   }
 
-  public static Map<String, DependencyEntity> setNpmDependenciesMap(
-      final Map<String, DependencyEntity> npmDependenciesMap) {
-    NPM_DEPENDENCIES_MAP = Map.copyOf(npmDependenciesMap);
-    return NPM_DEPENDENCIES_MAP;
+  public static Map<String, DependencyEntity> setNodeDependenciesMap(
+      final Map<String, DependencyEntity> nodeDependenciesMap) {
+    NODE_DEPENDENCIES_MAP = Map.copyOf(nodeDependenciesMap);
+    return NODE_DEPENDENCIES_MAP;
   }
 
-  public static void resetNpmDependenciesMap() {
-    NPM_DEPENDENCIES_MAP = Collections.emptyMap();
+  public static void resetNodeDependenciesMap() {
+    NODE_DEPENDENCIES_MAP = Collections.emptyMap();
   }
 
   public static Map<String, DependencyEntity> getPythonPackagesMap() {

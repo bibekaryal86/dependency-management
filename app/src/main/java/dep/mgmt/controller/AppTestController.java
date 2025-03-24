@@ -4,7 +4,7 @@ import dep.mgmt.config.CacheConfig;
 import dep.mgmt.server.Endpoints;
 import dep.mgmt.service.GradleDependencyVersionService;
 import dep.mgmt.service.GradlePluginVersionService;
-import dep.mgmt.service.NpmDependencyVersionService;
+import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.service.PythonPackageVersionService;
 import dep.mgmt.util.ServerUtils;
 import io.netty.buffer.Unpooled;
@@ -25,13 +25,13 @@ public class AppTestController {
   private static final String TESTS_RESET_RESPONSE = "{\"reset\": \"successful\"}";
 
   private final PythonPackageVersionService pythonPackageVersionService;
-  private final NpmDependencyVersionService npmDependencyVersionService;
+  private final NodeDependencyVersionService nodeDependencyVersionService;
   private final GradlePluginVersionService gradlePluginVersionService;
   private final GradleDependencyVersionService gradleDependencyVersionService;
 
   public AppTestController() {
     this.pythonPackageVersionService = new PythonPackageVersionService();
-    this.npmDependencyVersionService = new NpmDependencyVersionService();
+    this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
   }
@@ -45,7 +45,7 @@ public class AppTestController {
       case Endpoints.APP_TESTS_RESET -> {
         // TODO check if update is going on, if update is going on - do not reset
         CacheConfig.resetPythonPackagesMap();
-        CacheConfig.resetNpmDependenciesMap();
+        CacheConfig.resetNodeDependenciesMap();
         CacheConfig.resetGradlePluginsMap();
         CacheConfig.resetGradleDependenciesMap();
         CacheConfig.resetAppData();
@@ -53,7 +53,7 @@ public class AppTestController {
         CompletableFuture.runAsync(
             () -> {
               pythonPackageVersionService.getPythonPackagesMap();
-              npmDependencyVersionService.getNpmDependenciesMap();
+              nodeDependencyVersionService.getNodeDependenciesMap();
               gradlePluginVersionService.getGradlePluginsMap();
               gradleDependencyVersionService.getGradleDependenciesMap();
             });

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.entity.DependencyEntity;
-import dep.mgmt.service.NpmDependencyVersionService;
+import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.util.ConstantUtils;
 import java.util.Iterator;
 import dep.mgmt.util.VersionUtils;
@@ -17,27 +17,27 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class UpdateNpmProject {
-  private static final Logger log = LoggerFactory.getLogger(UpdateNpmProject.class);
+public class UpdateNodeProject {
+  private static final Logger log = LoggerFactory.getLogger(UpdateNodeProject.class);
 
   private final AppDataLatestVersions latestVersions;
   private final AppDataRepository repository;
-  private final NpmDependencyVersionService npmDependencyVersionService;
+  private final NodeDependencyVersionService nodeDependencyVersionService;
   private final UpdateDockerFile updateDockerFile;
   private final UpdateGcpConfigs updateGcpConfigs;
   private final UpdateGithubWorkflows updateGithubWorkflows;
   private final Map<String, DependencyEntity> dependenciesMap;
 
-  public UpdateNpmProject(final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
+  public UpdateNodeProject(final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
 
-    this.npmDependencyVersionService = new NpmDependencyVersionService();
+    this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
     this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getNode());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
-    this.dependenciesMap = this.npmDependencyVersionService.getNpmDependenciesMap();
+    this.dependenciesMap = this.nodeDependencyVersionService.getNodeDependenciesMap();
   }
 
   public boolean execute() {
@@ -107,7 +107,7 @@ public class UpdateNpmProject {
 
         final DependencyEntity dependency = this.dependenciesMap.get(name);
         if (dependency == null) {
-          this.npmDependencyVersionService.insertNpmDependency(name, version);
+          this.nodeDependencyVersionService.insertNodeDependency(name, version);
         }
 
         String latestVersion = "";

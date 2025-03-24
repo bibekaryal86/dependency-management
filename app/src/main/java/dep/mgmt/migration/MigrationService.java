@@ -119,7 +119,11 @@ public class MigrationService {
   }
 
   private String getProcessSummaryUpdateType(final String updateTypeOld) {
-    return updateTypeOld.split("_")[0];
+    final String updateTypeNew = updateTypeOld.split("_")[0];
+    if (updateTypeNew.equals("NPM")) {
+      return "NODE";
+    }
+    return updateTypeNew;
   }
 
   private List<ProcessSummaryEntity.ProcessRepositoryEntity> getProcessedRepositories(

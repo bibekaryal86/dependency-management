@@ -69,7 +69,7 @@ public class ProcessSummaries implements Serializable {
     private final Integer gradlePluginsToUpdate;
     private final Integer gradleDependenciesToUpdate;
     private final Integer pythonPackagesToUpdate;
-    private final Integer npmDependenciesToUpdate;
+    private final Integer nodeDependenciesToUpdate;
     private final Integer totalPrCreatedCount;
     private final Integer totalPrCreateErrorsCount;
     private final Integer totalPrMergedCount;
@@ -83,7 +83,7 @@ public class ProcessSummaries implements Serializable {
         @JsonProperty("gradlePluginsToUpdate") final Integer gradlePluginsToUpdate,
         @JsonProperty("gradleDependenciesToUpdate") final Integer gradleDependenciesToUpdate,
         @JsonProperty("pythonPackagesToUpdate") final Integer pythonPackagesToUpdate,
-        @JsonProperty("npmDependenciesToUpdate") final Integer npmDependenciesToUpdate,
+        @JsonProperty("nodeDependenciesToUpdate") final Integer nodeDependenciesToUpdate,
         @JsonProperty("totalPrCreatedCount") final Integer totalPrCreatedCount,
         @JsonProperty("totalPrCreateErrorsCount") final Integer totalPrCreateErrorsCount,
         @JsonProperty("totalPrMergedCount") final Integer totalPrMergedCount,
@@ -94,7 +94,7 @@ public class ProcessSummaries implements Serializable {
       this.gradlePluginsToUpdate = gradlePluginsToUpdate;
       this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
       this.pythonPackagesToUpdate = pythonPackagesToUpdate;
-      this.npmDependenciesToUpdate = npmDependenciesToUpdate;
+      this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
       this.totalPrCreatedCount = totalPrCreatedCount;
       this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
       this.totalPrMergedCount = totalPrMergedCount;
@@ -122,8 +122,8 @@ public class ProcessSummaries implements Serializable {
       return pythonPackagesToUpdate;
     }
 
-    public Integer getNpmDependenciesToUpdate() {
-      return npmDependenciesToUpdate;
+    public Integer getNodeDependenciesToUpdate() {
+      return nodeDependenciesToUpdate;
     }
 
     public Integer getTotalPrCreatedCount() {
@@ -160,8 +160,8 @@ public class ProcessSummaries implements Serializable {
           + gradleDependenciesToUpdate
           + ", pythonPackagesToUpdate="
           + pythonPackagesToUpdate
-          + ", npmDependenciesToUpdate="
-          + npmDependenciesToUpdate
+          + ", nodeDependenciesToUpdate="
+          + nodeDependenciesToUpdate
           + ", totalPrCreatedCount="
           + totalPrCreatedCount
           + ", totalPrCreateErrorsCount="

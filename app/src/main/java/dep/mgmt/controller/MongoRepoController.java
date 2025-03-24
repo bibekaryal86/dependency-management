@@ -10,7 +10,7 @@ import dep.mgmt.server.Endpoints;
 import dep.mgmt.service.GradleDependencyVersionService;
 import dep.mgmt.service.GradlePluginVersionService;
 import dep.mgmt.service.LatestVersionService;
-import dep.mgmt.service.NpmDependencyVersionService;
+import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.service.PythonPackageVersionService;
 import dep.mgmt.util.ConvertUtils;
@@ -29,7 +29,7 @@ public class MongoRepoController {
 
   private final GradlePluginVersionService gradlePluginVersionService;
   private final GradleDependencyVersionService gradleDependencyVersionService;
-  private final NpmDependencyVersionService npmDependencyVersionService;
+  private final NodeDependencyVersionService nodeDependencyVersionService;
   private final PythonPackageVersionService pythonPackageVersionService;
   private final LatestVersionService latestVersionService;
   private final ProcessSummaryService processSummaryService;
@@ -37,7 +37,7 @@ public class MongoRepoController {
   public MongoRepoController() {
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
-    this.npmDependencyVersionService = new NpmDependencyVersionService();
+    this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.latestVersionService = new LatestVersionService();
     this.processSummaryService = new ProcessSummaryService();
@@ -56,8 +56,8 @@ public class MongoRepoController {
         case Endpoints.MONGO_GRADLE_DEPENDENCY:
           ServerUtils.sendResponse(ctx, getGradleDependencies(), HttpResponseStatus.OK);
           break;
-        case Endpoints.MONGO_NPM_DEPENDENCY:
-          ServerUtils.sendResponse(ctx, getNpmDependencies(), HttpResponseStatus.OK);
+        case Endpoints.MONGO_NODE_DEPENDENCY:
+          ServerUtils.sendResponse(ctx, getNodeDependencies(), HttpResponseStatus.OK);
           break;
         case Endpoints.MONGO_PYTHON_PACKAGE:
           ServerUtils.sendResponse(ctx, getPythonPackages(), HttpResponseStatus.OK);
@@ -109,7 +109,7 @@ public class MongoRepoController {
           saveGradleDependency(dependencyRequest);
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
-        case Endpoints.MONGO_NPM_DEPENDENCY:
+        case Endpoints.MONGO_NODE_DEPENDENCY:
           saveNpmDependency(dependencyRequest);
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
@@ -171,24 +171,24 @@ public class MongoRepoController {
     }
   }
 
-  private DependencyResponse getNpmDependencies() {
-    final List<DependencyEntity> npmDependencyEntities =
-        npmDependencyVersionService.getNpmDependenciesMap().values().stream().toList();
-    final List<Dependency> npmDependencies =
-        ConvertUtils.convertDependencyEntities(npmDependencyEntities);
-    return new DependencyResponse(npmDependencies);
+  private DependencyResponse getNodeDependencies() {
+    final List<DependencyEntity> nodeDependencyEntities =
+        nodeDependencyVersionService.getNodeDependenciesMap().values().stream().toList();
+    final List<Dependency> nodeDependencies =
+        ConvertUtils.convertDependencyEntities(nodeDependencyEntities);
+    return new DependencyResponse(nodeDependencies);
   }
 
   private void saveNpmDependency(final Dependency dependency) {
     DependencyEntity dependencyEntity =
-        npmDependencyVersionService.getNpmDependenciesMap().get(dependency.getName());
+        nodeDependencyVersionService.getNodeDependenciesMap().get(dependency.getName());
     if (dependencyEntity == null) {
-      npmDependencyVersionService.insertNpmDependency(
+      nodeDependencyVersionService.insertNodeDependency(
           dependency.getName(), dependency.getVersion());
     } else {
       dependencyEntity.setVersion(dependency.getVersion());
       dependencyEntity.setSkipVersion(dependency.getSkipVersion());
-      npmDependencyVersionService.updateNpmDependency(dependencyEntity);
+      nodeDependencyVersionService.updateNodeDependency(dependencyEntity);
     }
   }
 
@@ -237,7 +237,7 @@ public class MongoRepoController {
     return List.of(
             RequestParams.UpdateType.ALL.name(),
             RequestParams.UpdateType.GRADLE.name(),
-            RequestParams.UpdateType.NPM.name(),
+            RequestParams.UpdateType.NODE.name(),
             RequestParams.UpdateType.PYTHON.name())
         .contains(updateType);
   }
@@ -253,7 +253,7 @@ public class MongoRepoController {
   private void updateDependenciesInMongo() {
     CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
     CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
-    CompletableFuture.runAsync(npmDependencyVersionService::updateNpmDependencies);
+    CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
     CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
   }
 }

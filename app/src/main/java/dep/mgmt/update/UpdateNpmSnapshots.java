@@ -20,7 +20,7 @@ public class UpdateNpmSnapshots {
   public UpdateNpmSnapshots(final AppData appData, final String branchName) {
     this.repositories =
         appData.getRepositories().stream()
-            .filter(repository -> repository.getType().equals(RequestParams.UpdateType.NPM))
+            .filter(repository -> repository.getType().equals(RequestParams.UpdateType.NODE))
             .toList();
     this.scriptFile =
         appData.getScriptFiles().stream()

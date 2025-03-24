@@ -14,7 +14,6 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPluginsToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoDependenciesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoPackagesToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoNpmSkipsActive = new AtomicInteger(0);
   private static Set<String> repositoriesWithPrError = new HashSet<>();
   private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
       processedRepositories = new ConcurrentHashMap<>();
@@ -35,10 +34,6 @@ public class ProcessUtils {
     mongoPackagesToUpdate.set(count);
   }
 
-  public static void setMongoNpmSkipsActive(int count) {
-    mongoNpmSkipsActive.set(count);
-  }
-
   public static boolean getErrorsOrExceptions() {
     return errorsOrExceptions.get();
   }
@@ -53,10 +48,6 @@ public class ProcessUtils {
 
   public static int getMongoPackagesToUpdate() {
     return mongoPackagesToUpdate.get();
-  }
-
-  public static int getMongoNpmSkipsActive() {
-    return mongoNpmSkipsActive.get();
   }
 
   public static synchronized void addRepositoriesWithPrError(final String repoName) {
@@ -111,7 +102,6 @@ public class ProcessUtils {
     setMongoPluginsToUpdate(0);
     setMongoDependenciesToUpdate(0);
     setMongoPackagesToUpdate(0);
-    setMongoNpmSkipsActive(0);
     setErrorsOrExceptions(false);
   }
 }

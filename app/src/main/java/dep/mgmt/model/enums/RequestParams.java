@@ -4,7 +4,7 @@ public class RequestParams {
   public enum UpdateType {
     ALL,
     GRADLE,
-    NPM,
+    NODE,
     PYTHON,
     PULL_REQUEST,
     PULL,
