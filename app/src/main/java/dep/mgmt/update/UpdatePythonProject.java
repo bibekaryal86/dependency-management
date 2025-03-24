@@ -37,8 +37,7 @@ public class UpdatePythonProject {
 
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs =
-        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
+    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getPython());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.packagesMap = this.pythonPackageVersionService.getPythonPackagesMap();

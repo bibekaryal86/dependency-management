@@ -89,6 +89,10 @@ public class ConstantUtils {
   public static final String BUILD_GRADLE = "build.gradle";
   public static final String PYPROJECT_TOML = "pyproject.toml";
   public static final String PACKAGE_JSON = "package.json";
+  public static final String DEPENDENCIES = "dependencies";
+  public static final String DEPENDENCIES_DEV = "devDependencies";
+  public static final String DEPENDENCIES_OPTIONAL = "optionalDependencies";
+  public static final String ENGINES = "engines";
   public static final String BRANCH_UPDATE_DEPENDENCIES = "update_dependencies_%s";
 
   // http requests
