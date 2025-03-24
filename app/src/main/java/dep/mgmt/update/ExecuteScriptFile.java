@@ -14,8 +14,9 @@ public class ExecuteScriptFile {
   private static final Logger log = LoggerFactory.getLogger(ExecuteScriptFile.class);
   private final String scriptPath;
   private final List<String> arguments;
+  private final boolean isRunAsync;
 
-  public ExecuteScriptFile(final String scriptFileName, final List<String> arguments) {
+  public ExecuteScriptFile(final String scriptFileName, final List<String> arguments, final boolean isRunAsync) {
     this.arguments = arguments;
     this.scriptPath =
         ConstantUtils.JAVA_SYSTEM_TMPDIR
@@ -23,16 +24,37 @@ public class ExecuteScriptFile {
             + ConstantUtils.SCRIPTS_DIRECTORY
             + ConstantUtils.PATH_DELIMITER
             + scriptFileName;
+    this.isRunAsync = isRunAsync;
   }
 
   public String executeScript() {
+    if (isRunAsync) {
+      runAsync();
+      return "Script execution started asynchronously.";
+    } else {
+      return runSync();
+    }
+  }
+
+  private void runAsync() {
+    new Thread(() -> {
+      try {
+        Process process = startProcess();
+        processOutput(process);
+      } catch (Exception ex) {
+        log.error("Error in Execute Script (async): ", ex);
+      }
+    }).start();
+  }
+
+  private String runSync() {
     try {
       Process process = startProcess();
       return processOutput(process);
     } catch (Exception ex) {
       log.error("Error in Execute Script: ", ex);
+      return null;
     }
-    return null;
   }
 
   private Process startProcess() throws IOException, InterruptedException {
@@ -41,14 +63,20 @@ public class ExecuteScriptFile {
       command.add(ConstantUtils.COMMAND_PATH);
       command.add(this.scriptPath);
       command.addAll(this.arguments);
-      Process process = new ProcessBuilder(command).start();
-      process.waitFor();
+
+      ProcessBuilder processBuilder = new ProcessBuilder(command);
+      Process process = processBuilder.start();
+
+      if (!isRunAsync) {
+        process.waitFor();
+      }
+
       return process;
     } catch (IOException ex) {
-      throw new IOException(ex.getCause().getMessage());
+      throw new IOException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
-      throw new InterruptedException(ex.getCause().getMessage());
+      throw new InterruptedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
     }
   }
 

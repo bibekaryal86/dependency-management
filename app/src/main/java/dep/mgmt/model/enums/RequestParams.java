@@ -10,7 +10,7 @@ public class RequestParams {
     PULL,
     RESET,
     MERGE,
-    BRANCH,
+    DELETE,
     SPOTLESS,
     SNAPSHOT
   }

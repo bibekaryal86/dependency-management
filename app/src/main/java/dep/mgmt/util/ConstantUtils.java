@@ -93,6 +93,14 @@ public class ConstantUtils {
   // http requests
   public static final AttributeKey<String> REQUEST_ID = AttributeKey.valueOf("REQUEST_ID");
 
+  // SCRIPT FILE NAMES
+  public static final String SCRIPT_DELETE = "DELETE_UPDATE_DEPS";
+  public static final String SCRIPT_SPOTLESS = "GRADLE_SPOTLESS";
+  public static final String SCRIPT_SNAPSHOT = "NPM_SNAPSHOT";
+  public static final String SCRIPT_RESET_PULL = "REPO_PULL_RESET";
+  public static final String SCRIPT_UPDATE_INIT = "UPDATE_DEPS_INIT_EXIT";
+  public static final String SCRIPT_UPDATE_EXEC = "UPDATE_DEPS_EXEC";
+
   // UPDATES
   public static final int CLEANUP_BEFORE_DAYS = 45;
   public static final int SCHEDULER_TIMEOUT = 5;
