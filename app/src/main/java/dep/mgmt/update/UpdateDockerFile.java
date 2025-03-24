@@ -27,7 +27,7 @@ public class UpdateDockerFile {
     dockerfilePath = this.repository.getRepoPath().resolve("Dockerfile");
   }
 
-  public boolean executeDockerfileUpdate() {
+  public boolean execute() {
     if (Files.exists(this.dockerfilePath)) {
       List<String> dockerfileData = readDockerfile();
       dockerfileData = updateDockerfile(dockerfileData);

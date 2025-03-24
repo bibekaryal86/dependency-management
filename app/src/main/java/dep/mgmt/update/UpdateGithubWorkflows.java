@@ -32,7 +32,7 @@ public class UpdateGithubWorkflows {
     githubWorkflowsFolderPath = this.repository.getRepoPath().resolve(".github");
   }
 
-  public boolean executeGithubWorkflowsUpdate() {
+  public boolean execute() {
     boolean isUpdated = false;
     if (Files.exists(this.githubWorkflowsFolderPath)) {
       List<Path> githubWorkflowPaths = findGithubWorkflows();

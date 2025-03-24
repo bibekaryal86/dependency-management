@@ -49,21 +49,19 @@ public class UpdateGradleProject {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs =
-        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
+    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.dependenciesMap = this.gradleDependencyVersionService.getGradleDependenciesMap();
     this.pluginsMap = this.gradlePluginVersionService.getGradlePluginsMap();
   }
 
-  private boolean executeGradleUpdate() {
+  private boolean execute() {
     final boolean isBuildGradleUpdated = executeBuildGradleUpdate();
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
-    final boolean isGcpConfigUpdated = this.updateGcpConfigs.executeGcpConfigsUpdate();
-    final boolean isDockerfileUpdated = this.updateDockerFile.executeDockerfileUpdate();
-    final boolean isGithubWorkflowsUpdated =
-        this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
+    final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
+    final boolean isDockerfileUpdated = this.updateDockerFile.execute();
+    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.execute();
 
     return isBuildGradleUpdated
         || isGradleWrapperUpdated

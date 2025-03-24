@@ -29,7 +29,7 @@ public class UpdateGcpConfigs {
             : this.repository.getRepoPath().resolve("gcp/app.yaml");
   }
 
-  public boolean executeGcpConfigsUpdate() {
+  public boolean execute() {
     if (Files.exists(this.yamlFilePath)) {
       List<String> yamlData = readGcpAppYaml();
       yamlData = updateGcpAppYaml(yamlData);

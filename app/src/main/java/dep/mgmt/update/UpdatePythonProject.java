@@ -44,13 +44,12 @@ public class UpdatePythonProject {
     this.packagesMap = this.pythonPackageVersionService.getPythonPackagesMap();
   }
 
-  private boolean executePythonUpdate() {
+  private boolean execute() {
     final boolean isProjectTomlUpdated = executePyProjectTomlUpdate();
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
-    final boolean isGcpConfigUpdated = this.updateGcpConfigs.executeGcpConfigsUpdate();
-    final boolean isDockerfileUpdated = this.updateDockerFile.executeDockerfileUpdate();
-    final boolean isGithubWorkflowsUpdated =
-        this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
+    final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
+    final boolean isDockerfileUpdated = this.updateDockerFile.execute();
+    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.execute();
 
     return isProjectTomlUpdated
         || isRequirementsTxtUpdated
