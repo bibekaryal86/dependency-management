@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.entity.DependencyEntity;
-import dep.mgmt.model.web.PythonPackageSearchResponse;
+import dep.mgmt.model.web.NpmRegistryResponse;
 import dep.mgmt.repository.NpmDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.ProcessUtils;
@@ -28,19 +28,24 @@ public class NpmDependencyVersionService {
     this.npmDependencyRepository = new NpmDependencyRepository(MongoDbConfig.getDatabase());
   }
 
-  // TODO
   public String getNpmDependencyVersion(final String name) {
-    return null;
+    NpmRegistryResponse npmRegistryResponse = getNpmDependencySearchResponse(name);
+
+    if (npmRegistryResponse == null
+        || npmRegistryResponse.getDistTags() == null
+        || CommonUtilities.isEmpty(npmRegistryResponse.getDistTags().getLatest())) {
+      return null;
+    }
+    return npmRegistryResponse.getDistTags().getLatest();
   }
 
-  // TODO
-  private PythonPackageSearchResponse getNpmDependencySearchResponse(final String name) {
+  private NpmRegistryResponse getNpmDependencySearchResponse(final String name) {
     try {
-      final String url = String.format(ConstantUtils.PYPI_SEARCH_ENDPOINT, name);
+      final String url = String.format(ConstantUtils.NPM_REGISTRY_ENDPOINT, name);
       return Connector.sendRequest(
               url,
               Enums.HttpMethod.GET,
-              new TypeReference<PythonPackageSearchResponse>() {},
+              new TypeReference<NpmRegistryResponse>() {},
               null,
               null,
               null)

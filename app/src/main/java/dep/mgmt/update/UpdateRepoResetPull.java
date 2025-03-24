@@ -3,11 +3,10 @@ package dep.mgmt.update;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.util.ConstantUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateRepoResetPull {
   private static final Logger log = LoggerFactory.getLogger(UpdateRepoResetPull.class);
@@ -23,8 +22,7 @@ public class UpdateRepoResetPull {
         appData.getScriptFiles().stream()
             .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_RESET_PULL))
             .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("Github Pull Reset Script Not Found..."));
+            .orElseThrow(() -> new IllegalStateException("Github Pull Reset Script Not Found..."));
     this.isPull = isPull;
     this.isReset = isReset;
   }
