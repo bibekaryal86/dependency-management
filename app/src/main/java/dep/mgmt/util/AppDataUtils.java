@@ -7,6 +7,7 @@ import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.enums.RequestParams;
+import dep.mgmt.service.LatestVersionService;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -262,9 +263,8 @@ public class AppDataUtils {
     }
   }
 
-  // TODO latest versions service
   private static AppDataLatestVersions getLatestVersions() {
-    return null;
+    return new LatestVersionService().getLatestVersion();
   }
 
   private static void validateLatestVersion(final Object latestVersion) {
