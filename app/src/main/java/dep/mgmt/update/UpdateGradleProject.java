@@ -56,7 +56,7 @@ public class UpdateGradleProject {
     this.pluginsMap = this.gradlePluginVersionService.getGradlePluginsMap();
   }
 
-  private boolean execute() {
+  public boolean execute() {
     final boolean isBuildGradleUpdated = executeBuildGradleUpdate();
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
     final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();

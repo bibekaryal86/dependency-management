@@ -44,7 +44,7 @@ public class UpdatePythonProject {
     this.packagesMap = this.pythonPackageVersionService.getPythonPackagesMap();
   }
 
-  private boolean execute() {
+  public boolean execute() {
     final boolean isProjectTomlUpdated = executePyProjectTomlUpdate();
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
     final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
