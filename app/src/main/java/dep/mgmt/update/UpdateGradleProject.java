@@ -9,9 +9,6 @@ import dep.mgmt.service.GradlePluginVersionService;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,6 +24,8 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateGradleProject {
 
@@ -42,14 +41,16 @@ public class UpdateGradleProject {
   private final Map<String, DependencyEntity> pluginsMap;
   private final Map<String, DependencyEntity> dependenciesMap;
 
-  public UpdateGradleProject(final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
+  public UpdateGradleProject(
+      final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
 
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
+    this.updateGcpConfigs =
+        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.dependenciesMap = this.gradleDependencyVersionService.getGradleDependenciesMap();
@@ -61,9 +62,14 @@ public class UpdateGradleProject {
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
     final boolean isGcpConfigUpdated = this.updateGcpConfigs.executeGcpConfigsUpdate();
     final boolean isDockerfileUpdated = this.updateDockerFile.executeDockerfileUpdate();
-    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
+    final boolean isGithubWorkflowsUpdated =
+        this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
 
-    return isBuildGradleUpdated || isGradleWrapperUpdated || isGcpConfigUpdated || isDockerfileUpdated || isGithubWorkflowsUpdated;
+    return isBuildGradleUpdated
+        || isGradleWrapperUpdated
+        || isGcpConfigUpdated
+        || isDockerfileUpdated
+        || isGithubWorkflowsUpdated;
   }
 
   private boolean writeToFile(final Path path, final List<String> content) {
@@ -99,7 +105,8 @@ public class UpdateGradleProject {
           if (CommonUtilities.isEmpty(buildGradleContent)) {
             log.debug("Build Gradle Configs not updated: [ {} ]", this.repository.getRepoPath());
           } else {
-            boolean isWriteToFile = writeBuildGradleToFile(buildGradleConfigs.getBuildGradlePath(), buildGradleContent);
+            boolean isWriteToFile =
+                writeBuildGradleToFile(buildGradleConfigs.getBuildGradlePath(), buildGradleContent);
 
             if (isWriteToFile) {
               isBuildGradleUpdated = true;
@@ -118,7 +125,8 @@ public class UpdateGradleProject {
     return isBuildGradleUpdated;
   }
 
-  private boolean writeBuildGradleToFile(final Path buildGradlePath, final List<String> buildGradleContent) {
+  private boolean writeBuildGradleToFile(
+      final Path buildGradlePath, final List<String> buildGradleContent) {
     log.debug("Writing to build.gradle file: [ {} ]", buildGradlePath);
     return writeToFile(buildGradlePath, buildGradleContent);
   }
@@ -145,12 +153,16 @@ public class UpdateGradleProject {
       if (dependenciesInBuildscriptBlock > 0) {
         dependenciesBuildScript = getDependenciesBlock(allLines, dependenciesInBuildscriptBlock);
       } else {
-        dependenciesBuildScript = new BuildGradleConfigs.GradleConfigBlock(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        dependenciesBuildScript =
+            new BuildGradleConfigs.GradleConfigBlock(
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
       }
 
-      return new BuildGradleConfigs(buildGradlePath, allLines, plugins, List.of(dependencies, dependenciesBuildScript));
+      return new BuildGradleConfigs(
+          buildGradlePath, allLines, plugins, List.of(dependencies, dependenciesBuildScript));
     } catch (IOException e) {
-      log.error("Error reading build.gradle: [ {} ] [ {} ]", this.repository.getRepoName(), gradleModule);
+      log.error(
+          "Error reading build.gradle: [ {} ] [ {} ]", this.repository.getRepoName(), gradleModule);
     }
 
     return null;
@@ -189,13 +201,16 @@ public class UpdateGradleProject {
         } else {
           version = pluginArray[3].replace("\"", "");
         }
-        plugins.add(new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(plugin, group, null, version, false));
+        plugins.add(
+            new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(
+                plugin, group, null, version, false));
       }
     } else {
       log.debug("No plugins in the project...");
     }
 
-    return new BuildGradleConfigs.GradleConfigBlock(Collections.emptyList(), Collections.emptyList(), plugins);
+    return new BuildGradleConfigs.GradleConfigBlock(
+        Collections.emptyList(), Collections.emptyList(), plugins);
   }
 
   private int getDependenciesBlockBuildscriptBeginPosition(final List<String> allLines) {
@@ -220,8 +235,10 @@ public class UpdateGradleProject {
 
   private BuildGradleConfigs.GradleConfigBlock getDependenciesBlock(
       final List<String> allLines, final int buildscriptDependenciesBeginPosition) {
-    List<BuildGradleConfigs.GradleConfigBlock.GradleDefinition> gradleDefinitions = new ArrayList<>();
-    List<BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin> gradleDependencies = new ArrayList<>();
+    List<BuildGradleConfigs.GradleConfigBlock.GradleDefinition> gradleDefinitions =
+        new ArrayList<>();
+    List<BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin> gradleDependencies =
+        new ArrayList<>();
 
     int dependenciesBeginPosition;
     if (buildscriptDependenciesBeginPosition > 0) {
@@ -251,12 +268,14 @@ public class UpdateGradleProject {
             dependency = dependency.replace("(", " ").replace(")", " ");
           }
 
-          BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency = getGradleDependency(dependency, original);
+          BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency =
+              getGradleDependency(dependency, original);
           if (gradleDependency != null) {
             gradleDependencies.add(gradleDependency);
           }
         } else if (isDefinitionDeclaration(leftTrim(dependency))) {
-          BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition = getGradleDefinition(dependency);
+          BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition =
+              getGradleDefinition(dependency);
           if (gradleDefinition != null) {
             gradleDefinitions.add(gradleDefinition);
           }
@@ -268,7 +287,8 @@ public class UpdateGradleProject {
           buildscriptDependenciesBeginPosition);
     }
 
-    return new BuildGradleConfigs.GradleConfigBlock(gradleDefinitions, gradleDependencies, Collections.emptyList());
+    return new BuildGradleConfigs.GradleConfigBlock(
+        gradleDefinitions, gradleDependencies, Collections.emptyList());
   }
 
   private boolean isDependencyDeclaration(final String dependency) {
@@ -290,7 +310,8 @@ public class UpdateGradleProject {
     return dependency.startsWith("def");
   }
 
-  private BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin getGradleDependency(final String dependency, final String original) {
+  private BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin getGradleDependency(
+      final String dependency, final String original) {
     // Get between `'` or `"`
     Pattern pattern;
     if (dependency.contains("'") && !dependency.contains("\"")) {
@@ -338,13 +359,15 @@ public class UpdateGradleProject {
     }
 
     if (dependencyArray.length == 3) {
-      return new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(original, dependencyArray[0], dependencyArray[1], dependencyArray[2], Boolean.FALSE);
+      return new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(
+          original, dependencyArray[0], dependencyArray[1], dependencyArray[2], Boolean.FALSE);
     }
 
     return null;
   }
 
-  private BuildGradleConfigs.GradleConfigBlock.GradleDefinition getGradleDefinition(final String dependency) {
+  private BuildGradleConfigs.GradleConfigBlock.GradleDefinition getGradleDefinition(
+      final String dependency) {
     Pattern pattern = Pattern.compile(String.format("(?<=\\%s)(.*?)(?=\\%s)", "\"", "\""));
     Matcher matcher = pattern.matcher(dependency);
 
@@ -357,7 +380,8 @@ public class UpdateGradleProject {
         String defName = matcher.group();
         String[] defNameArray = defName.split(" ");
         if (defNameArray.length == 2) {
-          return new BuildGradleConfigs.GradleConfigBlock.GradleDefinition(dependency, defNameArray[1], value);
+          return new BuildGradleConfigs.GradleConfigBlock.GradleDefinition(
+              dependency, defNameArray[1], value);
         }
       }
     }
@@ -426,7 +450,8 @@ public class UpdateGradleProject {
     final BuildGradleConfigs.GradleConfigBlock pluginsBlock = buildGradleConfigs.getPlugins();
     modifyPluginsBlock(pluginsBlock, originals);
 
-    final List<BuildGradleConfigs.GradleConfigBlock> dependenciesBlock = buildGradleConfigs.getDependencies();
+    final List<BuildGradleConfigs.GradleConfigBlock> dependenciesBlock =
+        buildGradleConfigs.getDependencies();
     for (BuildGradleConfigs.GradleConfigBlock dependencyBlock : dependenciesBlock) {
       modifyDependenciesBlock(dependencyBlock, originals);
     }
@@ -441,10 +466,11 @@ public class UpdateGradleProject {
   }
 
   private void modifyPluginsBlock(
-          final BuildGradleConfigs.GradleConfigBlock pluginsBlock, final List<String> originals) {
+      final BuildGradleConfigs.GradleConfigBlock pluginsBlock, final List<String> originals) {
     List<String> updatedPlugins = new ArrayList<>();
     if (pluginsBlock != null && !pluginsBlock.getPlugins().isEmpty()) {
-      for (final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradlePlugin : pluginsBlock.getPlugins()) {
+      for (final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradlePlugin :
+          pluginsBlock.getPlugins()) {
         if (gradlePlugin.getVersion().startsWith("$")) {
           // this updates definition
           String definitionName = gradlePlugin.getVersion().replace("$", "");
@@ -458,10 +484,12 @@ public class UpdateGradleProject {
                   .filter(gradleDefinition -> gradleDefinition.getName().equals(definitionName))
                   .findFirst();
           if (gradleDefinitionOptional.isPresent()) {
-            BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition = gradleDefinitionOptional.get();
+            BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition =
+                gradleDefinitionOptional.get();
             String version = gradleDefinition.getValue();
             BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin modifiedGradlePlugin =
-                    new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(null, gradlePlugin.getGroup(), null, version, Boolean.FALSE);
+                new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(
+                    null, gradlePlugin.getGroup(), null, version, Boolean.FALSE);
 
             String updatedOriginal = modifyPlugin(modifiedGradlePlugin, gradleDefinition);
 
@@ -487,10 +515,11 @@ public class UpdateGradleProject {
   }
 
   private void modifyDependenciesBlock(
-          final BuildGradleConfigs.GradleConfigBlock dependenciesBlock, final List<String> originals) {
+      final BuildGradleConfigs.GradleConfigBlock dependenciesBlock, final List<String> originals) {
     List<String> updatedDefinitions = new ArrayList<>();
     if (dependenciesBlock != null && !dependenciesBlock.getDependencies().isEmpty()) {
-      for (final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency : dependenciesBlock.getDependencies()) {
+      for (final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency :
+          dependenciesBlock.getDependencies()) {
         if (gradleDependency.getVersion().startsWith("$")) {
           // this updates definition
           String definitionName = gradleDependency.getVersion().replace("$", "");
@@ -504,10 +533,16 @@ public class UpdateGradleProject {
                   .filter(gradleDefinition -> gradleDefinition.getName().equals(definitionName))
                   .findFirst();
           if (gradleDefinitionOptional.isPresent()) {
-            BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition = gradleDefinitionOptional.get();
+            BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition =
+                gradleDefinitionOptional.get();
             String version = gradleDefinition.getValue();
             BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin modifiedGradleDependency =
-                    new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(null, gradleDependency.getGroup(), gradleDependency.getArtifact(), version, Boolean.FALSE);
+                new BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin(
+                    null,
+                    gradleDependency.getGroup(),
+                    gradleDependency.getArtifact(),
+                    version,
+                    Boolean.FALSE);
 
             String updatedOriginal = modifyDependency(modifiedGradleDependency, gradleDefinition);
 
@@ -533,7 +568,8 @@ public class UpdateGradleProject {
   }
 
   private String modifyPlugin(
-          final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradlePlugin, final BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition) {
+      final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradlePlugin,
+      final BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition) {
     String group = gradlePlugin.getGroup();
     DependencyEntity plugin = this.pluginsMap.get(group);
 
@@ -558,7 +594,8 @@ public class UpdateGradleProject {
   }
 
   private String modifyDependency(
-          final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency, final BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition) {
+      final BuildGradleConfigs.GradleConfigBlock.GradleDependencyPlugin gradleDependency,
+      final BuildGradleConfigs.GradleConfigBlock.GradleDefinition gradleDefinition) {
     String mavenId = gradleDependency.getGroup() + ":" + gradleDependency.getArtifact();
     DependencyEntity dependency = this.dependenciesMap.get(mavenId);
 
@@ -566,7 +603,8 @@ public class UpdateGradleProject {
       // It is likely dependency information is not available in the local repository
       log.info("Dependency information missing in local repo: [ {} ]", mavenId);
       // Save to mongo repository
-      this.gradleDependencyVersionService.insertGradleDependency(mavenId, gradleDependency.getVersion());
+      this.gradleDependencyVersionService.insertGradleDependency(
+          mavenId, gradleDependency.getVersion());
     }
 
     String latestVersion = "";
@@ -589,7 +627,8 @@ public class UpdateGradleProject {
 
     if (currentJavaVersionMajor.equals(latestJavaVersionMajor)) {
       return;
-    } else if (CommonUtilities.parseIntNoEx(currentJavaVersionMajor) >= CommonUtilities.parseIntNoEx(latestJavaVersionMajor)) {
+    } else if (CommonUtilities.parseIntNoEx(currentJavaVersionMajor)
+        >= CommonUtilities.parseIntNoEx(latestJavaVersionMajor)) {
       return;
     }
 
@@ -643,7 +682,9 @@ public class UpdateGradleProject {
       return false;
     }
 
-    Path wrapperPath = Path.of(repository.getRepoPath().toString().concat(ConstantUtils.GRADLE_WRAPPER_PROPERTIES));
+    Path wrapperPath =
+        Path.of(
+            repository.getRepoPath().toString().concat(ConstantUtils.GRADLE_WRAPPER_PROPERTIES));
     List<String> gradleWrapperContent = updateGradleWrapperProperties(wrapperPath);
 
     boolean isWriteToFile = writeGradleWrapperPropertiesToFile(wrapperPath, gradleWrapperContent);

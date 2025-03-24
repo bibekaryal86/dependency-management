@@ -4,15 +4,14 @@ import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateGcpConfigs {
   private static final Logger log = LoggerFactory.getLogger(UpdateGcpConfigs.class);
@@ -97,7 +96,8 @@ public class UpdateGcpConfigs {
       Files.write(this.yamlFilePath, yamlData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Writing Updated GCP App Yaml of repository: [{}]", this.repository.getRepoName());
+      log.error(
+          "Error Writing Updated GCP App Yaml of repository: [{}]", this.repository.getRepoName());
       return false;
     }
   }

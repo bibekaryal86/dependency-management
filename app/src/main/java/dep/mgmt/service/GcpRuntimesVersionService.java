@@ -19,7 +19,8 @@ public class GcpRuntimesVersionService {
   private static final Logger log = LoggerFactory.getLogger(GcpRuntimesVersionService.class);
 
   public Map<String, String> getGcpRuntimesVersions() {
-    final List<String> validKeys = List.of(ConstantUtils.JAVA_NAME, ConstantUtils.NODEJS_NAME, ConstantUtils.PYTHON_NAME);
+    final List<String> validKeys =
+        List.of(ConstantUtils.JAVA_NAME, ConstantUtils.NODEJS_NAME, ConstantUtils.PYTHON_NAME);
     Map<String, String> latestRuntimesMap = new HashMap<>();
 
     final Document document = getGcpRuntimeSupportSchedule();

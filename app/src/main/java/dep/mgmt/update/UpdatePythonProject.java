@@ -6,9 +6,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.service.PythonPackageVersionService;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.VersionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdatePythonProject {
   private static final Logger log = LoggerFactory.getLogger(UpdatePythonProject.class);
@@ -32,14 +31,14 @@ public class UpdatePythonProject {
   private final Map<String, DependencyEntity> packagesMap;
 
   public UpdatePythonProject(
-      final AppDataLatestVersions latestVersions,
-      final AppDataRepository repository) {
+      final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
 
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
+    this.updateGcpConfigs =
+        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.packagesMap = this.pythonPackageVersionService.getPythonPackagesMap();
@@ -50,9 +49,14 @@ public class UpdatePythonProject {
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
     final boolean isGcpConfigUpdated = this.updateGcpConfigs.executeGcpConfigsUpdate();
     final boolean isDockerfileUpdated = this.updateDockerFile.executeDockerfileUpdate();
-    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
+    final boolean isGithubWorkflowsUpdated =
+        this.updateGithubWorkflows.executeGithubWorkflowsUpdate();
 
-    return isProjectTomlUpdated || isRequirementsTxtUpdated || isGcpConfigUpdated || isDockerfileUpdated || isGithubWorkflowsUpdated;
+    return isProjectTomlUpdated
+        || isRequirementsTxtUpdated
+        || isGcpConfigUpdated
+        || isDockerfileUpdated
+        || isGithubWorkflowsUpdated;
   }
 
   private List<String> readFromFile(final Path path) {
@@ -94,14 +98,16 @@ public class UpdatePythonProject {
     List<String> requirementsTxtContent = readFromFile(requirementsTxtPath);
 
     if (requirementsTxtContent.isEmpty()) {
-      log.error("[ {} ] content is empty: in [ {} ]", requirementsTxt, this.repository.getRepoName());
+      log.error(
+          "[ {} ] content is empty: in [ {} ]", requirementsTxt, this.repository.getRepoName());
     } else {
       return modifyRequirementsTxt(requirementsTxtPath, requirementsTxtContent);
     }
     return isUpdated;
   }
 
-  private boolean modifyRequirementsTxt(final Path requirementsTxtPath, final List<String> requirementsTxtContent) {
+  private boolean modifyRequirementsTxt(
+      final Path requirementsTxtPath, final List<String> requirementsTxtContent) {
     boolean isUpdated = false;
     List<String> updatedRequirementsTxtContent = new ArrayList<>();
 
@@ -160,7 +166,13 @@ public class UpdatePythonProject {
    */
 
   private boolean executePyProjectTomlUpdate() {
-    Path pyProjectTomlPath = Path.of(this.repository.getRepoPath().toString().concat(ConstantUtils.PATH_DELIMITER).concat(ConstantUtils.PYPROJECT_TOML));
+    Path pyProjectTomlPath =
+        Path.of(
+            this.repository
+                .getRepoPath()
+                .toString()
+                .concat(ConstantUtils.PATH_DELIMITER)
+                .concat(ConstantUtils.PYPROJECT_TOML));
     List<String> pyProjectContent = readFromFile(pyProjectTomlPath);
 
     if (pyProjectContent.isEmpty()) {
@@ -172,7 +184,8 @@ public class UpdatePythonProject {
     return false;
   }
 
-  private boolean modifyPyProjectToml(final Path pyProjectTomlPath, final List<String> pyProjectContent) {
+  private boolean modifyPyProjectToml(
+      final Path pyProjectTomlPath, final List<String> pyProjectContent) {
     boolean isUpdated = false;
 
     List<String> updatedPyProjectContent = new ArrayList<>();
@@ -235,8 +248,7 @@ public class UpdatePythonProject {
     final String currentVersion = line.replaceAll("[^\\d.]", "").trim();
     final String latestVersion =
         VersionUtils.getVersionMajorMinor(
-            this.latestVersions.getLatestVersionLanguages().getPython().getVersionFull(),
-            true);
+            this.latestVersions.getLatestVersionLanguages().getPython().getVersionFull(), true);
 
     if (currentVersion.equals(latestVersion)) {
       return line;

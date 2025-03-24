@@ -4,9 +4,6 @@ import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,6 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateGithubWorkflows {
   private static final Logger log = LoggerFactory.getLogger(UpdateGithubWorkflows.class);
@@ -127,19 +126,13 @@ public class UpdateGithubWorkflows {
           this.latestVersions.getLatestVersionGithubActions().getSetupJava().getVersionMajor();
     } else if (githubActionLine.contains("gradle/actions/setup-gradle")) {
       latestVersion =
-          this.latestVersions
-              .getLatestVersionGithubActions()
-              .getSetupGradle()
-              .getVersionMajor();
+          this.latestVersions.getLatestVersionGithubActions().getSetupGradle().getVersionMajor();
     } else if (githubActionLine.contains("actions/setup-node")) {
       latestVersion =
           this.latestVersions.getLatestVersionGithubActions().getSetupNode().getVersionMajor();
     } else if (githubActionLine.contains("actions/setup-python")) {
       latestVersion =
-          this.latestVersions
-              .getLatestVersionGithubActions()
-              .getSetupPython()
-              .getVersionMajor();
+          this.latestVersions.getLatestVersionGithubActions().getSetupPython().getVersionMajor();
     } else if (githubActionLine.contains("github/codeql-action")) {
       latestVersion =
           this.latestVersions.getLatestVersionGithubActions().getCodeql().getVersionMajor();
@@ -210,18 +203,15 @@ public class UpdateGithubWorkflows {
     String latestVersion = "";
 
     if (versionLine.contains("node-version") && !versionLine.contains("matrix.node-version")) {
-      latestVersion =
-          this.latestVersions.getLatestVersionLanguages().getNode().getVersionMajor();
+      latestVersion = this.latestVersions.getLatestVersionLanguages().getNode().getVersionMajor();
     } else if (versionLine.contains("python-version")
         && !versionLine.contains("matrix.python-version")) {
       latestVersion =
           VersionUtils.getVersionMajorMinor(
-              this.latestVersions.getLatestVersionLanguages().getPython().getVersionFull(),
-              true);
+              this.latestVersions.getLatestVersionLanguages().getPython().getVersionFull(), true);
     } else if (versionLine.contains("java-version")
         && !versionLine.contains("matrix.java-version")) {
-      latestVersion =
-          this.latestVersions.getLatestVersionLanguages().getJava().getVersionMajor();
+      latestVersion = this.latestVersions.getLatestVersionLanguages().getJava().getVersionMajor();
     }
 
     return latestVersion;

@@ -18,7 +18,6 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
-
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
@@ -54,8 +53,8 @@ public class ServerUtils {
       ByteBuf byteBuf = fullHttpRequest.content();
       if (byteBuf != null) {
         requestBody =
-                CommonUtilities.objectMapperProvider()
-                        .readValue((InputStream) new ByteBufInputStream(byteBuf), tClass);
+            CommonUtilities.objectMapperProvider()
+                .readValue((InputStream) new ByteBufInputStream(byteBuf), tClass);
       }
     } catch (Exception ex) {
       throw new RuntimeException("Error Serializing Request Body...");

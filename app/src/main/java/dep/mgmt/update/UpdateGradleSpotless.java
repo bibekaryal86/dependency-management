@@ -6,11 +6,10 @@ import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateGradleSpotless {
   private static final Logger log = LoggerFactory.getLogger(UpdateGradleSpotless.class);
@@ -19,7 +18,8 @@ public class UpdateGradleSpotless {
   private final AppDataScriptFile scriptFile;
   private final String branchName;
 
-  public UpdateGradleSpotless(final AppData appData, final String branchName, final String repoName) {
+  public UpdateGradleSpotless(
+      final AppData appData, final String branchName, final String repoName) {
     this.repositories =
         appData.getRepositories().stream()
             .filter(repository -> repository.getType().equals(RequestParams.UpdateType.GRADLE))
@@ -36,9 +36,7 @@ public class UpdateGradleSpotless {
         appData.getScriptFiles().stream()
             .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_SPOTLESS))
             .findFirst()
-            .orElseThrow(
-                () ->
-                    new IllegalStateException("Gradle Spotless Script Not Found..."));
+            .orElseThrow(() -> new IllegalStateException("Gradle Spotless Script Not Found..."));
     this.branchName = branchName;
   }
 

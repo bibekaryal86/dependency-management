@@ -4,9 +4,6 @@ import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,6 +11,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateDockerFile {
   private static final Logger log = LoggerFactory.getLogger(UpdateDockerFile.class);
@@ -21,7 +20,8 @@ public class UpdateDockerFile {
   private final AppDataLatestVersions latestVersions;
   private final Path dockerfilePath;
 
-  public UpdateDockerFile(final AppDataRepository repository, final AppDataLatestVersions latestVersions) {
+  public UpdateDockerFile(
+      final AppDataRepository repository, final AppDataLatestVersions latestVersions) {
     this.repository = repository;
     this.latestVersions = latestVersions;
     dockerfilePath = this.repository.getRepoPath().resolve("Dockerfile");
@@ -119,7 +119,8 @@ public class UpdateDockerFile {
       Files.write(this.dockerfilePath, dockerfileData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Writing Updated Dockerfile of repository: [{}]", this.repository.getRepoName());
+      log.error(
+          "Error Writing Updated Dockerfile of repository: [{}]", this.repository.getRepoName());
       return false;
     }
   }

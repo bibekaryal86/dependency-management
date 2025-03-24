@@ -6,19 +6,23 @@ import dep.mgmt.util.ConstantUtils;
 public class GithubActionsVersionService extends VersionLookupGithubApi {
 
   public LatestVersion getGithubActionsCheckoutVersion() {
-    return getGithubApiLatestVersion(ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_CHECKOUT);
+    return getGithubApiLatestVersion(
+        ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_CHECKOUT);
   }
 
   public LatestVersion getGithubActionsSetupJavaVersion() {
-    return getGithubApiLatestVersion(ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_JAVA);
+    return getGithubApiLatestVersion(
+        ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_JAVA);
   }
 
   public LatestVersion getGithubActionsSetupNodeVersion() {
-    return getGithubApiLatestVersion(ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_NODE);
+    return getGithubApiLatestVersion(
+        ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_NODE);
   }
 
   public LatestVersion getGithubActionsSetupPythonVersion() {
-    return getGithubApiLatestVersion(ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_PYTHON);
+    return getGithubApiLatestVersion(
+        ConstantUtils.GITHUB_ACTIONS_NAME, ConstantUtils.GITHUB_ACTIONS_SETUP_PYTHON);
   }
 
   public LatestVersion getGithubActionsGradleVersion() {
@@ -26,6 +30,7 @@ public class GithubActionsVersionService extends VersionLookupGithubApi {
   }
 
   public LatestVersion getGithubActionsCodeqlActionVersion() {
-    return getGithubApiLatestVersion(ConstantUtils.GITHUB_NAME, ConstantUtils.GITHUB_ACTIONS_CODEQL);
+    return getGithubApiLatestVersion(
+        ConstantUtils.GITHUB_NAME, ConstantUtils.GITHUB_ACTIONS_CODEQL);
   }
 }

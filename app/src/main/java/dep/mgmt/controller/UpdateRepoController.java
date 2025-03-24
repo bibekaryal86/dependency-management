@@ -5,7 +5,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 public class UpdateRepoController {
 
-  public void handleRequest(final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {
-
-  }
+  public void handleRequest(
+      final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {}
 }

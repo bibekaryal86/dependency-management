@@ -14,7 +14,8 @@ public class NginxVersionService extends VersionLookupGithubApi {
 
   public LatestVersion getNginxVersion(final String latestDockerVersionFromMongo) {
     final ApiReleaseResponse apiReleaseResponse =
-        getGithubApiReleaseResponse(ConstantUtils.NGINX_NAME, ConstantUtils.NGINX_NAME, Boolean.TRUE);
+        getGithubApiReleaseResponse(
+            ConstantUtils.NGINX_NAME, ConstantUtils.NGINX_NAME, Boolean.TRUE);
 
     if (apiReleaseResponse == null) {
       return null;

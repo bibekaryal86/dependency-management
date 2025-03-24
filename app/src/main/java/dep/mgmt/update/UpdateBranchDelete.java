@@ -2,13 +2,11 @@ package dep.mgmt.update;
 
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataScriptFile;
-import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateBranchDelete {
   private static final Logger log = LoggerFactory.getLogger(UpdateBranchDelete.class);
@@ -24,8 +22,7 @@ public class UpdateBranchDelete {
             .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_DELETE))
             .findFirst()
             .orElseThrow(
-                () ->
-                    new IllegalStateException("Github Branch Delete Script Not Found..."));
+                () -> new IllegalStateException("Github Branch Delete Script Not Found..."));
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
   }
 

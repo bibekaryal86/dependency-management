@@ -5,11 +5,10 @@ import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.util.ConstantUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateNpmSnapshots {
   private static final Logger log = LoggerFactory.getLogger(UpdateNpmSnapshots.class);
@@ -27,8 +26,7 @@ public class UpdateNpmSnapshots {
         appData.getScriptFiles().stream()
             .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_SNAPSHOT))
             .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("NPM Snapshot Script Not Found..."));
+            .orElseThrow(() -> new IllegalStateException("NPM Snapshot Script Not Found..."));
     this.branchName = branchName;
   }
 

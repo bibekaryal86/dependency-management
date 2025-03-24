@@ -21,7 +21,8 @@ public class PythonVersionService extends VersionLookupGithubApi {
   public LatestVersion getPythonVersion(
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     ApiReleaseResponse apiReleaseResponse =
-        getGithubApiReleaseResponse(ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE);
+        getGithubApiReleaseResponse(
+            ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE);
 
     if (apiReleaseResponse == null) {
       return null;

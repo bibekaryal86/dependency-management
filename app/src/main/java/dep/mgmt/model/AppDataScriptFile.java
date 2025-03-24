@@ -7,7 +7,7 @@ public class AppDataScriptFile {
   public AppDataScriptFile(final String scriptFileName) {
     this.scriptFileName = scriptFileName;
     String[] sfnArray = scriptFileName.split("\\.");
-    this.scriptName =sfnArray[0];
+    this.scriptName = sfnArray[0];
   }
 
   public String getScriptFileName() {
@@ -20,6 +20,12 @@ public class AppDataScriptFile {
 
   @Override
   public String toString() {
-    return "ScriptFile{" + "scriptFileName='" + scriptFileName + '\'' + ", scriptName=" + scriptName + '}';
+    return "ScriptFile{"
+        + "scriptFileName='"
+        + scriptFileName
+        + '\''
+        + ", scriptName="
+        + scriptName
+        + '}';
   }
 }

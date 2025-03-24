@@ -7,7 +7,8 @@ import java.util.List;
 public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> allProcessedRepositories = processSummary.getProcessRepositories();
+    List<ProcessSummaryEntity.ProcessRepositoryEntity> allProcessedRepositories =
+        processSummary.getProcessRepositories();
     List<ProcessSummaryEntity.ProcessRepositoryEntity> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
@@ -215,7 +216,8 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedRepositoryTable(
-          List<ProcessSummaryEntity.ProcessRepositoryEntity> processedRepositories, StringBuilder html) {
+      List<ProcessSummaryEntity.ProcessRepositoryEntity> processedRepositories,
+      StringBuilder html) {
     for (ProcessSummaryEntity.ProcessRepositoryEntity processedRepository : processedRepositories) {
       html.append("<tr>");
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");

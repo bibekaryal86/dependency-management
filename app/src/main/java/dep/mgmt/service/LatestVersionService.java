@@ -5,10 +5,9 @@ import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.repository.LatestVersionRepository;
+import dep.mgmt.util.ConstantUtils;
 import java.time.LocalDateTime;
 import java.util.Map;
-
-import dep.mgmt.util.ConstantUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

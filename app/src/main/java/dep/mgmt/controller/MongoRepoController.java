@@ -77,7 +77,8 @@ public class MongoRepoController {
                 getProcessSummary(updateType, updateDate, pageNumber, pageSize),
                 HttpResponseStatus.OK);
           } else {
-            ServerUtils.sendErrorResponse(ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
+            ServerUtils.sendErrorResponse(
+                ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
           }
           break;
         case Endpoints.MONGO_REPO_UPDATE:
@@ -85,12 +86,16 @@ public class MongoRepoController {
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.ACCEPTED);
           break;
         default:
-          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(
+              ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else if (requestMethod.equals(HttpMethod.POST)) {
-      final Dependency dependencyRequest = ServerUtils.getRequestBody(fullHttpRequest, Dependency.class);
-      if (dependencyRequest == null || CommonUtilities.isEmpty(dependencyRequest.getName()) || CommonUtilities.isEmpty(dependencyRequest.getVersion())) {
+      final Dependency dependencyRequest =
+          ServerUtils.getRequestBody(fullHttpRequest, Dependency.class);
+      if (dependencyRequest == null
+          || CommonUtilities.isEmpty(dependencyRequest.getName())
+          || CommonUtilities.isEmpty(dependencyRequest.getVersion())) {
         ServerUtils.sendErrorResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
         return;
       }
@@ -113,7 +118,8 @@ public class MongoRepoController {
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         default:
-          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(
+              ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else {
@@ -133,7 +139,8 @@ public class MongoRepoController {
   }
 
   private void saveGradlePlugin(final Dependency dependency) {
-    DependencyEntity dependencyEntity = gradlePluginVersionService.getGradlePluginsMap().get(dependency.getName());
+    DependencyEntity dependencyEntity =
+        gradlePluginVersionService.getGradlePluginsMap().get(dependency.getName());
     if (dependencyEntity == null) {
       gradlePluginVersionService.insertGradlePlugin(dependency.getName(), dependency.getVersion());
     } else {
@@ -152,9 +159,11 @@ public class MongoRepoController {
   }
 
   private void saveGradleDependency(final Dependency dependency) {
-    DependencyEntity dependencyEntity = gradleDependencyVersionService.getGradleDependenciesMap().get(dependency.getName());
+    DependencyEntity dependencyEntity =
+        gradleDependencyVersionService.getGradleDependenciesMap().get(dependency.getName());
     if (dependencyEntity == null) {
-      gradleDependencyVersionService.insertGradleDependency(dependency.getName(), dependency.getVersion());
+      gradleDependencyVersionService.insertGradleDependency(
+          dependency.getName(), dependency.getVersion());
     } else {
       dependencyEntity.setVersion(dependency.getVersion());
       dependencyEntity.setSkipVersion(dependency.getSkipVersion());
@@ -171,9 +180,11 @@ public class MongoRepoController {
   }
 
   private void saveNpmDependency(final Dependency dependency) {
-    DependencyEntity dependencyEntity = npmDependencyVersionService.getNpmDependenciesMap().get(dependency.getName());
+    DependencyEntity dependencyEntity =
+        npmDependencyVersionService.getNpmDependenciesMap().get(dependency.getName());
     if (dependencyEntity == null) {
-      npmDependencyVersionService.insertNpmDependency(dependency.getName(), dependency.getVersion());
+      npmDependencyVersionService.insertNpmDependency(
+          dependency.getName(), dependency.getVersion());
     } else {
       dependencyEntity.setVersion(dependency.getVersion());
       dependencyEntity.setSkipVersion(dependency.getSkipVersion());
@@ -190,9 +201,11 @@ public class MongoRepoController {
   }
 
   private void savePythonPackage(final Dependency dependency) {
-    DependencyEntity dependencyEntity = pythonPackageVersionService.getPythonPackagesMap().get(dependency.getName());
+    DependencyEntity dependencyEntity =
+        pythonPackageVersionService.getPythonPackagesMap().get(dependency.getName());
     if (dependencyEntity == null) {
-      pythonPackageVersionService.insertPythonPackage(dependency.getName(), dependency.getVersion());
+      pythonPackageVersionService.insertPythonPackage(
+          dependency.getName(), dependency.getVersion());
     } else {
       dependencyEntity.setVersion(dependency.getVersion());
       dependencyEntity.setSkipVersion(dependency.getSkipVersion());
