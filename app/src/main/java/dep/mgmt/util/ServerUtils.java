@@ -1,7 +1,5 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.RequestMetadata;
-import dep.mgmt.model.enums.RequestParams;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseMetadata;
 import io.github.bibekaryal86.shdsvc.dtos.ResponseWithMetadata;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
@@ -19,7 +17,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -85,52 +82,5 @@ public class ServerUtils {
       return parts[0].substring(0, parts[0].length() - 1);
     }
     return parts[0];
-  }
-
-  public static RequestMetadata parseRequestMetadata(final FullHttpRequest request) {
-    final Map<String, List<String>> queryParams = getQueryParams(request.uri());
-
-    final RequestParams.UpdateType updateType =
-        RequestParams.UpdateType.valueOf(
-            queryParams
-                .getOrDefault("updateType", List.of(RequestParams.UpdateType.ALL.toString()))
-                .getFirst());
-    final boolean isRecreateCaches =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isRecreateCaches", List.of("false")).getFirst());
-    final boolean isRecreateScriptFiles =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isRecreateScriptFiles", List.of("false")).getFirst());
-    final boolean isGithubResetPullRequired =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isGithubResetPullRequired", List.of("true")).getFirst());
-    final boolean isProcessSummaryRequired =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isProcessSummaryRequired", List.of("false")).getFirst());
-    final boolean isForceCreatePr =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isForceCreatePr", List.of("false")).getFirst());
-    final boolean isDeleteUpdateDependenciesOnly =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isDeleteUpdateDependenciesOnly", List.of("true")).getFirst());
-    final boolean isIncludeDebugLogs =
-        Boolean.parseBoolean(
-            queryParams.getOrDefault("isIncludeDebugLogs", List.of("true")).getFirst());
-    final LocalDate branchDate =
-        LocalDate.parse(
-            queryParams.getOrDefault("branchDate", List.of(LocalDate.now().toString())).getFirst());
-    final String repoName = queryParams.getOrDefault("sortColumn", List.of("")).getFirst();
-
-    return new RequestMetadata(
-        updateType,
-        isRecreateCaches,
-        isRecreateScriptFiles,
-        isGithubResetPullRequired,
-        isProcessSummaryRequired,
-        isForceCreatePr,
-        isDeleteUpdateDependenciesOnly,
-        isIncludeDebugLogs,
-        branchDate,
-        repoName);
   }
 }

@@ -36,7 +36,6 @@ TODO:
     * schedules
         * one for dependency update
         * one for old process summary cleanup
-    * NPM Dependency Update
 
 Dependency Update:
 (1) GitHub Reset and Pull from Same Script File for one Repo
