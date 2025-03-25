@@ -35,14 +35,12 @@ option to run on one repo
 TODO:
     * schedules
         * one for dependency update
-        * one for old process summary cleanup
 
-Dependency Update:
-(1) GitHub Reset and Pull from Same Script File for one Repo
-(2) Update Dependencies
-(3) Push new branch
-(4) Use GitHub API to create Pull Requests
-(5) Use GitHub API to merge Pull Requests
-(6) GitHub Pull for one repo
-
-INSTEAD OF REQUEST METADATA, DO DIFFERENT ENDPOINT FOR DELETE, SPOTLESS, ETC
+Endpoints
+(1) Update Repo
+(2) NPM Snapshot Update
+(3) Gradle Spotless
+(4) Delete Branches (with option for 1)
+(5) Pull Reset (with option for 1)
+(6) Create Pull Request
+(7) Merge Pull Request

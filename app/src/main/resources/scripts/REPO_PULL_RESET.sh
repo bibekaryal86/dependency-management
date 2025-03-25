@@ -44,6 +44,9 @@ do
                   echo "$sub_dir"
 
                   if [ "$is_reset" = "true" ]; then
+                    echo "Checkout main branch"
+                    git checkout main 2>&1
+
                     echo "Reset branch"
                     git reset --hard 2>&1
                   fi
