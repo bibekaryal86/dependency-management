@@ -34,7 +34,8 @@ public class UpdateNodeProject {
 
     this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getNode());
+    this.updateGcpConfigs =
+        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getNode());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.dependenciesMap = this.nodeDependencyVersionService.getNodeDependenciesMap();

@@ -1,10 +1,7 @@
 package dep.mgmt.update;
 
-import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
-import dep.mgmt.model.enums.RequestParams;
-import dep.mgmt.util.ConstantUtils;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,16 +14,12 @@ public class UpdateNpmSnapshots {
   private final AppDataScriptFile scriptFile;
   private final String branchName;
 
-  public UpdateNpmSnapshots(final AppData appData, final String branchName) {
-    this.repositories =
-        appData.getRepositories().stream()
-            .filter(repository -> repository.getType().equals(RequestParams.UpdateType.NODE))
-            .toList();
-    this.scriptFile =
-        appData.getScriptFiles().stream()
-            .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_SNAPSHOT))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("NPM Snapshot Script Not Found..."));
+  public UpdateNpmSnapshots(
+      final List<AppDataRepository> repositories,
+      final AppDataScriptFile scriptFile,
+      final String branchName) {
+    this.repositories = repositories;
+    this.scriptFile = scriptFile;
     this.branchName = branchName;
   }
 

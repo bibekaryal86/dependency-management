@@ -49,7 +49,8 @@ public class UpdateGradleProject {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs = new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
+    this.updateGcpConfigs =
+        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
     this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.dependenciesMap = this.gradleDependencyVersionService.getGradleDependenciesMap();
