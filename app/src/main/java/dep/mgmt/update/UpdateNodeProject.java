@@ -103,7 +103,8 @@ public class UpdateNodeProject {
       while (fields.hasNext()) {
         final Map.Entry<String, JsonNode> entry = fields.next();
         final String name = entry.getKey();
-        final String version = getVersion(entry.getValue().asText());
+        final String version = entry.getValue().asText();
+        final String currentVersion = getCurrentVersion(version);
 
         final DependencyEntity dependency = this.dependenciesMap.get(name);
         if (dependency == null) {
@@ -115,8 +116,9 @@ public class UpdateNodeProject {
           latestVersion = dependency.getVersion();
         }
 
-        if (VersionUtils.isRequiresUpdate(version, latestVersion)) {
-          ((ObjectNode) sectionNode).put(name, latestVersion);
+        if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+          final String latestVersionToUse = version.replace(currentVersion, latestVersion);
+          ((ObjectNode) sectionNode).put(name, latestVersionToUse);
           isUpdated = true;
         }
       }
@@ -141,7 +143,7 @@ public class UpdateNodeProject {
     return false;
   }
 
-  private String getVersion(final String version) {
+  private String getCurrentVersion(final String version) {
     if (!CommonUtilities.isEmpty(version) && (version.startsWith("^") || version.startsWith("~"))) {
       return version.substring(1);
     }
