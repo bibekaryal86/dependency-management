@@ -107,9 +107,11 @@ public class ConstantUtils {
 
   // SCRIPT FILE NAMES
   public static final String SCRIPT_DELETE = "DELETE_UPDATE_DEPS";
+  public static final String SCRIPT_DELETE_ONE = "DELETE_UPDATE_DEPS_ONE";
   public static final String SCRIPT_SPOTLESS = "GRADLE_SPOTLESS";
   public static final String SCRIPT_SNAPSHOT = "NPM_SNAPSHOT";
-  public static final String SCRIPT_RESET_PULL = "REPO_PULL_RESET";
+  public static final String SCRIPT_RESET_PULL = "REPO_RESET_PULL";
+  public static final String SCRIPT_RESET_PULL_ONE = "REPO_RESET_PULL_ONE";
   public static final String SCRIPT_UPDATE_INIT = "UPDATE_DEPS_INIT_EXIT";
   public static final String SCRIPT_UPDATE_EXEC = "UPDATE_DEPS_EXEC";
 

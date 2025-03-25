@@ -1,8 +1,8 @@
 package dep.mgmt.update;
 
-import dep.mgmt.model.AppData;
+import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
-import dep.mgmt.util.ConstantUtils;
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -12,24 +12,40 @@ public class UpdateBranchDelete {
   private static final Logger log = LoggerFactory.getLogger(UpdateBranchDelete.class);
 
   private final String repoHome;
+  private final AppDataRepository repository;
   private final AppDataScriptFile scriptFile;
   private final boolean isDeleteUpdateDependenciesOnly;
 
-  public UpdateBranchDelete(final AppData appData, final boolean isDeleteUpdateDependenciesOnly) {
-    this.repoHome = appData.getArgsMap().get(ConstantUtils.ENV_REPO_HOME);
-    this.scriptFile =
-        appData.getScriptFiles().stream()
-            .filter(sf -> sf.getScriptName().equals(ConstantUtils.SCRIPT_DELETE))
-            .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("Github Branch Delete Script Not Found..."));
+  public UpdateBranchDelete(
+      final String repoHome,
+      AppDataScriptFile scriptFile,
+      final boolean isDeleteUpdateDependenciesOnly) {
+    this.repoHome = repoHome;
+    this.repository = null;
+    this.scriptFile = scriptFile;
+    this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
+  }
+
+  public UpdateBranchDelete(
+      final AppDataRepository repository,
+      AppDataScriptFile scriptFile,
+      final boolean isDeleteUpdateDependenciesOnly) {
+    this.repoHome = null;
+    this.repository = repository;
+    this.scriptFile = scriptFile;
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
   }
 
   public void execute() {
-    log.debug("Execute Github Branch Delete on: [ {} ]", this.repoHome);
+    log.debug("Execute Github Branch Delete on: [{}] | [{}]", this.repoHome, this.repository);
     List<String> arguments = new LinkedList<>();
-    arguments.add(this.repoHome);
+    if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
+      arguments.add(this.repository.getRepoPath().toString());
+    } else if (!CommonUtilities.isEmpty(this.repoHome) && this.repository == null) {
+      arguments.add(this.repoHome);
+    } else {
+      arguments.add("N/A");
+    }
     arguments.add(String.valueOf(this.isDeleteUpdateDependenciesOnly));
     new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE);
   }
