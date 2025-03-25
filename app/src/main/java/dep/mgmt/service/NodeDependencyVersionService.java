@@ -63,7 +63,8 @@ public class NodeDependencyVersionService {
       log.info("Node Dependencies List: [ {} ]", nodeDependencies.size());
       nodeDependenciesMap =
           nodeDependencies.stream()
-              .collect(Collectors.toMap(DependencyEntity::getName, nodeDependency -> nodeDependency));
+              .collect(
+                  Collectors.toMap(DependencyEntity::getName, nodeDependency -> nodeDependency));
       CacheConfig.setNodeDependenciesMap(nodeDependenciesMap);
     }
     return nodeDependenciesMap;

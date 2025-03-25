@@ -1,5 +1,6 @@
 package dep.mgmt.config;
 
+import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.util.ConstantUtils;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -33,33 +34,56 @@ public class ScheduleConfig {
                   }
                 }));
 
-    recreateAppCaches();
+    updateReposSchedule();
+    cleanupProcessSummariesSchedule();
   }
 
-  private static void recreateAppCaches() {
+  private static void updateReposSchedule() {
     final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-    ZonedDateTime executionTime =
-        ZonedDateTime.now(ZoneId.systemDefault())
-            .withHour(ConstantUtils.SCHEDULER_START_HOUR)
-            .withMinute(ConstantUtils.SCHEDULER_START_MINUTE)
-            .withSecond(ConstantUtils.SCHEDULER_START_SECOND);
-
-    // If the scheduled time has already passed today, schedule for the next day
-    if (now.isAfter(executionTime)) {
-      executionTime = executionTime.plusDays(1);
-    }
-
+    final ZonedDateTime executionTime =
+        getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_UPDATE_REPO);
     final long initialDelay = Duration.between(now, executionTime).toMillis();
 
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
-
-          // TODO -> what needs to be scheduled?
-          // Reschedule the next execution
-          recreateAppCaches();
+          // TODO what is to be scheduled
+          // Schedule the next execution
+          updateReposSchedule();
         },
         initialDelay,
         TimeUnit.MILLISECONDS);
+  }
+
+  private static void cleanupProcessSummariesSchedule() {
+    final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+    final ZonedDateTime executionTime =
+        getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES);
+    final long initialDelay = Duration.between(now, executionTime).toMillis();
+
+    scheduler.schedule(
+        () -> {
+          log.info("Starting Scheduler to Cleanup Process Summaries...");
+          new ProcessSummaryService().cleanupOldProcessSummaries();
+          // Schedule the next execution
+          updateReposSchedule();
+        },
+        initialDelay,
+        TimeUnit.MILLISECONDS);
+  }
+
+  private static ZonedDateTime getExecutionTime(
+      final ZonedDateTime now, final int schedulerStartHour) {
+    ZonedDateTime executionTime =
+        ZonedDateTime.now(ZoneId.systemDefault())
+            .withHour(schedulerStartHour)
+            .withMinute(ConstantUtils.SCHEDULER_START_MINUTE)
+            .withSecond(ConstantUtils.SCHEDULER_START_SECOND);
+
+    if (now.isAfter(executionTime)) {
+      executionTime = executionTime.plusDays(1);
+    }
+
+    return executionTime;
   }
 }

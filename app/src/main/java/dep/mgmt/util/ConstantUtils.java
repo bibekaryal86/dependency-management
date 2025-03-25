@@ -109,7 +109,8 @@ public class ConstantUtils {
   // UPDATES
   public static final int CLEANUP_BEFORE_DAYS = 45;
   public static final int SCHEDULER_TIMEOUT = 5;
-  public static final int SCHEDULER_START_HOUR = 20;
+  public static final int SCHEDULER_START_HOUR_UPDATE_REPO = 20;
+  public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
   public static final String DOCKER_JRE = "eclipse-temurin";
