@@ -1,7 +1,7 @@
 package dep.mgmt.connector;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import dep.mgmt.model.web.GithubPullRequestApi;
+import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -15,7 +15,7 @@ public class GithubConnector {
 
   private static final Logger log = LoggerFactory.getLogger(GithubConnector.class);
 
-  public GithubPullRequestApi.CreateResponse createPullRequest(
+  public GithubApiModel.CreatePullRequestResponse createPullRequest(
       final String repoName, final String branchName) {
     log.info("Create Pull Request: [{}] | [{}]", repoName, branchName);
 
@@ -28,29 +28,69 @@ public class GithubConnector {
             "Authorization",
             String.format(
                 "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
-    final GithubPullRequestApi.CreateRequest requestBody =
-        new GithubPullRequestApi.CreateRequest(
+    final GithubApiModel.CreatePullRequest requestBody =
+        new GithubApiModel.CreatePullRequest(
             ConstantUtils.GITHUB_PR_TITLE_BODY,
             ConstantUtils.GITHUB_PR_TITLE_BODY,
             branchName,
             ConstantUtils.GITHUB_PR_BASE_BRANCH);
 
-    HttpResponse<GithubPullRequestApi.CreateResponse> response =
+    HttpResponse<GithubApiModel.CreatePullRequestResponse> response =
         Connector.sendRequest(
             url,
             Enums.HttpMethod.POST,
-            new TypeReference<GithubPullRequestApi.CreateResponse>() {},
+            new TypeReference<GithubApiModel.CreatePullRequestResponse>() {},
             null,
             headers,
             requestBody);
     if (response.statusCode() == 201) {
       return response.responseBody();
+    } else {
+      log.error(
+          "Create Pull Request Error: [{}] | [{}] | [{}] | [{}]",
+          repoName,
+          branchName,
+          response.statusCode(),
+          response.responseBody());
     }
 
     return null;
   }
 
-  public GithubPullRequestApi.MergeResponse mergePullRequest(
+  public GithubApiModel.ListPullRequestsResponse listPullRequests(final String repoName) {
+    log.info("List Pull Requests: [{}]", repoName);
+
+    final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
+    final String url = String.format(ConstantUtils.GITHUB_LIST_PRS_ENDPOINT, repoOwner, repoName);
+    final Map<String, String> headers =
+        Map.of(
+            "Accept",
+            "application/vnd.github+json",
+            "Authorization",
+            String.format(
+                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    HttpResponse<GithubApiModel.ListPullRequestsResponse> response =
+        Connector.sendRequest(
+            url,
+            Enums.HttpMethod.GET,
+            new TypeReference<GithubApiModel.ListPullRequestsResponse>() {},
+            null,
+            headers,
+            null);
+    if (response.statusCode() == 200) {
+      return response.responseBody();
+    } else {
+      log.error(
+          "List Pull Requests Error: [{}] | [{}] [{}]",
+          repoName,
+          response.statusCode(),
+          response.responseBody());
+    }
+
+    return null;
+  }
+
+  public GithubApiModel.MergePullRequestResponse mergePullRequest(
       final String repoName, final Integer pullNumber) {
     log.info("Merge Pull Request: [{}] | [{}]", repoName, pullNumber);
 
@@ -64,19 +104,59 @@ public class GithubConnector {
             "Authorization",
             String.format(
                 "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
-    final GithubPullRequestApi.MergeRequest requestBody =
-        new GithubPullRequestApi.MergeRequest(ConstantUtils.GITHUB_PR_MERGE_METHOD);
+    final GithubApiModel.MergePullRequestRequest requestBody =
+        new GithubApiModel.MergePullRequestRequest(ConstantUtils.GITHUB_PR_MERGE_METHOD);
 
-    HttpResponse<GithubPullRequestApi.MergeResponse> response =
+    HttpResponse<GithubApiModel.MergePullRequestResponse> response =
         Connector.sendRequest(
             url,
             Enums.HttpMethod.PUT,
-            new TypeReference<GithubPullRequestApi.MergeResponse>() {},
+            new TypeReference<GithubApiModel.MergePullRequestResponse>() {},
             null,
             headers,
             requestBody);
     if (response.statusCode() == 200) {
       return response.responseBody();
+    } else {
+      log.error(
+          "Merge Pull Request Error: [{}] | [{}] | [{}] | [{}]",
+          repoName,
+          pullNumber,
+          response.statusCode(),
+          response.responseBody());
+    }
+
+    return null;
+  }
+
+  public GithubApiModel.ListWorkflowRunsResponse listWorkflowRuns(final String repoName) {
+    log.info("List Workflow Runs: [{}]", repoName);
+
+    final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
+    final String url = String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
+    final Map<String, String> headers =
+            Map.of(
+                    "Accept",
+                    "application/vnd.github+json",
+                    "Authorization",
+                    String.format(
+                            "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    HttpResponse<GithubApiModel.ListWorkflowRunsResponse> response =
+            Connector.sendRequest(
+                    url,
+                    Enums.HttpMethod.GET,
+                    new TypeReference<GithubApiModel.ListWorkflowRunsResponse>() {},
+                    null,
+                    headers,
+                    null);
+    if (response.statusCode() == 200) {
+      return response.responseBody();
+    } else {
+      log.error(
+              "List Workflow Runs Error: [{}] | [{}] [{}]",
+              repoName,
+              response.statusCode(),
+              response.responseBody());
     }
 
     return null;
