@@ -43,7 +43,7 @@ public class UpdateRepoResetPull {
 
   public void execute() {
     log.debug(
-        "Execute Github Pull Reset on: [{}] | [{}] | [{}] | [{}]",
+        "Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}]",
         this.repoHome,
         this.repository,
         this.isReset,
