@@ -152,9 +152,7 @@ public class GithubApiModel implements Serializable {
 
     @Override
     public String toString() {
-      return "ListWorkflowRunsResponse{" +
-              "workflowRuns=" + workflowRuns +
-              '}';
+      return "ListWorkflowRunsResponse{" + "workflowRuns=" + workflowRuns + '}';
     }
 
     public static class WorkflowRun implements Serializable {
@@ -164,10 +162,11 @@ public class GithubApiModel implements Serializable {
       private final String conclusion;
 
       @JsonCreator
-      public WorkflowRun(@JsonProperty("head_branch") String headBranch,
-                         @JsonProperty("event") String event,
-                         @JsonProperty("status") String status,
-                         @JsonProperty("conclusion") String conclusion) {
+      public WorkflowRun(
+          @JsonProperty("head_branch") String headBranch,
+          @JsonProperty("event") String event,
+          @JsonProperty("status") String status,
+          @JsonProperty("conclusion") String conclusion) {
         this.headBranch = headBranch;
         this.event = event;
         this.status = status;
@@ -192,12 +191,20 @@ public class GithubApiModel implements Serializable {
 
       @Override
       public String toString() {
-        return "WorkflowRun{" +
-                "headBranch='" + headBranch + '\'' +
-                ", event='" + event + '\'' +
-                ", status='" + status + '\'' +
-                ", conclusion='" + conclusion + '\'' +
-                '}';
+        return "WorkflowRun{"
+            + "headBranch='"
+            + headBranch
+            + '\''
+            + ", event='"
+            + event
+            + '\''
+            + ", status='"
+            + status
+            + '\''
+            + ", conclusion='"
+            + conclusion
+            + '\''
+            + '}';
       }
     }
   }

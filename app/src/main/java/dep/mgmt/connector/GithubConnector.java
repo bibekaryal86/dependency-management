@@ -133,30 +133,31 @@ public class GithubConnector {
     log.info("List Workflow Runs: [{}]", repoName);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
-    final String url = String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
+    final String url =
+        String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers =
-            Map.of(
-                    "Accept",
-                    "application/vnd.github+json",
-                    "Authorization",
-                    String.format(
-                            "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+        Map.of(
+            "Accept",
+            "application/vnd.github+json",
+            "Authorization",
+            String.format(
+                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
     HttpResponse<GithubApiModel.ListWorkflowRunsResponse> response =
-            Connector.sendRequest(
-                    url,
-                    Enums.HttpMethod.GET,
-                    new TypeReference<GithubApiModel.ListWorkflowRunsResponse>() {},
-                    null,
-                    headers,
-                    null);
+        Connector.sendRequest(
+            url,
+            Enums.HttpMethod.GET,
+            new TypeReference<GithubApiModel.ListWorkflowRunsResponse>() {},
+            null,
+            headers,
+            null);
     if (response.statusCode() == 200) {
       return response.responseBody();
     } else {
       log.error(
-              "List Workflow Runs Error: [{}] | [{}] [{}]",
-              repoName,
-              response.statusCode(),
-              response.responseBody());
+          "List Workflow Runs Error: [{}] | [{}] [{}]",
+          repoName,
+          response.statusCode(),
+          response.responseBody());
     }
 
     return null;
