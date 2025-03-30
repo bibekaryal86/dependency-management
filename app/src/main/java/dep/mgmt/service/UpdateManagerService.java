@@ -35,10 +35,10 @@ public class UpdateManagerService {
   }
 
   private TaskQueues getTaskQueues(final boolean isForceNewQueue) {
-    if (taskQueues == null || isForceNewQueue) {
-      return new TaskQueues();
+    if (taskQueues != null && taskQueues.isExecutorRunning() && !isForceNewQueue) {
+      return taskQueues;
     }
-    return taskQueues;
+    return new TaskQueues();
   }
 
   public boolean isTaskRunning() {
