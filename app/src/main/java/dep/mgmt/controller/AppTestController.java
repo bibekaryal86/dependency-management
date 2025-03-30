@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class AppTestController {
 
   private static final String TESTS_PING_RESPONSE = "{\"ping\": \"successful\"}";
-  private static final String TESTS_RESET_RESPONSE = "{\"reset\": \"successful\"}";
+  private static final String TESTS_RESET_RESPONSE = "{\"reset\": \"requested\"}";
 
   private final UpdateManagerService updateManagerService;
 
@@ -36,6 +36,7 @@ public class AppTestController {
         sendResponse(TESTS_RESET_RESPONSE, ctx);
         updateManagerService.resetAllCaches();
         updateManagerService.setAllCaches();
+        updateManagerService.executeTaskQueues();
       }
       case null, default ->
           ServerUtils.sendErrorResponse(

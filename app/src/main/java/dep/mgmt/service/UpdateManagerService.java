@@ -34,8 +34,10 @@ public class UpdateManagerService {
     this.pythonPackageVersionService = new PythonPackageVersionService();
   }
 
-  public boolean isTaskQueueNotRunning() {
-    return !taskQueues.isProcessing();
+  public void executeTaskQueues() {
+    if (!taskQueues.isProcessing()) {
+      taskQueues.processQueues();
+    }
   }
 
   public void scheduledUpdates() {
