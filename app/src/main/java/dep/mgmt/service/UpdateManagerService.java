@@ -34,8 +34,8 @@ public class UpdateManagerService {
     this.pythonPackageVersionService = new PythonPackageVersionService();
   }
 
-  private TaskQueues getTaskQueues(final boolean isForceNewQueue) {
-    if (taskQueues != null && taskQueues.isExecutorRunning() && !isForceNewQueue) {
+  private TaskQueues getTaskQueues() {
+    if (taskQueues != null && taskQueues.isExecutorRunning()) {
       return taskQueues;
     }
     return new TaskQueues();
@@ -48,6 +48,27 @@ public class UpdateManagerService {
   public void shutdownTaskQueues() {
     if (taskQueues != null) {
       taskQueues.shutdown();
+    }
+  }
+
+  private void addTaskToQueue(final String name, final Runnable action) {
+    TaskQueues taskQueuesLocal = getTaskQueues();
+    TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
+    taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
+    taskQueuesLocal.addQueue(taskQueue);
+  }
+
+  public void resetAllCachesTask() {
+    addTaskToQueue("RESET_ALL_CACHES", this::resetAllCaches);
+    if (!isTaskRunning()) {
+      taskQueues.processQueues();
+    }
+  }
+
+  public void setAllCachesTask() {
+    addTaskToQueue("SET_ALL_CACHES", this::setAllCaches);
+    if (!isTaskRunning()) {
+      taskQueues.processQueues();
     }
   }
 

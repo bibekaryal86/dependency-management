@@ -1,11 +1,7 @@
 package dep.mgmt.controller;
 
-import dep.mgmt.config.CacheConfig;
 import dep.mgmt.server.Endpoints;
-import dep.mgmt.service.GradleDependencyVersionService;
-import dep.mgmt.service.GradlePluginVersionService;
-import dep.mgmt.service.NodeDependencyVersionService;
-import dep.mgmt.service.PythonPackageVersionService;
+import dep.mgmt.service.UpdateManagerService;
 import dep.mgmt.util.ServerUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -24,16 +20,10 @@ public class AppTestController {
   private static final String TESTS_PING_RESPONSE = "{\"ping\": \"successful\"}";
   private static final String TESTS_RESET_RESPONSE = "{\"reset\": \"successful\"}";
 
-  private final PythonPackageVersionService pythonPackageVersionService;
-  private final NodeDependencyVersionService nodeDependencyVersionService;
-  private final GradlePluginVersionService gradlePluginVersionService;
-  private final GradleDependencyVersionService gradleDependencyVersionService;
+  private final UpdateManagerService updateManagerService;
 
   public AppTestController() {
-    this.pythonPackageVersionService = new PythonPackageVersionService();
-    this.nodeDependencyVersionService = new NodeDependencyVersionService();
-    this.gradlePluginVersionService = new GradlePluginVersionService();
-    this.gradleDependencyVersionService = new GradleDependencyVersionService();
+    this.updateManagerService = new UpdateManagerService();
   }
 
   public void handleRequest(
@@ -43,21 +33,11 @@ public class AppTestController {
     switch (requestUri) {
       case Endpoints.APP_TESTS_PING -> sendResponse(TESTS_PING_RESPONSE, ctx);
       case Endpoints.APP_TESTS_RESET -> {
-        // TODO check if update is going on, if update is going on - do not reset
-        CacheConfig.resetPythonPackagesMap();
-        CacheConfig.resetNodeDependenciesMap();
-        CacheConfig.resetGradlePluginsMap();
-        CacheConfig.resetGradleDependenciesMap();
-        CacheConfig.resetAppData();
-
         CompletableFuture.runAsync(
-            () -> {
-              pythonPackageVersionService.getPythonPackagesMap();
-              nodeDependencyVersionService.getNodeDependenciesMap();
-              gradlePluginVersionService.getGradlePluginsMap();
-              gradleDependencyVersionService.getGradleDependenciesMap();
-            });
-
+                () -> {
+                  updateManagerService.resetAllCachesTask();
+                  updateManagerService.setAllCachesTask();
+                });
         sendResponse(TESTS_RESET_RESPONSE, ctx);
       }
       case null, default ->
