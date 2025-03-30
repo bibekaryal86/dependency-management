@@ -1,5 +1,6 @@
 package dep.mgmt.service;
 
+import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
@@ -19,14 +20,51 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateManagerService {
   private static final Logger log = LoggerFactory.getLogger(UpdateManagerService.class);
-
   private TaskQueues taskQueues = null;
+
+  private final GradleDependencyVersionService gradleDependencyVersionService;
+  private final GradlePluginVersionService gradlePluginVersionService;
+  private final NodeDependencyVersionService nodeDependencyVersionService;
+  private final PythonPackageVersionService pythonPackageVersionService;
+
+  public UpdateManagerService() {
+    this.gradleDependencyVersionService = new GradleDependencyVersionService();
+    this.gradlePluginVersionService = new GradlePluginVersionService();
+    this.nodeDependencyVersionService = new NodeDependencyVersionService();
+    this.pythonPackageVersionService = new PythonPackageVersionService();
+  }
 
   private TaskQueues getTaskQueues(final boolean isForceNewQueue) {
     if (taskQueues == null || isForceNewQueue) {
       return new TaskQueues();
     }
     return taskQueues;
+  }
+
+  public boolean isTaskRunning() {
+    return taskQueues != null && taskQueues.isProcessing();
+  }
+
+  public void shutdownTaskQueues() {
+    if (taskQueues != null) {
+      taskQueues.shutdown();
+    }
+  }
+
+  private void resetAllCaches() {
+    CacheConfig.resetAppData();
+    CacheConfig.resetGradleDependenciesMap();
+    CacheConfig.resetGradlePluginsMap();
+    CacheConfig.resetNodeDependenciesMap();
+    CacheConfig.resetPythonPackagesMap();
+  }
+
+  private void setAllCaches() {
+    AppDataUtils.setAppData();
+    this.gradleDependencyVersionService.getGradleDependenciesMap();
+    this.gradlePluginVersionService.getGradlePluginsMap();
+    this.nodeDependencyVersionService.getNodeDependenciesMap();
+    this.pythonPackageVersionService.getPythonPackagesMap();
   }
 
   private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
@@ -179,4 +217,6 @@ public class UpdateManagerService {
       new UpdateDependencies(repository, scriptFile, branchName).execute();
     }
   }
+
+  // TODO create process summary
 }
