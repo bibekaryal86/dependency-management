@@ -145,7 +145,7 @@ public class GradleDependencyVersionService {
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
       log.info("Gradle Dependencies Updated...");
-      ProcessUtils.setMongoDependenciesToUpdate(gradleDependenciesToUpdate.size());
+      ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
     }
   }
 }

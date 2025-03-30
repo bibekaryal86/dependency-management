@@ -114,7 +114,7 @@ public class PythonPackageVersionService {
         pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
       }
       log.info("Python Packages Updated...");
-      ProcessUtils.setMongoPackagesToUpdate(pythonPackagesToUpdate.size());
+      ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
     }
   }
 }

@@ -114,7 +114,7 @@ public class NodeDependencyVersionService {
         nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
       }
       log.info("Node Dependencies Updated...");
-      ProcessUtils.setMongoPackagesToUpdate(nodeDependenciesToUpdate.size());
+      ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
     }
   }
 }

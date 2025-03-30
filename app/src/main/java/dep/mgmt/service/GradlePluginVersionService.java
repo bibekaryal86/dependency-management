@@ -131,7 +131,7 @@ public class GradlePluginVersionService {
         gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
       }
       log.info("Gradle Plugins Updated...");
-      ProcessUtils.setMongoPluginsToUpdate(gradlePluginsToUpdate.size());
+      ProcessUtils.setMongoGradlePluginsToUpdate(gradlePluginsToUpdate.size());
     }
   }
 }

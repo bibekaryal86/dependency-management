@@ -11,43 +11,52 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProcessUtils {
 
   private static final AtomicBoolean errorsOrExceptions = new AtomicBoolean(false);
-  private static final AtomicInteger mongoPluginsToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoDependenciesToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoPackagesToUpdate = new AtomicInteger(0);
+  private static final AtomicInteger mongoGradlePluginsToUpdate = new AtomicInteger(0);
+  private static final AtomicInteger mongoGradleDependenciesToUpdate = new AtomicInteger(0);
+  private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
+  private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
+
   private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
-      processedRepositories = new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
   }
 
-  public static void setMongoPluginsToUpdate(int count) {
-    mongoPluginsToUpdate.set(count);
+  public static void setMongoGradlePluginsToUpdate(int count) {
+    mongoGradlePluginsToUpdate.set(count);
   }
 
-  public static void setMongoDependenciesToUpdate(int count) {
-    mongoDependenciesToUpdate.set(count);
+  public static void setMongoGradleDependenciesToUpdate(int count) {
+    mongoGradleDependenciesToUpdate.set(count);
   }
 
-  public static void setMongoPackagesToUpdate(int count) {
-    mongoPackagesToUpdate.set(count);
+  public static void setMongoPythonPackagesToUpdate(int count) {
+    mongoPythonPackagesToUpdate.set(count);
+  }
+
+  public static void setMongoNodeDependenciesToUpdate(int count) {
+    mongoNodeDependenciesToUpdate.set(count);
   }
 
   public static boolean getErrorsOrExceptions() {
     return errorsOrExceptions.get();
   }
 
-  public static int getMongoPluginsToUpdate() {
-    return mongoPluginsToUpdate.get();
+  public static int getMongoGradlePluginsToUpdate() {
+    return mongoGradlePluginsToUpdate.get();
   }
 
-  public static int getMongoDependenciesToUpdate() {
-    return mongoDependenciesToUpdate.get();
+  public static int getMongoGradleDependenciesToUpdate() {
+    return mongoGradleDependenciesToUpdate.get();
   }
 
-  public static int getMongoPackagesToUpdate() {
-    return mongoPackagesToUpdate.get();
+  public static int getMongoPythonPackagesToUpdate() {
+    return mongoPythonPackagesToUpdate.get();
+  }
+
+  public static int getNodeDependenciesToUpdate() {
+    return mongoNodeDependenciesToUpdate.get();
   }
 
   public static synchronized void addRepositoriesWithPrError(final String repoName) {
@@ -66,8 +75,7 @@ public class ProcessUtils {
     repositoriesWithPrError = new HashSet<>();
   }
 
-  public static void addProcessedRepositories(
-      String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
+  public static void addProcessedRepositories(String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
     processedRepositories.put(
         repoName,
         new ProcessSummaries.ProcessSummary.ProcessRepository(
@@ -99,9 +107,10 @@ public class ProcessUtils {
 
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
-    setMongoPluginsToUpdate(0);
-    setMongoDependenciesToUpdate(0);
-    setMongoPackagesToUpdate(0);
+    setMongoGradlePluginsToUpdate(0);
+    setMongoGradleDependenciesToUpdate(0);
+    setMongoPythonPackagesToUpdate(0);
+    setMongoNodeDependenciesToUpdate(0);
     setErrorsOrExceptions(false);
   }
 }
