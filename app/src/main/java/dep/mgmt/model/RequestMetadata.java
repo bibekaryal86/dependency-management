@@ -1,5 +1,7 @@
 package dep.mgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dep.mgmt.model.enums.RequestParams;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,17 +20,18 @@ public class RequestMetadata implements Serializable {
   private final LocalDate branchDate;
   private final String repoName;
 
+  @JsonCreator
   public RequestMetadata(
-      RequestParams.UpdateType updateType,
-      boolean isRecreateCaches,
-      boolean isRecreateScriptFiles,
-      boolean isGithubResetPullRequired,
-      boolean isProcessSummaryRequired,
-      boolean isForceCreatePr,
-      boolean isDeleteUpdateDependenciesOnly,
-      boolean isIncludeDebugLogs,
-      LocalDate branchDate,
-      String repoName) {
+      @JsonProperty("updateType") RequestParams.UpdateType updateType,
+      @JsonProperty("isRecreateCaches") Boolean isRecreateCaches,
+      @JsonProperty("isRecreateScriptFiles") Boolean isRecreateScriptFiles,
+      @JsonProperty("isGithubResetPullRequired") Boolean isGithubResetPullRequired,
+      @JsonProperty("isProcessSummaryRequired") Boolean isProcessSummaryRequired,
+      @JsonProperty("isForceCreatePr") Boolean isForceCreatePr,
+      @JsonProperty("isDeleteUpdateDependenciesOnly") Boolean isDeleteUpdateDependenciesOnly,
+      @JsonProperty("isIncludeDebugLogs") Boolean isIncludeDebugLogs,
+      @JsonProperty("branchDate") LocalDate branchDate,
+      @JsonProperty("repoName") String repoName) {
     this.updateType = updateType;
     this.isRecreateCaches = isRecreateCaches;
     this.isRecreateScriptFiles = isRecreateScriptFiles;
