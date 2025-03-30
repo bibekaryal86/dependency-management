@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class TaskQueues {
   private final BlockingQueue<TaskQueue> queueOfQueues = new LinkedBlockingQueue<>();
-  private final ExecutorService executor = Executors.newCachedThreadPool();
-  private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private final AtomicBoolean isShutdown = new AtomicBoolean(Boolean.FALSE);
   private final AtomicLong nonEmptyQueueCount = new AtomicLong(0);
 
   public boolean addQueue(TaskQueue taskQueue) {
