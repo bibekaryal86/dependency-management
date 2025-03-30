@@ -3,6 +3,7 @@ package dep.mgmt.service;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
+import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.update.UpdateBranchDelete;
 import dep.mgmt.update.UpdateDependencies;
@@ -18,6 +19,15 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateManagerService {
   private static final Logger log = LoggerFactory.getLogger(UpdateManagerService.class);
+
+  private TaskQueues taskQueues = null;
+
+  private TaskQueues getTaskQueues(final boolean isForceNewQueue) {
+    if (taskQueues == null || isForceNewQueue) {
+      return new TaskQueues();
+    }
+    return taskQueues;
+  }
 
   private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
     log.info("Execute Npm Snapshots: [{}] | [{}]", branchDate, repoName);
@@ -150,7 +160,7 @@ public class UpdateManagerService {
                             () ->
                                     new IllegalArgumentException(
                                             "Repo Not Found by Repo Name ['" + repoName + "']"));
-    AppDataScriptFile scriptFile = null;
+    final AppDataScriptFile scriptFile;
     final boolean isInitOrExit = isInit || isExit;
     if (isInitOrExit) {
       scriptFile =

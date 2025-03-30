@@ -36,7 +36,7 @@ public class UpdateBranchDelete {
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
   }
 
-  public void execute() {
+  public String execute() {
     log.debug("Update Branch Delete: [{}] | [{}]", this.repoHome, this.repository);
     List<String> arguments = new LinkedList<>();
     if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
@@ -47,6 +47,6 @@ public class UpdateBranchDelete {
       arguments.add("N/A");
     }
     arguments.add(String.valueOf(this.isDeleteUpdateDependenciesOnly));
-    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE).executeScript();
+    return new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE).executeScript();
   }
 }
