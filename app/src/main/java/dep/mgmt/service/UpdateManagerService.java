@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateManagerService {
   private static final Logger log = LoggerFactory.getLogger(UpdateManagerService.class);
-  private TaskQueues taskQueues = null;
+  private final TaskQueues taskQueues = new TaskQueues();
 
   private final GradleDependencyVersionService gradleDependencyVersionService;
   private final GradlePluginVersionService gradlePluginVersionService;
@@ -34,40 +34,26 @@ public class UpdateManagerService {
     this.pythonPackageVersionService = new PythonPackageVersionService();
   }
 
-  private TaskQueues getTaskQueues() {
-    if (taskQueues != null && taskQueues.isExecutorRunning()) {
-      return taskQueues;
-    }
-    return new TaskQueues();
-  }
-
-  public boolean isTaskRunning() {
-    return taskQueues != null && taskQueues.isProcessing();
-  }
-
-  public void shutdownTaskQueues() {
-    if (taskQueues != null) {
-      taskQueues.shutdown();
-    }
+  public boolean isTaskQueueNotRunning() {
+    return !taskQueues.isProcessing();
   }
 
   private void addTaskToQueue(final String name, final Runnable action) {
-    TaskQueues taskQueuesLocal = getTaskQueues();
     TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
     taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
-    taskQueuesLocal.addQueue(taskQueue);
+    taskQueues.addQueue(taskQueue);
   }
 
   public void resetAllCachesTask() {
     addTaskToQueue("RESET_ALL_CACHES", this::resetAllCaches);
-    if (!isTaskRunning()) {
+    if (isTaskQueueNotRunning()) {
       taskQueues.processQueues();
     }
   }
 
   public void setAllCachesTask() {
     addTaskToQueue("SET_ALL_CACHES", this::setAllCaches);
-    if (!isTaskRunning()) {
+    if (isTaskQueueNotRunning()) {
       taskQueues.processQueues();
     }
   }
