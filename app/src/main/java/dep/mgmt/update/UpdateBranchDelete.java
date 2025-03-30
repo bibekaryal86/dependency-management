@@ -47,6 +47,6 @@ public class UpdateBranchDelete {
       arguments.add("N/A");
     }
     arguments.add(String.valueOf(this.isDeleteUpdateDependenciesOnly));
-    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE);
+    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE).executeScript();
   }
 }

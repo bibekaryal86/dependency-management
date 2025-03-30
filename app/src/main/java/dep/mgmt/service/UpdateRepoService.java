@@ -5,6 +5,7 @@ import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.update.UpdateBranchDelete;
+import dep.mgmt.update.UpdateDependencies;
 import dep.mgmt.update.UpdateGradleSpotless;
 import dep.mgmt.update.UpdateNpmSnapshots;
 import dep.mgmt.update.UpdateRepoResetPull;
@@ -72,8 +73,7 @@ public class UpdateRepoService {
     new UpdateGradleSpotless(repositories, scriptFile, branchName).execute();
   }
 
-  private void executeGithubBranchDelete(
-      final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
+  private void executeGithubBranchDelete(final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
     log.info(
         "Execute Update Repos GitHub Branch Delete: [{}] | [{}]",
         isDeleteUpdateDependenciesOnly,
@@ -108,8 +108,7 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateGithubResetPull(
-      final boolean isReset, final boolean isPull, final String repoName) {
+  private void executeUpdateGithubResetPull(final boolean isReset, final boolean isPull, final String repoName) {
     log.info("Execute Update GitHub Reset Pull: [{}] | [{}] | [{}]", isReset, isPull, repoName);
     final AppData appData = AppDataUtils.appData();
 
@@ -137,6 +136,37 @@ public class UpdateRepoService {
               .orElseThrow(
                   () -> new IllegalStateException("GitHub Reset Pull One Script Not Found"));
       new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute();
+    }
+  }
+
+  private void executeUpdateDependencies(final String repoName, final String branchName, final boolean isInit, final boolean isExit) {
+    log.info("Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]", repoName, branchName, isInit, isExit);
+    final AppData appData = AppDataUtils.appData();
+    final AppDataRepository repository =
+            appData.getRepositories().stream()
+                    .filter(repo -> repo.getRepoName().equals(repoName))
+                    .findFirst()
+                    .orElseThrow(
+                            () ->
+                                    new IllegalArgumentException(
+                                            "Repo Not Found by Repo Name ['" + repoName + "']"));
+    AppDataScriptFile scriptFile = null;
+    final boolean isInitOrExit = isInit || isExit;
+    if (isInitOrExit) {
+      scriptFile =
+              appData.getScriptFiles().stream()
+                      .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_INIT))
+                      .findFirst()
+                      .orElseThrow(
+                              () -> new IllegalStateException("Update Dependencies Init/Exit Script Not Found"));
+      new UpdateDependencies(repository, scriptFile, isInit).execute();
+    } else {
+      scriptFile = appData.getScriptFiles().stream()
+              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_EXEC))
+              .findFirst()
+              .orElseThrow(
+                      () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
+      new UpdateDependencies(repository, scriptFile, branchName).execute();
     }
   }
 }
