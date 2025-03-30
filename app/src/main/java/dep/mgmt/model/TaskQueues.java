@@ -13,11 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TaskQueues {
   private final BlockingQueue<TaskQueue> queueOfQueues = new LinkedBlockingQueue<>();
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
-  private final AtomicBoolean isShutdown = new AtomicBoolean(Boolean.FALSE);
   private final AtomicLong nonEmptyQueueCount = new AtomicLong(0);
+  private final AtomicBoolean isProcessing = new AtomicBoolean(Boolean.FALSE);
 
   public boolean addQueue(TaskQueue taskQueue) {
-    if (isShutdown.get()) {
+    if (!isExecutorRunning()) {
       return false;
     }
     boolean added = queueOfQueues.offer(taskQueue);
@@ -28,6 +28,11 @@ public class TaskQueues {
   }
 
   public Future<String> processQueues() {
+    if (isProcessing.get()) {
+      throw new IllegalStateException("Queues are already being processed...");
+    }
+
+    isProcessing.set(true);
     return executor.submit(() -> {
       StringBuilder result = new StringBuilder();
       while (!Thread.currentThread().isInterrupted()) {
@@ -55,6 +60,7 @@ public class TaskQueues {
           break;
         }
       }
+      isProcessing.set(false);
       return result.toString();
     });
   }
@@ -63,8 +69,15 @@ public class TaskQueues {
     return nonEmptyQueueCount.get() == 0;
   }
 
+  public boolean isProcessing() {
+    return isProcessing.get();
+  }
+
+  public boolean isExecutorRunning() {
+    return !executor.isShutdown() && !executor.isTerminated();
+  }
+
   public void shutdown() {
-    isShutdown.set(true);
     nonEmptyQueueCount.set(0);
     queueOfQueues.clear();
     executor.shutdown();
