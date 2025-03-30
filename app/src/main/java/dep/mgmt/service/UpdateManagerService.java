@@ -42,34 +42,20 @@ public class UpdateManagerService {
 
   }
 
-  public void resetAllCachesTask() {
-    addTaskToQueue("RESET_ALL_CACHES", this::resetAllCaches);
-    if (isTaskQueueNotRunning()) {
-      taskQueues.processQueues();
-    }
+  public void resetAllCaches() {
+    addTaskToQueue("RESET_APP_DATA", CacheConfig::resetAppData);
+    addTaskToQueue("RESET_GRADLE_DEPENDENCIES", CacheConfig::resetGradleDependenciesMap);
+    addTaskToQueue("RESET_GRADLE_PLUGINS", CacheConfig::resetGradlePluginsMap);
+    addTaskToQueue("RESET_NODE_DEPENDENCIES", CacheConfig::resetNodeDependenciesMap);
+    addTaskToQueue("RESET_PYTHON_PACKAGES", CacheConfig::resetPythonPackagesMap);
   }
 
-  public void setAllCachesTask() {
-    addTaskToQueue("SET_ALL_CACHES", this::setAllCaches);
-    if (isTaskQueueNotRunning()) {
-      taskQueues.processQueues();
-    }
-  }
-
-  private void resetAllCaches() {
-    CacheConfig.resetAppData();
-    CacheConfig.resetGradleDependenciesMap();
-    CacheConfig.resetGradlePluginsMap();
-    CacheConfig.resetNodeDependenciesMap();
-    CacheConfig.resetPythonPackagesMap();
-  }
-
-  private void setAllCaches() {
-    AppDataUtils.setAppData();
-    this.gradleDependencyVersionService.getGradleDependenciesMap();
-    this.gradlePluginVersionService.getGradlePluginsMap();
-    this.nodeDependencyVersionService.getNodeDependenciesMap();
-    this.pythonPackageVersionService.getPythonPackagesMap();
+  public void setAllCaches() {
+    addTaskToQueue("SET_APP_DATA", AppDataUtils::setAppData);
+    addTaskToQueue("SET_GRADLE_DEPENDENCIES", gradleDependencyVersionService::getGradleDependenciesMap);
+    addTaskToQueue("SET_GRADLE_PLUGINS", gradlePluginVersionService::getGradlePluginsMap);
+    addTaskToQueue("SET_NODE_DEPENDENCIES", nodeDependencyVersionService::getNodeDependenciesMap);
+    addTaskToQueue("SET_PYTHON_PACKAGES", pythonPackageVersionService::getPythonPackagesMap);
   }
 
   private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {

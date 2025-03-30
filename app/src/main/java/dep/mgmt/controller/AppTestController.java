@@ -33,12 +33,9 @@ public class AppTestController {
     switch (requestUri) {
       case Endpoints.APP_TESTS_PING -> sendResponse(TESTS_PING_RESPONSE, ctx);
       case Endpoints.APP_TESTS_RESET -> {
-        CompletableFuture.runAsync(
-                () -> {
-                  updateManagerService.resetAllCachesTask();
-                  updateManagerService.setAllCachesTask();
-                });
         sendResponse(TESTS_RESET_RESPONSE, ctx);
+        updateManagerService.resetAllCaches();
+        updateManagerService.setAllCaches();
       }
       case null, default ->
           ServerUtils.sendErrorResponse(
