@@ -1,6 +1,7 @@
 package dep.mgmt.config;
 
 import dep.mgmt.service.ProcessSummaryService;
+import dep.mgmt.service.UpdateManagerService;
 import dep.mgmt.util.ConstantUtils;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -15,6 +16,9 @@ import org.slf4j.LoggerFactory;
 public class ScheduleConfig {
   private static final Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
   private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+  private static final UpdateManagerService updateManagerService = new UpdateManagerService();
+  private static final ProcessSummaryService processSummaryService = new ProcessSummaryService();
 
   public static void init() {
     Runtime.getRuntime()
@@ -47,8 +51,8 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
-          // TODO what is to be scheduled
-          // Schedule the next execution
+          updateManagerService.scheduledUpdates();
+          // schedule the next execution
           updateReposSchedule();
         },
         initialDelay,
@@ -64,16 +68,15 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Cleanup Process Summaries...");
-          new ProcessSummaryService().cleanupOldProcessSummaries();
+          processSummaryService.cleanupOldProcessSummaries();
           // Schedule the next execution
-          updateReposSchedule();
+            cleanupProcessSummariesSchedule();
         },
         initialDelay,
         TimeUnit.MILLISECONDS);
   }
 
-  private static ZonedDateTime getExecutionTime(
-      final ZonedDateTime now, final int schedulerStartHour) {
+  private static ZonedDateTime getExecutionTime(final ZonedDateTime now, final int schedulerStartHour) {
     ZonedDateTime executionTime =
         ZonedDateTime.now(ZoneId.systemDefault())
             .withHour(schedulerStartHour)

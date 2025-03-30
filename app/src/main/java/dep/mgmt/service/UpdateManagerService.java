@@ -38,10 +38,8 @@ public class UpdateManagerService {
     return !taskQueues.isProcessing();
   }
 
-  private void addTaskToQueue(final String name, final Runnable action) {
-    TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
-    taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
-    taskQueues.addQueue(taskQueue);
+  public void scheduledUpdates() {
+
   }
 
   public void resetAllCachesTask() {
@@ -223,6 +221,12 @@ public class UpdateManagerService {
                       () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
       new UpdateDependencies(repository, scriptFile, branchName).execute();
     }
+  }
+
+  private void addTaskToQueue(final String name, final Runnable action) {
+    TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
+    taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
+    taskQueues.addQueue(taskQueue);
   }
 
   // TODO create process summary
