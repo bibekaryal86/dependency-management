@@ -16,10 +16,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExecuteUpdateService {
-  private static final Logger log = LoggerFactory.getLogger(ExecuteUpdateService.class);
+public class UpdateManagerService {
+  private static final Logger log = LoggerFactory.getLogger(UpdateManagerService.class);
 
-  public void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
+  private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
     log.info("Execute Npm Snapshots: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.appData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
@@ -46,7 +46,7 @@ public class ExecuteUpdateService {
     new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute();
   }
 
-  public void executeGradleSpotlessUpdate(final String branchDate, final String repoName) {
+  private void executeGradleSpotlessUpdate(final String branchDate, final String repoName) {
     log.info("Execute Gradle Spotless Update: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.appData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
