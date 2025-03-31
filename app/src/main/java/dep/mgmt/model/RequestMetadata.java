@@ -12,7 +12,8 @@ public class RequestMetadata implements Serializable {
   private final RequestParams.UpdateType updateType;
   private final Boolean isRecreateCaches;
   private final Boolean isRecreateScriptFiles;
-  private final Boolean isGithubResetPullRequired;
+  private final Boolean isGithubResetRequired;
+  private final Boolean isGithubPullRequired;
   private final Boolean isProcessSummaryRequired;
   private final Boolean isForceCreatePr;
   private final Boolean isDeleteUpdateDependenciesOnly;
@@ -25,7 +26,8 @@ public class RequestMetadata implements Serializable {
       @JsonProperty("updateType") RequestParams.UpdateType updateType,
       @JsonProperty("isRecreateCaches") Boolean isRecreateCaches,
       @JsonProperty("isRecreateScriptFiles") Boolean isRecreateScriptFiles,
-      @JsonProperty("isGithubResetPullRequired") Boolean isGithubResetPullRequired,
+      @JsonProperty("isGithubResetRequired") Boolean isGithubResetRequired,
+      @JsonProperty("isGithubPullRequired") Boolean isGithubPullRequired,
       @JsonProperty("isProcessSummaryRequired") Boolean isProcessSummaryRequired,
       @JsonProperty("isForceCreatePr") Boolean isForceCreatePr,
       @JsonProperty("isDeleteUpdateDependenciesOnly") Boolean isDeleteUpdateDependenciesOnly,
@@ -35,7 +37,8 @@ public class RequestMetadata implements Serializable {
     this.updateType = updateType;
     this.isRecreateCaches = isRecreateCaches;
     this.isRecreateScriptFiles = isRecreateScriptFiles;
-    this.isGithubResetPullRequired = isGithubResetPullRequired;
+    this.isGithubResetRequired = isGithubResetRequired;
+    this.isGithubPullRequired = isGithubPullRequired;
     this.isProcessSummaryRequired = isProcessSummaryRequired;
     this.isForceCreatePr = isForceCreatePr;
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
@@ -56,8 +59,12 @@ public class RequestMetadata implements Serializable {
     return isRecreateScriptFiles;
   }
 
-  public Boolean getGithubResetPullRequired() {
-    return isGithubResetPullRequired;
+  public Boolean getGithubResetRequired() {
+    return isGithubResetRequired;
+  }
+
+  public Boolean getIsGithubPullRequired() {
+    return isGithubPullRequired;
   }
 
   public Boolean getProcessSummaryRequired() {
@@ -91,7 +98,8 @@ public class RequestMetadata implements Serializable {
     return updateType == that.updateType
         && Objects.equals(isRecreateCaches, that.isRecreateCaches)
         && Objects.equals(isRecreateScriptFiles, that.isRecreateScriptFiles)
-        && Objects.equals(isGithubResetPullRequired, that.isGithubResetPullRequired)
+        && Objects.equals(isGithubResetRequired, that.isGithubResetRequired)
+        && Objects.equals(isGithubPullRequired, that.isGithubPullRequired)
         && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired)
         && Objects.equals(isForceCreatePr, that.isForceCreatePr)
         && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly)
@@ -106,7 +114,8 @@ public class RequestMetadata implements Serializable {
         updateType,
         isRecreateCaches,
         isRecreateScriptFiles,
-        isGithubResetPullRequired,
+        isGithubResetRequired,
+        isGithubPullRequired,
         isProcessSummaryRequired,
         isForceCreatePr,
         isDeleteUpdateDependenciesOnly,
@@ -124,8 +133,10 @@ public class RequestMetadata implements Serializable {
         + isRecreateCaches
         + ", isRecreateScriptFiles="
         + isRecreateScriptFiles
-        + ", isGithubResetPullRequired="
-        + isGithubResetPullRequired
+        + ", isGithubResetRequired="
+        + isGithubResetRequired
+        + ", isGithubPullRequired="
+        + isGithubPullRequired
         + ", isProcessSummaryRequired="
         + isProcessSummaryRequired
         + ", isForceCreatePr="
