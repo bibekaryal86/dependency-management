@@ -27,12 +27,12 @@ public class ExecuteScriptFile {
     this.isRunAsync = isRunAsync;
   }
 
-  public String executeScript() {
+  public void executeScript() {
     if (isRunAsync) {
       runAsync();
-      return "Script execution started asynchronously.";
+      log.info("Script execution started asynchronously: [{}]", scriptPath);
     } else {
-      return runSync();
+      runSync();
     }
   }
 
@@ -49,13 +49,12 @@ public class ExecuteScriptFile {
         .start();
   }
 
-  private String runSync() {
+  private void runSync() {
     try {
       Process process = startProcess();
-      return processOutput(process);
+      processOutput(process);
     } catch (Exception ex) {
       log.error("Error in Execute Script: ", ex);
-      return null;
     }
   }
 
@@ -83,7 +82,7 @@ public class ExecuteScriptFile {
     }
   }
 
-  private String processOutput(final Process process) throws IOException {
+  private void processOutput(final Process process) throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line;
     boolean isError = false;
@@ -110,7 +109,6 @@ public class ExecuteScriptFile {
       } else {
         log.debug("Process output: [ {} ]\n{}", this.scriptPath, stringBuilder);
       }
-      return stringBuilder.toString();
     } catch (IOException ex) {
       throw new IOException(
           "Error in Process Stream Output: " + ", " + this.scriptPath + ex.getCause().getMessage());

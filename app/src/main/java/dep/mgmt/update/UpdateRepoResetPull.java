@@ -41,7 +41,7 @@ public class UpdateRepoResetPull {
     this.isPull = isPull;
   }
 
-  public String execute() {
+  public void execute() {
     log.debug(
         "Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}]",
         this.repoHome,
@@ -58,6 +58,6 @@ public class UpdateRepoResetPull {
     }
     arguments.add(String.valueOf(this.isReset));
     arguments.add(String.valueOf(this.isPull));
-    return new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE).executeScript();
+    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE).executeScript();
   }
 }

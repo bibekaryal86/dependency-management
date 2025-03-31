@@ -36,7 +36,7 @@ public class UpdateDependencies {
     this.isInit = Boolean.FALSE;
   }
 
-  public String execute() {
+  public void execute() {
     log.debug(
         "Update Dependencies Init/Exit: [{}] | [{}] | [{}] | [{}]",
         this.repository,
@@ -52,6 +52,6 @@ public class UpdateDependencies {
       arguments.add(this.branchName);
     }
 
-    return new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.FALSE).executeScript();
+    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.FALSE).executeScript();
   }
 }
