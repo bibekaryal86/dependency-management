@@ -17,9 +17,10 @@ import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.LogCaptureUtils;
 import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+
+import java.time.LocalDate;
 import java.util.List;
 
-import io.netty.util.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,12 +81,7 @@ public class UpdateManagerService {
     addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_STOP, LogCaptureUtils::stop);
   }
 
-  public void updateGithubResetPull(final RequestMetadata requestMetadata) {
-    log.info("Update Github Reset Pull: [{}]", requestMetadata);
-
-  }
-
-  private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
+  private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
     log.info("Execute Npm Snapshots: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.appData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
@@ -109,10 +105,10 @@ public class UpdateManagerService {
                 })
             .toList();
 
-    new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute();
+    addTaskToQueue(ConstantUtils.TASK_NPM_SNAPSHOTS, () -> new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute());
   }
 
-  private void executeGradleSpotlessUpdate(final String branchDate, final String repoName) {
+  private void executeGradleSpotlessUpdate(final LocalDate branchDate, final String repoName) {
     log.info("Execute Gradle Spotless Update: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.appData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
@@ -136,7 +132,7 @@ public class UpdateManagerService {
                 })
             .toList();
 
-    new UpdateGradleSpotless(repositories, scriptFile, branchName).execute();
+    addTaskToQueue(ConstantUtils.TASK_GRADLE_SPOTLESS, () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute());
   }
 
   private void executeGithubBranchDelete(final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
@@ -154,7 +150,8 @@ public class UpdateManagerService {
               .findFirst()
               .orElseThrow(
                   () -> new IllegalStateException("Gradle Spotless Script File Not Found"));
-      new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly).execute();
+
+      addTaskToQueue(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, () -> new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly).execute());
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -170,7 +167,8 @@ public class UpdateManagerService {
               .findFirst()
               .orElseThrow(
                   () -> new IllegalStateException("Gradle Spotless One Script File Not Found"));
-      new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly).execute();
+
+      addTaskToQueue(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, () -> new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly).execute());
     }
   }
 
@@ -185,7 +183,8 @@ public class UpdateManagerService {
               .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_RESET_PULL))
               .findFirst()
               .orElseThrow(() -> new IllegalStateException("GitHub Reset Pull Script Not Found"));
-      new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute();
+
+      addTaskToQueue(ConstantUtils.TASK_GITHUB_RESET_PULL, () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute());
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -201,7 +200,8 @@ public class UpdateManagerService {
               .findFirst()
               .orElseThrow(
                   () -> new IllegalStateException("GitHub Reset Pull One Script Not Found"));
-      new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute();
+
+      addTaskToQueue(ConstantUtils.TASK_GITHUB_RESET_PULL, () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute());
     }
   }
 

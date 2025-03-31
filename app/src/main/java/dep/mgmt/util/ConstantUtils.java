@@ -164,4 +164,8 @@ public class ConstantUtils {
   public static final String TASK_SET_PYTHON_PACKAGES = "SET_PYTHON_PACKAGES";
   public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
   public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
+  public static final String TASK_GITHUB_RESET_PULL = "GITHUB_RESET_PULL";
+  public static final String TASK_GITHUB_BRANCH_DELETE = "GITHUB_BRANCH_DELETE";
+  public static final String TASK_GRADLE_SPOTLESS = "GRADLE_SPOTLESS";
+  public static final String TASK_NPM_SNAPSHOTS = "NPM_SNAPSHOTS";
 }
