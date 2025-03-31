@@ -148,4 +148,20 @@ public class ConstantUtils {
   public static final String GITHUB_ACTIONS_SETUP_NODE = "setup-node";
   public static final String GITHUB_ACTIONS_SETUP_PYTHON = "setup-python";
   public static final String GITHUB_ACTIONS_CODEQL = "codeql-action";
+
+  // UPDATES
+  public static final String TASK_LOG_CAPTURE_START = "LOG_CAPTURE_START";
+  public static final String TASK_LOG_CAPTURE_STOP = "LOG_CAPTURE_STOP";
+  public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
+  public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
+  public static final String TASK_RESET_GRADLE_DEPENDENCIES  = "RESET_GRADLE_DEPENDENCIES";
+  public static final String TASK_SET_GRADLE_DEPENDENCIES = "SET_GRADLE_DEPENDENCIES";
+  public static final String TASK_RESET_GRADLE_PLUGINS = "RESET_GRADLE_PLUGINS";
+  public static final String TASK_SET_GRADLE_PLUGINS   = "SET_GRADLE_PLUGINS";
+  public static final String TASK_RESET_NODE_DEPENDENCIES = "RESET_NODE_DEPENDENCIES";
+  public static final String TASK_SET_NODE_DEPENDENCIES = "SET_NODE_DEPENDENCIES";
+  public static final String TASK_RESET_PYTHON_PACKAGES = "RESET_PYTHON_PACKAGES";
+  public static final String TASK_SET_PYTHON_PACKAGES = "SET_PYTHON_PACKAGES";
+  public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
+  public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
 }

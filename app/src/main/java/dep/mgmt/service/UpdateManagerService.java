@@ -4,6 +4,7 @@ import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
+import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.update.UpdateBranchDelete;
@@ -13,8 +14,12 @@ import dep.mgmt.update.UpdateNpmSnapshots;
 import dep.mgmt.update.UpdateRepoResetPull;
 import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.LogCaptureUtils;
+import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.List;
+
+import io.netty.util.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +31,14 @@ public class UpdateManagerService {
   private final GradlePluginVersionService gradlePluginVersionService;
   private final NodeDependencyVersionService nodeDependencyVersionService;
   private final PythonPackageVersionService pythonPackageVersionService;
+  private final ScriptUtils scriptUtils;
 
   public UpdateManagerService() {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.pythonPackageVersionService = new PythonPackageVersionService();
+    this.scriptUtils = new ScriptUtils();
   }
 
   public void executeTaskQueues() {
@@ -45,19 +52,37 @@ public class UpdateManagerService {
   }
 
   public void resetAllCaches() {
-    addTaskToQueue("RESET_APP_DATA", CacheConfig::resetAppData);
-    addTaskToQueue("RESET_GRADLE_DEPENDENCIES", CacheConfig::resetGradleDependenciesMap);
-    addTaskToQueue("RESET_GRADLE_PLUGINS", CacheConfig::resetGradlePluginsMap);
-    addTaskToQueue("RESET_NODE_DEPENDENCIES", CacheConfig::resetNodeDependenciesMap);
-    addTaskToQueue("RESET_PYTHON_PACKAGES", CacheConfig::resetPythonPackagesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_APP_DATA, CacheConfig::resetAppData);
+    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES, CacheConfig::resetGradleDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_PLUGINS, CacheConfig::resetGradlePluginsMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_NODE_DEPENDENCIES, CacheConfig::resetNodeDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_PYTHON_PACKAGES, CacheConfig::resetPythonPackagesMap);
   }
 
   public void setAllCaches() {
-    addTaskToQueue("SET_APP_DATA", AppDataUtils::setAppData);
-    addTaskToQueue("SET_GRADLE_DEPENDENCIES", gradleDependencyVersionService::getGradleDependenciesMap);
-    addTaskToQueue("SET_GRADLE_PLUGINS", gradlePluginVersionService::getGradlePluginsMap);
-    addTaskToQueue("SET_NODE_DEPENDENCIES", nodeDependencyVersionService::getNodeDependenciesMap);
-    addTaskToQueue("SET_PYTHON_PACKAGES", pythonPackageVersionService::getPythonPackagesMap);
+    addTaskToQueue(ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData);
+    addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES, gradleDependencyVersionService::getGradleDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_PLUGINS, gradlePluginVersionService::getGradlePluginsMap);
+    addTaskToQueue(ConstantUtils.TASK_SET_NODE_DEPENDENCIES, nodeDependencyVersionService::getNodeDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_SET_PYTHON_PACKAGES, pythonPackageVersionService::getPythonPackagesMap);
+  }
+
+  public void recreateScriptFiles() {
+    addTaskToQueue(ConstantUtils.TASK_DELETE_SCRIPT_FILES, scriptUtils::deleteTempScriptFiles);
+    addTaskToQueue(ConstantUtils.TASK_CREATE_SCRIPT_FILES, scriptUtils::createTempScriptFiles);
+  }
+
+  public void setLogCaptureWithLevel(final boolean isIncludeDebugLogs) {
+    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_START, () -> LogCaptureUtils.start(isIncludeDebugLogs));
+  }
+
+  public void resetLogCaptureWithLevel() {
+    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_STOP, LogCaptureUtils::stop);
+  }
+
+  public void updateGithubResetPull(final RequestMetadata requestMetadata) {
+    log.info("Update Github Reset Pull: [{}]", requestMetadata);
+
   }
 
   private void executeNpmSnapshotsUpdate(final String branchDate, final String repoName) {
