@@ -6,41 +6,61 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class LogCaptureUtils {
 
   private static final Logger ROOT_LOGGER = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private static final ListAppender<ILoggingEvent> LIST_APPENDER = new ListAppender<>();
   private static boolean isStarted = false;
+  private static ListAppender<ILoggingEvent> listAppender;
+  private static Level previousLogLevel;
 
   public static void start(final boolean isIncludeDebugLogs) {
     if (!isStarted) {
+      previousLogLevel = ROOT_LOGGER.getLevel();
+
       if (isIncludeDebugLogs) {
         ROOT_LOGGER.setLevel(Level.DEBUG);
       }
-      LIST_APPENDER.start();
-      ROOT_LOGGER.addAppender(LIST_APPENDER);
+
+      listAppender = new ListAppender<>();
+      listAppender.start();
+      ROOT_LOGGER.addAppender(listAppender);
+
       isStarted = true;
     }
   }
 
   public static void stop() {
     if (isStarted) {
-      ROOT_LOGGER.detachAppender(LIST_APPENDER);
-      LIST_APPENDER.stop();
+      ROOT_LOGGER.detachAppender(listAppender);
+      listAppender.stop();
       isStarted = false;
-      ROOT_LOGGER.setLevel(Level.INFO);
+      ROOT_LOGGER.setLevel(previousLogLevel);
     }
   }
 
-  public static List<String> getCapturedLogs() {
-    return LIST_APPENDER.list.stream()
-            .map(ILoggingEvent::getFormattedMessage)
+  public static String getCapturedLogs() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            .withZone(ZoneId.systemDefault());
+    List<String> logs = listAppender.list.stream()
+            .map(event -> String.format(
+                    "[%s][%s][%s][%s][%s] --- %s",
+                    formatter.format(Instant.ofEpochMilli(event.getTimeStamp())),
+                    event.getLoggerContextVO().getName(),
+                    event.getThreadName(),
+                    event.getLevel(),
+                    event.getLoggerName(),
+                    event.getFormattedMessage()
+            ))
             .toList();
+    return String.join(System.lineSeparator(), logs);
   }
 
   public static void clear() {
-    LIST_APPENDER.list.clear();
+    listAppender.list.clear();
   }
 }

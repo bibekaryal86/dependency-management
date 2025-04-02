@@ -282,14 +282,6 @@ public class UpdateManagerService {
     taskQueues.addQueue(taskQueue);
   }
 
-  private void setLogCaptureWithLevel(final boolean isIncludeDebugLogs) {
-    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_START, () -> LogCaptureUtils.start(isIncludeDebugLogs));
-  }
-
-  private void resetLogCaptureWithLevel() {
-    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_STOP, LogCaptureUtils::stop);
-  }
-
   private void resetProcessedSummaries() {
     addTaskToQueue(ConstantUtils.TASK_RESET_PROCESS_SUMMARIES, ProcessUtils::resetProcessedRepositoriesAndSummary);
   }

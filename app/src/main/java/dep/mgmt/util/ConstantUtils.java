@@ -150,8 +150,6 @@ public class ConstantUtils {
   public static final String GITHUB_ACTIONS_CODEQL = "codeql-action";
 
   // UPDATES
-  public static final String TASK_LOG_CAPTURE_START = "LOG_CAPTURE_START";
-  public static final String TASK_LOG_CAPTURE_STOP = "LOG_CAPTURE_STOP";
   public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
   public static final String TASK_RESET_GRADLE_DEPENDENCIES  = "RESET_GRADLE_DEPENDENCIES";
