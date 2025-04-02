@@ -15,6 +15,7 @@ import dep.mgmt.update.UpdateRepoResetPull;
 import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.LogCaptureUtils;
+import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 
@@ -52,33 +53,63 @@ public class UpdateManagerService {
 
   }
 
-  public void resetAllCaches() {
+  public void updateNpmSnapshots(final RequestMetadata requestMetadata) {
+    updateInit(requestMetadata);
+    executeNpmSnapshotsUpdate(requestMetadata.getBranchDate(), requestMetadata.getRepoName());
+    executeTaskQueues();
+  }
+
+  public void updateGradleSpotless(final RequestMetadata requestMetadata) {
+    updateInit(requestMetadata);
+    executeGradleSpotlessUpdate(requestMetadata.getBranchDate(), requestMetadata.getRepoName());
+    executeTaskQueues();
+  }
+
+  public void updateGithubBranchDelete(final RequestMetadata requestMetadata) {
+    updateInit(requestMetadata);
+    executeGithubBranchDelete(requestMetadata.getDeleteUpdateDependenciesOnly(), requestMetadata.getRepoName());
+    executeTaskQueues();
+  }
+
+  public void updateGithubPullReset(final RequestMetadata requestMetadata) {
+    updateInit(requestMetadata);
+    executeUpdateGithubResetPull(requestMetadata.getGithubResetRequired(), requestMetadata.getIsGithubPullRequired(), requestMetadata.getRepoName());
+    executeTaskQueues();
+  }
+
+  public void recreateCaches() {
+    // reset
     addTaskToQueue(ConstantUtils.TASK_RESET_APP_DATA, CacheConfig::resetAppData);
     addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES, CacheConfig::resetGradleDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_PLUGINS, CacheConfig::resetGradlePluginsMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_NODE_DEPENDENCIES, CacheConfig::resetNodeDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_PYTHON_PACKAGES, CacheConfig::resetPythonPackagesMap);
-  }
 
-  public void setAllCaches() {
-    addTaskToQueue(ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData);
+    // set
+    addTaskToQueue(ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData, 1000);
     addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES, gradleDependencyVersionService::getGradleDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_PLUGINS, gradlePluginVersionService::getGradlePluginsMap);
     addTaskToQueue(ConstantUtils.TASK_SET_NODE_DEPENDENCIES, nodeDependencyVersionService::getNodeDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_SET_PYTHON_PACKAGES, pythonPackageVersionService::getPythonPackagesMap);
+
+    executeTaskQueues();
   }
 
-  public void recreateScriptFiles() {
+  private void recreateScriptFiles() {
     addTaskToQueue(ConstantUtils.TASK_DELETE_SCRIPT_FILES, scriptUtils::deleteTempScriptFiles);
     addTaskToQueue(ConstantUtils.TASK_CREATE_SCRIPT_FILES, scriptUtils::createTempScriptFiles);
   }
 
-  public void setLogCaptureWithLevel(final boolean isIncludeDebugLogs) {
-    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_START, () -> LogCaptureUtils.start(isIncludeDebugLogs));
-  }
+  private void updateInit(final RequestMetadata requestMetadata) {
+    resetProcessedSummaries();
 
-  public void resetLogCaptureWithLevel() {
-    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_STOP, LogCaptureUtils::stop);
+    if (requestMetadata.getRecreateCaches()) {
+      recreateCaches();
+    }
+
+    if (requestMetadata.getRecreateScriptFiles() || scriptUtils.isScriptFilesMissingInFileSystem()) {
+      recreateScriptFiles();
+    }
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
@@ -240,6 +271,27 @@ public class UpdateManagerService {
     TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
     taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
     taskQueues.addQueue(taskQueue);
+  }
+
+  private void addTaskToQueue(final String name, final Runnable action, final long delayMillis) {
+    TaskQueues.TaskQueue taskQueue = new TaskQueues.TaskQueue(name + "_QUEUE");
+    taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(name + "_TASK", action));
+    if (delayMillis > 0) {
+      taskQueue.setDelay(delayMillis);
+    }
+    taskQueues.addQueue(taskQueue);
+  }
+
+  private void setLogCaptureWithLevel(final boolean isIncludeDebugLogs) {
+    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_START, () -> LogCaptureUtils.start(isIncludeDebugLogs));
+  }
+
+  private void resetLogCaptureWithLevel() {
+    addTaskToQueue(ConstantUtils.TASK_LOG_CAPTURE_STOP, LogCaptureUtils::stop);
+  }
+
+  private void resetProcessedSummaries() {
+    addTaskToQueue(ConstantUtils.TASK_RESET_PROCESS_SUMMARIES, ProcessUtils::resetProcessedRepositoriesAndSummary);
   }
 
   // TODO create process summary

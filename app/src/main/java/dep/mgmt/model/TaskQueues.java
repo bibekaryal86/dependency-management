@@ -1,5 +1,8 @@
 package dep.mgmt.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -11,6 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TaskQueues {
+  private static final Logger log = LoggerFactory.getLogger(TaskQueues.class);
+
   private final BlockingQueue<TaskQueue> queueOfQueues = new LinkedBlockingQueue<>();
   private ExecutorService executor = Executors.newSingleThreadExecutor();
   private final AtomicLong nonEmptyQueueCount = new AtomicLong(0);
@@ -166,7 +171,9 @@ public class TaskQueues {
         try {
           return action.call();
         } catch (Exception e) {
-          return String.format("OneTask: [%s] [%s] : %s", this.name, e.getClass().getSimpleName(), e.getMessage());
+          final String message = String.format("OneTask: [%s] [%s] : %s", this.name, e.getClass().getSimpleName(), e.getMessage());
+          log.error(message);
+          return message;
         }
       }
     }

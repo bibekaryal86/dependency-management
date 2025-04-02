@@ -34,9 +34,7 @@ public class AppTestController {
       case Endpoints.APP_TESTS_PING -> sendResponse(TESTS_PING_RESPONSE, ctx);
       case Endpoints.APP_TESTS_RESET -> {
         sendResponse(TESTS_RESET_RESPONSE, ctx);
-        updateManagerService.resetAllCaches();
-        updateManagerService.setAllCaches();
-        updateManagerService.executeTaskQueues();
+        updateManagerService.recreateCaches();
       }
       case null, default ->
           ServerUtils.sendErrorResponse(

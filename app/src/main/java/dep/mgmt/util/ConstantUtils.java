@@ -168,4 +168,5 @@ public class ConstantUtils {
   public static final String TASK_GITHUB_BRANCH_DELETE = "GITHUB_BRANCH_DELETE";
   public static final String TASK_GRADLE_SPOTLESS = "GRADLE_SPOTLESS";
   public static final String TASK_NPM_SNAPSHOTS = "NPM_SNAPSHOTS";
+  public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
 }
