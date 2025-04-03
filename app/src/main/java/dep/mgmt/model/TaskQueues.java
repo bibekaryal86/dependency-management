@@ -1,8 +1,5 @@
 package dep.mgmt.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -12,6 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TaskQueues {
   private static final Logger log = LoggerFactory.getLogger(TaskQueues.class);
@@ -39,36 +38,37 @@ public class TaskQueues {
     }
 
     isProcessing.set(true);
-    return executor.submit(() -> {
-      StringBuilder result = new StringBuilder();
-      while (!Thread.currentThread().isInterrupted()) {
-        try {
-          TaskQueue taskQueue = queueOfQueues.poll(1, TimeUnit.SECONDS);
+    return executor.submit(
+        () -> {
+          StringBuilder result = new StringBuilder();
+          while (!Thread.currentThread().isInterrupted()) {
+            try {
+              TaskQueue taskQueue = queueOfQueues.poll(1, TimeUnit.SECONDS);
 
-          if (taskQueue == null && areAllQueuesEmpty()) {
-            break;
-          }
-
-          if (taskQueue != null) {
-            while (!taskQueue.isEmpty()) {
-              TaskQueue.OneTask oneTask = taskQueue.pollTask();
-              if (oneTask != null) {
-                Object object = oneTask.execute();
-                if (object != null) {
-                  result.append(object);
-                }
+              if (taskQueue == null && areAllQueuesEmpty()) {
+                break;
               }
+
+              if (taskQueue != null) {
+                while (!taskQueue.isEmpty()) {
+                  TaskQueue.OneTask oneTask = taskQueue.pollTask();
+                  if (oneTask != null) {
+                    Object object = oneTask.execute();
+                    if (object != null) {
+                      result.append(object);
+                    }
+                  }
+                }
+                nonEmptyQueueCount.decrementAndGet();
+              }
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              break;
             }
-            nonEmptyQueueCount.decrementAndGet();
           }
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          break;
-        }
-      }
-      isProcessing.set(false);
-      return result.toString();
-    });
+          isProcessing.set(false);
+          return result.toString();
+        });
   }
 
   private boolean areAllQueuesEmpty() {
@@ -157,10 +157,10 @@ public class TaskQueues {
       public OneTask(final String name, final Runnable action) {
         this.name = name;
         this.action =
-                () -> {
-                  action.run();
-                  return null;
-                };
+            () -> {
+              action.run();
+              return null;
+            };
       }
 
       public String getName() {
@@ -171,7 +171,10 @@ public class TaskQueues {
         try {
           return action.call();
         } catch (Exception e) {
-          final String message = String.format("OneTask: [%s] [%s] : %s", this.name, e.getClass().getSimpleName(), e.getMessage());
+          final String message =
+              String.format(
+                  "OneTask: [%s] [%s] : %s",
+                  this.name, e.getClass().getSimpleName(), e.getMessage());
           log.error(message);
           return message;
         }

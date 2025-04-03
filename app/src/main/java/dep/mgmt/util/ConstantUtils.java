@@ -152,10 +152,10 @@ public class ConstantUtils {
   // UPDATES
   public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
-  public static final String TASK_RESET_GRADLE_DEPENDENCIES  = "RESET_GRADLE_DEPENDENCIES";
+  public static final String TASK_RESET_GRADLE_DEPENDENCIES = "RESET_GRADLE_DEPENDENCIES";
   public static final String TASK_SET_GRADLE_DEPENDENCIES = "SET_GRADLE_DEPENDENCIES";
   public static final String TASK_RESET_GRADLE_PLUGINS = "RESET_GRADLE_PLUGINS";
-  public static final String TASK_SET_GRADLE_PLUGINS   = "SET_GRADLE_PLUGINS";
+  public static final String TASK_SET_GRADLE_PLUGINS = "SET_GRADLE_PLUGINS";
   public static final String TASK_RESET_NODE_DEPENDENCIES = "RESET_NODE_DEPENDENCIES";
   public static final String TASK_SET_NODE_DEPENDENCIES = "SET_NODE_DEPENDENCIES";
   public static final String TASK_RESET_PYTHON_PACKAGES = "RESET_PYTHON_PACKAGES";

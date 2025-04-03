@@ -70,13 +70,14 @@ public class ScheduleConfig {
           log.info("Starting Scheduler to Cleanup Process Summaries...");
           processSummaryService.cleanupOldProcessSummaries();
           // Schedule the next execution
-            cleanupProcessSummariesSchedule();
+          cleanupProcessSummariesSchedule();
         },
         initialDelay,
         TimeUnit.MILLISECONDS);
   }
 
-  private static ZonedDateTime getExecutionTime(final ZonedDateTime now, final int schedulerStartHour) {
+  private static ZonedDateTime getExecutionTime(
+      final ZonedDateTime now, final int schedulerStartHour) {
     ZonedDateTime executionTime =
         ZonedDateTime.now(ZoneId.systemDefault())
             .withHour(schedulerStartHour)

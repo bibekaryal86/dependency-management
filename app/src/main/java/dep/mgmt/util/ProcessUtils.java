@@ -17,7 +17,8 @@ public class ProcessUtils {
   private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
   private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
+      processedRepositories = new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -75,7 +76,8 @@ public class ProcessUtils {
     repositoriesWithPrError = new HashSet<>();
   }
 
-  public static void addProcessedRepositories(String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
+  public static void addProcessedRepositories(
+      String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
     processedRepositories.put(
         repoName,
         new ProcessSummaries.ProcessSummary.ProcessRepository(

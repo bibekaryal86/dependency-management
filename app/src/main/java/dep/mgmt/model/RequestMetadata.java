@@ -15,7 +15,6 @@ public class RequestMetadata implements Serializable {
   private final Boolean isGithubResetRequired;
   private final Boolean isGithubPullRequired;
   private final Boolean isProcessSummaryRequired;
-  private final Boolean isForceCreatePr;
   private final Boolean isDeleteUpdateDependenciesOnly;
   private final Boolean isIncludeDebugLogs;
   private final LocalDate branchDate;
@@ -29,7 +28,6 @@ public class RequestMetadata implements Serializable {
       @JsonProperty("isGithubResetRequired") Boolean isGithubResetRequired,
       @JsonProperty("isGithubPullRequired") Boolean isGithubPullRequired,
       @JsonProperty("isProcessSummaryRequired") Boolean isProcessSummaryRequired,
-      @JsonProperty("isForceCreatePr") Boolean isForceCreatePr,
       @JsonProperty("isDeleteUpdateDependenciesOnly") Boolean isDeleteUpdateDependenciesOnly,
       @JsonProperty("isIncludeDebugLogs") Boolean isIncludeDebugLogs,
       @JsonProperty("branchDate") LocalDate branchDate,
@@ -40,7 +38,6 @@ public class RequestMetadata implements Serializable {
     this.isGithubResetRequired = isGithubResetRequired;
     this.isGithubPullRequired = isGithubPullRequired;
     this.isProcessSummaryRequired = isProcessSummaryRequired;
-    this.isForceCreatePr = isForceCreatePr;
     this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
     this.isIncludeDebugLogs = isIncludeDebugLogs;
     this.branchDate = branchDate;
@@ -71,10 +68,6 @@ public class RequestMetadata implements Serializable {
     return isProcessSummaryRequired;
   }
 
-  public Boolean getForceCreatePr() {
-    return isForceCreatePr;
-  }
-
   public Boolean getDeleteUpdateDependenciesOnly() {
     return isDeleteUpdateDependenciesOnly;
   }
@@ -101,7 +94,6 @@ public class RequestMetadata implements Serializable {
         && Objects.equals(isGithubResetRequired, that.isGithubResetRequired)
         && Objects.equals(isGithubPullRequired, that.isGithubPullRequired)
         && Objects.equals(isProcessSummaryRequired, that.isProcessSummaryRequired)
-        && Objects.equals(isForceCreatePr, that.isForceCreatePr)
         && Objects.equals(isDeleteUpdateDependenciesOnly, that.isDeleteUpdateDependenciesOnly)
         && Objects.equals(isIncludeDebugLogs, that.isIncludeDebugLogs)
         && Objects.equals(branchDate, that.branchDate)
@@ -117,7 +109,6 @@ public class RequestMetadata implements Serializable {
         isGithubResetRequired,
         isGithubPullRequired,
         isProcessSummaryRequired,
-        isForceCreatePr,
         isDeleteUpdateDependenciesOnly,
         isIncludeDebugLogs,
         branchDate,
@@ -139,8 +130,6 @@ public class RequestMetadata implements Serializable {
         + isGithubPullRequired
         + ", isProcessSummaryRequired="
         + isProcessSummaryRequired
-        + ", isForceCreatePr="
-        + isForceCreatePr
         + ", isDeleteUpdateDependenciesOnly="
         + isDeleteUpdateDependenciesOnly
         + ", isIncludeDebugLogs="

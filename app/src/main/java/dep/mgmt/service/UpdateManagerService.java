@@ -14,14 +14,11 @@ import dep.mgmt.update.UpdateNpmSnapshots;
 import dep.mgmt.update.UpdateRepoResetPull;
 import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.LogCaptureUtils;
 import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
-
 import java.time.LocalDate;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +47,19 @@ public class UpdateManagerService {
   }
 
   public void scheduledUpdates() {
-
+    final RequestMetadata requestMetadata =
+        new RequestMetadata(
+            RequestParams.UpdateType.ALL,
+            Boolean.FALSE,
+            Boolean.FALSE,
+            Boolean.TRUE,
+            Boolean.TRUE,
+            Boolean.TRUE,
+            Boolean.TRUE,
+            Boolean.TRUE,
+            null,
+            null);
+    updateInit(requestMetadata);
   }
 
   public void updateNpmSnapshots(final RequestMetadata requestMetadata) {
@@ -67,13 +76,17 @@ public class UpdateManagerService {
 
   public void updateGithubBranchDelete(final RequestMetadata requestMetadata) {
     updateInit(requestMetadata);
-    executeGithubBranchDelete(requestMetadata.getDeleteUpdateDependenciesOnly(), requestMetadata.getRepoName());
+    executeGithubBranchDelete(
+        requestMetadata.getDeleteUpdateDependenciesOnly(), requestMetadata.getRepoName());
     executeTaskQueues();
   }
 
   public void updateGithubPullReset(final RequestMetadata requestMetadata) {
     updateInit(requestMetadata);
-    executeUpdateGithubResetPull(requestMetadata.getGithubResetRequired(), requestMetadata.getIsGithubPullRequired(), requestMetadata.getRepoName());
+    executeUpdateGithubResetPull(
+        requestMetadata.getGithubResetRequired(),
+        requestMetadata.getIsGithubPullRequired(),
+        requestMetadata.getRepoName());
     executeTaskQueues();
   }
 
@@ -92,7 +105,18 @@ public class UpdateManagerService {
     addTaskToQueue(ConstantUtils.TASK_SET_NODE_DEPENDENCIES, nodeDependencyVersionService::getNodeDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_SET_PYTHON_PACKAGES, pythonPackageVersionService::getPythonPackagesMap);
 
+    // execute
     executeTaskQueues();
+  }
+  // TODO break recreate into reset and set
+  public void recreateRemoteCaches() {
+    // clear and set caches after pull (gradle version in repo could have changed)
+    // reset
+    addTaskToQueue(ConstantUtils.TASK_RESET_APP_DATA, CacheConfig::resetAppData);
+    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES, CacheConfig::resetGradleDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_PLUGINS, CacheConfig::resetGradlePluginsMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_NODE_DEPENDENCIES, CacheConfig::resetNodeDependenciesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_PYTHON_PACKAGES, CacheConfig::resetPythonPackagesMap);
   }
 
   private void recreateScriptFiles() {
@@ -107,8 +131,13 @@ public class UpdateManagerService {
       recreateCaches();
     }
 
-    if (requestMetadata.getRecreateScriptFiles() || scriptUtils.isScriptFilesMissingInFileSystem()) {
+    if (requestMetadata.getRecreateScriptFiles()
+        || scriptUtils.isScriptFilesMissingInFileSystem()) {
       recreateScriptFiles();
+    }
+
+    if (requestMetadata.getGithubResetRequired() || requestMetadata.getIsGithubPullRequired()) {
+      executeUpdateGithubResetPull(requestMetadata.getGithubResetRequired(), requestMetadata.getIsGithubPullRequired(), requestMetadata.getRepoName());
     }
   }
 
@@ -136,7 +165,9 @@ public class UpdateManagerService {
                 })
             .toList();
 
-    addTaskToQueue(ConstantUtils.TASK_NPM_SNAPSHOTS, () -> new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute());
+    addTaskToQueue(
+        ConstantUtils.TASK_NPM_SNAPSHOTS,
+        () -> new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute());
   }
 
   private void executeGradleSpotlessUpdate(final LocalDate branchDate, final String repoName) {
@@ -163,10 +194,13 @@ public class UpdateManagerService {
                 })
             .toList();
 
-    addTaskToQueue(ConstantUtils.TASK_GRADLE_SPOTLESS, () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute());
+    addTaskToQueue(
+        ConstantUtils.TASK_GRADLE_SPOTLESS,
+        () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute());
   }
 
-  private void executeGithubBranchDelete(final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
+  private void executeGithubBranchDelete(
+      final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
     log.info(
         "Execute Update Repos GitHub Branch Delete: [{}] | [{}]",
         isDeleteUpdateDependenciesOnly,
@@ -182,7 +216,11 @@ public class UpdateManagerService {
               .orElseThrow(
                   () -> new IllegalStateException("Gradle Spotless Script File Not Found"));
 
-      addTaskToQueue(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, () -> new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly).execute());
+      addTaskToQueue(
+          ConstantUtils.TASK_GITHUB_BRANCH_DELETE,
+          () ->
+              new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly)
+                  .execute());
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -199,11 +237,16 @@ public class UpdateManagerService {
               .orElseThrow(
                   () -> new IllegalStateException("Gradle Spotless One Script File Not Found"));
 
-      addTaskToQueue(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, () -> new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly).execute());
+      addTaskToQueue(
+          ConstantUtils.TASK_GITHUB_BRANCH_DELETE,
+          () ->
+              new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly)
+                  .execute());
     }
   }
 
-  private void executeUpdateGithubResetPull(final boolean isReset, final boolean isPull, final String repoName) {
+  private void executeUpdateGithubResetPull(
+      final boolean isReset, final boolean isPull, final String repoName) {
     log.info("Execute Update GitHub Reset Pull: [{}] | [{}] | [{}]", isReset, isPull, repoName);
     final AppData appData = AppDataUtils.appData();
 
@@ -215,7 +258,9 @@ public class UpdateManagerService {
               .findFirst()
               .orElseThrow(() -> new IllegalStateException("GitHub Reset Pull Script Not Found"));
 
-      addTaskToQueue(ConstantUtils.TASK_GITHUB_RESET_PULL, () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute());
+      addTaskToQueue(
+          ConstantUtils.TASK_GITHUB_RESET_PULL,
+          () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute());
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -232,37 +277,47 @@ public class UpdateManagerService {
               .orElseThrow(
                   () -> new IllegalStateException("GitHub Reset Pull One Script Not Found"));
 
-      addTaskToQueue(ConstantUtils.TASK_GITHUB_RESET_PULL, () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute());
+      addTaskToQueue(
+          ConstantUtils.TASK_GITHUB_RESET_PULL,
+          () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute());
     }
   }
 
-  private void executeUpdateDependencies(final String repoName, final String branchName, final boolean isInit, final boolean isExit) {
-    log.info("Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]", repoName, branchName, isInit, isExit);
+  private void executeUpdateDependencies(
+      final String repoName, final String branchName, final boolean isInit, final boolean isExit) {
+    log.info(
+        "Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]",
+        repoName,
+        branchName,
+        isInit,
+        isExit);
     final AppData appData = AppDataUtils.appData();
     final AppDataRepository repository =
-            appData.getRepositories().stream()
-                    .filter(repo -> repo.getRepoName().equals(repoName))
-                    .findFirst()
-                    .orElseThrow(
-                            () ->
-                                    new IllegalArgumentException(
-                                            "Repo Not Found by Repo Name ['" + repoName + "']"));
+        appData.getRepositories().stream()
+            .filter(repo -> repo.getRepoName().equals(repoName))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException(
+                        "Repo Not Found by Repo Name ['" + repoName + "']"));
     final AppDataScriptFile scriptFile;
     final boolean isInitOrExit = isInit || isExit;
     if (isInitOrExit) {
       scriptFile =
-              appData.getScriptFiles().stream()
-                      .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_INIT))
-                      .findFirst()
-                      .orElseThrow(
-                              () -> new IllegalStateException("Update Dependencies Init/Exit Script Not Found"));
+          appData.getScriptFiles().stream()
+              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_INIT))
+              .findFirst()
+              .orElseThrow(
+                  () ->
+                      new IllegalStateException("Update Dependencies Init/Exit Script Not Found"));
       new UpdateDependencies(repository, scriptFile, isInit).execute();
     } else {
-      scriptFile = appData.getScriptFiles().stream()
+      scriptFile =
+          appData.getScriptFiles().stream()
               .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_EXEC))
               .findFirst()
               .orElseThrow(
-                      () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
+                  () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
       new UpdateDependencies(repository, scriptFile, branchName).execute();
     }
   }
@@ -283,7 +338,9 @@ public class UpdateManagerService {
   }
 
   private void resetProcessedSummaries() {
-    addTaskToQueue(ConstantUtils.TASK_RESET_PROCESS_SUMMARIES, ProcessUtils::resetProcessedRepositoriesAndSummary);
+    addTaskToQueue(
+        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES,
+        ProcessUtils::resetProcessedRepositoriesAndSummary);
   }
 
   // TODO create process summary
