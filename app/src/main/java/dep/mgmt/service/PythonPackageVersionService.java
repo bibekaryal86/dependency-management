@@ -58,6 +58,7 @@ public class PythonPackageVersionService {
   }
 
   public Map<String, DependencyEntity> getPythonPackagesMap() {
+    log.info("Get Python Packages Map...");
     Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
@@ -84,6 +85,7 @@ public class PythonPackageVersionService {
   }
 
   public void updatePythonPackages() {
+    log.info("Update Python Packages...");
     final Map<String, DependencyEntity> pythonPackagesLocal = getPythonPackagesMap();
     final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();

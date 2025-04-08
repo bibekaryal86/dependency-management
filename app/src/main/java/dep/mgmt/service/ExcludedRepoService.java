@@ -22,6 +22,7 @@ public class ExcludedRepoService {
   }
 
   public Map<String, ExcludedRepoEntity> getExcludedReposMap() {
+    log.info("Get Excluded Repos Map...");
     Map<String, ExcludedRepoEntity> excludedReposMap = CacheConfig.getExcludedReposMap();
     if (CommonUtilities.isEmpty(excludedReposMap)) {
       final List<ExcludedRepoEntity> excludedRepos = excludedRepoRepository.findAll();

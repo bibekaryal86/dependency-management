@@ -57,6 +57,7 @@ public class NodeDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getNodeDependenciesMap() {
+    log.info("Get Node Dependencies Map...");
     Map<String, DependencyEntity> nodeDependenciesMap = CacheConfig.getNodeDependenciesMap();
     if (CommonUtilities.isEmpty(nodeDependenciesMap)) {
       final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
@@ -84,6 +85,7 @@ public class NodeDependencyVersionService {
   }
 
   public void updateNodeDependencies() {
+    log.info("Update Node Dependencies...");
     final Map<String, DependencyEntity> nodeDependenciesLocal = getNodeDependenciesMap();
     final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
     List<DependencyEntity> nodeDependenciesToUpdate = new ArrayList<>();

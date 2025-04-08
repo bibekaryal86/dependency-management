@@ -51,7 +51,7 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
-          updateManagerService.scheduledUpdates();
+          updateManagerService.updateScheduled();
           // schedule the next execution
           updateReposSchedule();
         },

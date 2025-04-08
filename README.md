@@ -41,3 +41,7 @@ Endpoints
 (5) Pull Reset (with option for 1)
 (6) Create Pull Request
 (7) Merge Pull Request
+
+
+automate execute tasks
+    if first task is added, and is not running, execute it

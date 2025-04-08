@@ -75,6 +75,7 @@ public class GradlePluginVersionService {
   }
 
   public Map<String, DependencyEntity> getGradlePluginsMap() {
+    log.info("Get Gradle Plugins Map...");
     Map<String, DependencyEntity> gradlePluginsMap = CacheConfig.getGradlePluginsMap();
     if (CommonUtilities.isEmpty(gradlePluginsMap)) {
       final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
@@ -101,6 +102,7 @@ public class GradlePluginVersionService {
   }
 
   public void updateGradlePlugins() {
+    log.info("Update Gradle Plugins...");
     final Map<String, DependencyEntity> gradlePluginsLocal = getGradlePluginsMap();
     final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
     List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();

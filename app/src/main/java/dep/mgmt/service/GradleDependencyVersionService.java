@@ -85,6 +85,7 @@ public class GradleDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getGradleDependenciesMap() {
+    log.info("Get Gradle Dependencies Map...");
     Map<String, DependencyEntity> gradleDependenciesMap = CacheConfig.getGradleDependenciesMap();
     if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
       final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
@@ -113,6 +114,7 @@ public class GradleDependencyVersionService {
   }
 
   public void updateGradleDependencies() {
+    log.info("Update Gradle Dependencies...");
     final Map<String, DependencyEntity> gradleDependenciesLocal = getGradleDependenciesMap();
     final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
