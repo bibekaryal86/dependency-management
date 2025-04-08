@@ -32,9 +32,6 @@ options to view which tasks running
 options to kill a long running task
 option to run on one repo
 
-TODO:
-    * schedules
-        * one for dependency update
 
 Endpoints
 (1) Update Repo

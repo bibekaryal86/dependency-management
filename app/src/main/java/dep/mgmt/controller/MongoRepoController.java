@@ -1,12 +1,14 @@
 package dep.mgmt.controller;
 
 import dep.mgmt.model.AppDataLatestVersions;
-import dep.mgmt.model.Dependency;
-import dep.mgmt.model.DependencyResponse;
+import dep.mgmt.model.Dependencies;
+import dep.mgmt.model.ExcludedRepos;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
+import dep.mgmt.model.entity.ExcludedRepoEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.server.Endpoints;
+import dep.mgmt.service.ExcludedRepoService;
 import dep.mgmt.service.GradleDependencyVersionService;
 import dep.mgmt.service.GradlePluginVersionService;
 import dep.mgmt.service.LatestVersionService;
@@ -33,6 +35,7 @@ public class MongoRepoController {
   private final PythonPackageVersionService pythonPackageVersionService;
   private final LatestVersionService latestVersionService;
   private final ProcessSummaryService processSummaryService;
+  private final ExcludedRepoService excludedRepoService;
 
   public MongoRepoController() {
     this.gradlePluginVersionService = new GradlePluginVersionService();
@@ -41,6 +44,7 @@ public class MongoRepoController {
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.latestVersionService = new LatestVersionService();
     this.processSummaryService = new ProcessSummaryService();
+    this.excludedRepoService = new ExcludedRepoService();
   }
 
   public void handleRequest(
@@ -85,17 +89,19 @@ public class MongoRepoController {
           updateDependenciesInMongo();
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.ACCEPTED);
           break;
+        case Endpoints.MONGO_EXCLUDED_REPO:
+          ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK);
+          break;
         default:
-          ServerUtils.sendErrorResponse(
-              ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else if (requestMethod.equals(HttpMethod.POST)) {
-      final Dependency dependencyRequest =
-          ServerUtils.getRequestBody(fullHttpRequest, Dependency.class);
+      final Dependencies.Dependency dependencyRequest =
+          ServerUtils.getRequestBody(fullHttpRequest, Dependencies.Dependency.class);
       if (dependencyRequest == null
           || CommonUtilities.isEmpty(dependencyRequest.getName())
-          || CommonUtilities.isEmpty(dependencyRequest.getVersion())) {
+          || (CommonUtilities.isEmpty(dependencyRequest.getVersion()) && !requestUri.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
         ServerUtils.sendErrorResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
         return;
       }
@@ -117,9 +123,24 @@ public class MongoRepoController {
           savePythonPackage(dependencyRequest);
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
+        case Endpoints.MONGO_EXCLUDED_REPO:
+          saveExcludedRepo(dependencyRequest.getName());
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          break;
         default:
-          ServerUtils.sendErrorResponse(
-              ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          break;
+      }
+    } else if (requestMethod.equals(HttpMethod.DELETE)) {
+      switch (requestUri) {
+        case Endpoints.MONGO_EXCLUDED_REPO:
+          final String repoName = ServerUtils.getQueryParam(requestUri, "repoName", "");
+          final boolean isDeleteAll = Boolean.parseBoolean(ServerUtils.getQueryParam(requestUri, "deleteAll", ""));
+          deletedExcludedRepo(repoName, isDeleteAll);
+          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          break;
+        default:
+          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Delete Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else {
@@ -130,15 +151,15 @@ public class MongoRepoController {
     }
   }
 
-  private DependencyResponse getGradlePlugins() {
+  private Dependencies getGradlePlugins() {
     final List<DependencyEntity> gradlePluginEntities =
         gradlePluginVersionService.getGradlePluginsMap().values().stream().toList();
-    final List<Dependency> gradlePlugins =
+    final List<Dependencies.Dependency> gradlePlugins =
         ConvertUtils.convertDependencyEntities(gradlePluginEntities);
-    return new DependencyResponse(gradlePlugins);
+    return new Dependencies(gradlePlugins);
   }
 
-  private void saveGradlePlugin(final Dependency dependency) {
+  private void saveGradlePlugin(final Dependencies.Dependency dependency) {
     DependencyEntity dependencyEntity =
         gradlePluginVersionService.getGradlePluginsMap().get(dependency.getName());
     if (dependencyEntity == null) {
@@ -150,15 +171,15 @@ public class MongoRepoController {
     }
   }
 
-  private DependencyResponse getGradleDependencies() {
+  private Dependencies getGradleDependencies() {
     final List<DependencyEntity> gradleDependencyEntities =
         gradleDependencyVersionService.getGradleDependenciesMap().values().stream().toList();
-    final List<Dependency> gradleDependencies =
+    final List<Dependencies.Dependency> gradleDependencies =
         ConvertUtils.convertDependencyEntities(gradleDependencyEntities);
-    return new DependencyResponse(gradleDependencies);
+    return new Dependencies(gradleDependencies);
   }
 
-  private void saveGradleDependency(final Dependency dependency) {
+  private void saveGradleDependency(final Dependencies.Dependency dependency) {
     DependencyEntity dependencyEntity =
         gradleDependencyVersionService.getGradleDependenciesMap().get(dependency.getName());
     if (dependencyEntity == null) {
@@ -171,15 +192,15 @@ public class MongoRepoController {
     }
   }
 
-  private DependencyResponse getNodeDependencies() {
+  private Dependencies getNodeDependencies() {
     final List<DependencyEntity> nodeDependencyEntities =
         nodeDependencyVersionService.getNodeDependenciesMap().values().stream().toList();
-    final List<Dependency> nodeDependencies =
+    final List<Dependencies.Dependency> nodeDependencies =
         ConvertUtils.convertDependencyEntities(nodeDependencyEntities);
-    return new DependencyResponse(nodeDependencies);
+    return new Dependencies(nodeDependencies);
   }
 
-  private void saveNpmDependency(final Dependency dependency) {
+  private void saveNpmDependency(final Dependencies.Dependency dependency) {
     DependencyEntity dependencyEntity =
         nodeDependencyVersionService.getNodeDependenciesMap().get(dependency.getName());
     if (dependencyEntity == null) {
@@ -192,15 +213,15 @@ public class MongoRepoController {
     }
   }
 
-  private DependencyResponse getPythonPackages() {
+  private Dependencies getPythonPackages() {
     final List<DependencyEntity> pythonPackageEntities =
         pythonPackageVersionService.getPythonPackagesMap().values().stream().toList();
-    final List<Dependency> pythonPackages =
+    final List<Dependencies.Dependency> pythonPackages =
         ConvertUtils.convertDependencyEntities(pythonPackageEntities);
-    return new DependencyResponse(pythonPackages);
+    return new Dependencies(pythonPackages);
   }
 
-  private void savePythonPackage(final Dependency dependency) {
+  private void savePythonPackage(final Dependencies.Dependency dependency) {
     DependencyEntity dependencyEntity =
         pythonPackageVersionService.getPythonPackagesMap().get(dependency.getName());
     if (dependencyEntity == null) {
@@ -255,5 +276,23 @@ public class MongoRepoController {
     CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
     CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
     CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+  }
+
+  private ExcludedRepos getExcludedRepos() {
+    final List<ExcludedRepoEntity> excludedRepoEntities = excludedRepoService.getExcludedReposMap().values().stream().toList();
+    final List<ExcludedRepos.ExcludedRepo> excludedRepos = ConvertUtils.convertExcludedRepoEntities(excludedRepoEntities);
+    return new ExcludedRepos(excludedRepos);
+  }
+
+  private void saveExcludedRepo(final String name) {
+    excludedRepoService.insertExcludedRepo(name);
+  }
+
+  private void deletedExcludedRepo(final String name, final boolean isDeleteAll) {
+    if (CommonUtilities.isEmpty(name) && isDeleteAll) {
+      excludedRepoService.deleteAllExcludedRepos();
+    } else {
+      excludedRepoService.deleteExcludedRepo(name);
+    }
   }
 }

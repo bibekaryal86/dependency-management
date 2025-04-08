@@ -30,6 +30,7 @@ public class UpdateManagerService {
   private final GradlePluginVersionService gradlePluginVersionService;
   private final NodeDependencyVersionService nodeDependencyVersionService;
   private final PythonPackageVersionService pythonPackageVersionService;
+  private final ExcludedRepoService excludedRepoService;
   private final ScriptUtils scriptUtils;
 
   public UpdateManagerService() {
@@ -37,6 +38,7 @@ public class UpdateManagerService {
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.pythonPackageVersionService = new PythonPackageVersionService();
+    this.excludedRepoService = new ExcludedRepoService();
     this.scriptUtils = new ScriptUtils();
   }
 
@@ -90,33 +92,42 @@ public class UpdateManagerService {
     executeTaskQueues();
   }
 
-  public void recreateCaches() {
-    // reset
+  public void recreateLocalCaches() {
+    resetCaches();
+    setCaches();
+  }
+
+  private void resetCaches() {
     addTaskToQueue(ConstantUtils.TASK_RESET_APP_DATA, CacheConfig::resetAppData);
     addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES, CacheConfig::resetGradleDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_PLUGINS, CacheConfig::resetGradlePluginsMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_NODE_DEPENDENCIES, CacheConfig::resetNodeDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_RESET_PYTHON_PACKAGES, CacheConfig::resetPythonPackagesMap);
+    addTaskToQueue(ConstantUtils.TASK_RESET_EXCLUDED_REPOS, CacheConfig::resetExcludedReposMap);
+    // execute
+    executeTaskQueues();
+  }
 
-    // set
+  private void setCaches() {
     addTaskToQueue(ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData, 1000);
     addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES, gradleDependencyVersionService::getGradleDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_SET_GRADLE_PLUGINS, gradlePluginVersionService::getGradlePluginsMap);
     addTaskToQueue(ConstantUtils.TASK_SET_NODE_DEPENDENCIES, nodeDependencyVersionService::getNodeDependenciesMap);
     addTaskToQueue(ConstantUtils.TASK_SET_PYTHON_PACKAGES, pythonPackageVersionService::getPythonPackagesMap);
+    addTaskToQueue(ConstantUtils.TASK_SET_EXCLUDED_REPOS, excludedRepoService::getExcludedReposMap);
 
     // execute
     executeTaskQueues();
   }
-  // TODO break recreate into reset and set
+
   public void recreateRemoteCaches() {
     // clear and set caches after pull (gradle version in repo could have changed)
-    // reset
-    addTaskToQueue(ConstantUtils.TASK_RESET_APP_DATA, CacheConfig::resetAppData);
-    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES, CacheConfig::resetGradleDependenciesMap);
-    addTaskToQueue(ConstantUtils.TASK_RESET_GRADLE_PLUGINS, CacheConfig::resetGradlePluginsMap);
-    addTaskToQueue(ConstantUtils.TASK_RESET_NODE_DEPENDENCIES, CacheConfig::resetNodeDependenciesMap);
-    addTaskToQueue(ConstantUtils.TASK_RESET_PYTHON_PACKAGES, CacheConfig::resetPythonPackagesMap);
+    resetCaches();
+    gradleDependencyVersionService.updateGradleDependencies();
+    gradlePluginVersionService.updateGradlePlugins();
+    nodeDependencyVersionService.updateNodeDependencies();
+    pythonPackageVersionService.updatePythonPackages();
+    setCaches();
   }
 
   private void recreateScriptFiles() {
@@ -128,7 +139,7 @@ public class UpdateManagerService {
     resetProcessedSummaries();
 
     if (requestMetadata.getRecreateCaches()) {
-      recreateCaches();
+      recreateLocalCaches();
     }
 
     if (requestMetadata.getRecreateScriptFiles()
@@ -137,7 +148,10 @@ public class UpdateManagerService {
     }
 
     if (requestMetadata.getGithubResetRequired() || requestMetadata.getIsGithubPullRequired()) {
-      executeUpdateGithubResetPull(requestMetadata.getGithubResetRequired(), requestMetadata.getIsGithubPullRequired(), requestMetadata.getRepoName());
+      executeUpdateGithubResetPull(
+          requestMetadata.getGithubResetRequired(),
+          requestMetadata.getIsGithubPullRequired(),
+          requestMetadata.getRepoName());
     }
   }
 

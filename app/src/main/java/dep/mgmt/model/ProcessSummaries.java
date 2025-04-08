@@ -63,7 +63,7 @@ public class ProcessSummaries implements Serializable {
         + '}';
   }
 
-  public static class ProcessSummary {
+  public static class ProcessSummary implements Serializable {
     private final LocalDateTime updateDateTime;
     private final String updateType;
     private final Integer gradlePluginsToUpdate;

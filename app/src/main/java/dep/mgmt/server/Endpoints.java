@@ -17,4 +17,5 @@ public class Endpoints {
   public static final String MONGO_REPO_UPDATE = MONGO_REPO_CONTROLLER + "/update";
   public static final String MONGO_LATEST_VERSION = MONGO_REPO_CONTROLLER + "/latest-version";
   public static final String MONGO_PROCESS_SUMMARY = MONGO_REPO_CONTROLLER + "/process-summary";
+  public static final String MONGO_EXCLUDED_REPO = MONGO_REPO_CONTROLLER + "/excluded-repo";
 }

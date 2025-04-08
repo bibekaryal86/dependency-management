@@ -11,12 +11,13 @@ import org.bson.types.ObjectId;
 public class MongoRepository<T> {
   protected final MongoCollection<T> collection;
 
-  public MongoRepository(MongoDatabase database, String collectionName, Class<T> entityClass) {
+  public MongoRepository(
+      final MongoDatabase database, final String collectionName, final Class<T> entityClass) {
     this.collection = database.getCollection(collectionName, entityClass);
   }
 
   // CREATE
-  public void insert(T entity) {
+  public void insert(final T entity) {
     collection.insertOne(entity);
   }
 
@@ -25,17 +26,25 @@ public class MongoRepository<T> {
     return collection.find().into(new ArrayList<>());
   }
 
-  public T findById(ObjectId id) {
+  public T findById(final ObjectId id) {
     return collection.find(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id)).first();
   }
 
   // UPDATE
-  public void update(ObjectId id, T updatedEntity) {
+  public void update(final ObjectId id, final T updatedEntity) {
     collection.replaceOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id), updatedEntity);
   }
 
   // DELETE
-  public void delete(ObjectId id) {
-    collection.deleteOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id));
+  public long delete(final ObjectId id) {
+    return collection.deleteOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id)).getDeletedCount();
+  }
+
+  public long delete(final String columnName, final Object columnValue) {
+    return collection.deleteMany(Filters.eq(columnName, columnValue)).getDeletedCount();
+  }
+
+  public long deleteAll() {
+    return collection.deleteMany(Filters.empty()).getDeletedCount();
   }
 }

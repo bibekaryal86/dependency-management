@@ -5,6 +5,7 @@ import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.entity.DependencyEntity;
+import dep.mgmt.model.entity.ExcludedRepoEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class CacheConfig {
   private static Map<String, DependencyEntity> GRADLE_PLUGINS_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> NODE_DEPENDENCIES_MAP = Collections.emptyMap();
   private static Map<String, DependencyEntity> PYTHON_PACKAGES_MAP = Collections.emptyMap();
+  private static Map<String, ExcludedRepoEntity> ExCLUDED_REPOS_MAP = Collections.emptyMap();
 
   public static AppData getAppData() {
     return APP_DATA;
@@ -87,5 +89,19 @@ public class CacheConfig {
 
   public static void resetPythonPackagesMap() {
     PYTHON_PACKAGES_MAP = Collections.emptyMap();
+  }
+
+  public static Map<String, ExcludedRepoEntity> getExcludedReposMap() {
+    return ExCLUDED_REPOS_MAP;
+  }
+
+  public static Map<String, ExcludedRepoEntity> setExcludedReposMap(
+      final Map<String, ExcludedRepoEntity> excludedRepos) {
+    ExCLUDED_REPOS_MAP = Map.copyOf(excludedRepos);
+    return ExCLUDED_REPOS_MAP;
+  }
+
+  public static void resetExcludedReposMap() {
+    ExCLUDED_REPOS_MAP = Collections.emptyMap();
   }
 }

@@ -56,7 +56,9 @@ public class ConstantUtils {
   public static final String MONGODB_COLLECTION_NODE_DEPENDENCY = "node_dependency";
   public static final String MONGODB_COLLECTION_PROCESS_SUMMARY = "process_summary";
   public static final String MONGODB_COLLECTION_PYTHON_PACKAGE = "python_package";
+  public static final String MONGODB_COLLECTION_EXCLUDED_REPO = "excluded_repo";
   public static final String MONGODB_COLUMN_ID = "_id";
+  public static final String MONGODB_COLUMN_NAME = "name";
   public static final String MONGODB_COLUMN_UPDATE_DATETIME = "updateDateTime";
   public static final String MONGODB_COLUMN_UPDATE_TYPE = "updateType";
 
@@ -160,6 +162,8 @@ public class ConstantUtils {
   public static final String TASK_SET_NODE_DEPENDENCIES = "SET_NODE_DEPENDENCIES";
   public static final String TASK_RESET_PYTHON_PACKAGES = "RESET_PYTHON_PACKAGES";
   public static final String TASK_SET_PYTHON_PACKAGES = "SET_PYTHON_PACKAGES";
+  public static final String TASK_RESET_EXCLUDED_REPOS = "RESET_EXCLUDED_REPOS";
+  public static final String TASK_SET_EXCLUDED_REPOS = "SET_EXCLUDED_REPOS";
   public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
   public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
   public static final String TASK_GITHUB_RESET_PULL = "GITHUB_RESET_PULL";

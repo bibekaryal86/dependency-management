@@ -1,19 +1,21 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.Dependency;
+import dep.mgmt.model.Dependencies;
+import dep.mgmt.model.ExcludedRepos;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
+import dep.mgmt.model.entity.ExcludedRepoEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import java.util.List;
 
 public class ConvertUtils {
 
-  public static List<Dependency> convertDependencyEntities(
+  public static List<Dependencies.Dependency> convertDependencyEntities(
       final List<DependencyEntity> dependencyEntities) {
     return dependencyEntities.stream()
         .map(
             dependencyEntity ->
-                new Dependency(
+                new Dependencies.Dependency(
                     dependencyEntity.getName(),
                     dependencyEntity.getVersion(),
                     dependencyEntity.getSkipVersion()))
@@ -53,6 +55,13 @@ public class ConvertUtils {
                     processRepositoryEntity.getPrCreateError(),
                     processRepositoryEntity.getRepoType(),
                     processRepositoryEntity.getPrMerged()))
+        .toList();
+  }
+
+  public static List<ExcludedRepos.ExcludedRepo> convertExcludedRepoEntities(
+      final List<ExcludedRepoEntity> excludedRepoEntities) {
+    return excludedRepoEntities.stream()
+        .map(excludedRepoEntity -> new ExcludedRepos.ExcludedRepo(excludedRepoEntity.getName()))
         .toList();
   }
 }
