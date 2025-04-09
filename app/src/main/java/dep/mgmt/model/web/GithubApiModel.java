@@ -6,6 +6,27 @@ import java.io.Serializable;
 import java.util.List;
 
 public class GithubApiModel implements Serializable {
+
+  public static class ListBranchesResponse implements Serializable {
+    private final String name;
+
+    @JsonCreator
+    public ListBranchesResponse(@JsonProperty("name") final String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public String toString() {
+      return "ListBranchesResponse{" +
+              "name='" + name + '\'' +
+              '}';
+    }
+  }
+
   public static class CreatePullRequest implements Serializable {
     private final String title;
     private final String body;

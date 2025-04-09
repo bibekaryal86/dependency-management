@@ -15,8 +15,38 @@ public class GithubConnector {
 
   private static final Logger log = LoggerFactory.getLogger(GithubConnector.class);
 
-  public GithubApiModel.CreatePullRequestResponse createPullRequest(
-      final String repoName, final String branchName) {
+  public GithubApiModel.ListBranchesResponse listBranches(final String repoName) {
+    log.info("List Branches: [{}]", repoName);
+    final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
+    final String url = String.format(ConstantUtils.GITHUB_LIST_BRANCHES_ENDPOINT, repoOwner, repoName);
+    final Map<String, String> headers =
+            Map.of(
+                    "Accept",
+                    "application/vnd.github+json",
+                    "Authorization",
+                    String.format(
+                            "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    HttpResponse<GithubApiModel.ListBranchesResponse> response =
+            Connector.sendRequest(
+                    url,
+                    Enums.HttpMethod.GET,
+                    new TypeReference<GithubApiModel.ListBranchesResponse>() {},
+                    null,
+                    headers,
+                    null);
+    if (response.statusCode() == 200) {
+      return response.responseBody();
+    } else {
+      log.error(
+              "List Branches Error: [{}] | [{}] | [{}]",
+              repoName,
+              response.statusCode(),
+              response.responseBody());
+    }
+    return null;
+  }
+
+  public GithubApiModel.CreatePullRequestResponse createPullRequest(final String repoName, final String branchName) {
     log.info("Create Pull Request: [{}] | [{}]", repoName, branchName);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
@@ -90,8 +120,7 @@ public class GithubConnector {
     return null;
   }
 
-  public GithubApiModel.MergePullRequestResponse mergePullRequest(
-      final String repoName, final Integer pullNumber) {
+  public GithubApiModel.MergePullRequestResponse mergePullRequest(final String repoName, final Integer pullNumber) {
     log.info("Merge Pull Request: [{}] | [{}]", repoName, pullNumber);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);

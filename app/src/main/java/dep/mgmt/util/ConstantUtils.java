@@ -78,6 +78,7 @@ public class ConstantUtils {
   public static final String GRADLE_PLUGINS_ENDPOINT = "https://plugins.gradle.org/plugin/%s";
 
   public static final String GITHUB_RATE_LIMIT_ENDPOINT = "https://api.github.com/rate_limit";
+  public static final String GITHUB_LIST_BRANCHES_ENDPOINT = "https://api.github.com/repos/%s/%s/branches";
   public static final String GITHUB_CREATE_PR_ENDPOINT = "https://api.github.com/repos/%s/%s/pulls";
   public static final String GITHUB_LIST_PRS_ENDPOINT = "https://api.github.com/repos/%s/%s/pulls";
   public static final String GITHUB_MERGE_PR_ENDPOINT =

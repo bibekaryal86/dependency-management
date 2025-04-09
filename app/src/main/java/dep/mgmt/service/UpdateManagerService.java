@@ -160,6 +160,15 @@ public class UpdateManagerService {
                           final boolean isPrMergeRequired,
                           final boolean isExitRequired) {
     // TODO
+    if (isPrCreateRequired) {
+      executeUpdateCreatePullRequests(requestMetadata);
+    }
+    if (isPrMergeRequired) {
+      executeUpdateMergePullRequests(requestMetadata);
+    }
+    if (isExitRequired) {
+      executeUpdateDependencies(requestMetadata, Boolean.TRUE);
+    }
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
@@ -335,6 +344,24 @@ public class UpdateManagerService {
       repositories.forEach(repository -> executeUpdateDependenciesInitExit(repository, scriptFileInit, Boolean.TRUE));
       repositories.forEach(repository -> executeUpdateDependenciesExec(repository, scriptFileExec, requestMetadata.getBranchDate()));
     }
+  }
+
+  private void executeUpdateCreatePullRequests(final RequestMetadata requestMetadata) {
+    // repoName is mandatory, enforced in controller
+    // if repoName is given:
+    // 1. lookup branches
+    // 2. most recent update_dependencies branch, create pull request
+    // if repoName not given
+    // look up processedRepositories where new branch was pushed
+  }
+
+  private void executeUpdateMergePullRequests(final RequestMetadata requestMetadata) {
+    // repoName is mandatory, enforced in controller
+    // if repoName is given
+    // 1. lookup pull requests
+    // 2. most recent pull request which is open, merge it
+    // if repoName not given
+    // look up processedRepositories
   }
 
   private String getUpdateDependenciesQueueName(final String appender) {
