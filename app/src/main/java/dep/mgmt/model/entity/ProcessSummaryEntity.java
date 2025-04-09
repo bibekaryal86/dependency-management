@@ -180,23 +180,23 @@ public class ProcessSummaryEntity implements Serializable {
 
   public static class ProcessRepositoryEntity {
     private String repoName;
-    private Boolean isPrCreated;
-    private Boolean isPrCreateError;
     private String repoType;
+    private Boolean isUpdateBranchCreated;
+    private Boolean isPrCreated;
     private Boolean isPrMerged;
 
     public ProcessRepositoryEntity() {}
 
     public ProcessRepositoryEntity(
         String repoName,
-        Boolean isPrCreated,
-        Boolean isPrCreateError,
         String repoType,
+        Boolean isUpdateBranchCreated,
+        Boolean isPrCreated,
         Boolean isPrMerged) {
       this.repoName = repoName;
-      this.isPrCreated = isPrCreated;
-      this.isPrCreateError = isPrCreateError;
       this.repoType = repoType;
+      this.isUpdateBranchCreated = isUpdateBranchCreated;
+      this.isPrCreated = isPrCreated;
       this.isPrMerged = isPrMerged;
     }
 
@@ -208,28 +208,28 @@ public class ProcessSummaryEntity implements Serializable {
       this.repoName = repoName;
     }
 
-    public Boolean getPrCreated() {
-      return isPrCreated;
-    }
-
-    public void setPrCreated(Boolean prCreated) {
-      isPrCreated = prCreated;
-    }
-
-    public Boolean getPrCreateError() {
-      return isPrCreateError;
-    }
-
-    public void setPrCreateError(Boolean prCreateError) {
-      isPrCreateError = prCreateError;
-    }
-
     public String getRepoType() {
       return repoType;
     }
 
     public void setRepoType(String repoType) {
       this.repoType = repoType;
+    }
+
+    public Boolean getUpdateBranchCreated() {
+      return isUpdateBranchCreated;
+    }
+
+    public void setUpdateBranchCreated(Boolean updateBranchCreated) {
+      this.isUpdateBranchCreated = updateBranchCreated;
+    }
+
+    public Boolean getPrCreated() {
+      return isPrCreated;
+    }
+
+    public void setPrCreated(Boolean prCreated) {
+      isPrCreated = prCreated;
     }
 
     public Boolean getPrMerged() {
@@ -242,20 +242,13 @@ public class ProcessSummaryEntity implements Serializable {
 
     @Override
     public String toString() {
-      return "ProcessRepositoryEntity{"
-          + "repoName='"
-          + repoName
-          + '\''
-          + ", isPrCreated="
-          + isPrCreated
-          + ", isPrCreateError="
-          + isPrCreateError
-          + ", repoType='"
-          + repoType
-          + '\''
-          + ", isPrMerged="
-          + isPrMerged
-          + '}';
+      return "ProcessRepositoryEntity{" +
+              "repoName='" + repoName + '\'' +
+              ", repoType='" + repoType + '\'' +
+              ", isUpdateBranchCreated=" + isUpdateBranchCreated +
+              ", isPrCreated=" + isPrCreated +
+              ", isPrMerged=" + isPrMerged +
+              '}';
     }
   }
 }

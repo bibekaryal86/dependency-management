@@ -7,8 +7,7 @@ import java.util.List;
 public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> allProcessedRepositories =
-        processSummary.getProcessRepositories();
+    List<ProcessSummaryEntity.ProcessRepositoryEntity> allProcessedRepositories = processSummary.getProcessRepositories();
     List<ProcessSummaryEntity.ProcessRepositoryEntity> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
@@ -21,11 +20,6 @@ public class ProcessSummaryEmailUtils {
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && !processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummaryEntity.ProcessRepositoryEntity::getRepoName))
-            .toList();
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> prCreateError =
-        processSummary.getProcessRepositories().stream()
-            .filter(ProcessSummaryEntity.ProcessRepositoryEntity::getPrCreateError)
             .sorted(Comparator.comparing(ProcessSummaryEntity.ProcessRepositoryEntity::getRepoName))
             .toList();
 
@@ -165,31 +159,6 @@ public class ProcessSummaryEmailUtils {
       processedRepositoryTable(prCreatedNotMerged, html);
     }
 
-    if (prCreateError.isEmpty()) {
-      html.append(
-          """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Creation Error: N/A</p>
-                <br />
-              """);
-    } else {
-      html.append(
-          """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Creation Error</p>
-                <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                  <tr>
-                    <th>Repository</th>
-                    <th>Type</th>
-                    <th>PR Created</th>
-                    <th>PR Create Error</th>
-                    <th>PR Merged</th>
-                  </tr>
-              """);
-
-      processedRepositoryTable(prCreateError, html);
-    }
-
     html.append(
         """
               <br />
@@ -223,9 +192,6 @@ public class ProcessSummaryEmailUtils {
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");
       html.append("<td>").append(processedRepository.getPrCreated() ? "Y" : "N").append("</td>");
-      html.append("<td>")
-          .append(processedRepository.getPrCreateError() ? "Y" : "N")
-          .append("</td>");
       html.append("<td>").append(processedRepository.getPrMerged() ? "Y" : "N").append("</td>");
       html.append("</tr>");
     }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+
+import dep.mgmt.util.ProcessUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +17,14 @@ public class ExecuteScriptFile {
   private final List<String> arguments;
   private final boolean isRunAsync;
 
-  public ExecuteScriptFile(
-      final String scriptFileName, final List<String> arguments, final boolean isRunAsync) {
+  private final String repoName;
+  private final String repoType;
+
+  public ExecuteScriptFile(final String scriptFileName,
+                           final List<String> arguments,
+                           final boolean isRunAsync,
+                           final String repoName,
+                           final String repoType) {
     this.arguments = arguments;
     this.scriptPath =
         ConstantUtils.JAVA_SYSTEM_TMPDIR
@@ -25,6 +33,8 @@ public class ExecuteScriptFile {
             + ConstantUtils.PATH_DELIMITER
             + scriptFileName;
     this.isRunAsync = isRunAsync;
+    this.repoName = repoName;
+    this.repoType = repoType;
   }
 
   public void executeScript() {
@@ -94,8 +104,7 @@ public class ExecuteScriptFile {
         isError = true;
       }
 
-      try (BufferedReader readerInput =
-          new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+      try (BufferedReader readerInput = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
         while ((line = readerInput.readLine()) != null) {
           stringBuilder.append(line).append("\n");
           if (line.toLowerCase().contains("error") || line.toLowerCase().contains("fatal")) {
@@ -109,9 +118,18 @@ public class ExecuteScriptFile {
       } else {
         log.debug("Process output: [ {} ]\n{}", this.scriptPath, stringBuilder);
       }
+
+      checkProcessedRepository(stringBuilder);
     } catch (IOException ex) {
       throw new IOException(
           "Error in Process Stream Output: " + ", " + this.scriptPath + ex.getCause().getMessage());
+    }
+  }
+
+  private void checkProcessedRepository(final StringBuilder stringBuilder) {
+    if (this.scriptPath.contains(ConstantUtils.SCRIPT_UPDATE_EXEC)) {
+      final boolean isPushedNewBranch = stringBuilder.toString().contains("Pushed new branch");
+      ProcessUtils.addProcessedRepositories(this.repoName, this.repoType, isPushedNewBranch);
     }
   }
 }

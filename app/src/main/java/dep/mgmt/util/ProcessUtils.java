@@ -1,8 +1,6 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummaries;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,9 +14,7 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
-  private static Set<String> repositoriesWithPrError = new HashSet<>();
-  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
-      processedRepositories = new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -60,50 +56,31 @@ public class ProcessUtils {
     return mongoNodeDependenciesToUpdate.get();
   }
 
-  public static synchronized void addRepositoriesWithPrError(final String repoName) {
-    repositoriesWithPrError.add(repoName);
-  }
-
-  public static synchronized void removeRepositoriesWithPrError(final String repoName) {
-    repositoriesWithPrError.remove(repoName);
-  }
-
-  public static synchronized Set<String> getRepositoriesWithPrError() {
-    return repositoriesWithPrError;
-  }
-
-  public static synchronized void resetRepositoriesWithPrError() {
-    repositoriesWithPrError = new HashSet<>();
-  }
-
-  public static void addProcessedRepositories(
-      String repoName, boolean isPrCreateAttempted, boolean isPrCreateError) {
+  public static void addProcessedRepositories(final String repoName, final String repoType, boolean isUpdateBranchCreated) {
     processedRepositories.put(
         repoName,
-        new ProcessSummaries.ProcessSummary.ProcessRepository(
-            repoName, isPrCreateAttempted && !isPrCreateError, isPrCreateError));
+        new ProcessSummaries.ProcessSummary.ProcessRepository(repoName, repoType, isUpdateBranchCreated));
   }
 
-  public static void updateProcessedRepositoriesToPrMerged(String repoName) {
+  public static void updateProcessedRepositoriesPrCreated(String repoName) {
     processedRepositories.computeIfPresent(
         repoName,
         (key, processedRepository) -> {
-          processedRepository.setPrMerged(true);
+          processedRepository.setPrCreated(true);
           return processedRepository;
         });
   }
 
-  public static void updateProcessedRepositoriesRepoType(String repoName, String repoType) {
+  public static void updateProcessedRepositoriesPrMerged(String repoName) {
     processedRepositories.computeIfPresent(
-        repoName,
-        (key, processedRepository) -> {
-          processedRepository.setRepoType(repoType);
-          return processedRepository;
-        });
+            repoName,
+            (key, processedRepository) -> {
+              processedRepository.setPrCreated(true);
+              return processedRepository;
+            });
   }
 
-  public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
-      getProcessedRepositoriesMap() {
+  public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> getProcessedRepositoriesMap() {
     return processedRepositories;
   }
 

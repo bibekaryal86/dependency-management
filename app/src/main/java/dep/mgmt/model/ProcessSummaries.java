@@ -177,32 +177,31 @@ public class ProcessSummaries implements Serializable {
 
     public static class ProcessRepository implements Serializable {
       private final String repoName;
-      private final Boolean isPrCreated;
-      private final Boolean isPrCreateError;
+      private final String repoType;
+      private final Boolean isUpdateBranchCreated;
 
-      private String repoType;
+      private Boolean isPrCreated;
       private Boolean isPrMerged;
 
       @JsonCreator
       public ProcessRepository(
           @JsonProperty("repoName") final String repoName,
-          @JsonProperty("isPrCreated") final Boolean isPrCreated,
-          @JsonProperty("isPrCreateError") final Boolean isPrCreateError,
           @JsonProperty("repoType") final String repoType,
+          @JsonProperty("isUpdateBranchCreated") final Boolean isUpdateBranchCreated,
+          @JsonProperty("isPrCreated") final Boolean isPrCreated,
           @JsonProperty("isPrMerged") final Boolean isPrMerged) {
         this.repoName = repoName;
-        this.isPrCreated = isPrCreated;
-        this.isPrCreateError = isPrCreateError;
         this.repoType = repoType;
+        this.isUpdateBranchCreated = isUpdateBranchCreated;
+        this.isPrCreated = isPrCreated;
         this.isPrMerged = isPrMerged;
       }
 
-      public ProcessRepository(
-          final String repoName, final Boolean isPrCreated, final Boolean isPrCreateError) {
+      public ProcessRepository(final String repoName, final String repoType, final Boolean isUpdateBranchCreated) {
         this.repoName = repoName;
-        this.repoType = null;
-        this.isPrCreated = isPrCreated;
-        this.isPrCreateError = isPrCreateError;
+        this.isUpdateBranchCreated = isUpdateBranchCreated;
+        this.isPrCreated = Boolean.FALSE;
+        this.repoType = repoType;
         this.isPrMerged = Boolean.FALSE;
       }
 
@@ -210,46 +209,39 @@ public class ProcessSummaries implements Serializable {
         return repoName;
       }
 
-      public Boolean getPrCreated() {
-        return isPrCreated;
-      }
-
-      public Boolean getPrCreateError() {
-        return isPrCreateError;
-      }
-
       public String getRepoType() {
         return repoType;
       }
 
-      public void setRepoType(final String repoType) {
-        this.repoType = repoType;
+      public Boolean getUpdateBranchCreated() {
+        return isUpdateBranchCreated;
+      }
+
+      public Boolean getPrCreated() {
+        return isPrCreated;
       }
 
       public Boolean getPrMerged() {
         return isPrMerged;
       }
 
-      public void setPrMerged(final boolean isPrMerged) {
-        this.isPrMerged = isPrMerged;
+      public void setPrCreated(final Boolean prCreated) {
+        isPrCreated = prCreated;
+      }
+
+      public void setPrMerged(final Boolean prMerged) {
+        isPrMerged = prMerged;
       }
 
       @Override
       public String toString() {
-        return "Repository{"
-            + "repoName='"
-            + repoName
-            + '\''
-            + ", isPrCreated="
-            + isPrCreated
-            + ", isPrCreateError="
-            + isPrCreateError
-            + ", repoType='"
-            + repoType
-            + '\''
-            + ", isPrMerged="
-            + isPrMerged
-            + '}';
+        return "ProcessRepository{" +
+                "repoName='" + repoName + '\'' +
+                ", repoType='" + repoType + '\'' +
+                ", isUpdateBranchCreated=" + isUpdateBranchCreated +
+                ", isPrCreated=" + isPrCreated +
+                ", isPrMerged=" + isPrMerged +
+                '}';
       }
     }
   }

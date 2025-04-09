@@ -51,9 +51,9 @@ public class ConvertUtils {
             processRepositoryEntity ->
                 new ProcessSummaries.ProcessSummary.ProcessRepository(
                     processRepositoryEntity.getRepoName(),
-                    processRepositoryEntity.getPrCreated(),
-                    processRepositoryEntity.getPrCreateError(),
                     processRepositoryEntity.getRepoType(),
+                    processRepositoryEntity.getUpdateBranchCreated(),
+                    processRepositoryEntity.getPrCreated(),
                     processRepositoryEntity.getPrMerged()))
         .toList();
   }

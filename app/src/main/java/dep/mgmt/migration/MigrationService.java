@@ -133,9 +133,9 @@ public class MigrationService {
       ProcessSummaryEntity.ProcessRepositoryEntity processRepositoryNew =
           new ProcessSummaryEntity.ProcessRepositoryEntity(
               processedRepositoryOld.getRepoName(),
-              processedRepositoryOld.isPrCreated(),
-              processedRepositoryOld.isPrCreateError(),
               processedRepositoryOld.getRepoType(),
+              processedRepositoryOld.isPrCreated(), // use isPrCreated to check isUpdateBranchCreated
+              processedRepositoryOld.isPrCreated(),
               processedRepositoryOld.isPrMerged());
       processRepositoriesNew.add(processRepositoryNew);
     }
