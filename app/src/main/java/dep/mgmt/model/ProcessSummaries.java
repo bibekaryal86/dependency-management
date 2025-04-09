@@ -182,6 +182,7 @@ public class ProcessSummaries implements Serializable {
 
       private Boolean isPrCreated;
       private Boolean isPrMerged;
+      private Integer prNumber;
 
       @JsonCreator
       public ProcessRepository(
@@ -189,12 +190,14 @@ public class ProcessSummaries implements Serializable {
           @JsonProperty("repoType") final String repoType,
           @JsonProperty("isUpdateBranchCreated") final Boolean isUpdateBranchCreated,
           @JsonProperty("isPrCreated") final Boolean isPrCreated,
-          @JsonProperty("isPrMerged") final Boolean isPrMerged) {
+          @JsonProperty("isPrMerged") final Boolean isPrMerged,
+          @JsonProperty("prNumber") final Integer prNumber) {
         this.repoName = repoName;
         this.repoType = repoType;
         this.isUpdateBranchCreated = isUpdateBranchCreated;
         this.isPrCreated = isPrCreated;
         this.isPrMerged = isPrMerged;
+        this.prNumber = prNumber;
       }
 
       public ProcessRepository(final String repoName, final String repoType, final Boolean isUpdateBranchCreated) {
@@ -226,11 +229,15 @@ public class ProcessSummaries implements Serializable {
       }
 
       public void setPrCreated(final Boolean prCreated) {
-        isPrCreated = prCreated;
+        this.isPrCreated = prCreated;
       }
 
       public void setPrMerged(final Boolean prMerged) {
-        isPrMerged = prMerged;
+        this.isPrMerged = prMerged;
+      }
+
+      public void setPrNumber(final Integer number) {
+        this.prNumber = number;
       }
 
       @Override
@@ -241,6 +248,7 @@ public class ProcessSummaries implements Serializable {
                 ", isUpdateBranchCreated=" + isUpdateBranchCreated +
                 ", isPrCreated=" + isPrCreated +
                 ", isPrMerged=" + isPrMerged +
+                ", prNumber=" + prNumber +
                 '}';
       }
     }

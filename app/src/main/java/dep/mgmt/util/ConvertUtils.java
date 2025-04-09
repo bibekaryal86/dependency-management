@@ -54,7 +54,8 @@ public class ConvertUtils {
                     processRepositoryEntity.getRepoType(),
                     processRepositoryEntity.getUpdateBranchCreated(),
                     processRepositoryEntity.getPrCreated(),
-                    processRepositoryEntity.getPrMerged()))
+                    processRepositoryEntity.getPrMerged(),
+                    processRepositoryEntity.getPrNumber()))
         .toList();
   }
 

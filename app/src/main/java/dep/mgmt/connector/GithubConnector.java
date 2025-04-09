@@ -41,6 +41,8 @@ public class GithubConnector {
     return null;
   }
 
+
+
   public GithubApiModel.CreatePullRequestResponse createPullRequest(final String repoName, final String branchName) {
     log.info("Create Pull Request: [{}] | [{}]", repoName, branchName);
 
@@ -163,6 +165,8 @@ public class GithubConnector {
 
   private Map<String, String> getDefaultHeaders() {
     return Map.of(
+            "X-GitHub-Api-Version",
+            "2022-11-28",
             "Accept",
             "application/vnd.github+json",
             "Authorization",

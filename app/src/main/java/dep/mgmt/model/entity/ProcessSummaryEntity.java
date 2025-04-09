@@ -184,6 +184,7 @@ public class ProcessSummaryEntity implements Serializable {
     private Boolean isUpdateBranchCreated;
     private Boolean isPrCreated;
     private Boolean isPrMerged;
+    private Integer prNumber;
 
     public ProcessRepositoryEntity() {}
 
@@ -192,12 +193,14 @@ public class ProcessSummaryEntity implements Serializable {
         String repoType,
         Boolean isUpdateBranchCreated,
         Boolean isPrCreated,
-        Boolean isPrMerged) {
+        Boolean isPrMerged,
+        Integer prNumber) {
       this.repoName = repoName;
       this.repoType = repoType;
       this.isUpdateBranchCreated = isUpdateBranchCreated;
       this.isPrCreated = isPrCreated;
       this.isPrMerged = isPrMerged;
+      this.prNumber = prNumber;
     }
 
     public String getRepoName() {
@@ -240,6 +243,14 @@ public class ProcessSummaryEntity implements Serializable {
       isPrMerged = prMerged;
     }
 
+    public Integer getPrNumber() {
+      return prNumber;
+    }
+
+    public void setPrNumber(Integer prNumber) {
+      this.prNumber = prNumber;
+    }
+
     @Override
     public String toString() {
       return "ProcessRepositoryEntity{" +
@@ -248,6 +259,7 @@ public class ProcessSummaryEntity implements Serializable {
               ", isUpdateBranchCreated=" + isUpdateBranchCreated +
               ", isPrCreated=" + isPrCreated +
               ", isPrMerged=" + isPrMerged +
+              ", prNumber=" + prNumber +
               '}';
     }
   }

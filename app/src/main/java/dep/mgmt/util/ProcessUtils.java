@@ -62,16 +62,17 @@ public class ProcessUtils {
         new ProcessSummaries.ProcessSummary.ProcessRepository(repoName, repoType, isUpdateBranchCreated));
   }
 
-  public static void updateProcessedRepositoriesPrCreated(String repoName) {
+  public static void updateProcessedRepositoriesPrCreated(final String repoName, final Integer prNumber) {
     processedRepositories.computeIfPresent(
         repoName,
         (key, processedRepository) -> {
           processedRepository.setPrCreated(true);
+          processedRepository.setPrNumber(prNumber);
           return processedRepository;
         });
   }
 
-  public static void updateProcessedRepositoriesPrMerged(String repoName) {
+  public static void updateProcessedRepositoriesPrMerged(final String repoName) {
     processedRepositories.computeIfPresent(
             repoName,
             (key, processedRepository) -> {

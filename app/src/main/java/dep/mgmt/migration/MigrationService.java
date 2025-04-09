@@ -136,7 +136,7 @@ public class MigrationService {
               processedRepositoryOld.getRepoType(),
               processedRepositoryOld.isPrCreated(), // use isPrCreated to check isUpdateBranchCreated
               processedRepositoryOld.isPrCreated(),
-              processedRepositoryOld.isPrMerged());
+              processedRepositoryOld.isPrMerged(), null);
       processRepositoriesNew.add(processRepositoryNew);
     }
     return processRepositoriesNew;

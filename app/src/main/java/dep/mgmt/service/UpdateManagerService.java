@@ -31,6 +31,7 @@ public class UpdateManagerService {
   private final NodeDependencyVersionService nodeDependencyVersionService;
   private final PythonPackageVersionService pythonPackageVersionService;
   private final ExcludedRepoService excludedRepoService;
+  private final GithubService githubService;
   private final ScriptUtils scriptUtils;
 
   public UpdateManagerService() {
@@ -39,6 +40,7 @@ public class UpdateManagerService {
     this.nodeDependencyVersionService = new NodeDependencyVersionService();
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.excludedRepoService = new ExcludedRepoService();
+    this.githubService = new GithubService();
     this.scriptUtils = new ScriptUtils();
   }
 
@@ -59,7 +61,7 @@ public class UpdateManagerService {
             Boolean.TRUE,
             Boolean.TRUE,
             Boolean.TRUE,
-            null,
+            LocalDate.now(),
             null);
     updateRepos(requestMetadata);
   }
@@ -108,7 +110,7 @@ public class UpdateManagerService {
 
   private void setCaches() {
     log.info("Set Caches...");
-    addTaskToQueue(ConstantUtils.QUEUE_SET, ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData, 1000);
+    addTaskToQueue(ConstantUtils.QUEUE_SET, ConstantUtils.TASK_SET_APP_DATA, AppDataUtils::setAppData, ConstantUtils.TASK_DELAY_DEFAULT);
     addTaskToQueue(ConstantUtils.QUEUE_SET, ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES, gradleDependencyVersionService::getGradleDependenciesMap, Long.MIN_VALUE);
     addTaskToQueue(ConstantUtils.QUEUE_SET, ConstantUtils.TASK_SET_GRADLE_PLUGINS, gradlePluginVersionService::getGradlePluginsMap, Long.MIN_VALUE);
     addTaskToQueue(ConstantUtils.QUEUE_SET, ConstantUtils.TASK_SET_NODE_DEPENDENCIES, nodeDependencyVersionService::getNodeDependenciesMap, Long.MIN_VALUE);
@@ -128,11 +130,11 @@ public class UpdateManagerService {
 
   private void recreateScriptFiles() {
     addTaskToQueue(ConstantUtils.QUEUE_FILES, ConstantUtils.TASK_DELETE_SCRIPT_FILES, scriptUtils::deleteTempScriptFiles, Long.MIN_VALUE);
-    addTaskToQueue(ConstantUtils.QUEUE_FILES, ConstantUtils.TASK_CREATE_SCRIPT_FILES, scriptUtils::createTempScriptFiles, 1000);
+    addTaskToQueue(ConstantUtils.QUEUE_FILES, ConstantUtils.TASK_CREATE_SCRIPT_FILES, scriptUtils::createTempScriptFiles, ConstantUtils.TASK_DELAY_DEFAULT);
   }
 
   private void updateInit(final RequestMetadata requestMetadata) {
-    resetProcessedSummaries();
+    resetProcessedSummaries(Boolean.TRUE);
 
     if (requestMetadata.getRecreateCaches()) {
       recreateLocalCaches();
@@ -152,6 +154,8 @@ public class UpdateManagerService {
       if (requestMetadata.getRecreateCaches()) {
         recreateRemoteCaches();
       }
+
+      resetProcessedSummaries(Boolean.FALSE);
     }
   }
 
@@ -159,7 +163,6 @@ public class UpdateManagerService {
                           final boolean isPrCreateRequired,
                           final boolean isPrMergeRequired,
                           final boolean isExitRequired) {
-    // TODO
     if (isPrCreateRequired) {
       executeUpdateCreatePullRequests(requestMetadata);
     }
@@ -169,6 +172,7 @@ public class UpdateManagerService {
     if (isExitRequired) {
       executeUpdateDependencies(requestMetadata, Boolean.TRUE);
     }
+
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
@@ -196,8 +200,8 @@ public class UpdateManagerService {
             .toList();
 
     addTaskToQueue(
-        ConstantUtils.TASK_NPM_SNAPSHOTS + "_QUEUE",
-        ConstantUtils.TASK_NPM_SNAPSHOTS + "_TASK",
+        ConstantUtils.TASK_NPM_SNAPSHOTS + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_NPM_SNAPSHOTS + ConstantUtils.APPENDER_TASK_NAME,
         () -> new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute(),
         Long.MIN_VALUE);
   }
@@ -227,8 +231,8 @@ public class UpdateManagerService {
             .toList();
 
     addTaskToQueue(
-            ConstantUtils.TASK_GRADLE_SPOTLESS + "_QUEUE",
-        ConstantUtils.TASK_GRADLE_SPOTLESS + "_TASK",
+            ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_TASK_NAME,
         () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute()
             , Long.MIN_VALUE);
   }
@@ -250,8 +254,8 @@ public class UpdateManagerService {
                   () -> new IllegalStateException("Gradle Spotless Script File Not Found"));
 
       addTaskToQueue(
-          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + "_QUEUE",
-          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + "_TASK",
+          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
+          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_TASK_NAME,
           () ->
               new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly)
                   .execute(), Long.MIN_VALUE);
@@ -272,8 +276,8 @@ public class UpdateManagerService {
                   () -> new IllegalStateException("Gradle Spotless One Script File Not Found"));
 
       addTaskToQueue(
-              ConstantUtils.TASK_GITHUB_BRANCH_DELETE + "_QUEUE",
-          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + "_TASK",
+              ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
+          ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_TASK_NAME,
           () ->
               new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly)
                   .execute(), Long.MIN_VALUE);
@@ -293,8 +297,8 @@ public class UpdateManagerService {
               .orElseThrow(() -> new IllegalStateException("GitHub Reset Pull Script Not Found"));
 
       addTaskToQueue(
-          ConstantUtils.TASK_GITHUB_RESET_PULL + "_QUEUE",
-          ConstantUtils.TASK_GITHUB_RESET_PULL + "_TASK",
+          ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
+          ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute(), Long.MIN_VALUE);
     } else {
       final AppDataRepository repository =
@@ -313,8 +317,8 @@ public class UpdateManagerService {
                   () -> new IllegalStateException("GitHub Reset Pull One Script Not Found"));
 
       addTaskToQueue(
-              ConstantUtils.TASK_GITHUB_RESET_PULL + "_QUEUE",
-              ConstantUtils.TASK_GITHUB_RESET_PULL + "_TASK",
+              ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
+              ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute(), Long.MIN_VALUE);
     }
   }
@@ -347,16 +351,41 @@ public class UpdateManagerService {
   }
 
   private void executeUpdateCreatePullRequests(final RequestMetadata requestMetadata) {
-    // repoName is mandatory, enforced in controller
+    // branchDate is mandatory, enforced in controller
     // if repoName is given:
     // 1. lookup branches
     // 2. most recent update_dependencies branch, create pull request
     // if repoName not given
     // look up processedRepositories where new branch was pushed
+    log.info("Execute Update Create Pull Requests...");
+    final AppData appData = AppDataUtils.appData();
+    final String requestRepoName = requestMetadata.getRepoName();
+    final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, requestMetadata.getBranchDate());
+
+    if (CommonUtilities.isEmpty(requestRepoName)) {
+
+    } else {
+      final AppDataRepository repository =
+              appData.getRepositories().stream()
+                      .filter(repo -> repo.getRepoName().equals(requestRepoName))
+                      .findFirst()
+                      .orElseThrow(
+                              () ->
+                                      new IllegalArgumentException(
+                                              "Repo Not Found by Repo Name ['" + requestRepoName + "']"));
+
+      ProcessUtils.addProcessedRepositories(requestRepoName, repository.getType().toString(), Boolean.TRUE);
+
+
+    }
+
+
+
+
   }
 
   private void executeUpdateMergePullRequests(final RequestMetadata requestMetadata) {
-    // repoName is mandatory, enforced in controller
+    // branchDate is mandatory, enforced in controller
     // if repoName is given
     // 1. lookup pull requests
     // 2. most recent pull request which is open, merge it
@@ -375,8 +404,8 @@ public class UpdateManagerService {
   private void executeUpdateDependenciesInitExit(final AppDataRepository repository, final AppDataScriptFile scriptFile, final boolean isInit) {
     log.info("Execute Update Dependencies Init/Exit: [{}] | [{}]", repository.getRepoName(), scriptFile.getScriptName());
     addTaskToQueue(
-            getUpdateDependenciesQueueName(isInit ? "INIT" : "EXIT"),
-            getUpdateDependenciesTaskName(repository.getRepoName(), isInit ? "INIT" : "EXIT"),
+            getUpdateDependenciesQueueName(isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+            getUpdateDependenciesTaskName(repository.getRepoName(), isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
             () -> new UpdateDependencies(repository, scriptFile, isInit).execute(), Long.MIN_VALUE);
   }
 
@@ -384,12 +413,12 @@ public class UpdateManagerService {
     log.info("Execute Update Dependencies: [{}] | [{}] | [{}]", repository.getRepoName(), scriptFile.getScriptName(), branchDate);
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     addTaskToQueue(
-            getUpdateDependenciesQueueName("EXEC"),
-            getUpdateDependenciesTaskName(repository.getRepoName(), "EXEC"),
+            getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
+            getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
             () -> new UpdateDependencies(repository, scriptFile, branchName).execute(), Long.MIN_VALUE);
   }
 
-  public void addTaskToQueue(final String queueName, final String taskName, final Runnable action, final long delayMillis) {
+  private void addTaskToQueue(final String queueName, final String taskName, final Runnable action, final long delayMillis) {
     TaskQueues.TaskQueue taskQueue = taskQueues.getQueueByName(queueName);
     if (taskQueue == null) {
       taskQueue = new TaskQueues.TaskQueue(queueName);
@@ -400,10 +429,10 @@ public class UpdateManagerService {
     }
   }
 
-  private void resetProcessedSummaries() {
+  private void resetProcessedSummaries(final boolean isInit) {
     addTaskToQueue(
-        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + "_QUEUE",
-        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + "_TASK",
+        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + ConstantUtils.APPENDER_QUEUE_NAME + "_" + (isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + ConstantUtils.APPENDER_TASK_NAME + "_" + (isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
         ProcessUtils::resetProcessedRepositoriesAndSummary, Long.MIN_VALUE);
   }
 

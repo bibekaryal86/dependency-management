@@ -128,6 +128,8 @@ public class ConstantUtils {
   public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
+  public static final long TASK_DELAY_DEFAULT = 1000;         // 1 second
+  public static final long TASK_DELAY_GITHUB_MERGE = 1000 * 60 * 5; // 5 minutes
   public static final String DOCKER_JRE = "eclipse-temurin";
   public static final String DOCKER_ALPINE = "alpine";
   public static final String GITHUB_ENDPOINT_TAGS = "tags";
@@ -177,4 +179,10 @@ public class ConstantUtils {
   public static final String TASK_NPM_SNAPSHOTS = "NPM_SNAPSHOTS";
   public static final String TASK_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s_%s";
   public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
+
+  public static final String APPENDER_INIT = "INIT";
+  public static final String APPENDER_EXEC = "EXEC";
+  public static final String APPENDER_EXIT = "EXIT";
+  public static final String APPENDER_QUEUE_NAME = "_QUEUE";
+  public static final String APPENDER_TASK_NAME = "_TASK";
 }
