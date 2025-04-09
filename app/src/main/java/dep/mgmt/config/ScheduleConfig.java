@@ -51,7 +51,7 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
-          updateManagerService.updateScheduled();
+          updateManagerService.scheduledUpdate();
           // schedule the next execution
           updateReposSchedule();
         },
@@ -68,7 +68,7 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Cleanup Process Summaries...");
-          processSummaryService.cleanupOldProcessSummaries();
+          processSummaryService.scheduledCleanup();
           // Schedule the next execution
           cleanupProcessSummariesSchedule();
         },

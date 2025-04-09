@@ -48,7 +48,7 @@ public class UpdateManagerService {
     }
   }
 
-  public void updateScheduled() {
+  public void scheduledUpdate() {
     final RequestMetadata requestMetadata =
         new RequestMetadata(
             RequestParams.UpdateType.ALL,

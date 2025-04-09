@@ -22,8 +22,7 @@ public class ProcessSummaryService {
     this.processSummaryRepository = new ProcessSummaryRepository(MongoDbConfig.getDatabase());
   }
 
-  // TODO add schedule
-  public void cleanupOldProcessSummaries() {
+  public void scheduledCleanup() {
     LocalDateTime cleanupBeforeDate =
         LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
     processSummaryRepository.deleteByUpdateDateTimeBefore(cleanupBeforeDate);

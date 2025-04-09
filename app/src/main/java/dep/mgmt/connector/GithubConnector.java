@@ -19,13 +19,7 @@ public class GithubConnector {
     log.info("List Branches: [{}]", repoName);
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_LIST_BRANCHES_ENDPOINT, repoOwner, repoName);
-    final Map<String, String> headers =
-            Map.of(
-                    "Accept",
-                    "application/vnd.github+json",
-                    "Authorization",
-                    String.format(
-                            "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.ListBranchesResponse> response =
             Connector.sendRequest(
                     url,
@@ -43,6 +37,7 @@ public class GithubConnector {
               response.statusCode(),
               response.responseBody());
     }
+
     return null;
   }
 
@@ -51,13 +46,7 @@ public class GithubConnector {
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_CREATE_PR_ENDPOINT, repoOwner, repoName);
-    final Map<String, String> headers =
-        Map.of(
-            "Accept",
-            "application/vnd.github+json",
-            "Authorization",
-            String.format(
-                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    final Map<String, String> headers = getDefaultHeaders();
     final GithubApiModel.CreatePullRequest requestBody =
         new GithubApiModel.CreatePullRequest(
             ConstantUtils.GITHUB_PR_TITLE_BODY,
@@ -92,13 +81,7 @@ public class GithubConnector {
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_LIST_PRS_ENDPOINT, repoOwner, repoName);
-    final Map<String, String> headers =
-        Map.of(
-            "Accept",
-            "application/vnd.github+json",
-            "Authorization",
-            String.format(
-                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.ListPullRequestsResponse> response =
         Connector.sendRequest(
             url,
@@ -124,15 +107,8 @@ public class GithubConnector {
     log.info("Merge Pull Request: [{}] | [{}]", repoName, pullNumber);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
-    final String url =
-        String.format(ConstantUtils.GITHUB_MERGE_PR_ENDPOINT, repoOwner, repoName, pullNumber);
-    final Map<String, String> headers =
-        Map.of(
-            "Accept",
-            "application/vnd.github+json",
-            "Authorization",
-            String.format(
-                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    final String url = String.format(ConstantUtils.GITHUB_MERGE_PR_ENDPOINT, repoOwner, repoName, pullNumber);
+    final Map<String, String> headers = getDefaultHeaders();
     final GithubApiModel.MergePullRequestRequest requestBody =
         new GithubApiModel.MergePullRequestRequest(ConstantUtils.GITHUB_PR_MERGE_METHOD);
 
@@ -162,15 +138,8 @@ public class GithubConnector {
     log.info("List Workflow Runs: [{}]", repoName);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
-    final String url =
-        String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
-    final Map<String, String> headers =
-        Map.of(
-            "Accept",
-            "application/vnd.github+json",
-            "Authorization",
-            String.format(
-                "Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
+    final String url = String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
+    final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.ListWorkflowRunsResponse> response =
         Connector.sendRequest(
             url,
@@ -190,5 +159,13 @@ public class GithubConnector {
     }
 
     return null;
+  }
+
+  private Map<String, String> getDefaultHeaders() {
+    return Map.of(
+            "Accept",
+            "application/vnd.github+json",
+            "Authorization",
+            String.format("Bearer %s", CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_TOKEN)));
   }
 }
