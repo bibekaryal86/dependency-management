@@ -1,5 +1,7 @@
 package dep.mgmt.update;
 
+import dep.mgmt.model.AppDataRepository;
+import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.util.ConstantUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,23 +20,27 @@ public class ExecuteScriptFile {
   private final boolean isRunAsync;
 
   private final String repoName;
-  private final String repoType;
+  private final String type;
 
-  public ExecuteScriptFile(final String scriptFileName,
+  public ExecuteScriptFile(final AppDataScriptFile scriptFile,
                            final List<String> arguments,
                            final boolean isRunAsync,
-                           final String repoName,
-                           final String repoType) {
+                           final AppDataRepository repository) {
     this.arguments = arguments;
     this.scriptPath =
         ConstantUtils.JAVA_SYSTEM_TMPDIR
             + ConstantUtils.PATH_DELIMITER
             + ConstantUtils.SCRIPTS_DIRECTORY
             + ConstantUtils.PATH_DELIMITER
-            + scriptFileName;
+            + scriptFile.getScriptFileName();
     this.isRunAsync = isRunAsync;
-    this.repoName = repoName;
-    this.repoType = repoType;
+    if (repository == null) {
+      this.repoName = null;
+      this.type = null;
+    } else {
+      this.repoName = repository.getRepoName();
+      this.type = repository.getType().toString();
+    }
   }
 
   public void executeScript() {
@@ -129,7 +135,7 @@ public class ExecuteScriptFile {
   private void checkProcessedRepository(final StringBuilder stringBuilder) {
     if (this.scriptPath.contains(ConstantUtils.SCRIPT_UPDATE_EXEC)) {
       final boolean isPushedNewBranch = stringBuilder.toString().contains("Pushed new branch");
-      ProcessUtils.addProcessedRepositories(this.repoName, this.repoType, isPushedNewBranch);
+      ProcessUtils.addProcessedRepositories(this.repoName, this.type, isPushedNewBranch);
     }
   }
 }

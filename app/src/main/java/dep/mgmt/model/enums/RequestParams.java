@@ -6,7 +6,7 @@ public class RequestParams {
     GRADLE,
     NODE,
     PYTHON,
-    PULL_REQUEST,
+    PULL_REQ,
     PULL,
     RESET,
     MERGE,

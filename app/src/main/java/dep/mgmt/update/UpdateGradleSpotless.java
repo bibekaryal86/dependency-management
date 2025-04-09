@@ -34,7 +34,6 @@ public class UpdateGradleSpotless {
     List<String> arguments = new LinkedList<>();
     arguments.add(repository.getRepoPath().toString());
     arguments.add(branchName);
-    new ExecuteScriptFile(this.scriptFile.getScriptFileName(), arguments, Boolean.TRUE)
-        .executeScript();
+    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, repository).executeScript();
   }
 }

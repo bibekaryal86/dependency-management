@@ -20,12 +20,20 @@ public class TaskQueues {
   private final AtomicLong nonEmptyQueueCount = new AtomicLong(0);
   private final AtomicBoolean isProcessing = new AtomicBoolean(Boolean.FALSE);
 
-  public boolean addQueue(TaskQueue taskQueue) {
+  public void addQueue(TaskQueue taskQueue) {
     boolean added = queueOfQueues.offer(taskQueue);
     if (added && !taskQueue.isEmpty()) {
       nonEmptyQueueCount.incrementAndGet();
     }
-    return added;
+  }
+
+  public TaskQueue getQueueByName(String name) {
+    for (TaskQueue queue : queueOfQueues) {
+      if (queue.getName().equals(name)) {
+        return queue;
+      }
+    }
+    return null;
   }
 
   public Future<String> processQueues() {
@@ -101,7 +109,6 @@ public class TaskQueues {
   public static class TaskQueue {
     private final String name;
     private final BlockingQueue<OneTask> queue = new LinkedBlockingQueue<>();
-    private final AtomicLong delayMillis = new AtomicLong(0);
 
     public TaskQueue(final String name) {
       this.name = name;
@@ -111,15 +118,12 @@ public class TaskQueues {
       return name;
     }
 
-    public boolean addTask(OneTask task) {
-      return queue.offer(task);
+    public void addTask(OneTask task) {
+      queue.offer(task);
     }
 
     public OneTask pollTask() {
       try {
-        if (delayMillis.get() > 0) {
-          Thread.sleep(delayMillis.get());
-        }
         return queue.poll(100, TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
@@ -135,32 +139,27 @@ public class TaskQueues {
       return queue.isEmpty();
     }
 
-    public void setDelay(long millis) {
-      delayMillis.set(millis);
-    }
-
-    public void resetDelay() {
-      delayMillis.set(0);
-    }
-
     public static class OneTask {
       private final String name;
       private final Callable<Object> action;
+      private final AtomicLong delayMillis = new AtomicLong(0);
 
       // for methods that return value
-      public OneTask(final String name, final Callable<Object> action) {
+      public OneTask(final String name, final Callable<Object> action, final long delayMillis) {
         this.name = name;
         this.action = action;
+        this.delayMillis.set(delayMillis);
       }
 
       // for methods that are void
-      public OneTask(final String name, final Runnable action) {
+      public OneTask(final String name, final Runnable action, final long delayMillis) {
         this.name = name;
         this.action =
             () -> {
               action.run();
               return null;
             };
+        this.delayMillis.set(delayMillis);
       }
 
       public String getName() {
@@ -169,6 +168,9 @@ public class TaskQueues {
 
       public Object execute() {
         try {
+          if (delayMillis.get() > 0) {
+            Thread.sleep(delayMillis.get());
+          }
           return action.call();
         } catch (Exception e) {
           final String message =
