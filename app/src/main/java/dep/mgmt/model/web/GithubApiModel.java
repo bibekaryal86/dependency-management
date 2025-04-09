@@ -181,17 +181,20 @@ public class GithubApiModel implements Serializable {
       private final String event;
       private final String status;
       private final String conclusion;
+      private final List<CreatePullRequestResponse> pullRequests;
 
       @JsonCreator
       public WorkflowRun(
           @JsonProperty("head_branch") String headBranch,
           @JsonProperty("event") String event,
           @JsonProperty("status") String status,
-          @JsonProperty("conclusion") String conclusion) {
+          @JsonProperty("conclusion") String conclusion,
+          @JsonProperty("pull_requests") List<CreatePullRequestResponse> pullRequests) {
         this.headBranch = headBranch;
         this.event = event;
         this.status = status;
         this.conclusion = conclusion;
+        this.pullRequests = pullRequests;
       }
 
       public String getHeadBranch() {
@@ -210,22 +213,19 @@ public class GithubApiModel implements Serializable {
         return conclusion;
       }
 
+      public List<CreatePullRequestResponse> getPullRequests() {
+        return pullRequests;
+      }
+
       @Override
       public String toString() {
-        return "WorkflowRun{"
-            + "headBranch='"
-            + headBranch
-            + '\''
-            + ", event='"
-            + event
-            + '\''
-            + ", status='"
-            + status
-            + '\''
-            + ", conclusion='"
-            + conclusion
-            + '\''
-            + '}';
+        return "WorkflowRun{" +
+                "headBranch='" + headBranch + '\'' +
+                ", event='" + event + '\'' +
+                ", status='" + status + '\'' +
+                ", conclusion='" + conclusion + '\'' +
+                ", pullRequests=" + pullRequests +
+                '}';
       }
     }
   }

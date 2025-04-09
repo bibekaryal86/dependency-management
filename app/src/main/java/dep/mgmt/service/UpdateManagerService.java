@@ -391,6 +391,7 @@ public class UpdateManagerService {
     // 2. most recent pull request which is open, merge it
     // if repoName not given
     // look up processedRepositories
+    // headBranch='update_dependencies_2025-03-24', event='pull_request', status='completed', conclusion='success'
   }
 
   private String getUpdateDependenciesQueueName(final String appender) {

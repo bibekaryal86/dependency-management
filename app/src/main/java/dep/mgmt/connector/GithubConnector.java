@@ -7,6 +7,9 @@ import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
 import io.github.bibekaryal86.shdsvc.dtos.HttpResponse;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +18,16 @@ public class GithubConnector {
 
   private static final Logger log = LoggerFactory.getLogger(GithubConnector.class);
 
-  public GithubApiModel.ListBranchesResponse listBranches(final String repoName) {
+  public List<GithubApiModel.ListBranchesResponse> listBranches(final String repoName) {
     log.info("List Branches: [{}]", repoName);
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_LIST_BRANCHES_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
-    HttpResponse<GithubApiModel.ListBranchesResponse> response =
+    HttpResponse<List<GithubApiModel.ListBranchesResponse>> response =
             Connector.sendRequest(
                     url,
                     Enums.HttpMethod.GET,
-                    new TypeReference<GithubApiModel.ListBranchesResponse>() {},
+                    new TypeReference<List<GithubApiModel.ListBranchesResponse>>() {},
                     null,
                     headers,
                     null);
@@ -38,10 +41,8 @@ public class GithubConnector {
               response.responseBody());
     }
 
-    return null;
+    return Collections.emptyList();
   }
-
-
 
   public GithubApiModel.CreatePullRequestResponse createPullRequest(final String repoName, final String branchName) {
     log.info("Create Pull Request: [{}] | [{}]", repoName, branchName);
@@ -78,17 +79,17 @@ public class GithubConnector {
     return null;
   }
 
-  public GithubApiModel.ListPullRequestsResponse listPullRequests(final String repoName) {
+  public List<GithubApiModel.ListPullRequestsResponse> listPullRequests(final String repoName) {
     log.info("List Pull Requests: [{}]", repoName);
 
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_LIST_PRS_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
-    HttpResponse<GithubApiModel.ListPullRequestsResponse> response =
+    HttpResponse<List<GithubApiModel.ListPullRequestsResponse>> response =
         Connector.sendRequest(
             url,
             Enums.HttpMethod.GET,
-            new TypeReference<GithubApiModel.ListPullRequestsResponse>() {},
+            new TypeReference<List<GithubApiModel.ListPullRequestsResponse>>() {},
             null,
             headers,
             null);
@@ -102,7 +103,7 @@ public class GithubConnector {
           response.responseBody());
     }
 
-    return null;
+    return Collections.emptyList();
   }
 
   public GithubApiModel.MergePullRequestResponse mergePullRequest(final String repoName, final Integer pullNumber) {
