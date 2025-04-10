@@ -75,7 +75,7 @@ public class UpdateManagerService {
             Boolean.TRUE,
             Boolean.TRUE,
             Boolean.TRUE,
-            Boolean.TRUE,
+            Boolean.FALSE,
             LocalDate.now(),
             null);
     updateRepos(requestMetadata, Boolean.TRUE);
