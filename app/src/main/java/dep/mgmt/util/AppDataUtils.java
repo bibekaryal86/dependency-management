@@ -197,10 +197,10 @@ public class AppDataUtils {
 
       try (Stream<Path> files = Files.list(resourcesPath)) {
         scriptFiles =
-                files
-                        .filter(path -> path.toString().endsWith(".sh"))
-                        .map(path -> new AppDataScriptFile(path.getFileName().toString()))
-                        .toList();
+            files
+                .filter(path -> path.toString().endsWith(".sh"))
+                .map(path -> new AppDataScriptFile(path.getFileName().toString()))
+                .toList();
       }
 
       if (scriptFiles.isEmpty()) {

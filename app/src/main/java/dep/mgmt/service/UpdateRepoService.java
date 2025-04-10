@@ -59,6 +59,23 @@ public class UpdateRepoService {
     this.scriptUtils = new ScriptUtils();
   }
 
+  public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues() {
+    final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks =
+        ProcessUtils.getProcessedTasks().values().stream().toList();
+    List<ProcessSummaries.ProcessSummary.ProcessTask> queueTasks = new ArrayList<>();
+
+    for (TaskQueues.TaskQueue taskQueue : taskQueues.getQueueOfQueues()) {
+      List<TaskQueues.TaskQueue.OneTask> oneTaskList = taskQueue.getTaskQueue();
+      for (TaskQueues.TaskQueue.OneTask oneTask : oneTaskList) {
+        queueTasks.add(
+            new ProcessSummaries.ProcessSummary.ProcessTask(
+                taskQueue.getName(), oneTask.getName()));
+      }
+    }
+
+    return Map.of("processTasks", processTasks, "queueTasks", queueTasks);
+  }
+
   public void executeTaskQueues() {
     if (!taskQueues.isProcessing()) {
       taskQueues.processQueues();

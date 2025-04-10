@@ -311,6 +311,12 @@ public class ProcessSummaries implements Serializable {
         this.added = added;
       }
 
+      public ProcessTask(final String queueName, final String taskName) {
+        this.queueName = queueName;
+        this.taskName = taskName;
+        this.added = null;
+      }
+
       public String getQueueName() {
         return queueName;
       }

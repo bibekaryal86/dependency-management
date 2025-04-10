@@ -1,6 +1,8 @@
 package dep.mgmt.model;
 
 import dep.mgmt.util.ProcessUtils;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +29,10 @@ public class TaskQueues {
     if (added && !taskQueue.isEmpty()) {
       nonEmptyQueueCount.incrementAndGet();
     }
+  }
+
+  public List<TaskQueue> getQueueOfQueues() {
+    return new ArrayList<>(queueOfQueues);
   }
 
   public TaskQueue getQueueByName(String name) {
@@ -114,6 +120,10 @@ public class TaskQueues {
 
     public TaskQueue(final String name) {
       this.name = name;
+    }
+
+    public List<OneTask> getTaskQueue() {
+      return new ArrayList<>(queue);
     }
 
     public String getName() {

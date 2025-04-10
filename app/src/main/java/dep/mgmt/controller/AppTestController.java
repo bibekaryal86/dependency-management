@@ -6,12 +6,12 @@ import dep.mgmt.server.Endpoints;
 import dep.mgmt.service.GithubService;
 import dep.mgmt.service.UpdateRepoService;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.ServerUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.util.List;
+import java.util.Map;
 
 public class AppTestController {
 
@@ -42,9 +42,9 @@ public class AppTestController {
         ServerUtils.sendResponse(ctx, rateLimitResponse, HttpResponseStatus.OK, null);
       }
       case Endpoints.APP_TESTS_TASKS -> {
-        List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks =
-            ProcessUtils.getProcessedTasks().values().stream().toList();
-        ServerUtils.sendResponse(ctx, processTasks, HttpResponseStatus.OK, null);
+        final Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> processTaskQueues =
+            updateRepoService.getAllProcessTaskQueues();
+        ServerUtils.sendResponse(ctx, processTaskQueues, HttpResponseStatus.OK, null);
       }
       case null, default ->
           ServerUtils.sendResponse(

@@ -29,17 +29,21 @@ public class UpdateRepoController {
       case Endpoints.UPDATE_DEPENDENCIES_EXECUTE -> {
         final RequestMetadata requestMetadata = getRequestMetadata(fullHttpRequest);
         if (requestMetadata == null) {
-          ServerUtils.sendResponse(ctx, "Missing Request Metadata...", HttpResponseStatus.BAD_REQUEST);
+          ServerUtils.sendResponse(
+              ctx, "Missing Request Metadata...", HttpResponseStatus.BAD_REQUEST);
           return;
         }
 
-        if (!isBranchDateValid(String.valueOf(requestMetadata.getBranchDate()), requestMetadata.getUpdateType())) {
-          ServerUtils.sendResponse(ctx, "Missing or Invalid Branch Date...", HttpResponseStatus.BAD_REQUEST);
+        if (!isBranchDateValid(
+            String.valueOf(requestMetadata.getBranchDate()), requestMetadata.getUpdateType())) {
+          ServerUtils.sendResponse(
+              ctx, "Missing or Invalid Branch Date...", HttpResponseStatus.BAD_REQUEST);
           return;
         }
 
         updateRepoService.updateRepos(requestMetadata, Boolean.FALSE);
-        ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+        ServerUtils.sendResponse(
+            ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
       }
       case null, default ->
           ServerUtils.sendResponse(
@@ -48,26 +52,27 @@ public class UpdateRepoController {
   }
 
   private RequestMetadata getRequestMetadata(final FullHttpRequest fullHttpRequest) {
-    final RequestMetadata requestMetadata = ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
+    final RequestMetadata requestMetadata =
+        ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
     if (requestMetadata == null) {
       return null;
     }
 
     return new RequestMetadata(
-            requestMetadata.getUpdateType(),
-            Optional.ofNullable(requestMetadata.getRecreateCaches()).orElse(false),
-            Optional.ofNullable(requestMetadata.getRecreateScriptFiles()).orElse(false),
-            Optional.ofNullable(requestMetadata.getGithubResetRequired()).orElse(false),
-            Optional.ofNullable(requestMetadata.getIsGithubPullRequired()).orElse(false),
-            Optional.ofNullable(requestMetadata.getProcessSummaryRequired()).orElse(false),
-            Optional.ofNullable(requestMetadata.getDeleteUpdateDependenciesOnly()).orElse(false),
-            Optional.ofNullable(requestMetadata.getIncludeDebugLogs()).orElse(false),
-            Optional.ofNullable(requestMetadata.getBranchDate()).orElse(LocalDate.now()),
-            requestMetadata.getRepoName());
+        requestMetadata.getUpdateType(),
+        Optional.ofNullable(requestMetadata.getRecreateCaches()).orElse(false),
+        Optional.ofNullable(requestMetadata.getRecreateScriptFiles()).orElse(false),
+        Optional.ofNullable(requestMetadata.getGithubResetRequired()).orElse(false),
+        Optional.ofNullable(requestMetadata.getIsGithubPullRequired()).orElse(false),
+        Optional.ofNullable(requestMetadata.getProcessSummaryRequired()).orElse(false),
+        Optional.ofNullable(requestMetadata.getDeleteUpdateDependenciesOnly()).orElse(false),
+        Optional.ofNullable(requestMetadata.getIncludeDebugLogs()).orElse(false),
+        Optional.ofNullable(requestMetadata.getBranchDate()).orElse(LocalDate.now()),
+        requestMetadata.getRepoName());
   }
 
   private boolean isBranchDateValid(
-          final String branchDate, final RequestParams.UpdateType updateType) {
+      final String branchDate, final RequestParams.UpdateType updateType) {
     if (updateType.equals(RequestParams.UpdateType.SNAPSHOT)
         || updateType.equals(RequestParams.UpdateType.SPOTLESS)
         || updateType.equals(RequestParams.UpdateType.PULL_REQ)

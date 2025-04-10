@@ -197,5 +197,6 @@ public class ConstantUtils {
 
   public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
   public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";
-  public static final String RESPONSE_BAD_BRANCH_DATE = "{\"branchDate\": \"empty or invalid format\"}";
+  public static final String RESPONSE_BAD_BRANCH_DATE =
+      "{\"branchDate\": \"empty or invalid format\"}";
 }
