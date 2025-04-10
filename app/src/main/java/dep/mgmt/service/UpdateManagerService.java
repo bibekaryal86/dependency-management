@@ -1,7 +1,6 @@
 package dep.mgmt.service;
 
 import dep.mgmt.config.CacheConfig;
-import dep.mgmt.migration.entities_old.ProcessedRepository;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
@@ -21,7 +20,7 @@ import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -377,7 +376,7 @@ public class UpdateManagerService {
           addTaskToQueue(ConstantUtils.QUEUE_CREATE_PULL_REQUESTS,
                   getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
                   () -> githubService.createGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate()),
-                  ConstantUtils.TASK_DELAY_PULL_REQUEST_CREATE);
+                  ConstantUtils.TASK_DELAY_PULL_REQUEST);
         }
       }
     } else if (CommonUtilities.isEmpty(requestRepoName)) {
@@ -387,7 +386,7 @@ public class UpdateManagerService {
         addTaskToQueue(ConstantUtils.QUEUE_CREATE_PULL_REQUESTS,
                 getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
                 () -> githubService.createGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate()),
-                ConstantUtils.TASK_DELAY_PULL_REQUEST_CREATE);
+                ConstantUtils.TASK_DELAY_PULL_REQUEST);
       }
     } else {
       // process requested repository
@@ -414,22 +413,24 @@ public class UpdateManagerService {
     if (isScheduledUpdate) {
       // process the processed repositories
       final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories = ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
-      for (ProcessSummaries.ProcessSummary.ProcessRepository repository : repositories) {
+      for (int i=0; i<repositories.size(); i++) {
+        ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
         if (repository.getPrCreated()) {
           addTaskToQueue(ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
                   getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
                   () -> githubService.mergeGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate(), repository.getPrNumber()),
-                  ConstantUtils.TASK_DELAY_PULL_REQUEST_MERGE);
+                  i==0 ? ConstantUtils.TASK_DELAY_PULL_REQUEST_TRY : ConstantUtils.TASK_DELAY_PULL_REQUEST);
         }
       }
     } else if (CommonUtilities.isEmpty(requestRepoName)) {
       // process all repositories
       final List<AppDataRepository> repositories = appData.getRepositories();
-      for (AppDataRepository repository : repositories) {
+      for (int i=0; i< repositories.size(); i++) {
+        AppDataRepository repository = repositories.get(i);
         addTaskToQueue(ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
                 getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
                 () -> githubService.mergeGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate(), null),
-                ConstantUtils.TASK_DELAY_PULL_REQUEST_MERGE);
+                ConstantUtils.TASK_DELAY_PULL_REQUEST);
       }
     } else {
       // process requested repository
@@ -444,7 +445,23 @@ public class UpdateManagerService {
       addTaskToQueue(ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
               getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
               () -> githubService.mergeGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate(), null),
-              ConstantUtils.TASK_DELAY_PULL_REQUEST_MERGE);
+              ConstantUtils.TASK_DELAY_PULL_REQUEST);
+    }
+  }
+
+  private void executeUpdateContinuedForMergeRetry(final RequestMetadata requestMetadata) {
+    Set<String> repositoriesToRetryMerge = ProcessUtils.getRepositoriesToRetryMerge();
+    if (!repositoriesToRetryMerge.isEmpty()) {
+      final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories = ProcessUtils.getProcessedRepositoriesMap().values().stream().filter(pr -> repositoriesToRetryMerge.contains(pr.getRepoName())).toList();
+      for (int i=0; i< repositories.size(); i++) {
+        ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
+        if (repository.getPrCreated()) {
+          addTaskToQueue(ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
+                  getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
+                  () -> githubService.mergeGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate(), repository.getPrNumber()),
+                  i==0 ? ConstantUtils.TASK_DELAY_PULL_REQUEST_RETRY : ConstantUtils.TASK_DELAY_PULL_REQUEST);
+        }
+      }
     }
   }
 

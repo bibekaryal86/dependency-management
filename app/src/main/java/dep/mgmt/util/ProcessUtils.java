@@ -1,6 +1,9 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummaries;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,6 +18,7 @@ public class ProcessUtils {
   private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
   private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
+  private static Set<String> repositoriesToRetryMerge = new HashSet<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -85,8 +89,21 @@ public class ProcessUtils {
     return processedRepositories;
   }
 
+  public static synchronized void addRepositoriesToRetryMerge(final String repository) {
+    repositoriesToRetryMerge.add(repository);
+  }
+
+  public static synchronized void removeRepositoriesToRetryMerge(final String repository) {
+    repositoriesToRetryMerge.remove(repository);
+  }
+
+  public static synchronized Set<String> getRepositoriesToRetryMerge() {
+    return repositoriesToRetryMerge;
+  }
+
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
+    repositoriesToRetryMerge = new HashSet<>();
     setMongoGradlePluginsToUpdate(0);
     setMongoGradleDependenciesToUpdate(0);
     setMongoPythonPackagesToUpdate(0);

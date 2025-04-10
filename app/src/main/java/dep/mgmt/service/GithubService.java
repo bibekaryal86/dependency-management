@@ -32,18 +32,17 @@ public class GithubService {
 
     public void mergeGithubPullRequest(final String repoName, final LocalDate branchDate, final Integer prNumber) {
         log.info("Merge Github Pull Request: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
-        boolean isPrMerged = false;
-
         final Integer prNumberFromWorkflowRun = checkWorkflowRun(repoName, branchDate);
 
         if (prNumberFromWorkflowRun == null) {
             log.info("PR Not Found in Workflow Run: [{}] | [{}]", repoName, branchDate);
+
         }
 
         if (prNumber != null && !Objects.equals(prNumber, prNumberFromWorkflowRun)) {
             log.error("PR Number Not Matched in Workflow Run: [{}] | [{}] | [{}] | [{}]",
                     repoName, branchDate, prNumber, prNumberFromWorkflowRun);
-            // TODO add to error thing here
+            ProcessUtils.addRepositoriesToRetryMerge(repoName);
         }
 
         if ((prNumber != null && Objects.equals(prNumber, prNumberFromWorkflowRun)) || prNumberFromWorkflowRun != null) {
@@ -52,7 +51,7 @@ public class GithubService {
             if (mergePullRequestResponse != null && mergePullRequestResponse.getMerged() != null && mergePullRequestResponse.getMerged()) {
                 ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
             } else {
-                // TODO add to error thing here
+                ProcessUtils.addRepositoriesToRetryMerge(repoName);
             }
         }
     }

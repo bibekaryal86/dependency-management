@@ -128,9 +128,10 @@ public class ConstantUtils {
   public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
-  public static final long TASK_DELAY_DEFAULT = 1000;                     // 1 second
-  public static final long TASK_DELAY_PULL_REQUEST_CREATE = 1000 * 60;    // 1 minute
-  public static final long TASK_DELAY_PULL_REQUEST_MERGE = 1000 * 60 * 5; // 5 minutes
+  public static final long TASK_DELAY_DEFAULT = 1000;                       // 1 second
+  public static final long TASK_DELAY_PULL_REQUEST = 1000 * 60;      // 1 minute
+  public static final long TASK_DELAY_PULL_REQUEST_TRY = 1000 * 60 * 5;   // 5 minutes
+  public static final long TASK_DELAY_PULL_REQUEST_RETRY = 1000 * 60 * 30;  // 30 minutes
   public static final String DOCKER_JRE = "eclipse-temurin";
   public static final String DOCKER_ALPINE = "alpine";
   public static final String GITHUB_ENDPOINT_TAGS = "tags";
