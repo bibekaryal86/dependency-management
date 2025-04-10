@@ -3,6 +3,10 @@ package dep.mgmt.model.web;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class GithubApiModel implements Serializable {
@@ -233,6 +237,120 @@ public class GithubApiModel implements Serializable {
             + '\''
             + ", pullRequests="
             + pullRequests
+            + '}';
+      }
+    }
+  }
+
+  public static class RateLimitResponse implements Serializable {
+    private final Resources resources;
+    private final Rate rate;
+
+    @JsonCreator
+    public RateLimitResponse(
+        @JsonProperty("resources") Resources resources, @JsonProperty("rate") Rate rate) {
+      this.resources = resources;
+      this.rate = rate;
+    }
+
+    public Resources getResources() {
+      return resources;
+    }
+
+    public Rate getRate() {
+      return rate;
+    }
+
+    @Override
+    public String toString() {
+      return "RateLimitResponse{" + "resources=" + resources + ", rate=" + rate + '}';
+    }
+
+    public static class Resources implements Serializable {
+      private final Rate core;
+      private final Rate graphql;
+
+      @JsonCreator
+      public Resources(@JsonProperty("core") Rate core, @JsonProperty("graphql") Rate graphql) {
+        this.core = core;
+        this.graphql = graphql;
+      }
+
+      public Rate getCore() {
+        return core;
+      }
+
+      public Rate getGraphql() {
+        return graphql;
+      }
+
+      @Override
+      public String toString() {
+        return "Resource{" + "core=" + core + ", graphql=" + graphql + '}';
+      }
+    }
+
+    public static class Rate implements Serializable {
+      private final Integer limit;
+      private final Integer used;
+      private final Integer remaining;
+      private final Integer reset;
+      private final LocalDateTime resetAt;
+      private final Long resetAfterInMinutes;
+
+      @JsonCreator
+      public Rate(
+          @JsonProperty("limit") Integer limit,
+          @JsonProperty("used") Integer used,
+          @JsonProperty("remaining") Integer remaining,
+          @JsonProperty("reset") Integer reset) {
+        this.limit = limit;
+        this.used = used;
+        this.remaining = remaining;
+        this.reset = reset;
+        this.resetAt = LocalDateTime.ofInstant(Instant.ofEpochSecond(reset), ZoneId.systemDefault());
+        this.resetAfterInMinutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), this.resetAt);
+      }
+
+      public Integer getLimit() {
+        return limit;
+      }
+
+      public Integer getUsed() {
+        return used;
+      }
+
+      public Integer getRemaining() {
+        return remaining;
+      }
+
+      public Integer getReset() {
+        return reset;
+      }
+
+      public LocalDateTime getResetAt() {
+        return resetAt;
+      }
+
+      public Long getResetAfterInMinutes() {
+        return resetAfterInMinutes;
+      }
+
+      @Override
+      public String toString() {
+        return "Rate{"
+            + "limit="
+            + limit
+            + ", used="
+            + used
+            + ", remaining="
+            + remaining
+            + ", reset="
+            + reset
+            + ", resetAt="
+            + resetAt
+            + ", resetAfterInMinutes="
+            + resetAfterInMinutes
             + '}';
       }
     }

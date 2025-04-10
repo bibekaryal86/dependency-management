@@ -168,6 +168,24 @@ public class GithubConnector {
     return null;
   }
 
+  public GithubApiModel.RateLimitResponse getRateLimits() {
+    log.info("Get GitHub Rate Limits...");
+    final String url = ConstantUtils.GITHUB_RATE_LIMIT_ENDPOINT;
+    final Map<String, String> headers = getDefaultHeaders();
+    HttpResponse<GithubApiModel.RateLimitResponse> response =
+        Connector.sendRequest(
+            url,
+            Enums.HttpMethod.GET,
+            new TypeReference<GithubApiModel.RateLimitResponse>() {},
+            null,
+            headers,
+            null);
+    if (response.statusCode() == 200) {
+      return response.responseBody();
+    }
+    return null;
+  }
+
   private Map<String, String> getDefaultHeaders() {
     return Map.of(
         "Accept",

@@ -113,4 +113,8 @@ public class GithubService {
 
     return workflowRun.getPullRequests().getFirst().getNumber();
   }
+
+  public GithubApiModel.RateLimitResponse getCurrentGithubRateLimits() {
+    return githubConnector.getRateLimits();
+  }
 }

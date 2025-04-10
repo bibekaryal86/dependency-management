@@ -1,6 +1,8 @@
 package dep.mgmt.controller;
 
+import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.server.Endpoints;
+import dep.mgmt.service.GithubService;
 import dep.mgmt.service.UpdateManagerService;
 import dep.mgmt.util.ServerUtils;
 import io.netty.buffer.Unpooled;
@@ -20,9 +22,11 @@ public class AppTestController {
   private static final String TESTS_RESET_RESPONSE = "{\"reset\": \"requested\"}";
 
   private final UpdateManagerService updateManagerService;
+  private final GithubService githubService;
 
   public AppTestController() {
     this.updateManagerService = new UpdateManagerService();
+    this.githubService = new GithubService();
   }
 
   public void handleRequest(
@@ -34,6 +38,10 @@ public class AppTestController {
       case Endpoints.APP_TESTS_RESET -> {
         sendResponse(TESTS_RESET_RESPONSE, ctx);
         updateManagerService.recreateLocalCaches();
+      }
+      case Endpoints.APP_TESTS_RATE -> {
+        GithubApiModel.RateLimitResponse rateLimitResponse = githubService.getCurrentGithubRateLimits();
+        ServerUtils.sendResponse(ctx, rateLimitResponse, HttpResponseStatus.OK);
       }
       case null, default ->
           ServerUtils.sendErrorResponse(
