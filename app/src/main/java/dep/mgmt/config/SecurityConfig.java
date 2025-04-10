@@ -33,7 +33,7 @@ public class SecurityConfig extends ChannelDuplexHandler {
       }
 
       if (CommonUtilities.isEmpty(authHeader)) {
-        ServerUtils.sendErrorResponse(
+        ServerUtils.sendResponse(
             channelHandlerContext,
             ConstantUtils.NOT_AUTHENTICATED,
             HttpResponseStatus.UNAUTHORIZED);
@@ -43,7 +43,7 @@ public class SecurityConfig extends ChannelDuplexHandler {
       if (isBasicAuthenticated(authHeader)) {
         super.channelRead(channelHandlerContext, object);
       } else {
-        ServerUtils.sendErrorResponse(
+        ServerUtils.sendResponse(
             channelHandlerContext, ConstantUtils.NOT_AUTHORIZED, HttpResponseStatus.FORBIDDEN);
       }
     } else {

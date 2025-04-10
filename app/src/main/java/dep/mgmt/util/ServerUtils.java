@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ServerUtils {
 
-  public static void sendErrorResponse(
+  public static void sendResponse(
       final ChannelHandlerContext ctx, final String errMsg, final HttpResponseStatus status) {
     final ResponseWithMetadata responseWithMetadata =
         new ResponseWithMetadata(
@@ -30,12 +30,18 @@ public class ServerUtils {
                 new ResponseMetadata.ResponseStatusInfo(errMsg),
                 ResponseMetadata.emptyResponseCrudInfo(),
                 ResponseMetadata.emptyResponsePageInfo()));
-    sendResponse(ctx, responseWithMetadata, status);
+    sendResponse(ctx, responseWithMetadata, status, null);
   }
 
   public static void sendResponse(
-      final ChannelHandlerContext ctx, final Object object, final HttpResponseStatus status) {
-    final byte[] jsonResponse = CommonUtilities.writeValueAsBytesNoEx(object);
+      final ChannelHandlerContext ctx,
+      final Object object,
+      final HttpResponseStatus status,
+      final String jsonString) {
+    final byte[] jsonResponse =
+        CommonUtilities.isEmpty(jsonString)
+            ? CommonUtilities.writeValueAsBytesNoEx(object)
+            : jsonString.getBytes();
     final FullHttpResponse fullHttpResponse =
         new DefaultFullHttpResponse(
             HttpVersion.HTTP_1_1, status, Unpooled.wrappedBuffer(jsonResponse));

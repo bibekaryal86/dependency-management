@@ -1,7 +1,7 @@
 package dep.mgmt.config;
 
 import dep.mgmt.service.ProcessSummaryService;
-import dep.mgmt.service.UpdateManagerService;
+import dep.mgmt.service.UpdateRepoService;
 import dep.mgmt.util.ConstantUtils;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -17,7 +17,7 @@ public class ScheduleConfig {
   private static final Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
   private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-  private static final UpdateManagerService updateManagerService = new UpdateManagerService();
+  private static final UpdateRepoService updateRepoService = new UpdateRepoService();
   private static final ProcessSummaryService processSummaryService = new ProcessSummaryService();
 
   public static void init() {
@@ -51,7 +51,7 @@ public class ScheduleConfig {
     scheduler.schedule(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
-          updateManagerService.scheduledUpdate();
+          updateRepoService.scheduledUpdate();
           // schedule the next execution
           updateReposSchedule();
         },

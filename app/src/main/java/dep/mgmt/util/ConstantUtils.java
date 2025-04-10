@@ -194,4 +194,7 @@ public class ConstantUtils {
   public static final String APPENDER_QUEUE_NAME = "_QUEUE";
   public static final String APPENDER_TASK_NAME = "_TASK";
   public static final String APPENDER_RETRY = "_RETRY";
+
+  public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
+  public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";
 }

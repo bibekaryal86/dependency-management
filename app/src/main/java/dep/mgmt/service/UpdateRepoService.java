@@ -33,8 +33,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateManagerService {
-  private static final Logger log = LoggerFactory.getLogger(UpdateManagerService.class);
+public class UpdateRepoService {
+  private static final Logger log = LoggerFactory.getLogger(UpdateRepoService.class);
   private final TaskQueues taskQueues = new TaskQueues();
 
   private final GradleDependencyVersionService gradleDependencyVersionService;
@@ -47,7 +47,7 @@ public class UpdateManagerService {
   private final ProcessSummaryService processSummaryService;
   private final ScriptUtils scriptUtils;
 
-  public UpdateManagerService() {
+  public UpdateRepoService() {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
     this.nodeDependencyVersionService = new NodeDependencyVersionService();

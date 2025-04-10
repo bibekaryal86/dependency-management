@@ -10,6 +10,8 @@ public class Endpoints {
   public static final String APP_TESTS_TASKS = APP_TESTS_CONTROLLER + "/task-queue";
 
   public static final String UPDATE_DEPENDENCIES_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/update";
+  public static final String UPDATE_DEPENDENCIES_EXECUTE =
+      UPDATE_DEPENDENCIES_CONTROLLER + "/execute";
 
   public static final String MONGO_REPO_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/mongo";
   public static final String MONGO_GRADLE_DEPENDENCY = MONGO_REPO_CONTROLLER + "/gradle-dependency";

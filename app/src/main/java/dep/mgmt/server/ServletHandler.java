@@ -31,7 +31,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
     if (msg instanceof FullHttpRequest fullHttpRequest) {
       final HttpMethod httpMethod = fullHttpRequest.method();
       if (httpMethod.equals(HttpMethod.OPTIONS)) {
-        ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+        ServerUtils.sendResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
         return;
       }
 
@@ -48,8 +48,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
         log.info("[{}] Routing to UpdateRepoController...", requestId);
         updateRepoController.handleRequest(fullHttpRequest, ctx);
       } else {
-        ServerUtils.sendErrorResponse(
-            ctx, "Servlet Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+        ServerUtils.sendResponse(ctx, "Servlet Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
       }
     } else {
       super.channelRead(ctx, msg);
@@ -62,7 +61,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
     final String requestId = channelHandlerContext.channel().attr(ConstantUtils.REQUEST_ID).get();
     log.error("[{}] Servlet Handler Exception Caught...", requestId, throwable);
 
-    ServerUtils.sendErrorResponse(
+    ServerUtils.sendResponse(
         channelHandlerContext,
         "Servlet Handler Exception Caught: " + throwable.getMessage(),
         HttpResponseStatus.INTERNAL_SERVER_ERROR);

@@ -15,6 +15,7 @@ import dep.mgmt.service.LatestVersionService;
 import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.service.PythonPackageVersionService;
+import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.ConvertUtils;
 import dep.mgmt.util.ServerUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
@@ -55,19 +56,19 @@ public class MongoRepoController {
     if (requestMethod.equals(HttpMethod.GET)) {
       switch (requestUri) {
         case Endpoints.MONGO_GRADLE_PLUGIN:
-          ServerUtils.sendResponse(ctx, getGradlePlugins(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getGradlePlugins(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_GRADLE_DEPENDENCY:
-          ServerUtils.sendResponse(ctx, getGradleDependencies(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getGradleDependencies(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_NODE_DEPENDENCY:
-          ServerUtils.sendResponse(ctx, getNodeDependencies(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getNodeDependencies(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_PYTHON_PACKAGE:
-          ServerUtils.sendResponse(ctx, getPythonPackages(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getPythonPackages(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_LATEST_VERSION:
-          ServerUtils.sendResponse(ctx, getLatestVersion(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getLatestVersion(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_PROCESS_SUMMARY:
           final String updateType = ServerUtils.getQueryParam(requestUri, "updateType", "");
@@ -79,21 +80,21 @@ public class MongoRepoController {
             ServerUtils.sendResponse(
                 ctx,
                 getProcessSummary(updateType, updateDate, pageNumber, pageSize),
-                HttpResponseStatus.OK);
+                HttpResponseStatus.OK,
+                null);
           } else {
-            ServerUtils.sendErrorResponse(
-                ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
+            ServerUtils.sendResponse(ctx, "Invalid Update Type...", HttpResponseStatus.BAD_REQUEST);
           }
           break;
         case Endpoints.MONGO_REPO_UPDATE:
           updateDependenciesInMongo();
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.ACCEPTED);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
         case Endpoints.MONGO_EXCLUDED_REPO:
-          ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK);
+          ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK, null);
           break;
-        default:
-          ServerUtils.sendErrorResponse(
+        case null, default:
+          ServerUtils.sendResponse(
               ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
@@ -104,33 +105,33 @@ public class MongoRepoController {
           || CommonUtilities.isEmpty(dependencyRequest.getName())
           || (CommonUtilities.isEmpty(dependencyRequest.getVersion())
               && !requestUri.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
-        ServerUtils.sendErrorResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
+        ServerUtils.sendResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
         return;
       }
 
       switch (requestUri) {
         case Endpoints.MONGO_GRADLE_PLUGIN:
           saveGradlePlugin(dependencyRequest);
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
         case Endpoints.MONGO_GRADLE_DEPENDENCY:
           saveGradleDependency(dependencyRequest);
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
         case Endpoints.MONGO_NODE_DEPENDENCY:
           saveNpmDependency(dependencyRequest);
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
         case Endpoints.MONGO_PYTHON_PACKAGE:
           savePythonPackage(dependencyRequest);
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
         case Endpoints.MONGO_EXCLUDED_REPO:
           saveExcludedRepo(dependencyRequest.getName());
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
-        default:
-          ServerUtils.sendErrorResponse(
+        case null, default:
+          ServerUtils.sendResponse(
               ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
@@ -142,15 +143,15 @@ public class MongoRepoController {
               Boolean.parseBoolean(
                   ServerUtils.getQueryParam(fullHttpRequest.uri(), "deleteAll", ""));
           deletedExcludedRepo(repoName, isDeleteAll);
-          ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
+          ServerUtils.sendResponse(ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
           break;
-        default:
-          ServerUtils.sendErrorResponse(
+        case null, default:
+          ServerUtils.sendResponse(
               ctx, "MongoRepoController Delete Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else {
-      ServerUtils.sendErrorResponse(
+      ServerUtils.sendResponse(
           ctx,
           "MongoRepoController Method Mapping Not Found...",
           HttpResponseStatus.METHOD_NOT_ALLOWED);

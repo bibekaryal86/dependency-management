@@ -35,9 +35,7 @@ options to kill a long running task
 
 Endpoints
 (1) Update Repo
-(2) NPM Snapshot Update
-(3) Gradle Spotless
-(4) Delete Branches (with option for 1)
-(5) Pull Reset (with option for 1)
-(6) Create Pull Request
-(7) Merge Pull Request
+(2) Kill a Task
+
+
+rename updatemanagerservice to updaterepomanager

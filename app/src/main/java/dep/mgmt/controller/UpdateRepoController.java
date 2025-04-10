@@ -1,15 +1,41 @@
 package dep.mgmt.controller;
 
+import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.enums.RequestParams;
+import dep.mgmt.server.Endpoints;
+import dep.mgmt.service.UpdateRepoService;
+import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ServerUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class UpdateRepoController {
 
+  private final UpdateRepoService updateRepoService;
+
+  public UpdateRepoController() {
+    this.updateRepoService = new UpdateRepoService();
+  }
+
   public void handleRequest(
-      final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {}
+      final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {
+    final String requestUri = ServerUtils.getRequestUriLessParams(fullHttpRequest.uri());
+
+    switch (requestUri) {
+      case Endpoints.UPDATE_DEPENDENCIES_EXECUTE -> {
+        final RequestMetadata requestMetadata =
+            ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
+        updateRepoService.updateRepos(requestMetadata, Boolean.FALSE);
+        ServerUtils.sendResponse(ctx, ConstantUtils.RESPONSE_REQUEST_SUBMITTED, HttpResponseStatus.ACCEPTED);
+      }
+      case null, default ->
+          ServerUtils.sendResponse(
+              ctx, "UpdateRepoController Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+    }
+  }
 
   private boolean isBranchDateValid(
       final String branchDate, final RequestParams.UpdateType updateType) {
