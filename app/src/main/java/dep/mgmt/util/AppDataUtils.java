@@ -30,7 +30,7 @@ public class AppDataUtils {
 
   private static final Logger log = LoggerFactory.getLogger(AppDataUtils.class);
 
-  public static AppData appData() {
+  public static AppData getAppData() {
     final AppData appDataCache = CacheConfig.getAppData();
     if (appDataCache == null) {
       return setAppData();
@@ -197,10 +197,10 @@ public class AppDataUtils {
 
       try (Stream<Path> files = Files.list(resourcesPath)) {
         scriptFiles =
-            files
-                .filter(path -> path.endsWith(".sh"))
-                .map(path -> new AppDataScriptFile(path.getFileName().toString()))
-                .toList();
+                files
+                        .filter(path -> path.toString().endsWith(".sh"))
+                        .map(path -> new AppDataScriptFile(path.getFileName().toString()))
+                        .toList();
       }
 
       if (scriptFiles.isEmpty()) {

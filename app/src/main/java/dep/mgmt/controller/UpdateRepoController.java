@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class UpdateRepoController {
 
@@ -26,7 +27,7 @@ public class UpdateRepoController {
 
     switch (requestUri) {
       case Endpoints.UPDATE_DEPENDENCIES_EXECUTE -> {
-        final RequestMetadata requestMetadata = ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
+        final RequestMetadata requestMetadata = getRequestMetadata(fullHttpRequest);
         if (requestMetadata == null) {
           ServerUtils.sendResponse(ctx, "Missing Request Metadata...", HttpResponseStatus.BAD_REQUEST);
           return;
@@ -44,6 +45,25 @@ public class UpdateRepoController {
           ServerUtils.sendResponse(
               ctx, "UpdateRepoController Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
     }
+  }
+
+  private RequestMetadata getRequestMetadata(final FullHttpRequest fullHttpRequest) {
+    final RequestMetadata requestMetadata = ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
+    if (requestMetadata == null) {
+      return null;
+    }
+
+    return new RequestMetadata(
+            requestMetadata.getUpdateType(),
+            Optional.ofNullable(requestMetadata.getRecreateCaches()).orElse(false),
+            Optional.ofNullable(requestMetadata.getRecreateScriptFiles()).orElse(false),
+            Optional.ofNullable(requestMetadata.getGithubResetRequired()).orElse(false),
+            Optional.ofNullable(requestMetadata.getIsGithubPullRequired()).orElse(false),
+            Optional.ofNullable(requestMetadata.getProcessSummaryRequired()).orElse(false),
+            Optional.ofNullable(requestMetadata.getDeleteUpdateDependenciesOnly()).orElse(false),
+            Optional.ofNullable(requestMetadata.getIncludeDebugLogs()).orElse(false),
+            Optional.ofNullable(requestMetadata.getBranchDate()).orElse(LocalDate.now()),
+            requestMetadata.getRepoName());
   }
 
   private boolean isBranchDateValid(

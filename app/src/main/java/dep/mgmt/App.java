@@ -7,6 +7,7 @@ import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.migration.MigrationService;
 import dep.mgmt.server.NettyServer;
+import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.List;
@@ -38,6 +39,7 @@ public class App {
   }
 
   private static void init() {
+    // ENV DATA
     final Map<String, String> properties =
         CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
     final List<String> requiredEnvProperties =
@@ -50,6 +52,9 @@ public class App {
       throw new IllegalStateException(
           "One or more environment configurations could not be accessed...");
     }
+
+    // APP DATA
+    AppDataUtils.setAppData();
   }
 
   private static boolean isMigration(String[] args) {

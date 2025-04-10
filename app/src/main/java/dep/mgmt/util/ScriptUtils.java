@@ -42,7 +42,7 @@ public class ScriptUtils {
       throw new RuntimeException("Unable to create temp directory to store scripts...");
     }
 
-    List<AppDataScriptFile> scriptFiles = AppDataUtils.appData().getScriptFiles();
+    List<AppDataScriptFile> scriptFiles = AppDataUtils.getAppData().getScriptFiles();
     for (final AppDataScriptFile scriptFile : scriptFiles) {
       isError = createTempScriptFile(scriptFile);
       if (isError) {

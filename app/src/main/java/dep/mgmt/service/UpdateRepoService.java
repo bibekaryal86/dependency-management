@@ -251,7 +251,7 @@ public class UpdateRepoService {
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
     log.info("Execute Npm Snapshots: [{}] | [{}]", branchDate, repoName);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
     final AppDataScriptFile scriptFile =
@@ -282,7 +282,7 @@ public class UpdateRepoService {
 
   private void executeGradleSpotlessUpdate(final LocalDate branchDate, final String repoName) {
     log.info("Execute Gradle Spotless Update: [{}] | [{}]", branchDate, repoName);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
     final AppDataScriptFile scriptFile =
@@ -317,7 +317,7 @@ public class UpdateRepoService {
         "Execute Update Repos GitHub Branch Delete: [{}] | [{}]",
         isDeleteUpdateDependenciesOnly,
         repoName);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
       final String repoHome = appData.getArgsMap().get(ConstantUtils.ENV_REPO_HOME);
@@ -364,7 +364,7 @@ public class UpdateRepoService {
   private void executeUpdateGithubResetPull(
       final boolean isReset, final boolean isPull, final String repoName) {
     log.info("Execute Update GitHub Reset Pull: [{}] | [{}] | [{}]", isReset, isPull, repoName);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
       final String repoHome = appData.getArgsMap().get(ConstantUtils.ENV_REPO_HOME);
@@ -406,7 +406,7 @@ public class UpdateRepoService {
   private void executeUpdateDependencies(
       final RequestMetadata requestMetadata, final boolean isExit) {
     log.info("Execute Update Dependencies: [{}]", requestMetadata);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
 
     final List<AppDataRepository> repositories =
@@ -486,7 +486,7 @@ public class UpdateRepoService {
       final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
     log.info(
         "Execute Update Create Pull Requests: [{}] | [{}]", requestMetadata, isScheduledUpdate);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
     if (isScheduledUpdate) {
@@ -539,7 +539,7 @@ public class UpdateRepoService {
   private void executeUpdateMergePullRequests(
       final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
     log.info("Execute Update Merge Pull Requests: [{}] | [{}]", requestMetadata, isScheduledUpdate);
-    final AppData appData = AppDataUtils.appData();
+    final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
     if (isScheduledUpdate) {
@@ -680,7 +680,7 @@ public class UpdateRepoService {
     final boolean isProcessSummaryRequired = requestMetadata.getProcessSummaryRequired();
     final RequestParams.UpdateType updateType = requestMetadata.getUpdateType();
     boolean isSendEmail =
-        "true".equals(AppDataUtils.appData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
+        "true".equals(AppDataUtils.getAppData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
 
     log.info(
         "Make Process Summary: [ {} ] | [ {} ] | [ {} ]",
@@ -710,7 +710,7 @@ public class UpdateRepoService {
         ProcessUtils.getProcessedRepositoriesMap();
     List<ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories =
         new ArrayList<>(ProcessUtils.getProcessedRepositoriesMap().values().stream().toList());
-    List<AppDataRepository> allRepositories = AppDataUtils.appData().getRepositories();
+    List<AppDataRepository> allRepositories = AppDataUtils.getAppData().getRepositories();
 
     for (AppDataRepository repository : allRepositories) {
       if (!processedRepositoryMap.containsKey(repository.getRepoName())) {

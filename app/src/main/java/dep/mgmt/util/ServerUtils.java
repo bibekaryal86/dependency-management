@@ -54,7 +54,7 @@ public class ServerUtils {
     T requestBody = null;
     try {
       ByteBuf byteBuf = fullHttpRequest.content();
-      if (byteBuf != null) {
+      if (byteBuf != null && byteBuf.readableBytes() > 0) {
         requestBody =
             CommonUtilities.objectMapperProvider()
                 .readValue((InputStream) new ByteBufInputStream(byteBuf), tClass);
