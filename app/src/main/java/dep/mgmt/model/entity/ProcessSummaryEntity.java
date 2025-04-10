@@ -17,8 +17,8 @@ public class ProcessSummaryEntity implements Serializable {
   private Integer pythonPackagesToUpdate;
   private Integer nodeDependenciesToUpdate;
   private Integer totalPrCreatedCount;
-  private Integer totalPrCreateErrorsCount;
   private Integer totalPrMergedCount;
+  private Integer totalPrMergeErrorCount;
   private List<ProcessRepositoryEntity> processRepositories;
   private Boolean isErrorsOrExceptions;
 
@@ -33,8 +33,8 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer pythonPackagesToUpdate,
       final Integer nodeDependenciesToUpdate,
       final Integer totalPrCreatedCount,
-      final Integer totalPrCreateErrorsCount,
       final Integer totalPrMergedCount,
+      final Integer totalPrMergeErrorCount,
       final List<ProcessRepositoryEntity> processRepositories,
       final Boolean isErrorsOrExceptions) {
     this.id = id;
@@ -45,8 +45,8 @@ public class ProcessSummaryEntity implements Serializable {
     this.pythonPackagesToUpdate = pythonPackagesToUpdate;
     this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
     this.totalPrCreatedCount = totalPrCreatedCount;
-    this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
     this.totalPrMergedCount = totalPrMergedCount;
+    this.totalPrMergeErrorCount = totalPrMergeErrorCount;
     this.processRepositories =
         processRepositories == null ? Collections.emptyList() : processRepositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
@@ -116,20 +116,20 @@ public class ProcessSummaryEntity implements Serializable {
     this.totalPrCreatedCount = totalPrCreatedCount;
   }
 
-  public Integer getTotalPrCreateErrorsCount() {
-    return totalPrCreateErrorsCount;
-  }
-
-  public void setTotalPrCreateErrorsCount(Integer totalPrCreateErrorsCount) {
-    this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
-  }
-
   public Integer getTotalPrMergedCount() {
     return totalPrMergedCount;
   }
 
   public void setTotalPrMergedCount(Integer totalPrMergedCount) {
     this.totalPrMergedCount = totalPrMergedCount;
+  }
+
+  public Integer getTotalPrMergeErrorCount() {
+    return totalPrMergeErrorCount;
+  }
+
+  public void setTotalPrMergeErrorCount(Integer totalPrMergeErrorCount) {
+    this.totalPrMergeErrorCount = totalPrMergeErrorCount;
   }
 
   public List<ProcessRepositoryEntity> getProcessRepositories() {
@@ -150,32 +150,20 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{"
-        + "id="
-        + id
-        + ", updateDateTime="
-        + updateDateTime
-        + ", updateType="
-        + updateType
-        + ", gradlePluginsToUpdate="
-        + gradlePluginsToUpdate
-        + ", gradleDependenciesToUpdate="
-        + gradleDependenciesToUpdate
-        + ", pythonPackagesToUpdate="
-        + pythonPackagesToUpdate
-        + ", nodeDependenciesToUpdate="
-        + nodeDependenciesToUpdate
-        + ", totalPrCreatedCount="
-        + totalPrCreatedCount
-        + ", totalPrCreateErrorsCount="
-        + totalPrCreateErrorsCount
-        + ", totalPrMergedCount="
-        + totalPrMergedCount
-        + ", processRepositories="
-        + processRepositories
-        + ", isErrorsOrExceptions="
-        + isErrorsOrExceptions
-        + '}';
+    return "ProcessSummaryEntity{" +
+            "id=" + id +
+            ", updateDateTime=" + updateDateTime +
+            ", updateType='" + updateType + '\'' +
+            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
+            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
+            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
+            ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
+            ", totalPrCreatedCount=" + totalPrCreatedCount +
+            ", totalPrMergedCount=" + totalPrMergedCount +
+            ", totalPrMergeErrorCount=" + totalPrMergeErrorCount +
+            ", processRepositories=" + processRepositories +
+            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
+            '}';
   }
 
   public static class ProcessRepositoryEntity {

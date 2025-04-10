@@ -50,6 +50,7 @@ public class GithubService {
 
             if (mergePullRequestResponse != null && mergePullRequestResponse.getMerged() != null && mergePullRequestResponse.getMerged()) {
                 ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
+                ProcessUtils.removeRepositoriesToRetryMerge(repoName);
             } else {
                 ProcessUtils.addRepositoriesToRetryMerge(repoName);
             }

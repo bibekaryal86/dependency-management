@@ -71,8 +71,8 @@ public class ProcessSummaries implements Serializable {
     private final Integer pythonPackagesToUpdate;
     private final Integer nodeDependenciesToUpdate;
     private final Integer totalPrCreatedCount;
-    private final Integer totalPrCreateErrorsCount;
     private final Integer totalPrMergedCount;
+    private final Integer totalPrMergeErrorsCount;
     private final List<ProcessRepository> processRepositories;
     private final Boolean isErrorsOrExceptions;
 
@@ -85,8 +85,8 @@ public class ProcessSummaries implements Serializable {
         @JsonProperty("pythonPackagesToUpdate") final Integer pythonPackagesToUpdate,
         @JsonProperty("nodeDependenciesToUpdate") final Integer nodeDependenciesToUpdate,
         @JsonProperty("totalPrCreatedCount") final Integer totalPrCreatedCount,
-        @JsonProperty("totalPrCreateErrorsCount") final Integer totalPrCreateErrorsCount,
         @JsonProperty("totalPrMergedCount") final Integer totalPrMergedCount,
+        @JsonProperty("totalPrMergeErrorsCount") final Integer totalPrMergeErrorsCount,
         @JsonProperty("processRepositories") final List<ProcessRepository> processRepositories,
         @JsonProperty("isErrorsOrExceptions") final Boolean isErrorsOrExceptions) {
       this.updateDateTime = updateDateTime;
@@ -96,8 +96,8 @@ public class ProcessSummaries implements Serializable {
       this.pythonPackagesToUpdate = pythonPackagesToUpdate;
       this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
       this.totalPrCreatedCount = totalPrCreatedCount;
-      this.totalPrCreateErrorsCount = totalPrCreateErrorsCount;
       this.totalPrMergedCount = totalPrMergedCount;
+      this.totalPrMergeErrorsCount = totalPrMergeErrorsCount;
       this.processRepositories = processRepositories;
       this.isErrorsOrExceptions = isErrorsOrExceptions;
     }
@@ -130,12 +130,12 @@ public class ProcessSummaries implements Serializable {
       return totalPrCreatedCount;
     }
 
-    public Integer getTotalPrCreateErrorsCount() {
-      return totalPrCreateErrorsCount;
-    }
-
     public Integer getTotalPrMergedCount() {
       return totalPrMergedCount;
+    }
+
+    public Integer getTotalPrMergeErrorsCount() {
+      return totalPrMergeErrorsCount;
     }
 
     public List<ProcessRepository> getProcessRepositories() {
@@ -148,31 +148,19 @@ public class ProcessSummaries implements Serializable {
 
     @Override
     public String toString() {
-      return "ProcessSummary{"
-          + "updateDateTime="
-          + updateDateTime
-          + ", updateType='"
-          + updateType
-          + '\''
-          + ", gradlePluginsToUpdate="
-          + gradlePluginsToUpdate
-          + ", gradleDependenciesToUpdate="
-          + gradleDependenciesToUpdate
-          + ", pythonPackagesToUpdate="
-          + pythonPackagesToUpdate
-          + ", nodeDependenciesToUpdate="
-          + nodeDependenciesToUpdate
-          + ", totalPrCreatedCount="
-          + totalPrCreatedCount
-          + ", totalPrCreateErrorsCount="
-          + totalPrCreateErrorsCount
-          + ", totalPrMergedCount="
-          + totalPrMergedCount
-          + ", processRepositories="
-          + processRepositories
-          + ", isErrorsOrExceptions="
-          + isErrorsOrExceptions
-          + '}';
+      return "ProcessSummary{" +
+              "updateDateTime=" + updateDateTime +
+              ", updateType='" + updateType + '\'' +
+              ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
+              ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
+              ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
+              ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
+              ", totalPrCreatedCount=" + totalPrCreatedCount +
+              ", totalPrMergedCount=" + totalPrMergedCount +
+              ", totalPrMergeErrorsCount=" + totalPrMergeErrorsCount +
+              ", processRepositories=" + processRepositories +
+              ", isErrorsOrExceptions=" + isErrorsOrExceptions +
+              '}';
     }
 
     public static class ProcessRepository implements Serializable {
@@ -202,9 +190,17 @@ public class ProcessSummaries implements Serializable {
 
       public ProcessRepository(final String repoName, final String repoType, final Boolean isUpdateBranchCreated) {
         this.repoName = repoName;
+        this.repoType = repoType;
         this.isUpdateBranchCreated = isUpdateBranchCreated;
         this.isPrCreated = Boolean.FALSE;
+        this.isPrMerged = Boolean.FALSE;
+      }
+
+      public ProcessRepository(final String repoName, final String repoType) {
+        this.repoName = repoName;
         this.repoType = repoType;
+        this.isUpdateBranchCreated = Boolean.FALSE;
+        this.isPrCreated = Boolean.FALSE;
         this.isPrMerged = Boolean.FALSE;
       }
 

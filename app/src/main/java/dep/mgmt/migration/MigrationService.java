@@ -106,8 +106,8 @@ public class MigrationService {
               processSummaryOld.getMongoPackagesToUpdate(),
               0,
               processSummaryOld.getTotalPrCreatedCount(),
-              processSummaryOld.getTotalPrCreateErrorsCount(),
               processSummaryOld.getTotalPrMergedCount(),
+              processSummaryOld.getTotalPrCreateErrorsCount(),  // prCreateError -> prMergeError
               getProcessedRepositories(processSummaryOld.getProcessedRepositories()),
               processSummaryOld.isErrorsOrExceptions());
       processSummariesNew.add(processSummaryNew);

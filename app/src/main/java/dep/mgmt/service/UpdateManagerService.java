@@ -7,6 +7,7 @@ import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
+import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.update.UpdateBranchDelete;
 import dep.mgmt.update.UpdateDependencies;
@@ -15,11 +16,18 @@ import dep.mgmt.update.UpdateNpmSnapshots;
 import dep.mgmt.update.UpdateRepoResetPull;
 import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ConvertUtils;
+import dep.mgmt.util.LogCaptureUtils;
+import dep.mgmt.util.ProcessSummaryEmailUtils;
 import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.ScriptUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -35,6 +43,8 @@ public class UpdateManagerService {
   private final PythonPackageVersionService pythonPackageVersionService;
   private final ExcludedRepoService excludedRepoService;
   private final GithubService githubService;
+  private final EmailService emailService;
+  private final ProcessSummaryService processSummaryService;
   private final ScriptUtils scriptUtils;
 
   public UpdateManagerService() {
@@ -44,6 +54,8 @@ public class UpdateManagerService {
     this.pythonPackageVersionService = new PythonPackageVersionService();
     this.excludedRepoService = new ExcludedRepoService();
     this.githubService = new GithubService();
+    this.emailService = new EmailService();
+    this.processSummaryService = new ProcessSummaryService();
     this.scriptUtils = new ScriptUtils();
   }
 
@@ -98,6 +110,8 @@ public class UpdateManagerService {
       executeUpdateMergePullRequests(requestMetadata, isScheduledUpdate);
     }
 
+    makeProcessSummaryTask(requestMetadata);
+    executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
     executeTaskQueues();
   }
@@ -430,7 +444,7 @@ public class UpdateManagerService {
         addTaskToQueue(ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
                 getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
                 () -> githubService.mergeGithubPullRequest(repository.getRepoName(), requestMetadata.getBranchDate(), null),
-                ConstantUtils.TASK_DELAY_PULL_REQUEST);
+                i==0 ? ConstantUtils.TASK_DELAY_PULL_REQUEST_TRY : ConstantUtils.TASK_DELAY_PULL_REQUEST);
       }
     } else {
       // process requested repository
@@ -481,7 +495,7 @@ public class UpdateManagerService {
   }
 
   private String getPullRequestsTaskName(final String repoName, final String appender) {
-    return String.format(ConstantUtils.TASK_UPDATE_DEPENDENCIES, repoName, appender);
+    return String.format(ConstantUtils.TASK_PULL_REQUESTS, repoName, appender);
   }
 
   private void addTaskToQueue(final String queueName, final String taskName, final Runnable action, final long delayMillis) {
@@ -495,5 +509,76 @@ public class UpdateManagerService {
     }
   }
 
-  // TODO create process summary
+  private void makeProcessSummaryTask(final RequestMetadata requestMetadata) {
+    if (requestMetadata.getProcessSummaryRequired()) {
+      addTaskToQueue(ConstantUtils.QUEUE_PROCESS_SUMMARY, ConstantUtils.QUEUE_PROCESS_SUMMARY,
+              () -> makeProcessSummary(requestMetadata),
+              ConstantUtils.TASK_DELAY_DEFAULT
+      );
+    }
+  }
+
+  private void makeProcessSummary(final RequestMetadata requestMetadata) {
+    final boolean isProcessSummaryRequired = requestMetadata.getProcessSummaryRequired();
+    final RequestParams.UpdateType updateType = requestMetadata.getUpdateType();
+    boolean isSendEmail = "true".equals(AppDataUtils.appData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
+
+    log.info("Make Process Summary: [ {} ] | [ {} ] | [ {} ]",
+            isSendEmail,
+            isProcessSummaryRequired,
+            updateType);
+
+    ProcessSummaries.ProcessSummary processSummary = null;
+    if (isProcessSummaryRequired) {
+      processSummary = processSummary(updateType);
+    }
+
+    if (isSendEmail && processSummary != null) {
+      String subject = "Dependency Management Scheduled Update Logs";
+      String html = ProcessSummaryEmailUtils.getProcessSummaryContent(processSummary);
+      // log.debug(html);
+      String attachmentFileName = String.format("dep_mgmt_scheduled_update_logs_%s.log", LocalDate.now());
+      String attachment = LogCaptureUtils.getCapturedLogs();
+      emailService.sendEmail(subject, html, attachmentFileName, attachment);
+    }
+  }
+
+  private ProcessSummaries.ProcessSummary processSummary(final RequestParams.UpdateType updateType) {
+    Map<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositoryMap =
+            ProcessUtils.getProcessedRepositoriesMap();
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories =
+            new ArrayList<>(ProcessUtils.getProcessedRepositoriesMap().values().stream().toList());
+    List<AppDataRepository> allRepositories = AppDataUtils.appData().getRepositories();
+
+    for (AppDataRepository repository : allRepositories) {
+      if (!processedRepositoryMap.containsKey(repository.getRepoName())) {
+        processedRepositories.add(new ProcessSummaries.ProcessSummary.ProcessRepository(repository.getRepoName(),
+                repository.getType().toString()));
+      }
+    }
+
+    processedRepositories.sort(Comparator.comparing(ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName));
+
+    final Integer totalPrCreatedCount = (int) processedRepositories.stream().filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrCreated).count();
+    final Integer totalPrMergedCount = (int) processedRepositories.stream().filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrMerged).count();
+    final Integer totalPrMergeErrorCount = ProcessUtils.getRepositoriesToRetryMerge().size();
+
+    final ProcessSummaries.ProcessSummary processSummary = new ProcessSummaries.ProcessSummary(
+            LocalDateTime.now(),
+            updateType.name(),
+            ProcessUtils.getMongoGradlePluginsToUpdate(),
+            ProcessUtils.getMongoGradleDependenciesToUpdate(),
+            ProcessUtils.getMongoPythonPackagesToUpdate(),
+            ProcessUtils.getMongoNodeDependenciesToUpdate(),
+            totalPrCreatedCount,
+            totalPrMergedCount,
+            totalPrMergeErrorCount,
+            processedRepositories,
+            ProcessUtils.getErrorsOrExceptions());
+
+    // save to repository
+    final ProcessSummaryEntity processSummaryEntity = ConvertUtils.convertProcessSummary(processSummary);
+    processSummaryService.saveProcessSummary(processSummaryEntity);
+    return processSummary;
+  }
 }
