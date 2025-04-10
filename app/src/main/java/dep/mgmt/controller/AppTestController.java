@@ -1,9 +1,11 @@
 package dep.mgmt.controller;
 
+import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.server.Endpoints;
 import dep.mgmt.service.GithubService;
 import dep.mgmt.service.UpdateManagerService;
+import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.ServerUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -15,6 +17,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import java.util.List;
 
 public class AppTestController {
 
@@ -40,8 +43,14 @@ public class AppTestController {
         updateManagerService.recreateLocalCaches();
       }
       case Endpoints.APP_TESTS_RATE -> {
-        GithubApiModel.RateLimitResponse rateLimitResponse = githubService.getCurrentGithubRateLimits();
+        GithubApiModel.RateLimitResponse rateLimitResponse =
+            githubService.getCurrentGithubRateLimits();
         ServerUtils.sendResponse(ctx, rateLimitResponse, HttpResponseStatus.OK);
+      }
+      case Endpoints.APP_TESTS_TASKS -> {
+        List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks =
+            ProcessUtils.getProcessedTasks().values().stream().toList();
+        ServerUtils.sendResponse(ctx, processTasks, HttpResponseStatus.OK);
       }
       case null, default ->
           ServerUtils.sendErrorResponse(

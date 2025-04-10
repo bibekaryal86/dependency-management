@@ -139,7 +139,8 @@ public class MongoRepoController {
         case Endpoints.MONGO_EXCLUDED_REPO:
           final String repoName = ServerUtils.getQueryParam(fullHttpRequest.uri(), "repoName", "");
           final boolean isDeleteAll =
-              Boolean.parseBoolean(ServerUtils.getQueryParam(fullHttpRequest.uri(), "deleteAll", ""));
+              Boolean.parseBoolean(
+                  ServerUtils.getQueryParam(fullHttpRequest.uri(), "deleteAll", ""));
           deletedExcludedRepo(repoName, isDeleteAll);
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;

@@ -3,7 +3,6 @@ package dep.mgmt.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -285,62 +284,77 @@ public class ProcessSummaries implements Serializable {
     }
 
     public static class ProcessTask implements Serializable {
-      private final String name;
-      private final LocalDateTime start;
-      private final LocalDateTime end;
-      private final Integer seconds;
-      private final Integer minutes;
+      private final String queueName;
+      private final String taskName;
+      private final LocalDateTime added;
+
+      private LocalDateTime started;
+      private LocalDateTime ended;
 
       @JsonCreator
-      public ProcessTask(@JsonProperty("name") String name,
-                         @JsonProperty("start") LocalDateTime start,
-                         @JsonProperty("end") LocalDateTime end) {
-        this.name = name;
-        this.start = start;
-        this.end = end;
-
-        final Duration duration = Duration.between(start, end);
-        this.seconds = (int) duration.getSeconds();
-        this.minutes = (int) duration.toMinutes();
+      public ProcessTask(
+          @JsonProperty("queueName") String queueName,
+          @JsonProperty("taskName") String taskName,
+          @JsonProperty("added") LocalDateTime added,
+          @JsonProperty("started") LocalDateTime started,
+          @JsonProperty("ended") LocalDateTime ended) {
+        this.queueName = queueName;
+        this.taskName = taskName;
+        this.added = added;
+        this.started = started;
+        this.ended = ended;
       }
 
-      public ProcessTask(final String name, final LocalDateTime start, final LocalDateTime end, final Integer seconds, final Integer minutes) {
-        this.name = name;
-        this.start = start;
-        this.end = end;
-        this.seconds = seconds;
-        this.minutes = minutes;
+      public ProcessTask(final String queueName, final String taskName, final LocalDateTime added) {
+        this.queueName = queueName;
+        this.taskName = taskName;
+        this.added = added;
       }
 
-      public String getName() {
-        return name;
+      public String getQueueName() {
+        return queueName;
       }
 
-      public LocalDateTime getStart() {
-        return start;
+      public String getTaskName() {
+        return taskName;
       }
 
-      public LocalDateTime getEnd() {
-        return end;
+      public LocalDateTime getAdded() {
+        return added;
       }
 
-      public Integer getSeconds() {
-        return seconds;
+      public LocalDateTime getStarted() {
+        return started;
       }
 
-      public Integer getMinutes() {
-        return minutes;
+      public void setStarted(LocalDateTime started) {
+        this.started = started;
+      }
+
+      public LocalDateTime getEnded() {
+        return ended;
+      }
+
+      public void setEnded(LocalDateTime ended) {
+        this.ended = ended;
       }
 
       @Override
       public String toString() {
-        return "ProcessTask{" +
-                "name='" + name + '\'' +
-                ", start=" + start +
-                ", end=" + end +
-                ", seconds=" + seconds +
-                ", minutes=" + minutes +
-                '}';
+        return "ProcessTask{"
+            + "queueName='"
+            + queueName
+            + '\''
+            + ", taskName='"
+            + taskName
+            + '\''
+            + ", added="
+            + added
+            + ", started="
+            + started
+            + ", ended="
+            + ended
+            + '}';
       }
     }
   }

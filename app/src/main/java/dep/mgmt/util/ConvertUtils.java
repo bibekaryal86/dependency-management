@@ -40,7 +40,7 @@ public class ConvertUtils {
                     convertProcessSummaryRepositoryEntities(
                         processSummaryEntity.getProcessRepositories()),
                     processSummaryEntity.getErrorsOrExceptions(),
-                        convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks())))
+                    convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks())))
         .toList();
   }
 
@@ -60,13 +60,19 @@ public class ConvertUtils {
         .toList();
   }
 
-  private static List<ProcessSummaries.ProcessSummary.ProcessTask> convertProcessSummaryTaskEntities(
+  private static List<ProcessSummaries.ProcessSummary.ProcessTask>
+      convertProcessSummaryTaskEntities(
           final List<ProcessSummaryEntity.ProcessTaskEntity> processTaskEntities) {
-    return processTaskEntities.stream().map(
-            processTaskEntity -> new ProcessSummaries.ProcessSummary.ProcessTask(
-                    processTaskEntity.getName(), processTaskEntity.getStart(), processTaskEntity.getEnd(), processTaskEntity.getSeconds(), processTaskEntity.getMinutes()
-            )
-    ).toList();
+    return processTaskEntities.stream()
+        .map(
+            processTaskEntity ->
+                new ProcessSummaries.ProcessSummary.ProcessTask(
+                    processTaskEntity.getQueueName(),
+                    processTaskEntity.getTaskName(),
+                    processTaskEntity.getAdded(),
+                    processTaskEntity.getStarted(),
+                    processTaskEntity.getEnded()))
+        .toList();
   }
 
   public static ProcessSummaryEntity convertProcessSummary(
@@ -104,12 +110,17 @@ public class ConvertUtils {
   }
 
   private static List<ProcessSummaryEntity.ProcessTaskEntity> convertProcessSummaryTasks(
-          final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks) {
+      final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks) {
     return processTasks.stream()
-            .map(processTask ->
-                    new ProcessSummaryEntity.ProcessTaskEntity(processTask.getName(), processTask.getStart(), processTask.getEnd(), processTask.getSeconds(), processTask.getMinutes()))
-            .toList();
-
+        .map(
+            processTask ->
+                new ProcessSummaryEntity.ProcessTaskEntity(
+                    processTask.getQueueName(),
+                    processTask.getTaskName(),
+                    processTask.getAdded(),
+                    processTask.getStarted(),
+                    processTask.getEnded()))
+        .toList();
   }
 
   public static List<ExcludedRepos.ExcludedRepo> convertExcludedRepoEntities(

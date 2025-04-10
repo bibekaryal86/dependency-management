@@ -308,7 +308,8 @@ public class GithubApiModel implements Serializable {
         this.used = used;
         this.remaining = remaining;
         this.reset = reset;
-        this.resetAt = LocalDateTime.ofInstant(Instant.ofEpochSecond(reset), ZoneId.systemDefault());
+        this.resetAt =
+            LocalDateTime.ofInstant(Instant.ofEpochSecond(reset), ZoneId.systemDefault());
         this.resetAfterInMinutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), this.resetAt);
       }
 

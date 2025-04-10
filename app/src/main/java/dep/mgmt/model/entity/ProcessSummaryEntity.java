@@ -38,8 +38,7 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrMergeErrorCount,
       final List<ProcessRepositoryEntity> processRepositories,
       final Boolean isErrorsOrExceptions,
-      final List<ProcessTaskEntity> processTasks
-  ) {
+      final List<ProcessTaskEntity> processTasks) {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.updateType = updateType;
@@ -162,21 +161,35 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{" +
-            "id=" + id +
-            ", updateDateTime=" + updateDateTime +
-            ", updateType='" + updateType + '\'' +
-            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
-            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
-            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
-            ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
-            ", totalPrCreatedCount=" + totalPrCreatedCount +
-            ", totalPrMergedCount=" + totalPrMergedCount +
-            ", totalPrMergeErrorCount=" + totalPrMergeErrorCount +
-            ", processRepositories=" + processRepositories +
-            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
-            ", processTasks=" + processTasks +
-            '}';
+    return "ProcessSummaryEntity{"
+        + "id="
+        + id
+        + ", updateDateTime="
+        + updateDateTime
+        + ", updateType='"
+        + updateType
+        + '\''
+        + ", gradlePluginsToUpdate="
+        + gradlePluginsToUpdate
+        + ", gradleDependenciesToUpdate="
+        + gradleDependenciesToUpdate
+        + ", pythonPackagesToUpdate="
+        + pythonPackagesToUpdate
+        + ", nodeDependenciesToUpdate="
+        + nodeDependenciesToUpdate
+        + ", totalPrCreatedCount="
+        + totalPrCreatedCount
+        + ", totalPrMergedCount="
+        + totalPrMergedCount
+        + ", totalPrMergeErrorCount="
+        + totalPrMergeErrorCount
+        + ", processRepositories="
+        + processRepositories
+        + ", isErrorsOrExceptions="
+        + isErrorsOrExceptions
+        + ", processTasks="
+        + processTasks
+        + '}';
   }
 
   public static class ProcessRepositoryEntity {
@@ -274,71 +287,83 @@ public class ProcessSummaryEntity implements Serializable {
   }
 
   public static class ProcessTaskEntity {
-    private String name;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private Integer seconds;
-    private Integer minutes;
+    private String queueName;
+    private String taskName;
+    private LocalDateTime added;
+    private LocalDateTime started;
+    private LocalDateTime ended;
 
     public ProcessTaskEntity() {}
 
-    public ProcessTaskEntity(String name, LocalDateTime start, LocalDateTime end, Integer seconds, Integer minutes) {
-      this.name = name;
-      this.start = start;
-      this.end = end;
-      this.seconds = seconds;
-      this.minutes = minutes;
+    public ProcessTaskEntity(
+        String queueName,
+        String taskName,
+        LocalDateTime added,
+        LocalDateTime started,
+        LocalDateTime ended) {
+      this.queueName = queueName;
+      this.taskName = taskName;
+      this.added = added;
+      this.started = started;
+      this.ended = ended;
     }
 
-    public String getName() {
-      return name;
+    public String getQueueName() {
+      return queueName;
     }
 
-    public void setName(String name) {
-      this.name = name;
+    public void setQueueName(String queueName) {
+      this.queueName = queueName;
     }
 
-    public LocalDateTime getStart() {
-      return start;
+    public String getTaskName() {
+      return taskName;
     }
 
-    public void setStart(LocalDateTime start) {
-      this.start = start;
+    public void setTaskName(String taskName) {
+      this.taskName = taskName;
     }
 
-    public LocalDateTime getEnd() {
-      return end;
+    public LocalDateTime getAdded() {
+      return added;
     }
 
-    public void setEnd(LocalDateTime end) {
-      this.end = end;
+    public void setAdded(LocalDateTime added) {
+      this.added = added;
     }
 
-    public Integer getSeconds() {
-      return seconds;
+    public LocalDateTime getStarted() {
+      return started;
     }
 
-    public void setSeconds(Integer seconds) {
-      this.seconds = seconds;
+    public void setStarted(LocalDateTime started) {
+      this.started = started;
     }
 
-    public Integer getMinutes() {
-      return minutes;
+    public LocalDateTime getEnded() {
+      return ended;
     }
 
-    public void setMinutes(Integer minutes) {
-      this.minutes = minutes;
+    public void setEnded(LocalDateTime ended) {
+      this.ended = ended;
     }
 
     @Override
     public String toString() {
-      return "ProcessTaskEntity{" +
-              "name='" + name + '\'' +
-              ", start=" + start +
-              ", end=" + end +
-              ", seconds=" + seconds +
-              ", minutes=" + minutes +
-              '}';
+      return "ProcessTaskEntity{"
+          + "queueName='"
+          + queueName
+          + '\''
+          + ", taskName='"
+          + taskName
+          + '\''
+          + ", added="
+          + added
+          + ", started="
+          + started
+          + ", ended="
+          + ended
+          + '}';
     }
   }
 }
