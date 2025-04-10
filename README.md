@@ -2,6 +2,10 @@
 
 * Things to add:
     * Add Pagination to MongoRepoController GET lookup
+    * Add More options to tasks
+      * kill tasks
+        * this is initialized, but not implemented
+      * skip tasks
     * Tests
     * Documentation
 
@@ -30,12 +34,3 @@
 
 options to view which tasks running
     needs enhancement to view from actual task queues
-options to kill a long running task
-    how to kill a task by task name
-
-Endpoints
-(1) Update Repo
-(2) Kill a Task
-
-
-rename updatemanagerservice to updaterepomanager
