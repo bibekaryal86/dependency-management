@@ -29,9 +29,9 @@ public class Dependencies implements Serializable {
 
     @JsonCreator
     public Dependency(
-            @JsonProperty("name") final String name,
-            @JsonProperty("version") final String version,
-            @JsonProperty("skipVersion") final Boolean skipVersion) {
+        @JsonProperty("name") final String name,
+        @JsonProperty("version") final String version,
+        @JsonProperty("skipVersion") final Boolean skipVersion) {
       this.name = name;
       this.version = version;
       this.skipVersion = skipVersion;
@@ -52,16 +52,15 @@ public class Dependencies implements Serializable {
     @Override
     public String toString() {
       return "Dependency{"
-              + "name='"
-              + name
-              + '\''
-              + ", version='"
-              + version
-              + '\''
-              + ", skipVersion="
-              + skipVersion
-              + '}';
+          + "name='"
+          + name
+          + '\''
+          + ", version='"
+          + version
+          + '\''
+          + ", skipVersion="
+          + skipVersion
+          + '}';
     }
   }
-
 }

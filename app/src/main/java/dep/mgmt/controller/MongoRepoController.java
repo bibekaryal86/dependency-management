@@ -93,7 +93,8 @@ public class MongoRepoController {
           ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK);
           break;
         default:
-          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(
+              ctx, "MongoRepoController Get Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else if (requestMethod.equals(HttpMethod.POST)) {
@@ -101,7 +102,8 @@ public class MongoRepoController {
           ServerUtils.getRequestBody(fullHttpRequest, Dependencies.Dependency.class);
       if (dependencyRequest == null
           || CommonUtilities.isEmpty(dependencyRequest.getName())
-          || (CommonUtilities.isEmpty(dependencyRequest.getVersion()) && !requestUri.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
+          || (CommonUtilities.isEmpty(dependencyRequest.getVersion())
+              && !requestUri.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
         ServerUtils.sendErrorResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
         return;
       }
@@ -128,19 +130,22 @@ public class MongoRepoController {
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         default:
-          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(
+              ctx, "MongoRepoController Post Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else if (requestMethod.equals(HttpMethod.DELETE)) {
       switch (requestUri) {
         case Endpoints.MONGO_EXCLUDED_REPO:
           final String repoName = ServerUtils.getQueryParam(requestUri, "repoName", "");
-          final boolean isDeleteAll = Boolean.parseBoolean(ServerUtils.getQueryParam(requestUri, "deleteAll", ""));
+          final boolean isDeleteAll =
+              Boolean.parseBoolean(ServerUtils.getQueryParam(requestUri, "deleteAll", ""));
           deletedExcludedRepo(repoName, isDeleteAll);
           ServerUtils.sendErrorResponse(ctx, "", HttpResponseStatus.NO_CONTENT);
           break;
         default:
-          ServerUtils.sendErrorResponse(ctx, "MongoRepoController Delete Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
+          ServerUtils.sendErrorResponse(
+              ctx, "MongoRepoController Delete Mapping Not Found...", HttpResponseStatus.NOT_FOUND);
           break;
       }
     } else {
@@ -279,8 +284,10 @@ public class MongoRepoController {
   }
 
   private ExcludedRepos getExcludedRepos() {
-    final List<ExcludedRepoEntity> excludedRepoEntities = excludedRepoService.getExcludedReposMap().values().stream().toList();
-    final List<ExcludedRepos.ExcludedRepo> excludedRepos = ConvertUtils.convertExcludedRepoEntities(excludedRepoEntities);
+    final List<ExcludedRepoEntity> excludedRepoEntities =
+        excludedRepoService.getExcludedReposMap().values().stream().toList();
+    final List<ExcludedRepos.ExcludedRepo> excludedRepos =
+        ConvertUtils.convertExcludedRepoEntities(excludedRepoEntities);
     return new ExcludedRepos(excludedRepos);
   }
 

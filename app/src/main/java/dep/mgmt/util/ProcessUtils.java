@@ -1,15 +1,7 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.ProcessSummaries;
-import dep.mgmt.model.enums.RequestParams;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -24,7 +16,8 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
-  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
+      processedRepositories = new ConcurrentHashMap<>();
   private static Set<String> repositoriesToRetryMerge = new HashSet<>();
 
   public static void setErrorsOrExceptions(boolean value) {
@@ -67,13 +60,16 @@ public class ProcessUtils {
     return mongoNodeDependenciesToUpdate.get();
   }
 
-  public static void addProcessedRepositories(final String repoName, final String repoType, boolean isUpdateBranchCreated) {
+  public static void addProcessedRepositories(
+      final String repoName, final String repoType, boolean isUpdateBranchCreated) {
     processedRepositories.put(
         repoName,
-        new ProcessSummaries.ProcessSummary.ProcessRepository(repoName, repoType, isUpdateBranchCreated));
+        new ProcessSummaries.ProcessSummary.ProcessRepository(
+            repoName, repoType, isUpdateBranchCreated));
   }
 
-  public static void updateProcessedRepositoriesPrCreated(final String repoName, final Integer prNumber) {
+  public static void updateProcessedRepositoriesPrCreated(
+      final String repoName, final Integer prNumber) {
     processedRepositories.computeIfPresent(
         repoName,
         (key, processedRepository) -> {
@@ -85,14 +81,15 @@ public class ProcessUtils {
 
   public static void updateProcessedRepositoriesPrMerged(final String repoName) {
     processedRepositories.computeIfPresent(
-            repoName,
-            (key, processedRepository) -> {
-              processedRepository.setPrCreated(true);
-              return processedRepository;
-            });
+        repoName,
+        (key, processedRepository) -> {
+          processedRepository.setPrCreated(true);
+          return processedRepository;
+        });
   }
 
-  public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> getProcessedRepositoriesMap() {
+  public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
+      getProcessedRepositoriesMap() {
     return processedRepositories;
   }
 

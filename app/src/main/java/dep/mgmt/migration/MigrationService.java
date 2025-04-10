@@ -107,7 +107,7 @@ public class MigrationService {
               0,
               processSummaryOld.getTotalPrCreatedCount(),
               processSummaryOld.getTotalPrMergedCount(),
-              processSummaryOld.getTotalPrCreateErrorsCount(),  // prCreateError -> prMergeError
+              processSummaryOld.getTotalPrCreateErrorsCount(), // prCreateError -> prMergeError
               getProcessedRepositories(processSummaryOld.getProcessedRepositories()),
               processSummaryOld.isErrorsOrExceptions());
       processSummariesNew.add(processSummaryNew);
@@ -134,9 +134,11 @@ public class MigrationService {
           new ProcessSummaryEntity.ProcessRepositoryEntity(
               processedRepositoryOld.getRepoName(),
               processedRepositoryOld.getRepoType(),
-              processedRepositoryOld.isPrCreated(), // use isPrCreated to check isUpdateBranchCreated
+              processedRepositoryOld
+                  .isPrCreated(), // use isPrCreated to check isUpdateBranchCreated
               processedRepositoryOld.isPrCreated(),
-              processedRepositoryOld.isPrMerged(), null);
+              processedRepositoryOld.isPrMerged(),
+              null);
       processRepositoriesNew.add(processRepositoryNew);
     }
     return processRepositoriesNew;

@@ -6,7 +6,6 @@ import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.ExcludedRepoEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
-
 import java.util.List;
 
 public class ConvertUtils {
@@ -60,31 +59,37 @@ public class ConvertUtils {
         .toList();
   }
 
-  public static ProcessSummaryEntity convertProcessSummary(final ProcessSummaries.ProcessSummary processSummary) {
-    return new ProcessSummaryEntity(null,
-            processSummary.getUpdateDateTime(),
-            processSummary.getUpdateType(),
-            processSummary.getGradlePluginsToUpdate(),
-            processSummary.getGradleDependenciesToUpdate(),
-            processSummary.getPythonPackagesToUpdate(),
-            processSummary.getNodeDependenciesToUpdate(),
-            processSummary.getTotalPrCreatedCount(),
-            processSummary.getTotalPrMergedCount(),
-            processSummary.getTotalPrMergeErrorsCount(),
-            convertProcessSummaryRepositories(processSummary.getProcessRepositories()),
-            processSummary.getErrorsOrExceptions());
+  public static ProcessSummaryEntity convertProcessSummary(
+      final ProcessSummaries.ProcessSummary processSummary) {
+    return new ProcessSummaryEntity(
+        null,
+        processSummary.getUpdateDateTime(),
+        processSummary.getUpdateType(),
+        processSummary.getGradlePluginsToUpdate(),
+        processSummary.getGradleDependenciesToUpdate(),
+        processSummary.getPythonPackagesToUpdate(),
+        processSummary.getNodeDependenciesToUpdate(),
+        processSummary.getTotalPrCreatedCount(),
+        processSummary.getTotalPrMergedCount(),
+        processSummary.getTotalPrMergeErrorsCount(),
+        convertProcessSummaryRepositories(processSummary.getProcessRepositories()),
+        processSummary.getErrorsOrExceptions());
   }
 
-  private static List<ProcessSummaryEntity.ProcessRepositoryEntity> convertProcessSummaryRepositories(final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories) {
+  private static List<ProcessSummaryEntity.ProcessRepositoryEntity>
+      convertProcessSummaryRepositories(
+          final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories) {
     return processRepositories.stream()
-            .map(
-                    processRepository -> new ProcessSummaryEntity.ProcessRepositoryEntity(processRepository.getRepoName(),
-                            processRepository.getRepoType(),
-                            processRepository.getUpdateBranchCreated(),
-                            processRepository.getPrCreated(),
-                            processRepository.getPrMerged(),
-                            processRepository.getPrNumber())
-            ).toList();
+        .map(
+            processRepository ->
+                new ProcessSummaryEntity.ProcessRepositoryEntity(
+                    processRepository.getRepoName(),
+                    processRepository.getRepoType(),
+                    processRepository.getUpdateBranchCreated(),
+                    processRepository.getPrCreated(),
+                    processRepository.getPrMerged(),
+                    processRepository.getPrNumber()))
+        .toList();
   }
 
   public static List<ExcludedRepos.ExcludedRepo> convertExcludedRepoEntities(

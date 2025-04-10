@@ -21,9 +21,7 @@ public class GithubApiModel implements Serializable {
 
     @Override
     public String toString() {
-      return "ListBranchesResponse{" +
-              "name='" + name + '\'' +
-              '}';
+      return "ListBranchesResponse{" + "name='" + name + '\'' + '}';
     }
   }
 
@@ -220,13 +218,22 @@ public class GithubApiModel implements Serializable {
 
       @Override
       public String toString() {
-        return "WorkflowRun{" +
-                "headBranch='" + headBranch + '\'' +
-                ", event='" + event + '\'' +
-                ", status='" + status + '\'' +
-                ", conclusion='" + conclusion + '\'' +
-                ", pullRequests=" + pullRequests +
-                '}';
+        return "WorkflowRun{"
+            + "headBranch='"
+            + headBranch
+            + '\''
+            + ", event='"
+            + event
+            + '\''
+            + ", status='"
+            + status
+            + '\''
+            + ", conclusion='"
+            + conclusion
+            + '\''
+            + ", pullRequests="
+            + pullRequests
+            + '}';
       }
     }
   }

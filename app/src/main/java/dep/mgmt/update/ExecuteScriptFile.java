@@ -3,13 +3,12 @@ package dep.mgmt.update;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.ProcessUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
-
-import dep.mgmt.util.ProcessUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +21,11 @@ public class ExecuteScriptFile {
   private final String repoName;
   private final String type;
 
-  public ExecuteScriptFile(final AppDataScriptFile scriptFile,
-                           final List<String> arguments,
-                           final boolean isRunAsync,
-                           final AppDataRepository repository) {
+  public ExecuteScriptFile(
+      final AppDataScriptFile scriptFile,
+      final List<String> arguments,
+      final boolean isRunAsync,
+      final AppDataRepository repository) {
     this.arguments = arguments;
     this.scriptPath =
         ConstantUtils.JAVA_SYSTEM_TMPDIR
@@ -110,7 +110,8 @@ public class ExecuteScriptFile {
         isError = true;
       }
 
-      try (BufferedReader readerInput = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+      try (BufferedReader readerInput =
+          new BufferedReader(new InputStreamReader(process.getInputStream()))) {
         while ((line = readerInput.readLine()) != null) {
           stringBuilder.append(line).append("\n");
           if (line.toLowerCase().contains("error") || line.toLowerCase().contains("fatal")) {

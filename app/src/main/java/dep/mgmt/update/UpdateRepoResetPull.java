@@ -58,6 +58,7 @@ public class UpdateRepoResetPull {
     }
     arguments.add(String.valueOf(this.isReset));
     arguments.add(String.valueOf(this.isPull));
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, this.repository).executeScript();
+    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, this.repository)
+        .executeScript();
   }
 }

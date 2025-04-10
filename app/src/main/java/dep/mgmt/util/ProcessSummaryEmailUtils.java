@@ -1,26 +1,32 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.entity.ProcessSummaryEntity;
+import dep.mgmt.model.ProcessSummaries;
 import java.util.Comparator;
 import java.util.List;
 
 public class ProcessSummaryEmailUtils {
 
-  public static synchronized String getProcessSummaryContent(ProcessSummaryEntity processSummary) {
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> allProcessedRepositories = processSummary.getProcessRepositories();
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> prCreatedAndMerged =
+  public static synchronized String getProcessSummaryContent(
+      ProcessSummaries.ProcessSummary processSummary) {
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> allProcessedRepositories =
+        processSummary.getProcessRepositories();
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> prCreatedAndMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummaryEntity.ProcessRepositoryEntity::getRepoName))
+            .sorted(
+                Comparator.comparing(
+                    ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName))
             .toList();
-    List<ProcessSummaryEntity.ProcessRepositoryEntity> prCreatedNotMerged =
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> prCreatedNotMerged =
         processSummary.getProcessRepositories().stream()
             .filter(
                 processedRepository ->
                     processedRepository.getPrCreated() && !processedRepository.getPrMerged())
-            .sorted(Comparator.comparing(ProcessSummaryEntity.ProcessRepositoryEntity::getRepoName))
+            .sorted(
+                Comparator.comparing(
+                    ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName))
             .toList();
 
     StringBuilder html = new StringBuilder();
@@ -80,11 +86,11 @@ public class ProcessSummaryEmailUtils {
                   <td>%d</td>
                 </tr>
                 <tr>
-                  <td>Total PR Create Errors Count</td>
+                  <td>Total PR Merged Count</td>
                   <td>%d</td>
                 </tr>
                 <tr>
-                  <td>Total PR Merged Count</td>
+                  <td>Total PR Merge Errors Count</td>
                   <td>%d</td>
                 </tr>
               </table>
@@ -96,7 +102,7 @@ public class ProcessSummaryEmailUtils {
                 processSummary.getPythonPackagesToUpdate(),
                 processSummary.getNodeDependenciesToUpdate(),
                 processSummary.getTotalPrCreatedCount(),
-                processSummary.getTotalPrCreateErrorsCount(),
+                processSummary.getTotalPrMergeErrorsCount(),
                 processSummary.getTotalPrMergedCount()));
 
     html.append(
@@ -154,6 +160,9 @@ public class ProcessSummaryEmailUtils {
                     <th>PR Create Error</th>
                     <th>PR Merged</th>
                   </tr>
+                  <br />
+                    <p style='font-size: 10px; font-weight: bold;'>The system will attempt to merge these again in about an hour...</p>
+                  <br />
               """);
 
       processedRepositoryTable(prCreatedNotMerged, html);
@@ -185,9 +194,10 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedRepositoryTable(
-      List<ProcessSummaryEntity.ProcessRepositoryEntity> processedRepositories,
+      List<ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories,
       StringBuilder html) {
-    for (ProcessSummaryEntity.ProcessRepositoryEntity processedRepository : processedRepositories) {
+    for (ProcessSummaries.ProcessSummary.ProcessRepository processedRepository :
+        processedRepositories) {
       html.append("<tr>");
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");

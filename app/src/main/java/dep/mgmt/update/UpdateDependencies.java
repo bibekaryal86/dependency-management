@@ -52,6 +52,7 @@ public class UpdateDependencies {
       arguments.add(this.branchName);
     }
 
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.FALSE, this.repository).executeScript();
+    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.FALSE, this.repository)
+        .executeScript();
   }
 }

@@ -150,20 +150,33 @@ public class ProcessSummaryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{" +
-            "id=" + id +
-            ", updateDateTime=" + updateDateTime +
-            ", updateType='" + updateType + '\'' +
-            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
-            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
-            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
-            ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
-            ", totalPrCreatedCount=" + totalPrCreatedCount +
-            ", totalPrMergedCount=" + totalPrMergedCount +
-            ", totalPrMergeErrorCount=" + totalPrMergeErrorCount +
-            ", processRepositories=" + processRepositories +
-            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
-            '}';
+    return "ProcessSummaryEntity{"
+        + "id="
+        + id
+        + ", updateDateTime="
+        + updateDateTime
+        + ", updateType='"
+        + updateType
+        + '\''
+        + ", gradlePluginsToUpdate="
+        + gradlePluginsToUpdate
+        + ", gradleDependenciesToUpdate="
+        + gradleDependenciesToUpdate
+        + ", pythonPackagesToUpdate="
+        + pythonPackagesToUpdate
+        + ", nodeDependenciesToUpdate="
+        + nodeDependenciesToUpdate
+        + ", totalPrCreatedCount="
+        + totalPrCreatedCount
+        + ", totalPrMergedCount="
+        + totalPrMergedCount
+        + ", totalPrMergeErrorCount="
+        + totalPrMergeErrorCount
+        + ", processRepositories="
+        + processRepositories
+        + ", isErrorsOrExceptions="
+        + isErrorsOrExceptions
+        + '}';
   }
 
   public static class ProcessRepositoryEntity {
@@ -241,14 +254,22 @@ public class ProcessSummaryEntity implements Serializable {
 
     @Override
     public String toString() {
-      return "ProcessRepositoryEntity{" +
-              "repoName='" + repoName + '\'' +
-              ", repoType='" + repoType + '\'' +
-              ", isUpdateBranchCreated=" + isUpdateBranchCreated +
-              ", isPrCreated=" + isPrCreated +
-              ", isPrMerged=" + isPrMerged +
-              ", prNumber=" + prNumber +
-              '}';
+      return "ProcessRepositoryEntity{"
+          + "repoName='"
+          + repoName
+          + '\''
+          + ", repoType='"
+          + repoType
+          + '\''
+          + ", isUpdateBranchCreated="
+          + isUpdateBranchCreated
+          + ", isPrCreated="
+          + isPrCreated
+          + ", isPrMerged="
+          + isPrMerged
+          + ", prNumber="
+          + prNumber
+          + '}';
     }
   }
 }

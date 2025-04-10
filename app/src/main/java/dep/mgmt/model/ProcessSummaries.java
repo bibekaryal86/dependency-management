@@ -148,19 +148,31 @@ public class ProcessSummaries implements Serializable {
 
     @Override
     public String toString() {
-      return "ProcessSummary{" +
-              "updateDateTime=" + updateDateTime +
-              ", updateType='" + updateType + '\'' +
-              ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
-              ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
-              ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
-              ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
-              ", totalPrCreatedCount=" + totalPrCreatedCount +
-              ", totalPrMergedCount=" + totalPrMergedCount +
-              ", totalPrMergeErrorsCount=" + totalPrMergeErrorsCount +
-              ", processRepositories=" + processRepositories +
-              ", isErrorsOrExceptions=" + isErrorsOrExceptions +
-              '}';
+      return "ProcessSummary{"
+          + "updateDateTime="
+          + updateDateTime
+          + ", updateType='"
+          + updateType
+          + '\''
+          + ", gradlePluginsToUpdate="
+          + gradlePluginsToUpdate
+          + ", gradleDependenciesToUpdate="
+          + gradleDependenciesToUpdate
+          + ", pythonPackagesToUpdate="
+          + pythonPackagesToUpdate
+          + ", nodeDependenciesToUpdate="
+          + nodeDependenciesToUpdate
+          + ", totalPrCreatedCount="
+          + totalPrCreatedCount
+          + ", totalPrMergedCount="
+          + totalPrMergedCount
+          + ", totalPrMergeErrorsCount="
+          + totalPrMergeErrorsCount
+          + ", processRepositories="
+          + processRepositories
+          + ", isErrorsOrExceptions="
+          + isErrorsOrExceptions
+          + '}';
     }
 
     public static class ProcessRepository implements Serializable {
@@ -188,7 +200,8 @@ public class ProcessSummaries implements Serializable {
         this.prNumber = prNumber;
       }
 
-      public ProcessRepository(final String repoName, final String repoType, final Boolean isUpdateBranchCreated) {
+      public ProcessRepository(
+          final String repoName, final String repoType, final Boolean isUpdateBranchCreated) {
         this.repoName = repoName;
         this.repoType = repoType;
         this.isUpdateBranchCreated = isUpdateBranchCreated;
@@ -242,14 +255,22 @@ public class ProcessSummaries implements Serializable {
 
       @Override
       public String toString() {
-        return "ProcessRepository{" +
-                "repoName='" + repoName + '\'' +
-                ", repoType='" + repoType + '\'' +
-                ", isUpdateBranchCreated=" + isUpdateBranchCreated +
-                ", isPrCreated=" + isPrCreated +
-                ", isPrMerged=" + isPrMerged +
-                ", prNumber=" + prNumber +
-                '}';
+        return "ProcessRepository{"
+            + "repoName='"
+            + repoName
+            + '\''
+            + ", repoType='"
+            + repoType
+            + '\''
+            + ", isUpdateBranchCreated="
+            + isUpdateBranchCreated
+            + ", isPrCreated="
+            + isPrCreated
+            + ", isPrMerged="
+            + isPrMerged
+            + ", prNumber="
+            + prNumber
+            + '}';
       }
     }
   }
