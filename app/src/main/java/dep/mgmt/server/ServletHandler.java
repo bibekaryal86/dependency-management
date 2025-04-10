@@ -64,7 +64,7 @@ public class ServletHandler extends ChannelInboundHandlerAdapter {
 
     ServerUtils.sendErrorResponse(
         channelHandlerContext,
-        "Servlet Handler Exception Caught...",
+        "Servlet Handler Exception Caught: " + throwable.getMessage(),
         HttpResponseStatus.INTERNAL_SERVER_ERROR);
   }
 }
