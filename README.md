@@ -29,8 +29,9 @@
 
 
 options to view which tasks running
+    needs enhancement to view from actual task queues
 options to kill a long running task
-option to view github repo limit
+    how to kill a task by task name
 
 Endpoints
 (1) Update Repo

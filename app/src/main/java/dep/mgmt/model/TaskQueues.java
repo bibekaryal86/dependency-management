@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
@@ -144,23 +145,19 @@ public class TaskQueues {
       private final String name;
       private final Callable<Object> action;
       private final AtomicLong delayMillis = new AtomicLong(0);
+      private final ExecutorService singleTaskExecutor;
 
       // for methods that return value
       public OneTask(final String name, final Callable<Object> action, final long delayMillis) {
         this.name = name;
         this.action = action;
         this.delayMillis.set(delayMillis);
+        this.singleTaskExecutor = Executors.newSingleThreadExecutor();
       }
 
       // for methods that are void
       public OneTask(final String name, final Runnable action, final long delayMillis) {
-        this.name = name;
-        this.action =
-            () -> {
-              action.run();
-              return null;
-            };
-        this.delayMillis.set(delayMillis);
+        this(name, Executors.callable(action), delayMillis);
       }
 
       public String getName() {
@@ -170,11 +167,25 @@ public class TaskQueues {
       public Object execute() {
         ProcessUtils.updateProcessedTasksStarted(name);
         Object result = null;
+        Future<Object> future = null;
+        final long timeoutMillis = delayMillis.get() + 60_000;
+
         try {
-          if (delayMillis.get() > 0) {
-            Thread.sleep(delayMillis.get());
-          }
-          result = action.call();
+          future =
+              singleTaskExecutor.submit(
+                  () -> {
+                    if (delayMillis.get() > 0) {
+                      Thread.sleep(delayMillis.get());
+                    }
+                    return action.call();
+                  });
+
+          result = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+          future.cancel(true); // attempt to interrupt
+          String msg = String.format("OneTask [%s] timed out after %d ms", name, timeoutMillis);
+          log.warn(msg);
+          result = msg;
         } catch (Exception e) {
           final String message =
               String.format(
@@ -182,9 +193,15 @@ public class TaskQueues {
                   this.name, e.getClass().getSimpleName(), e.getMessage());
           log.error(message);
           result = message;
+        } finally {
+          ProcessUtils.updateProcessedTasksEnded(name);
+          singleTaskExecutor.shutdownNow();
         }
-        ProcessUtils.updateProcessedTasksEnded(name);
         return result;
+      }
+
+      public void shutdownTaskExec() {
+        singleTaskExecutor.shutdownNow();
       }
     }
   }
