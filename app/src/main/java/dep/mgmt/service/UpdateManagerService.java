@@ -9,6 +9,7 @@ import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
+import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.update.UpdateBranchDelete;
 import dep.mgmt.update.UpdateDependencies;
 import dep.mgmt.update.UpdateGradleSpotless;
@@ -116,6 +117,7 @@ public class UpdateManagerService {
       executeUpdateMergePullRequests(requestMetadata, isScheduledUpdate);
     }
 
+    logGithubRateLimit();
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
@@ -750,5 +752,10 @@ public class UpdateManagerService {
         ConvertUtils.convertProcessSummary(processSummary);
     processSummaryService.saveProcessSummary(processSummaryEntity);
     return processSummary;
+  }
+
+  private void logGithubRateLimit() {
+    GithubApiModel.RateLimitResponse rateLimitResponse = githubService.getCurrentGithubRateLimits();
+    log.info("{}", rateLimitResponse);
   }
 }
