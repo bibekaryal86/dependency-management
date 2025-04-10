@@ -164,6 +164,7 @@ public class ConstantUtils {
   public static final String QUEUE_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s";
   public static final String QUEUE_CREATE_PULL_REQUESTS = "PULL_REQUESTS_CREATE";
   public static final String QUEUE_MERGE_PULL_REQUESTS = "PULL_REQUESTS_MERGE";
+  public static final String QUEUE_MERGE_PULL_REQUESTS_RETRY = "PULL_REQUESTS_MERGE_RETRY";
   public static final String QUEUE_PROCESS_SUMMARY = "PROCESS_SUMMARY";
   public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
@@ -192,4 +193,5 @@ public class ConstantUtils {
   public static final String APPENDER_EXIT = "EXIT";
   public static final String APPENDER_QUEUE_NAME = "_QUEUE";
   public static final String APPENDER_TASK_NAME = "_TASK";
+  public static final String APPENDER_RETRY = "_RETRY";
 }

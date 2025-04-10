@@ -11,6 +11,7 @@ import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.util.ConstantUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MigrationService {
@@ -109,7 +110,8 @@ public class MigrationService {
               processSummaryOld.getTotalPrMergedCount(),
               processSummaryOld.getTotalPrCreateErrorsCount(), // prCreateError -> prMergeError
               getProcessedRepositories(processSummaryOld.getProcessedRepositories()),
-              processSummaryOld.isErrorsOrExceptions());
+              processSummaryOld.isErrorsOrExceptions(),
+              Collections.emptyList());
       processSummariesNew.add(processSummaryNew);
     }
 

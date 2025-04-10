@@ -3,6 +3,7 @@ package dep.mgmt.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class ProcessSummaries implements Serializable {
     private final Integer totalPrMergeErrorsCount;
     private final List<ProcessRepository> processRepositories;
     private final Boolean isErrorsOrExceptions;
+    private final List<ProcessTask> processTasks;
 
     @JsonCreator
     public ProcessSummary(
@@ -88,7 +90,8 @@ public class ProcessSummaries implements Serializable {
         @JsonProperty("totalPrMergedCount") final Integer totalPrMergedCount,
         @JsonProperty("totalPrMergeErrorsCount") final Integer totalPrMergeErrorsCount,
         @JsonProperty("processRepositories") final List<ProcessRepository> processRepositories,
-        @JsonProperty("isErrorsOrExceptions") final Boolean isErrorsOrExceptions) {
+        @JsonProperty("isErrorsOrExceptions") final Boolean isErrorsOrExceptions,
+        @JsonProperty("processTasks") final List<ProcessTask> processTasks) {
       this.updateDateTime = updateDateTime;
       this.updateType = updateType;
       this.gradlePluginsToUpdate = gradlePluginsToUpdate;
@@ -100,6 +103,7 @@ public class ProcessSummaries implements Serializable {
       this.totalPrMergeErrorsCount = totalPrMergeErrorsCount;
       this.processRepositories = processRepositories;
       this.isErrorsOrExceptions = isErrorsOrExceptions;
+      this.processTasks = processTasks;
     }
 
     public LocalDateTime getUpdateDateTime() {
@@ -146,6 +150,10 @@ public class ProcessSummaries implements Serializable {
       return isErrorsOrExceptions;
     }
 
+    public List<ProcessTask> getProcessTasks() {
+      return processTasks;
+    }
+
     @Override
     public String toString() {
       return "ProcessSummary{"
@@ -172,6 +180,8 @@ public class ProcessSummaries implements Serializable {
           + processRepositories
           + ", isErrorsOrExceptions="
           + isErrorsOrExceptions
+          + ", processTasks="
+          + processTasks
           + '}';
     }
 
@@ -271,6 +281,66 @@ public class ProcessSummaries implements Serializable {
             + ", prNumber="
             + prNumber
             + '}';
+      }
+    }
+
+    public static class ProcessTask implements Serializable {
+      private final String name;
+      private final LocalDateTime start;
+      private final LocalDateTime end;
+      private final Integer seconds;
+      private final Integer minutes;
+
+      @JsonCreator
+      public ProcessTask(@JsonProperty("name") String name,
+                         @JsonProperty("start") LocalDateTime start,
+                         @JsonProperty("end") LocalDateTime end) {
+        this.name = name;
+        this.start = start;
+        this.end = end;
+
+        final Duration duration = Duration.between(start, end);
+        this.seconds = (int) duration.getSeconds();
+        this.minutes = (int) duration.toMinutes();
+      }
+
+      public ProcessTask(final String name, final LocalDateTime start, final LocalDateTime end, final Integer seconds, final Integer minutes) {
+        this.name = name;
+        this.start = start;
+        this.end = end;
+        this.seconds = seconds;
+        this.minutes = minutes;
+      }
+
+      public String getName() {
+        return name;
+      }
+
+      public LocalDateTime getStart() {
+        return start;
+      }
+
+      public LocalDateTime getEnd() {
+        return end;
+      }
+
+      public Integer getSeconds() {
+        return seconds;
+      }
+
+      public Integer getMinutes() {
+        return minutes;
+      }
+
+      @Override
+      public String toString() {
+        return "ProcessTask{" +
+                "name='" + name + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", seconds=" + seconds +
+                ", minutes=" + minutes +
+                '}';
       }
     }
   }

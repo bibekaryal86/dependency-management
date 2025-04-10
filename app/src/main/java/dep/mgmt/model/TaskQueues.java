@@ -1,5 +1,7 @@
 package dep.mgmt.model;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +11,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
+import dep.mgmt.util.ProcessUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,19 +171,24 @@ public class TaskQueues {
       }
 
       public Object execute() {
+        final LocalDateTime start = LocalDateTime.now();
+        Object result = null;
         try {
           if (delayMillis.get() > 0) {
             Thread.sleep(delayMillis.get());
           }
-          return action.call();
+          result = action.call();
         } catch (Exception e) {
           final String message =
               String.format(
                   "OneTask: [%s] [%s] : %s",
                   this.name, e.getClass().getSimpleName(), e.getMessage());
           log.error(message);
-          return message;
+          result = message;
         }
+        final LocalDateTime end = LocalDateTime.now();
+        ProcessUtils.addProcessedTasks(name, start, end);
+        return result;
       }
     }
   }

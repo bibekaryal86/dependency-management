@@ -21,6 +21,7 @@ public class ProcessSummaryEntity implements Serializable {
   private Integer totalPrMergeErrorCount;
   private List<ProcessRepositoryEntity> processRepositories;
   private Boolean isErrorsOrExceptions;
+  private List<ProcessTaskEntity> processTasks;
 
   public ProcessSummaryEntity() {}
 
@@ -36,7 +37,9 @@ public class ProcessSummaryEntity implements Serializable {
       final Integer totalPrMergedCount,
       final Integer totalPrMergeErrorCount,
       final List<ProcessRepositoryEntity> processRepositories,
-      final Boolean isErrorsOrExceptions) {
+      final Boolean isErrorsOrExceptions,
+      final List<ProcessTaskEntity> processTasks
+  ) {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.updateType = updateType;
@@ -50,6 +53,7 @@ public class ProcessSummaryEntity implements Serializable {
     this.processRepositories =
         processRepositories == null ? Collections.emptyList() : processRepositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
+    this.processTasks = processTasks == null ? Collections.emptyList() : processTasks;
   }
 
   public ObjectId getId() {
@@ -148,35 +152,31 @@ public class ProcessSummaryEntity implements Serializable {
     isErrorsOrExceptions = errorsOrExceptions;
   }
 
+  public List<ProcessTaskEntity> getProcessTasks() {
+    return processTasks;
+  }
+
+  public void setProcessTasks(List<ProcessTaskEntity> processTasks) {
+    this.processTasks = processTasks;
+  }
+
   @Override
   public String toString() {
-    return "ProcessSummaryEntity{"
-        + "id="
-        + id
-        + ", updateDateTime="
-        + updateDateTime
-        + ", updateType='"
-        + updateType
-        + '\''
-        + ", gradlePluginsToUpdate="
-        + gradlePluginsToUpdate
-        + ", gradleDependenciesToUpdate="
-        + gradleDependenciesToUpdate
-        + ", pythonPackagesToUpdate="
-        + pythonPackagesToUpdate
-        + ", nodeDependenciesToUpdate="
-        + nodeDependenciesToUpdate
-        + ", totalPrCreatedCount="
-        + totalPrCreatedCount
-        + ", totalPrMergedCount="
-        + totalPrMergedCount
-        + ", totalPrMergeErrorCount="
-        + totalPrMergeErrorCount
-        + ", processRepositories="
-        + processRepositories
-        + ", isErrorsOrExceptions="
-        + isErrorsOrExceptions
-        + '}';
+    return "ProcessSummaryEntity{" +
+            "id=" + id +
+            ", updateDateTime=" + updateDateTime +
+            ", updateType='" + updateType + '\'' +
+            ", gradlePluginsToUpdate=" + gradlePluginsToUpdate +
+            ", gradleDependenciesToUpdate=" + gradleDependenciesToUpdate +
+            ", pythonPackagesToUpdate=" + pythonPackagesToUpdate +
+            ", nodeDependenciesToUpdate=" + nodeDependenciesToUpdate +
+            ", totalPrCreatedCount=" + totalPrCreatedCount +
+            ", totalPrMergedCount=" + totalPrMergedCount +
+            ", totalPrMergeErrorCount=" + totalPrMergeErrorCount +
+            ", processRepositories=" + processRepositories +
+            ", isErrorsOrExceptions=" + isErrorsOrExceptions +
+            ", processTasks=" + processTasks +
+            '}';
   }
 
   public static class ProcessRepositoryEntity {
@@ -270,6 +270,75 @@ public class ProcessSummaryEntity implements Serializable {
           + ", prNumber="
           + prNumber
           + '}';
+    }
+  }
+
+  public static class ProcessTaskEntity {
+    private String name;
+    private LocalDateTime start;
+    private LocalDateTime end;
+    private Integer seconds;
+    private Integer minutes;
+
+    public ProcessTaskEntity() {}
+
+    public ProcessTaskEntity(String name, LocalDateTime start, LocalDateTime end, Integer seconds, Integer minutes) {
+      this.name = name;
+      this.start = start;
+      this.end = end;
+      this.seconds = seconds;
+      this.minutes = minutes;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public LocalDateTime getStart() {
+      return start;
+    }
+
+    public void setStart(LocalDateTime start) {
+      this.start = start;
+    }
+
+    public LocalDateTime getEnd() {
+      return end;
+    }
+
+    public void setEnd(LocalDateTime end) {
+      this.end = end;
+    }
+
+    public Integer getSeconds() {
+      return seconds;
+    }
+
+    public void setSeconds(Integer seconds) {
+      this.seconds = seconds;
+    }
+
+    public Integer getMinutes() {
+      return minutes;
+    }
+
+    public void setMinutes(Integer minutes) {
+      this.minutes = minutes;
+    }
+
+    @Override
+    public String toString() {
+      return "ProcessTaskEntity{" +
+              "name='" + name + '\'' +
+              ", start=" + start +
+              ", end=" + end +
+              ", seconds=" + seconds +
+              ", minutes=" + minutes +
+              '}';
     }
   }
 }

@@ -39,7 +39,8 @@ public class ConvertUtils {
                     processSummaryEntity.getTotalPrMergeErrorCount(),
                     convertProcessSummaryRepositoryEntities(
                         processSummaryEntity.getProcessRepositories()),
-                    processSummaryEntity.getErrorsOrExceptions()))
+                    processSummaryEntity.getErrorsOrExceptions(),
+                        convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks())))
         .toList();
   }
 
@@ -59,6 +60,15 @@ public class ConvertUtils {
         .toList();
   }
 
+  private static List<ProcessSummaries.ProcessSummary.ProcessTask> convertProcessSummaryTaskEntities(
+          final List<ProcessSummaryEntity.ProcessTaskEntity> processTaskEntities) {
+    return processTaskEntities.stream().map(
+            processTaskEntity -> new ProcessSummaries.ProcessSummary.ProcessTask(
+                    processTaskEntity.getName(), processTaskEntity.getStart(), processTaskEntity.getEnd(), processTaskEntity.getSeconds(), processTaskEntity.getMinutes()
+            )
+    ).toList();
+  }
+
   public static ProcessSummaryEntity convertProcessSummary(
       final ProcessSummaries.ProcessSummary processSummary) {
     return new ProcessSummaryEntity(
@@ -73,7 +83,8 @@ public class ConvertUtils {
         processSummary.getTotalPrMergedCount(),
         processSummary.getTotalPrMergeErrorsCount(),
         convertProcessSummaryRepositories(processSummary.getProcessRepositories()),
-        processSummary.getErrorsOrExceptions());
+        processSummary.getErrorsOrExceptions(),
+        convertProcessSummaryTasks(processSummary.getProcessTasks()));
   }
 
   private static List<ProcessSummaryEntity.ProcessRepositoryEntity>
@@ -90,6 +101,15 @@ public class ConvertUtils {
                     processRepository.getPrMerged(),
                     processRepository.getPrNumber()))
         .toList();
+  }
+
+  private static List<ProcessSummaryEntity.ProcessTaskEntity> convertProcessSummaryTasks(
+          final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks) {
+    return processTasks.stream()
+            .map(processTask ->
+                    new ProcessSummaryEntity.ProcessTaskEntity(processTask.getName(), processTask.getStart(), processTask.getEnd(), processTask.getSeconds(), processTask.getMinutes()))
+            .toList();
+
   }
 
   public static List<ExcludedRepos.ExcludedRepo> convertExcludedRepoEntities(

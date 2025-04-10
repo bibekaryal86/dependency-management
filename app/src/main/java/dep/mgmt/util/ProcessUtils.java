@@ -1,10 +1,14 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummaries;
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,8 +20,8 @@ public class ProcessUtils {
   private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
-  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
-      processedRepositories = new ConcurrentHashMap<>();
+  private static List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks = new CopyOnWriteArrayList<>();
+  private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories = new ConcurrentHashMap<>();
   private static Set<String> repositoriesToRetryMerge = new HashSet<>();
 
   public static void setErrorsOrExceptions(boolean value) {
@@ -105,9 +109,18 @@ public class ProcessUtils {
     return repositoriesToRetryMerge;
   }
 
+  public static void addProcessedTasks(final String taskName, final LocalDateTime start, final LocalDateTime end) {
+    processedTasks.add(new ProcessSummaries.ProcessSummary.ProcessTask(taskName, start, end));
+  }
+
+  public static List<ProcessSummaries.ProcessSummary.ProcessTask> getProcessedTasks() {
+    return processedTasks;
+  }
+
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
     repositoriesToRetryMerge = new HashSet<>();
+    processedTasks = new CopyOnWriteArrayList<>();
     setMongoGradlePluginsToUpdate(0);
     setMongoGradleDependenciesToUpdate(0);
     setMongoPythonPackagesToUpdate(0);

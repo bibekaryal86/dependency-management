@@ -608,8 +608,8 @@ public class UpdateManagerService {
         ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
         if (repository.getPrCreated()) {
           addTaskToQueue(
-              ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
-              getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
+              ConstantUtils.QUEUE_MERGE_PULL_REQUESTS_RETRY,
+              getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT + ConstantUtils.APPENDER_RETRY),
               () ->
                   githubService.mergeGithubPullRequest(
                       repository.getRepoName(),
@@ -745,7 +745,8 @@ public class UpdateManagerService {
             totalPrMergedCount,
             totalPrMergeErrorCount,
             processedRepositories,
-            ProcessUtils.getErrorsOrExceptions());
+            ProcessUtils.getErrorsOrExceptions(),
+            ProcessUtils.getProcessedTasks());
 
     // save to repository
     final ProcessSummaryEntity processSummaryEntity =
