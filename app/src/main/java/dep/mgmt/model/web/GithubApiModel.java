@@ -181,6 +181,7 @@ public class GithubApiModel implements Serializable {
       private final String event;
       private final String status;
       private final String conclusion;
+      // list only populated if an open pull request exists
       private final List<CreatePullRequestResponse> pullRequests;
 
       @JsonCreator

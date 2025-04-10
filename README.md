@@ -30,8 +30,7 @@
 
 options to view which tasks running
 options to kill a long running task
-option to run on one repo
-
+option to view github repo limit
 
 Endpoints
 (1) Update Repo
@@ -41,7 +40,3 @@ Endpoints
 (5) Pull Reset (with option for 1)
 (6) Create Pull Request
 (7) Merge Pull Request
-
-
-automate execute tasks
-    if first task is added, and is not running, execute it

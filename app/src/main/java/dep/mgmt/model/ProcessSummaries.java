@@ -228,6 +228,10 @@ public class ProcessSummaries implements Serializable {
         return isPrMerged;
       }
 
+      public Integer getPrNumber() {
+        return prNumber;
+      }
+
       public void setPrCreated(final Boolean prCreated) {
         this.isPrCreated = prCreated;
       }

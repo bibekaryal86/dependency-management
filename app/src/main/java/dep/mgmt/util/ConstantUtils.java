@@ -128,8 +128,9 @@ public class ConstantUtils {
   public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
-  public static final long TASK_DELAY_DEFAULT = 1000;         // 1 second
-  public static final long TASK_DELAY_GITHUB_MERGE = 1000 * 60 * 5; // 5 minutes
+  public static final long TASK_DELAY_DEFAULT = 1000;                     // 1 second
+  public static final long TASK_DELAY_PULL_REQUEST_CREATE = 1000 * 60;    // 1 minute
+  public static final long TASK_DELAY_PULL_REQUEST_MERGE = 1000 * 60 * 5; // 5 minutes
   public static final String DOCKER_JRE = "eclipse-temurin";
   public static final String DOCKER_ALPINE = "alpine";
   public static final String GITHUB_ENDPOINT_TAGS = "tags";
@@ -159,6 +160,8 @@ public class ConstantUtils {
   public static final String QUEUE_SET = "SET_DATA";
   public static final String QUEUE_FILES = "RECREATE_FILES";
   public static final String QUEUE_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s";
+  public static final String QUEUE_CREATE_PULL_REQUESTS = "PULL_REQUESTS_CREATE";
+  public static final String QUEUE_MERGE_PULL_REQUESTS = "PULL_REQUESTS_MERGE";
   public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
   public static final String TASK_RESET_GRADLE_DEPENDENCIES = "RESET_GRADLE_DEPENDENCIES";
@@ -178,6 +181,7 @@ public class ConstantUtils {
   public static final String TASK_GRADLE_SPOTLESS = "GRADLE_SPOTLESS";
   public static final String TASK_NPM_SNAPSHOTS = "NPM_SNAPSHOTS";
   public static final String TASK_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s_%s";
+  public static final String TASK_CREATE_PULL_REQUESTS = "CREATE_PULL_REQUESTS_%s";
   public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
 
   public static final String APPENDER_INIT = "INIT";
