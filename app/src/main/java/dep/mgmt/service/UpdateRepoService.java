@@ -106,6 +106,10 @@ public class UpdateRepoService {
   }
 
   public void updateRepos(final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
+    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)) {
+      LogCaptureUtils.start(requestMetadata.getIncludeDebugLogs());
+    }
+
     log.info("Update Repos: [{}] | [{}]", requestMetadata, isScheduledUpdate);
     updateInit(requestMetadata);
 
@@ -146,6 +150,7 @@ public class UpdateRepoService {
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
+    stopLogCapture();
     executeTaskQueues();
   }
 
@@ -768,6 +773,18 @@ public class UpdateRepoService {
         ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_QUEUE_NAME,
         ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_TASK_NAME,
         githubService::getCurrentGithubRateLimits,
+        ConstantUtils.TASK_DELAY_DEFAULT);
+  }
+
+  private void stopLogCapture() {
+    addTaskToQueue(
+        ConstantUtils.TASK_LOG_CAPTURE
+            + ConstantUtils.APPENDER_EXIT
+            + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_LOG_CAPTURE
+            + ConstantUtils.APPENDER_EXIT
+            + ConstantUtils.APPENDER_TASK_NAME,
+        LogCaptureUtils::stop,
         ConstantUtils.TASK_DELAY_DEFAULT);
   }
 }

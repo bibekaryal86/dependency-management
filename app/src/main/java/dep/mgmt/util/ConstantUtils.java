@@ -189,6 +189,7 @@ public class ConstantUtils {
   public static final String TASK_PULL_REQUESTS = "PULL_REQUESTS_%s_%s";
   public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
   public static final String TASK_GITHUB_RATE_LIMIT = "GITHUB_RATE_LIMIT";
+  public static final String TASK_LOG_CAPTURE = "LOG_CAPTURE_";
 
   public static final String APPENDER_INIT = "INIT";
   public static final String APPENDER_EXEC = "EXEC";
