@@ -9,9 +9,11 @@ import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.service.LatestVersionService;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -178,40 +180,30 @@ public class AppDataUtils {
   }
 
   private static List<AppDataScriptFile> getScriptFilesInResources() {
-    log.debug("Get Script files in Resources...");
     List<AppDataScriptFile> scriptFiles = new ArrayList<>();
 
-    try {
-      ClassLoader classLoader = AppDataUtils.class.getClassLoader();
-      URL resourcesUrl = classLoader.getResource("scripts");
-
-      if (resourcesUrl == null) {
-        throw new RuntimeException("scripts directory not found in resources...");
+    try (InputStream listStream =
+        AppDataUtils.class.getClassLoader().getResourceAsStream(ConstantUtils.SCRIPTS_FILE)) {
+      if (listStream == null) {
+        throw new RuntimeException("scripts.txt not found in resources/scripts/");
       }
 
-      Path resourcesPath = Paths.get(resourcesUrl.toURI());
-
-      if (!Files.exists(resourcesPath) || !Files.isDirectory(resourcesPath)) {
-        throw new RuntimeException("scripts directory is not a valid directory...");
+      List<String> fileNames;
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(listStream))) {
+        fileNames = reader.lines().map(String::trim).filter(name -> !name.isEmpty()).toList();
       }
 
-      try (Stream<Path> files = Files.list(resourcesPath)) {
-        scriptFiles =
-            files
-                .filter(path -> path.toString().endsWith(".sh"))
-                .map(path -> new AppDataScriptFile(path.getFileName().toString()))
-                .toList();
+      if (fileNames.isEmpty()) {
+        throw new RuntimeException("No script filenames listed in scripts.txt");
       }
 
-      if (scriptFiles.isEmpty()) {
-        throw new RuntimeException("Script files not found in resources...");
+      for (String fileName : fileNames) {
+        scriptFiles.add(new AppDataScriptFile(fileName));
       }
 
-      log.info("Script files: [ {} ]", scriptFiles.size());
-      log.debug("Script files: [ {} ]", scriptFiles);
       return scriptFiles;
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
+    } catch (IOException ex) {
+      throw new RuntimeException("Error reading scripts.txt", ex);
     }
   }
 

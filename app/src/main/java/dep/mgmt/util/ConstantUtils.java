@@ -96,6 +96,7 @@ public class ConstantUtils {
   public static final String PATH_DELIMITER = "/";
   public static final String COMMAND_PATH = PATH_DELIMITER + "bin" + PATH_DELIMITER + "bash";
   public static final String SCRIPTS_DIRECTORY = "scripts";
+  public static final String SCRIPTS_FILE = SCRIPTS_DIRECTORY + PATH_DELIMITER + "scripts.txt";
   public static final String CHMOD_COMMAND = "chmod +x ";
   public static final String JAVA_SYSTEM_TMPDIR = System.getProperty("java.io.tmpdir");
   public static final String GRADLE_WRAPPER_PROPERTIES =
