@@ -184,14 +184,15 @@ public class TaskQueues {
         ProcessUtils.updateProcessedTasksStarted(name);
         Object result = null;
         Future<Object> future = null;
-        final long timeoutMillis = delayMillis.get() + 60_000;
+        final long delayMillisGet = delayMillis.get();
+        final long timeoutMillis = delayMillisGet > 0 ? delayMillisGet + 60_000 : 60_000;
 
         try {
           future =
               singleTaskExecutor.submit(
                   () -> {
-                    if (delayMillis.get() > 0) {
-                      Thread.sleep(delayMillis.get());
+                    if (delayMillisGet > 0) {
+                      Thread.sleep(delayMillisGet);
                     }
                     return action.call();
                   });
