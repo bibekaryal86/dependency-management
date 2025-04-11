@@ -8,6 +8,8 @@ public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(
       ProcessSummaries.ProcessSummary processSummary) {
+    List<ProcessSummaries.ProcessSummary.ProcessTask> allProcessedTasks =
+        processSummary.getProcessTasks();
     List<ProcessSummaries.ProcessSummary.ProcessRepository> allProcessedRepositories =
         processSummary.getProcessRepositories();
     List<ProcessSummaries.ProcessSummary.ProcessRepository> prCreatedAndMerged =
@@ -132,7 +134,6 @@ public class ProcessSummaryEmailUtils {
                     <th>Repository</th>
                     <th>Type</th>
                     <th>PR Created</th>
-                    <th>PR Create Error</th>
                     <th>PR Merged</th>
                   </tr>
               """);
@@ -157,7 +158,6 @@ public class ProcessSummaryEmailUtils {
                     <th>Repository</th>
                     <th>Type</th>
                     <th>PR Created</th>
-                    <th>PR Create Error</th>
                     <th>PR Merged</th>
                   </tr>
                   <br />
@@ -177,12 +177,27 @@ public class ProcessSummaryEmailUtils {
                   <th>Repository</th>
                   <th>Type</th>
                   <th>PR Created</th>
-                  <th>PR Create Error</th>
                   <th>PR Merged</th>
                 </tr>
             """);
 
     processedRepositoryTable(allProcessedRepositories, html);
+
+    html.append(
+        """
+                  <br />
+                  <p style='font-size: 14px; font-weight: bold;'>All Process Tasks</p>
+                  <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+                    <tr>
+                      <th>Queue</th>
+                      <th>Task</th>
+                      <th>Added</th>
+                      <th>Started</th>
+                      <th>Ended</th>
+                    </tr>
+                """);
+
+    processedTaskTable(allProcessedTasks, html);
 
     html.append(
         """
@@ -210,5 +225,23 @@ public class ProcessSummaryEmailUtils {
         """
         </table>
       """);
+  }
+
+  private static void processedTaskTable(
+      List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks, StringBuilder html) {
+    for (ProcessSummaries.ProcessSummary.ProcessTask processedTask : processedTasks) {
+      html.append("<tr>");
+      html.append("<td>").append(processedTask.getQueueName()).append("</td>");
+      html.append("<td>").append(processedTask.getTaskName()).append("</td>");
+      html.append("<td>").append(processedTask.getAdded()).append("</td>");
+      html.append("<td>").append(processedTask.getStarted()).append("</td>");
+      html.append("<td>").append(processedTask.getEnded()).append("</td>");
+      html.append("</tr>");
+    }
+
+    html.append(
+        """
+            </table>
+          """);
   }
 }
