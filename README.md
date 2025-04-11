@@ -4,33 +4,37 @@
     * Add Pagination to MongoRepoController GET lookup
     * Add More options to tasks
       * kill tasks
-        * this is initialized, but not implemented
+        * work has started, but not implemented
       * skip tasks
+        * programmable so that it can be updated after adding
     * Tests
-    * Documentation
+    * Improved Documentation
 
 * System Requirements:
     * Java (https://adoptium.net/temurin/releases/)
     * git (https://git-scm.com/downloads)
-    * github cli (https://cli.github.com/)
+
+* Technologies Used:
+  * Java
+  * Netty
+  * MongoDb
+  * GitHub
 
 * App Arguments
-    * Required
-        * repo_home: Hard disk location where repos are cloned
-        * mongo_user: User name of mongo database where plugins and dependencies are stored
-        * mongo_pwd: Password of the mongo database
-    * Optional
-        * send_email: Flag to send email of current log file at the end of scheduled update
-        * mj_public: Public API Key of MailJet Email Service
-            * Required if send_email is `true`
-        * mj_private: Private API Key of MailJet Email Service
-            * Required if send_email is `true`
-        * mj_email: Email address that the email will be sent from
-            * Required if send_email is `true`
-
-* Example:
-    * java -jar -Drepo_home=/home/pi/zava/projects -Ddb_host=some-host -Ddb_name=some-name -Ddb_username=some_user -Ddb_password=some_password dep-mgmt.jar
-
-
-options to view which tasks running
-    needs enhancement to view from actual task queues
+  * Required
+    * self_username: user name for basic auth
+    * self_password: password for basic auth
+    * db_host: mongodb connection url
+    * db_name: mongodb database name
+    * db_username: mongodb login username
+    * db_password: mongodb login password
+    * gh_owner: owner of github repos
+    * gh_token: github Public Access Token for github rest apis
+* Optional
+  * send_email: flag to send email with process summary and application logs
+  * mj_public: public api key of mailjet email service
+      * required if send_email is `true`
+  * mj_private: private api Key of mailjet email service
+      * required if send_email is `true`
+  * mj_email: email address that the email will be sent from
+      * required if send_email is `true`
