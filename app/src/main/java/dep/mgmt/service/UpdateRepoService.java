@@ -146,7 +146,7 @@ public class UpdateRepoService {
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
-    // executeTaskQueues();
+    executeTaskQueues();
   }
 
   public void recreateLocalCaches() {
