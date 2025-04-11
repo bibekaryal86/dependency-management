@@ -37,10 +37,10 @@ public class UpdateDependencies {
   }
 
   public void execute() {
-    log.debug(
-        "Update Dependencies Init/Exit: [{}] | [{}] | [{}] | [{}]",
-        this.repository,
-        this.scriptFile,
+    log.info(
+        "Execute Update Dependencies Init/Exit: [{}] | [{}] | [{}] | [{}]",
+        this.repository.getRepoName(),
+        this.scriptFile.getScriptFileName(),
         this.isInit,
         this.branchName);
     List<String> arguments = new LinkedList<>();

@@ -42,8 +42,8 @@ public class UpdateRepoResetPull {
   }
 
   public void execute() {
-    log.debug(
-        "Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}]",
+    log.info(
+        "Execute Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}]",
         this.repoHome,
         this.repository,
         this.isReset,

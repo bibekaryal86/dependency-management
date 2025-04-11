@@ -77,12 +77,14 @@ public class UpdateRepoService {
   }
 
   public void executeTaskQueues() {
+    log.info("Execute Task Queues...");
     if (!taskQueues.isProcessing()) {
       taskQueues.processQueues();
     }
   }
 
   public void scheduledUpdate() {
+    log.info("Scheduled Update...");
     final RequestMetadata requestMetadata =
         new RequestMetadata(
             RequestParams.UpdateType.ALL,
@@ -99,6 +101,7 @@ public class UpdateRepoService {
   }
 
   public void updateRepos(final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
+    log.info("Update Repos: [{}] | [{}]", requestMetadata, isScheduledUpdate);
     updateInit(requestMetadata);
 
     boolean isPrCreateRequired = false;
@@ -147,7 +150,6 @@ public class UpdateRepoService {
   }
 
   private void resetCaches() {
-    log.info("Reset Caches...");
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET,
         ConstantUtils.TASK_RESET_APP_DATA,
@@ -181,7 +183,6 @@ public class UpdateRepoService {
   }
 
   private void setCaches() {
-    log.info("Set Caches...");
     addTaskToQueue(
         ConstantUtils.QUEUE_SET,
         ConstantUtils.TASK_SET_APP_DATA,
@@ -267,7 +268,6 @@ public class UpdateRepoService {
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
-    log.info("Execute Npm Snapshots: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
@@ -298,7 +298,6 @@ public class UpdateRepoService {
   }
 
   private void executeGradleSpotlessUpdate(final LocalDate branchDate, final String repoName) {
-    log.info("Execute Gradle Spotless Update: [{}] | [{}]", branchDate, repoName);
     final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
@@ -328,12 +327,7 @@ public class UpdateRepoService {
         Long.MIN_VALUE);
   }
 
-  private void executeGithubBranchDelete(
-      final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
-    log.info(
-        "Execute Update Repos GitHub Branch Delete: [{}] | [{}]",
-        isDeleteUpdateDependenciesOnly,
-        repoName);
+  private void executeGithubBranchDelete(final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
     final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
@@ -378,9 +372,7 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateGithubResetPull(
-      final boolean isReset, final boolean isPull, final String repoName) {
-    log.info("Execute Update GitHub Reset Pull: [{}] | [{}] | [{}]", isReset, isPull, repoName);
+  private void executeUpdateGithubResetPull(final boolean isReset, final boolean isPull, final String repoName) {
     final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
@@ -420,9 +412,7 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateDependencies(
-      final RequestMetadata requestMetadata, final boolean isExit) {
-    log.info("Execute Update Dependencies: [{}]", requestMetadata);
+  private void executeUpdateDependencies(final RequestMetadata requestMetadata, final boolean isExit) {
     final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
 
@@ -468,10 +458,6 @@ public class UpdateRepoService {
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
       final boolean isInit) {
-    log.info(
-        "Execute Update Dependencies Init/Exit: [{}] | [{}]",
-        repository.getRepoName(),
-        scriptFile.getScriptName());
     addTaskToQueue(
         getUpdateDependenciesQueueName(
             isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
@@ -486,11 +472,6 @@ public class UpdateRepoService {
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
       final LocalDate branchDate) {
-    log.info(
-        "Execute Update Dependencies: [{}] | [{}] | [{}]",
-        repository.getRepoName(),
-        scriptFile.getScriptName(),
-        branchDate);
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     addTaskToQueue(
         getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
@@ -501,8 +482,6 @@ public class UpdateRepoService {
 
   private void executeUpdateCreatePullRequests(
       final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
-    log.info(
-        "Execute Update Create Pull Requests: [{}] | [{}]", requestMetadata, isScheduledUpdate);
     final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
@@ -555,7 +534,6 @@ public class UpdateRepoService {
 
   private void executeUpdateMergePullRequests(
       final RequestMetadata requestMetadata, final boolean isScheduledUpdate) {
-    log.info("Execute Update Merge Pull Requests: [{}] | [{}]", requestMetadata, isScheduledUpdate);
     final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
@@ -777,7 +755,6 @@ public class UpdateRepoService {
   }
 
   private void logGithubRateLimit() {
-    GithubApiModel.RateLimitResponse rateLimitResponse = githubService.getCurrentGithubRateLimits();
-    log.info("{}", rateLimitResponse);
+    addTaskToQueue(ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_QUEUE_NAME, ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_TASK_NAME, githubService::getCurrentGithubRateLimits, ConstantUtils.TASK_DELAY_DEFAULT);
   }
 }

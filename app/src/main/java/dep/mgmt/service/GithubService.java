@@ -115,6 +115,8 @@ public class GithubService {
   }
 
   public GithubApiModel.RateLimitResponse getCurrentGithubRateLimits() {
-    return githubConnector.getRateLimits();
+    GithubApiModel.RateLimitResponse rateLimitResponse = githubConnector.getRateLimits();
+    log.info("{}", rateLimitResponse);
+    return rateLimitResponse;
   }
 }
