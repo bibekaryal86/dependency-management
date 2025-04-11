@@ -9,7 +9,6 @@ import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
-import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.update.UpdateBranchDelete;
 import dep.mgmt.update.UpdateDependencies;
 import dep.mgmt.update.UpdateGradleSpotless;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateRepoService {
   private static final Logger log = LoggerFactory.getLogger(UpdateRepoService.class);
-  private final TaskQueues taskQueues = new TaskQueues();
+  private static final TaskQueues taskQueues = new TaskQueues();
 
   private final GradleDependencyVersionService gradleDependencyVersionService;
   private final GradlePluginVersionService gradlePluginVersionService;
@@ -81,6 +80,12 @@ public class UpdateRepoService {
     if (!taskQueues.isProcessing()) {
       taskQueues.processQueues();
     }
+  }
+
+  public void clearTaskQueues() {
+    log.info("Clear Task Queues...");
+    taskQueues.clearQueue();
+    ProcessUtils.resetProcessedTasks();
   }
 
   public void scheduledUpdate() {
@@ -141,7 +146,7 @@ public class UpdateRepoService {
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
-    executeTaskQueues();
+    // executeTaskQueues();
   }
 
   public void recreateLocalCaches() {
@@ -327,7 +332,8 @@ public class UpdateRepoService {
         Long.MIN_VALUE);
   }
 
-  private void executeGithubBranchDelete(final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
+  private void executeGithubBranchDelete(
+      final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
     final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
@@ -372,7 +378,8 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateGithubResetPull(final boolean isReset, final boolean isPull, final String repoName) {
+  private void executeUpdateGithubResetPull(
+      final boolean isReset, final boolean isPull, final String repoName) {
     final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
@@ -412,7 +419,8 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateDependencies(final RequestMetadata requestMetadata, final boolean isExit) {
+  private void executeUpdateDependencies(
+      final RequestMetadata requestMetadata, final boolean isExit) {
     final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
 
@@ -659,6 +667,7 @@ public class UpdateRepoService {
     } else {
       taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(taskName, action, delayMillis));
     }
+    ProcessUtils.addProcessedTasks(queueName, taskName);
   }
 
   private void makeProcessSummaryTask(final RequestMetadata requestMetadata) {
@@ -755,6 +764,10 @@ public class UpdateRepoService {
   }
 
   private void logGithubRateLimit() {
-    addTaskToQueue(ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_QUEUE_NAME, ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_TASK_NAME, githubService::getCurrentGithubRateLimits, ConstantUtils.TASK_DELAY_DEFAULT);
+    addTaskToQueue(
+        ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_TASK_NAME,
+        githubService::getCurrentGithubRateLimits,
+        ConstantUtils.TASK_DELAY_DEFAULT);
   }
 }

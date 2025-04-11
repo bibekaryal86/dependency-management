@@ -35,6 +35,11 @@ public class TaskQueues {
     return new ArrayList<>(queueOfQueues);
   }
 
+  public void clearQueue() {
+    nonEmptyQueueCount.set(0);
+    queueOfQueues.clear();
+  }
+
   public TaskQueue getQueueByName(String name) {
     for (TaskQueue queue : queueOfQueues) {
       if (queue.getName().equals(name)) {
@@ -108,8 +113,7 @@ public class TaskQueues {
     }
 
     // Reset queue state
-    nonEmptyQueueCount.set(0);
-    queueOfQueues.clear();
+    clearQueue();
 
     // Create a new executor instance
     executor = Executors.newSingleThreadExecutor();

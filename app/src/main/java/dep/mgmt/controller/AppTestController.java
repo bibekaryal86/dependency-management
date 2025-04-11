@@ -46,6 +46,11 @@ public class AppTestController {
             updateRepoService.getAllProcessTaskQueues();
         ServerUtils.sendResponse(ctx, processTaskQueues, HttpResponseStatus.OK, null);
       }
+      case Endpoints.APP_TESTS_CLEAR -> {
+        ServerUtils.sendResponse(
+            ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+        updateRepoService.clearTaskQueues();
+      }
       case null, default ->
           ServerUtils.sendResponse(
               ctx, "AppTestController Mapping Not Found...", HttpResponseStatus.NOT_FOUND);

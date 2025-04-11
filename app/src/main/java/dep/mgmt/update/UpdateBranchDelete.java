@@ -37,7 +37,11 @@ public class UpdateBranchDelete {
   }
 
   public void execute() {
-    log.info("Execute Update Branch Delete: [{}] | [{}] | [{}]", this.repoHome, this.repository, this.isDeleteUpdateDependenciesOnly);
+    log.info(
+        "Execute Update Branch Delete: [{}] | [{}] | [{}]",
+        this.repoHome,
+        this.repository,
+        this.isDeleteUpdateDependenciesOnly);
     List<String> arguments = new LinkedList<>();
     if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
       arguments.add(this.repository.getRepoPath().toString());

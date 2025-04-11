@@ -2,12 +2,12 @@ package dep.mgmt.service;
 
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.AppDataLatestVersions;
-import dep.mgmt.model.LatestVersion;
 import dep.mgmt.model.entity.LatestVersionEntity;
 import dep.mgmt.repository.LatestVersionRepository;
-import dep.mgmt.util.ConstantUtils;
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +40,11 @@ public class LatestVersionService {
   public AppDataLatestVersions getLatestVersion() {
     log.debug("Get Latest Version...");
 
-    LatestVersionEntity latestVersionEntity =
-        latestVersionRepository.findFirstByOrderByUpdateDateTimeDesc();
-
-    if (latestVersionEntity == null) {
+    try {
+      return CommonUtilities.objectMapperProvider()
+          .readValue(new File("latest_versions.json"), AppDataLatestVersions.class);
+    } catch (IOException e) {
+      System.err.println("NO READ LATEST VERSION TO FILE");
       return null;
     }
 
