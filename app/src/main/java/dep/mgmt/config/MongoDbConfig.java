@@ -38,7 +38,7 @@ public class MongoDbConfig {
     return database;
   }
 
-  public static String init() {
-    return database.getName();
+  public static void init() {
+    database.getName();
   }
 }

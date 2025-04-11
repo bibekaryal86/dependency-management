@@ -33,7 +33,7 @@ public class App {
       App.init();
       ScheduleConfig.init();
       NettyServer.init();
-      log.info("MongoDb Database Initialized: [{}]", MongoDbConfig.init());
+      MongoDbConfig.init();
       log.info("Started Dependency Management Service...");
     }
   }

@@ -180,6 +180,7 @@ public class AppDataUtils {
   }
 
   private static List<AppDataScriptFile> getScriptFilesInResources() {
+    log.debug("Get Script Files in Resources...");
     List<AppDataScriptFile> scriptFiles = new ArrayList<>();
 
     try (InputStream listStream =
@@ -200,6 +201,9 @@ public class AppDataUtils {
       for (String fileName : fileNames) {
         scriptFiles.add(new AppDataScriptFile(fileName));
       }
+
+      log.info("Script Files list: [ {} ]", scriptFiles.size());
+      log.debug("Script Files list: [ {} ]", scriptFiles);
 
       return scriptFiles;
     } catch (IOException ex) {

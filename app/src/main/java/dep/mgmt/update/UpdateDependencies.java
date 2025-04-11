@@ -38,7 +38,7 @@ public class UpdateDependencies {
 
   public void execute() {
     log.info(
-        "Execute Update Dependencies Init/Exit: [{}] | [{}] | [{}] | [{}]",
+        "Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]",
         this.repository.getRepoName(),
         this.scriptFile.getScriptFileName(),
         this.isInit,
