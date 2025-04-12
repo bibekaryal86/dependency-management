@@ -150,7 +150,7 @@ public class UpdateRepoService {
 
     checkGithubRateLimits();
     makeProcessSummaryTask(requestMetadata);
-    executeUpdateContinuedForMergeRetry(requestMetadata);
+    // executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
     stopLogCapture();
     executeTaskQueues();
@@ -521,7 +521,7 @@ public class UpdateRepoService {
       final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories =
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
       for (ProcessSummaries.ProcessSummary.ProcessRepository repository : repositories) {
-        if (repository.getUpdateBranchCreated()) {
+        if (repository.getUpdateBranchCreated().equals(Boolean.TRUE)) {
           addTaskToQueue(
               ConstantUtils.QUEUE_CREATE_PULL_REQUESTS,
               getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
