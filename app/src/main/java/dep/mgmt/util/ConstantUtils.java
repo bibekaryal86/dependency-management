@@ -131,6 +131,7 @@ public class ConstantUtils {
   public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
+  public static final long TASK_DELAY_ZERO = 0L;
   public static final long TASK_DELAY_DEFAULT = 1000; // 1 second
   public static final long TASK_DELAY_PULL_REQUEST = 1000 * 60; // 1 minute
   public static final long TASK_DELAY_PULL_REQUEST_TRY = 1000 * 60 * 5; // 5 minutes
@@ -185,7 +186,6 @@ public class ConstantUtils {
   public static final String TASK_UPDATE_PYTHON_PACKAGES = "UPDATE_PYTHON_PACKAGES";
   public static final String TASK_RESET_EXCLUDED_REPOS = "RESET_EXCLUDED_REPOS";
   public static final String TASK_SET_EXCLUDED_REPOS = "SET_EXCLUDED_REPOS";
-  public static final String TASK_UPDATE_EXCLUDED_REPOS = "UPDATE_EXCLUDED_REPOS";
   public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
   public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
   public static final String TASK_GITHUB_RESET_PULL = "GITHUB_RESET_PULL";
@@ -196,7 +196,8 @@ public class ConstantUtils {
   public static final String TASK_PULL_REQUESTS = "PULL_REQUESTS_%s_%s";
   public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
   public static final String TASK_GITHUB_RATE_LIMIT = "GITHUB_RATE_LIMIT";
-  public static final String TASK_LOG_CAPTURE = "LOG_CAPTURE_";
+  public static final String TASK_LOG_CAPTURE_STOP = "STOP_LOG_CAPTURE";
+  public static final String TASK_LOG_CAPTURE_SAVE = "SAVE_LOG_CAPTURE";
 
   public static final String APPENDER_INIT = "INIT";
   public static final String APPENDER_EXEC = "EXEC";

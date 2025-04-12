@@ -18,7 +18,6 @@ public class GithubConnector {
   private static final Logger log = LoggerFactory.getLogger(GithubConnector.class);
 
   public List<GithubApiModel.ListBranchesResponse> listBranches(final String repoName) {
-    log.info("List Branches: [{}]", repoName);
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url =
         String.format(ConstantUtils.GITHUB_LIST_BRANCHES_ENDPOINT, repoOwner, repoName);
@@ -46,8 +45,6 @@ public class GithubConnector {
 
   public GithubApiModel.CreatePullRequestResponse createPullRequest(
       final String repoName, final String branchName) {
-    log.info("Create Pull Request: [{}] | [{}]", repoName, branchName);
-
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_CREATE_PR_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
@@ -81,8 +78,6 @@ public class GithubConnector {
   }
 
   public List<GithubApiModel.ListPullRequestsResponse> listPullRequests(final String repoName) {
-    log.info("List Pull Requests: [{}]", repoName);
-
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url = String.format(ConstantUtils.GITHUB_LIST_PRS_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
@@ -109,8 +104,6 @@ public class GithubConnector {
 
   public GithubApiModel.MergePullRequestResponse mergePullRequest(
       final String repoName, final Integer pullNumber) {
-    log.info("Merge Pull Request: [{}] | [{}]", repoName, pullNumber);
-
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url =
         String.format(ConstantUtils.GITHUB_MERGE_PR_ENDPOINT, repoOwner, repoName, pullNumber);
@@ -141,8 +134,6 @@ public class GithubConnector {
   }
 
   public GithubApiModel.ListWorkflowRunsResponse listWorkflowRuns(final String repoName) {
-    log.info("List Workflow Runs: [{}]", repoName);
-
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
     final String url =
         String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
@@ -169,7 +160,7 @@ public class GithubConnector {
   }
 
   public GithubApiModel.RateLimitResponse getRateLimits() {
-    log.info("Get GitHub Rate Limits...");
+    log.info("Get GitHub API Rate Limits...");
     final String url = ConstantUtils.GITHUB_RATE_LIMIT_ENDPOINT;
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.RateLimitResponse> response =
@@ -181,7 +172,13 @@ public class GithubConnector {
             headers,
             null);
     if (response.statusCode() == 200) {
+      log.info("{}", response.responseBody());
       return response.responseBody();
+    } else {
+      log.error(
+          "Get GitHub API Rate Limits Error: [{}] | [{}]",
+          response.statusCode(),
+          response.responseBody());
     }
     return null;
   }

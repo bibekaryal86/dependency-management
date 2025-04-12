@@ -3,6 +3,8 @@ package dep.mgmt.service;
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.entity.LogEntryEntity;
 import dep.mgmt.repository.LogEntryRepository;
+import dep.mgmt.util.LogCaptureUtils;
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,8 +24,18 @@ public class LogEntryService {
 
   public void saveLogEntry(final String logs) {
     log.debug("Save Log Entry: [{}]", logs);
+
+    final String logEntries;
+    if (CommonUtilities.isEmpty(logs)) {
+      logEntries = LogCaptureUtils.getCapturedLogs();
+    } else {
+      logEntries = logs;
+    }
+
     CompletableFuture.runAsync(
-            () -> logEntryRepository.insert(new LogEntryEntity(null, LocalDateTime.now(), logs)))
+            () ->
+                logEntryRepository.insert(
+                    new LogEntryEntity(null, LocalDateTime.now(), logEntries)))
         .exceptionally(
             ex -> {
               log.error("Error Saving Log Entry...", ex);

@@ -148,7 +148,7 @@ public class UpdateRepoService {
       executeUpdateMergePullRequests(requestMetadata, isScheduledUpdate);
     }
 
-    logGithubRateLimit();
+    checkGithubRateLimits();
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
@@ -166,32 +166,32 @@ public class UpdateRepoService {
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_APP_DATA + appender,
         CacheConfig::resetAppData,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES + appender,
         CacheConfig::resetGradleDependenciesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_GRADLE_PLUGINS + appender,
         CacheConfig::resetGradlePluginsMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_NODE_DEPENDENCIES + appender,
         CacheConfig::resetNodeDependenciesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_PYTHON_PACKAGES + appender,
         CacheConfig::resetPythonPackagesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_RESET + appender,
         ConstantUtils.TASK_RESET_EXCLUDED_REPOS + appender,
         CacheConfig::resetExcludedReposMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private void setCaches(final String appender) {
@@ -204,27 +204,27 @@ public class UpdateRepoService {
         ConstantUtils.QUEUE_SET + appender,
         ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES + appender,
         gradleDependencyVersionService::getGradleDependenciesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_SET + appender,
         ConstantUtils.TASK_SET_GRADLE_PLUGINS + appender,
         gradlePluginVersionService::getGradlePluginsMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_SET + appender,
         ConstantUtils.TASK_SET_NODE_DEPENDENCIES + appender,
         nodeDependencyVersionService::getNodeDependenciesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_SET + appender,
         ConstantUtils.TASK_SET_PYTHON_PACKAGES + appender,
         pythonPackageVersionService::getPythonPackagesMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_SET + appender,
         ConstantUtils.TASK_SET_EXCLUDED_REPOS + appender,
         excludedRepoService::getExcludedReposMap,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   public void recreateRemoteCaches() {
@@ -234,22 +234,22 @@ public class UpdateRepoService {
         ConstantUtils.QUEUE_UPDATE,
         ConstantUtils.TASK_UPDATE_GRADLE_DEPENDENCIES,
         gradleDependencyVersionService::updateGradleDependencies,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_UPDATE,
         ConstantUtils.TASK_UPDATE_GRADLE_PLUGINS,
         gradlePluginVersionService::updateGradlePlugins,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_UPDATE,
         ConstantUtils.TASK_UPDATE_NODE_DEPENDENCIES,
         nodeDependencyVersionService::updateNodeDependencies,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_UPDATE,
         ConstantUtils.TASK_UPDATE_PYTHON_PACKAGES,
         pythonPackageVersionService::updatePythonPackages,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     setCaches(ConstantUtils.APPENDER_REMOTE);
   }
 
@@ -258,7 +258,7 @@ public class UpdateRepoService {
         ConstantUtils.QUEUE_FILES,
         ConstantUtils.TASK_DELETE_SCRIPT_FILES,
         scriptUtils::deleteTempScriptFiles,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_FILES,
         ConstantUtils.TASK_CREATE_SCRIPT_FILES,
@@ -322,7 +322,7 @@ public class UpdateRepoService {
         ConstantUtils.TASK_NPM_SNAPSHOTS + ConstantUtils.APPENDER_QUEUE_NAME,
         ConstantUtils.TASK_NPM_SNAPSHOTS + ConstantUtils.APPENDER_TASK_NAME,
         () -> new UpdateNpmSnapshots(repositories, scriptFile, branchName).execute(),
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private void executeGradleSpotlessUpdate(final LocalDate branchDate, final String repoName) {
@@ -352,7 +352,7 @@ public class UpdateRepoService {
         ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_QUEUE_NAME,
         ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_TASK_NAME,
         () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute(),
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private void executeGithubBranchDelete(
@@ -374,7 +374,7 @@ public class UpdateRepoService {
           () ->
               new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly)
                   .execute(),
-          Long.MIN_VALUE);
+          ConstantUtils.TASK_DELAY_ZERO);
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -397,7 +397,7 @@ public class UpdateRepoService {
           () ->
               new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly)
                   .execute(),
-          Long.MIN_VALUE);
+          ConstantUtils.TASK_DELAY_ZERO);
     }
   }
 
@@ -417,7 +417,7 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute(),
-          Long.MIN_VALUE);
+          ConstantUtils.TASK_DELAY_ZERO);
     } else {
       final AppDataRepository repository =
           appData.getRepositories().stream()
@@ -438,7 +438,7 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute(),
-          Long.MIN_VALUE);
+          ConstantUtils.TASK_DELAY_ZERO);
     }
   }
 
@@ -496,7 +496,7 @@ public class UpdateRepoService {
             repository.getRepoName(),
             isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
         () -> new UpdateDependencies(repository, scriptFile, isInit).execute(),
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private void executeUpdateDependenciesExec(
@@ -508,7 +508,7 @@ public class UpdateRepoService {
         getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
         getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
         () -> new UpdateDependencies(repository, scriptFile, branchName).execute(),
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private void executeUpdateCreatePullRequests(
@@ -559,7 +559,7 @@ public class UpdateRepoService {
           () ->
               githubService.createGithubPullRequest(
                   requestRepoName, requestMetadata.getBranchDate()),
-          Long.MIN_VALUE);
+          ConstantUtils.TASK_DELAY_ZERO);
     }
   }
 
@@ -666,7 +666,7 @@ public class UpdateRepoService {
             + "_"
             + (isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
         ProcessUtils::resetProcessedRepositoriesAndSummary,
-        Long.MIN_VALUE);
+        ConstantUtils.TASK_DELAY_ZERO);
   }
 
   private String getUpdateDependenciesTaskName(final String repoName, final String appender) {
@@ -716,13 +716,12 @@ public class UpdateRepoService {
     log.info("Make Process Summary: [ {} ] | [ {} ]", isSendEmail, updateType);
 
     ProcessSummaries.ProcessSummary processSummary = processSummary(updateType);
-    final String attachment = LogCaptureUtils.getCapturedLogs();
-    logEntryService.saveLogEntry(attachment);
 
     if (isSendEmail) {
       final String subject = "Dependency Management Scheduled Update Logs";
       final String html = ProcessSummaryEmailUtils.getProcessSummaryContent(processSummary);
       // log.debug(html);
+      final String attachment = LogCaptureUtils.getCapturedLogs();
       final String attachmentFileName =
           String.format("dep_mgmt_scheduled_update_logs_%s.log", LocalDate.now());
       emailService.sendEmail(subject, html, attachmentFileName, attachment);
@@ -784,7 +783,7 @@ public class UpdateRepoService {
     return processSummary;
   }
 
-  private void logGithubRateLimit() {
+  private void checkGithubRateLimits() {
     addTaskToQueue(
         ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_QUEUE_NAME,
         ConstantUtils.TASK_GITHUB_RATE_LIMIT + ConstantUtils.APPENDER_TASK_NAME,
@@ -793,13 +792,19 @@ public class UpdateRepoService {
   }
 
   private void stopLogCapture() {
+    // save log capture
     addTaskToQueue(
-        ConstantUtils.TASK_LOG_CAPTURE
-            + ConstantUtils.APPENDER_EXIT
-            + ConstantUtils.APPENDER_QUEUE_NAME,
-        ConstantUtils.TASK_LOG_CAPTURE
-            + ConstantUtils.APPENDER_EXIT
-            + ConstantUtils.APPENDER_TASK_NAME,
+        ConstantUtils.TASK_LOG_CAPTURE_SAVE + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_LOG_CAPTURE_SAVE + ConstantUtils.APPENDER_TASK_NAME,
+        () -> {
+          logEntryService.saveLogEntry(null);
+        },
+        ConstantUtils.TASK_DELAY_DEFAULT);
+
+    // stop log capture
+    addTaskToQueue(
+        ConstantUtils.TASK_LOG_CAPTURE_STOP + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_LOG_CAPTURE_STOP + ConstantUtils.APPENDER_TASK_NAME,
         LogCaptureUtils::stop,
         ConstantUtils.TASK_DELAY_DEFAULT);
   }
