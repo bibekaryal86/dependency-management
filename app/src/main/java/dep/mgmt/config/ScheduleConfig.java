@@ -47,15 +47,15 @@ public class ScheduleConfig {
     final ZonedDateTime executionTime =
         getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_UPDATE_REPO);
     final long initialDelay = Duration.between(now, executionTime).toMillis();
+    final long period = TimeUnit.DAYS.toMillis(1);
 
-    scheduler.schedule(
+    scheduler.scheduleAtFixedRate(
         () -> {
           log.info("Starting Scheduler to Update Repos...");
           updateRepoService.scheduledUpdate();
-          // schedule the next execution
-          updateReposSchedule();
         },
         initialDelay,
+        period,
         TimeUnit.MILLISECONDS);
   }
 
@@ -64,15 +64,15 @@ public class ScheduleConfig {
     final ZonedDateTime executionTime =
         getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES);
     final long initialDelay = Duration.between(now, executionTime).toMillis();
+    final long period = TimeUnit.DAYS.toMillis(1);
 
-    scheduler.schedule(
+    scheduler.scheduleAtFixedRate(
         () -> {
           log.info("Starting Scheduler to Cleanup Process Summaries...");
           processSummaryService.scheduledCleanup();
-          // Schedule the next execution
-          cleanupProcessSummariesSchedule();
         },
         initialDelay,
+        period,
         TimeUnit.MILLISECONDS);
   }
 
