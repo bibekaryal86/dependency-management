@@ -57,6 +57,7 @@ public class ConstantUtils {
   public static final String MONGODB_COLLECTION_PROCESS_SUMMARY = "process_summary";
   public static final String MONGODB_COLLECTION_PYTHON_PACKAGE = "python_package";
   public static final String MONGODB_COLLECTION_EXCLUDED_REPO = "excluded_repo";
+  public static final String MONGODB_COLLECTION_LOG_ENTRY = "log_entry";
   public static final String MONGODB_COLUMN_ID = "_id";
   public static final String MONGODB_COLUMN_NAME = "name";
   public static final String MONGODB_COLUMN_UPDATE_DATETIME = "updateDateTime";

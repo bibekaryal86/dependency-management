@@ -2,9 +2,11 @@ package dep.mgmt.util;
 
 import dep.mgmt.model.Dependencies;
 import dep.mgmt.model.ExcludedRepos;
+import dep.mgmt.model.LogEntry;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.ExcludedRepoEntity;
+import dep.mgmt.model.entity.LogEntryEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import java.util.List;
 
@@ -127,6 +129,15 @@ public class ConvertUtils {
       final List<ExcludedRepoEntity> excludedRepoEntities) {
     return excludedRepoEntities.stream()
         .map(excludedRepoEntity -> new ExcludedRepos.ExcludedRepo(excludedRepoEntity.getName()))
+        .toList();
+  }
+
+  public static List<LogEntry> convertLogEntryEntities(
+      final List<LogEntryEntity> logEntryEntities) {
+    return logEntryEntities.stream()
+        .map(
+            logEntryEntity ->
+                new LogEntry(logEntryEntity.getUpdateDateTime(), logEntryEntity.getLogEntries()))
         .toList();
   }
 }

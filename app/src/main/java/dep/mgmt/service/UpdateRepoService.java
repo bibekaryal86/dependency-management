@@ -43,6 +43,7 @@ public class UpdateRepoService {
   private final ExcludedRepoService excludedRepoService;
   private final GithubService githubService;
   private final EmailService emailService;
+  private final LogEntryService logEntryService;
   private final ProcessSummaryService processSummaryService;
   private final ScriptUtils scriptUtils;
 
@@ -54,6 +55,7 @@ public class UpdateRepoService {
     this.excludedRepoService = new ExcludedRepoService();
     this.githubService = new GithubService();
     this.emailService = new EmailService();
+    this.logEntryService = new LogEntryService();
     this.processSummaryService = new ProcessSummaryService();
     this.scriptUtils = new ScriptUtils();
   }
@@ -708,12 +710,13 @@ public class UpdateRepoService {
     }
 
     if (isSendEmail && processSummary != null) {
-      String subject = "Dependency Management Scheduled Update Logs";
-      String html = ProcessSummaryEmailUtils.getProcessSummaryContent(processSummary);
+      final String subject = "Dependency Management Scheduled Update Logs";
+      final String html = ProcessSummaryEmailUtils.getProcessSummaryContent(processSummary);
       // log.debug(html);
-      String attachmentFileName =
+      final String attachmentFileName =
           String.format("dep_mgmt_scheduled_update_logs_%s.log", LocalDate.now());
-      String attachment = LogCaptureUtils.getCapturedLogs();
+      final String attachment = LogCaptureUtils.getCapturedLogs();
+      logEntryService.saveLogEntry(attachment);
       emailService.sendEmail(subject, html, attachmentFileName, attachment);
     }
   }

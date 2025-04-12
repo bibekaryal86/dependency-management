@@ -6,6 +6,7 @@ import io.github.bibekaryal86.shdsvc.dtos.EmailRequest;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +28,13 @@ public class EmailService {
     log.info("Sending Email...");
     final EmailRequest emailRequest =
         buildEmailRequest(subject, html, attachmentFileName, attachment);
-    email.sendEmail(emailRequest);
-    log.info("Email Sent...");
+    CompletableFuture.runAsync(() -> email.sendEmail(emailRequest))
+        .exceptionally(
+            ex -> {
+              log.error("Error Sending Email...", ex);
+              return null;
+            });
+    log.info("Email Request Sent...");
   }
 
   private EmailRequest buildEmailRequest(
