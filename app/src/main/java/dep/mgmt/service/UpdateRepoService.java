@@ -693,30 +693,22 @@ public class UpdateRepoService {
   }
 
   private void makeProcessSummary(final RequestMetadata requestMetadata) {
-    final boolean isProcessSummaryRequired = requestMetadata.getProcessSummaryRequired();
     final RequestParams.UpdateType updateType = requestMetadata.getUpdateType();
     boolean isSendEmail =
         "true".equals(AppDataUtils.getAppData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
 
-    log.info(
-        "Make Process Summary: [ {} ] | [ {} ] | [ {} ]",
-        isSendEmail,
-        isProcessSummaryRequired,
-        updateType);
+    log.info("Make Process Summary: [ {} ] | [ {} ]", isSendEmail, updateType);
 
-    ProcessSummaries.ProcessSummary processSummary = null;
-    if (isProcessSummaryRequired) {
-      processSummary = processSummary(updateType);
-    }
+    ProcessSummaries.ProcessSummary processSummary = processSummary(updateType);
+    final String attachment = LogCaptureUtils.getCapturedLogs();
+    logEntryService.saveLogEntry(attachment);
 
-    if (isSendEmail && processSummary != null) {
+    if (isSendEmail) {
       final String subject = "Dependency Management Scheduled Update Logs";
       final String html = ProcessSummaryEmailUtils.getProcessSummaryContent(processSummary);
       // log.debug(html);
       final String attachmentFileName =
           String.format("dep_mgmt_scheduled_update_logs_%s.log", LocalDate.now());
-      final String attachment = LogCaptureUtils.getCapturedLogs();
-      logEntryService.saveLogEntry(attachment);
       emailService.sendEmail(subject, html, attachmentFileName, attachment);
     }
   }
