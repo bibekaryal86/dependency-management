@@ -185,7 +185,7 @@ public class TaskQueues {
         Object result = null;
         Future<Object> future = null;
         final long delayMillisGet = delayMillis.get();
-        final long timeoutMillis = delayMillisGet > 0 ? delayMillisGet + 60_000 : 60_000;
+        final long timeoutMillis = delayMillisGet > 0 ? delayMillisGet + 300_000 : 300_000;
 
         try {
           future =
