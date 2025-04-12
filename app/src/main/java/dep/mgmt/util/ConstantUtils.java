@@ -162,6 +162,7 @@ public class ConstantUtils {
   // UPDATES
   public static final String QUEUE_RESET = "RESET_DATA";
   public static final String QUEUE_SET = "SET_DATA";
+  public static final String QUEUE_UPDATE = "UPDATE_DATA";
   public static final String QUEUE_FILES = "RECREATE_FILES";
   public static final String QUEUE_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s";
   public static final String QUEUE_CREATE_PULL_REQUESTS = "PULL_REQUESTS_CREATE";
@@ -172,14 +173,19 @@ public class ConstantUtils {
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
   public static final String TASK_RESET_GRADLE_DEPENDENCIES = "RESET_GRADLE_DEPENDENCIES";
   public static final String TASK_SET_GRADLE_DEPENDENCIES = "SET_GRADLE_DEPENDENCIES";
+  public static final String TASK_UPDATE_GRADLE_DEPENDENCIES = "UPDATE_GRADLE_DEPENDENCIES";
   public static final String TASK_RESET_GRADLE_PLUGINS = "RESET_GRADLE_PLUGINS";
   public static final String TASK_SET_GRADLE_PLUGINS = "SET_GRADLE_PLUGINS";
+  public static final String TASK_UPDATE_GRADLE_PLUGINS = "UPDATE_GRADLE_PLUGINS";
   public static final String TASK_RESET_NODE_DEPENDENCIES = "RESET_NODE_DEPENDENCIES";
   public static final String TASK_SET_NODE_DEPENDENCIES = "SET_NODE_DEPENDENCIES";
+  public static final String TASK_UPDATE_NODE_DEPENDENCIES = "UPDATE_NODE_DEPENDENCIES";
   public static final String TASK_RESET_PYTHON_PACKAGES = "RESET_PYTHON_PACKAGES";
   public static final String TASK_SET_PYTHON_PACKAGES = "SET_PYTHON_PACKAGES";
+  public static final String TASK_UPDATE_PYTHON_PACKAGES = "UPDATE_PYTHON_PACKAGES";
   public static final String TASK_RESET_EXCLUDED_REPOS = "RESET_EXCLUDED_REPOS";
   public static final String TASK_SET_EXCLUDED_REPOS = "SET_EXCLUDED_REPOS";
+  public static final String TASK_UPDATE_EXCLUDED_REPOS = "UPDATE_EXCLUDED_REPOS";
   public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
   public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
   public static final String TASK_GITHUB_RESET_PULL = "GITHUB_RESET_PULL";
@@ -198,6 +204,8 @@ public class ConstantUtils {
   public static final String APPENDER_QUEUE_NAME = "_QUEUE";
   public static final String APPENDER_TASK_NAME = "_TASK";
   public static final String APPENDER_RETRY = "_RETRY";
+  public static final String APPENDER_LOCAL = "_LOCAL";
+  public static final String APPENDER_REMOTE = "_REMOTE";
 
   public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
   public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";

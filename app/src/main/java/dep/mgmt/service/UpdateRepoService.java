@@ -157,84 +157,100 @@ public class UpdateRepoService {
   }
 
   public void recreateLocalCaches() {
-    resetCaches();
-    setCaches();
+    resetCaches(ConstantUtils.APPENDER_LOCAL);
+    setCaches(ConstantUtils.APPENDER_LOCAL);
   }
 
-  private void resetCaches() {
+  private void resetCaches(final String appender) {
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_APP_DATA,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_APP_DATA + appender,
         CacheConfig::resetAppData,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES + appender,
         CacheConfig::resetGradleDependenciesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_GRADLE_PLUGINS,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_GRADLE_PLUGINS + appender,
         CacheConfig::resetGradlePluginsMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_NODE_DEPENDENCIES,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_NODE_DEPENDENCIES + appender,
         CacheConfig::resetNodeDependenciesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_PYTHON_PACKAGES,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_PYTHON_PACKAGES + appender,
         CacheConfig::resetPythonPackagesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_RESET,
-        ConstantUtils.TASK_RESET_EXCLUDED_REPOS,
+        ConstantUtils.QUEUE_RESET + appender,
+        ConstantUtils.TASK_RESET_EXCLUDED_REPOS + appender,
         CacheConfig::resetExcludedReposMap,
         Long.MIN_VALUE);
   }
 
-  private void setCaches() {
+  private void setCaches(final String appender) {
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_APP_DATA,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_APP_DATA + appender,
         AppDataUtils::setAppData,
         ConstantUtils.TASK_DELAY_DEFAULT);
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES + appender,
         gradleDependencyVersionService::getGradleDependenciesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_GRADLE_PLUGINS,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_GRADLE_PLUGINS + appender,
         gradlePluginVersionService::getGradlePluginsMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_NODE_DEPENDENCIES,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_NODE_DEPENDENCIES + appender,
         nodeDependencyVersionService::getNodeDependenciesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_PYTHON_PACKAGES,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_PYTHON_PACKAGES + appender,
         pythonPackageVersionService::getPythonPackagesMap,
         Long.MIN_VALUE);
     addTaskToQueue(
-        ConstantUtils.QUEUE_SET,
-        ConstantUtils.TASK_SET_EXCLUDED_REPOS,
+        ConstantUtils.QUEUE_SET + appender,
+        ConstantUtils.TASK_SET_EXCLUDED_REPOS + appender,
         excludedRepoService::getExcludedReposMap,
         Long.MIN_VALUE);
   }
 
   public void recreateRemoteCaches() {
     // clear and set caches after pull (gradle version in repo could have changed)
-    resetCaches();
-    gradleDependencyVersionService.updateGradleDependencies();
-    gradlePluginVersionService.updateGradlePlugins();
-    nodeDependencyVersionService.updateNodeDependencies();
-    pythonPackageVersionService.updatePythonPackages();
-    setCaches();
+    resetCaches(ConstantUtils.APPENDER_REMOTE);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_UPDATE,
+        ConstantUtils.TASK_UPDATE_GRADLE_DEPENDENCIES,
+        gradleDependencyVersionService::updateGradleDependencies,
+        Long.MIN_VALUE);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_UPDATE,
+        ConstantUtils.TASK_UPDATE_GRADLE_PLUGINS,
+        gradlePluginVersionService::updateGradlePlugins,
+        Long.MIN_VALUE);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_UPDATE,
+        ConstantUtils.TASK_UPDATE_NODE_DEPENDENCIES,
+        nodeDependencyVersionService::updateNodeDependencies,
+        Long.MIN_VALUE);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_UPDATE,
+        ConstantUtils.TASK_UPDATE_PYTHON_PACKAGES,
+        pythonPackageVersionService::updatePythonPackages,
+        Long.MIN_VALUE);
+    setCaches(ConstantUtils.APPENDER_REMOTE);
   }
 
   private void recreateScriptFiles() {

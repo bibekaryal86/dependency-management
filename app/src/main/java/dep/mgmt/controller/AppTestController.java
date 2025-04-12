@@ -43,6 +43,7 @@ public class AppTestController {
         ServerUtils.sendResponse(
             ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
         updateRepoService.recreateLocalCaches();
+        updateRepoService.executeTaskQueues();
       }
       case Endpoints.APP_TESTS_RATE -> {
         GithubApiModel.RateLimitResponse rateLimitResponse =
