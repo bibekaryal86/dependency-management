@@ -558,7 +558,7 @@ public class UpdateRepoService {
           getPullRequestsTaskName(requestRepoName, ConstantUtils.APPENDER_INIT),
           () ->
               githubService.createGithubPullRequest(
-                  requestRepoName, requestMetadata.getBranchDate()),
+                  repository.getRepoName(), requestMetadata.getBranchDate()),
           ConstantUtils.TASK_DELAY_ZERO);
     }
   }
@@ -574,7 +574,7 @@ public class UpdateRepoService {
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
       for (int i = 0; i < repositories.size(); i++) {
         ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
-        if (repository.getPrCreated()) {
+        if (repository.getPrCreated().equals(Boolean.TRUE)) {
           addTaskToQueue(
               ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
               getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
