@@ -46,7 +46,7 @@ public class ExecuteScriptFile {
   public void executeScript() {
     if (isRunAsync) {
       runAsync();
-      log.info("Script execution started asynchronously: [{}]", scriptPath);
+      log.info("Script execution started asynchronously: [{}] | [{}]", scriptPath, repoName);
     } else {
       runSync();
     }
@@ -59,7 +59,7 @@ public class ExecuteScriptFile {
                 Process process = startProcess();
                 processOutput(process);
               } catch (Exception ex) {
-                log.error("Error in Execute Script (async): ", ex);
+                log.error("Error in Execute Script (async): [{}] | [{}]", scriptPath, repoName, ex);
               }
             })
         .start();
@@ -70,7 +70,7 @@ public class ExecuteScriptFile {
       Process process = startProcess();
       processOutput(process);
     } catch (Exception ex) {
-      log.error("Error in Execute Script: ", ex);
+      log.error("Error in Execute Script: [{}] | [{}]", scriptPath, repoName, ex);
     }
   }
 
@@ -121,15 +121,23 @@ public class ExecuteScriptFile {
       }
 
       if (isError) {
-        log.info("ERROR in Process: [ {} ]\n{}", this.scriptPath, stringBuilder);
+        log.info(
+            "ERROR in Process: [{}] | [{}]\n{}", this.scriptPath, this.repoName, stringBuilder);
       } else {
-        log.debug("Process output: [ {} ]\n{}", this.scriptPath, stringBuilder);
+        log.debug(
+            "Process output: [{}] | [{}] \n{}", this.scriptPath, this.repoName, stringBuilder);
       }
 
       checkProcessedRepository(stringBuilder);
     } catch (IOException ex) {
       throw new IOException(
-          "Error in Process Stream Output: " + ", " + this.scriptPath + ex.getCause().getMessage());
+          "Error in Process Stream Output: "
+              + ", "
+              + this.scriptPath
+              + " | "
+              + this.repoName
+              + "---"
+              + ex.getCause().getMessage());
     }
   }
 
