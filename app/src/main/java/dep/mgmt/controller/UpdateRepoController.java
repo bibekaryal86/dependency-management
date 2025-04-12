@@ -54,7 +54,7 @@ public class UpdateRepoController {
   private RequestMetadata getRequestMetadata(final FullHttpRequest fullHttpRequest) {
     final RequestMetadata requestMetadata =
         ServerUtils.getRequestBody(fullHttpRequest, RequestMetadata.class);
-    if (requestMetadata == null) {
+    if (requestMetadata == null || requestMetadata.getUpdateType() == null) {
       return null;
     }
 
@@ -62,10 +62,12 @@ public class UpdateRepoController {
         requestMetadata.getUpdateType(),
         Optional.ofNullable(requestMetadata.getRecreateCaches()).orElse(false),
         Optional.ofNullable(requestMetadata.getRecreateScriptFiles()).orElse(false),
-        Optional.ofNullable(requestMetadata.getGithubResetRequired()).orElse(false),
-        Optional.ofNullable(requestMetadata.getIsGithubPullRequired()).orElse(false),
+        Optional.ofNullable(requestMetadata.getGithubResetRequired())
+            .orElse(requestMetadata.getUpdateType().equals(RequestParams.UpdateType.RESET)),
+        Optional.ofNullable(requestMetadata.getIsGithubPullRequired())
+            .orElse(requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PULL)),
         Optional.ofNullable(requestMetadata.getProcessSummaryRequired()).orElse(false),
-        Optional.ofNullable(requestMetadata.getDeleteUpdateDependenciesOnly()).orElse(false),
+        Optional.ofNullable(requestMetadata.getDeleteUpdateDependenciesOnly()).orElse(true),
         Optional.ofNullable(requestMetadata.getIncludeDebugLogs()).orElse(false),
         Optional.ofNullable(requestMetadata.getBranchDate()).orElse(LocalDate.now()),
         requestMetadata.getRepoName());
