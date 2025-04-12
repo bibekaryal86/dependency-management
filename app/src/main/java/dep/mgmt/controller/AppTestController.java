@@ -65,7 +65,7 @@ public class AppTestController {
         final LocalDate logDate = getLogDate(logDateParam);
         if (logDate == null) {
           ServerUtils.sendResponse(
-              ctx, "Invalid Log Date Parameter...", HttpResponseStatus.BAD_REQUEST);
+              ctx, "Invalid Log Date Value/Format...", HttpResponseStatus.BAD_REQUEST);
         } else {
           final List<LogEntryEntity> logEntryEntities = logEntryService.getLogEntries(logDate);
           final List<LogEntry> logEntries = ConvertUtils.convertLogEntryEntities(logEntryEntities);
