@@ -41,7 +41,7 @@ public class UpdateRepoController {
           return;
         }
 
-        updateRepoService.updateRepos(requestMetadata, Boolean.FALSE);
+        updateRepoService.updateRepos(requestMetadata);
         ServerUtils.sendResponse(
             ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
       }
