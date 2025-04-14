@@ -153,8 +153,6 @@ public class UpdateRepoService {
       executeUpdateMergePullRequests(requestMetadata);
     }
 
-    checkGithubRateLimits();
-    makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
     executeTaskQueues();
@@ -266,7 +264,8 @@ public class UpdateRepoService {
   }
 
   private void updateInit(final RequestMetadata requestMetadata) {
-    resetProcessedSummaries(Boolean.TRUE);
+    // this needs to be executed before adding to tasks
+    ProcessUtils.resetProcessedRepositoriesAndSummary();
 
     if (requestMetadata.getRecreateCaches()) {
       recreateLocalCaches();
@@ -290,9 +289,11 @@ public class UpdateRepoService {
   }
 
   private void updateExit(final RequestMetadata requestMetadata) {
+    checkGithubRateLimits();
     executeUpdateDependencies(requestMetadata, Boolean.TRUE);
+    makeProcessSummaryTask(requestMetadata);
+    resetProcessedSummariesTask();
     stopLogCapture();
-    resetProcessedSummaries(Boolean.FALSE);
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
@@ -653,16 +654,10 @@ public class UpdateRepoService {
     return String.format(ConstantUtils.QUEUE_UPDATE_DEPENDENCIES, appender);
   }
 
-  private void resetProcessedSummaries(final boolean isInit) {
+  private void resetProcessedSummariesTask() {
     addTaskToQueue(
-        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES
-            + ConstantUtils.APPENDER_QUEUE_NAME
-            + "_"
-            + (isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
-        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES
-            + ConstantUtils.APPENDER_TASK_NAME
-            + "_"
-            + (isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + ConstantUtils.APPENDER_QUEUE_NAME,
+        ConstantUtils.TASK_RESET_PROCESS_SUMMARIES + ConstantUtils.APPENDER_TASK_NAME,
         ProcessUtils::resetProcessedRepositoriesAndSummary,
         ConstantUtils.TASK_DELAY_ZERO);
   }
@@ -689,7 +684,6 @@ public class UpdateRepoService {
     } else {
       taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(taskName, action, delayMillis));
     }
-    ProcessUtils.addProcessedTasks(queueName, taskName);
   }
 
   private void makeProcessSummaryTask(final RequestMetadata requestMetadata) {

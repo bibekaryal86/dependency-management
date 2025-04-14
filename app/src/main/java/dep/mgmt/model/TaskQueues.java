@@ -136,6 +136,7 @@ public class TaskQueues {
     }
 
     public void addTask(OneTask task) {
+      ProcessUtils.addProcessedTasks(name, task.getName());
       queue.offer(task);
     }
 
