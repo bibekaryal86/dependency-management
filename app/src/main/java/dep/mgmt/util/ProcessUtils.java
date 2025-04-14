@@ -137,10 +137,6 @@ public class ProcessUtils {
     return processedTasks;
   }
 
-  public static void resetProcessedTasks() {
-    processedTasks = new ConcurrentHashMap<>();
-  }
-
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
     repositoriesToRetryMerge = new HashSet<>();

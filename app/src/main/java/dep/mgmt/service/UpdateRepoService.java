@@ -87,7 +87,7 @@ public class UpdateRepoService {
   public void clearTaskQueues() {
     log.info("Clear Task Queues...");
     taskQueues.clearQueue();
-    ProcessUtils.resetProcessedTasks();
+    ProcessUtils.resetProcessedRepositoriesAndSummary();
   }
 
   public void recreateLocalCaches() {
@@ -157,7 +157,6 @@ public class UpdateRepoService {
     makeProcessSummaryTask(requestMetadata);
     executeUpdateContinuedForMergeRetry(requestMetadata);
     updateExit(requestMetadata);
-    stopLogCapture();
     executeTaskQueues();
   }
 
@@ -292,6 +291,7 @@ public class UpdateRepoService {
 
   private void updateExit(final RequestMetadata requestMetadata) {
     executeUpdateDependencies(requestMetadata, Boolean.TRUE);
+    stopLogCapture();
     resetProcessedSummaries(Boolean.FALSE);
   }
 
