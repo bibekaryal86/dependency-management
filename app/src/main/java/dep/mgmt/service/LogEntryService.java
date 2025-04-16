@@ -32,15 +32,17 @@ public class LogEntryService {
       logEntries = logs;
     }
 
-    CompletableFuture.runAsync(
-            () ->
-                logEntryRepository.insert(
-                    new LogEntryEntity(null, LocalDateTime.now(), logEntries)))
-        .exceptionally(
-            ex -> {
-              log.error("Error Saving Log Entry...", ex);
-              return null;
-            });
+    if (!CommonUtilities.isEmpty(logEntries)) {
+      CompletableFuture.runAsync(
+              () ->
+                  logEntryRepository.insert(
+                      new LogEntryEntity(null, LocalDateTime.now(), logEntries)))
+          .exceptionally(
+              ex -> {
+                log.error("Error Saving Log Entry...", ex);
+                return null;
+              });
+    }
   }
 
   public List<LogEntryEntity> getLogEntries(final LocalDate logDate) {
