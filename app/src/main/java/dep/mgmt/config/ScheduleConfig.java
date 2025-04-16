@@ -15,7 +15,14 @@ import org.slf4j.LoggerFactory;
 /** simple scheduler without using any third party library */
 public class ScheduleConfig {
   private static final Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
-  private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  private static final ScheduledExecutorService scheduler =
+      Executors.newScheduledThreadPool(
+          1,
+          runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setDaemon(true); // Allow JVM to exit if this is the only thread left
+            return thread;
+          });
 
   private static final UpdateRepoService updateRepoService = new UpdateRepoService();
   private static final ProcessSummaryService processSummaryService = new ProcessSummaryService();
