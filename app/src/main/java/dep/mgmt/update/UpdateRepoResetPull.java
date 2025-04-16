@@ -16,38 +16,44 @@ public class UpdateRepoResetPull {
   private final AppDataScriptFile scriptFile;
   private final boolean isReset;
   private final boolean isPull;
+  private final boolean isRunAsync;
 
   public UpdateRepoResetPull(
       final String repoHome,
       final AppDataScriptFile scriptFile,
       final boolean isReset,
-      final boolean isPull) {
+      final boolean isPull,
+      final boolean isRunAsync) {
     this.repoHome = repoHome;
     this.repository = null;
     this.scriptFile = scriptFile;
     this.isReset = isReset;
     this.isPull = isPull;
+    this.isRunAsync = isRunAsync;
   }
 
   public UpdateRepoResetPull(
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
       final boolean isReset,
-      final boolean isPull) {
+      final boolean isPull,
+      final boolean isRunAsync) {
     this.repoHome = null;
     this.repository = repository;
     this.scriptFile = scriptFile;
     this.isReset = isReset;
     this.isPull = isPull;
+    this.isRunAsync = isRunAsync;
   }
 
   public void execute() {
     log.info(
-        "Execute Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}]",
+        "Execute Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}] | [{}]",
         this.repoHome,
         this.repository,
         this.isReset,
-        this.isPull);
+        this.isPull,
+        this.isRunAsync);
     List<String> arguments = new LinkedList<>();
     if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
       arguments.add(this.repository.getRepoPath().toString());
@@ -58,7 +64,7 @@ public class UpdateRepoResetPull {
     }
     arguments.add(String.valueOf(this.isReset));
     arguments.add(String.valueOf(this.isPull));
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, this.repository)
+    new ExecuteScriptFile(this.scriptFile, arguments, this.isRunAsync, this.repository)
         .executeScript();
   }
 }

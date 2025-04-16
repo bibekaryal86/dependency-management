@@ -280,7 +280,9 @@ public class UpdateRepoService {
       executeUpdateGithubResetPull(
           requestMetadata.getGithubResetRequired(),
           requestMetadata.getIsGithubPullRequired(),
-          requestMetadata.getRepoName());
+          requestMetadata.getRepoName(),
+          (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.RESET)
+              || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PULL)));
 
       if (requestMetadata.getRecreateCaches()) {
         recreateRemoteCaches();
@@ -403,7 +405,10 @@ public class UpdateRepoService {
   }
 
   private void executeUpdateGithubResetPull(
-      final boolean isReset, final boolean isPull, final String repoName) {
+      final boolean isReset,
+      final boolean isPull,
+      final String repoName,
+      final boolean isRunAsync) {
     final AppData appData = AppDataUtils.getAppData();
 
     if (CommonUtilities.isEmpty(repoName)) {
@@ -417,7 +422,8 @@ public class UpdateRepoService {
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
-          () -> new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull).execute(),
+          () ->
+              new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull, isRunAsync).execute(),
           ConstantUtils.TASK_DELAY_ZERO);
     } else {
       final AppDataRepository repository =
@@ -438,7 +444,9 @@ public class UpdateRepoService {
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
-          () -> new UpdateRepoResetPull(repository, scriptFile, isReset, isPull).execute(),
+          () ->
+              new UpdateRepoResetPull(repository, scriptFile, isReset, isPull, isRunAsync)
+                  .execute(),
           ConstantUtils.TASK_DELAY_ZERO);
     }
   }
