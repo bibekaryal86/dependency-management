@@ -748,7 +748,9 @@ public class UpdateRepoService {
     final Integer totalPrMergeErrorCount = ProcessUtils.getRepositoriesToRetryMerge().size();
 
     List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks =
-        ProcessUtils.getProcessedTasks().values().stream().toList();
+        ProcessUtils.getProcessedTasks().values().stream()
+            .sorted(Comparator.comparing(ProcessSummaries.ProcessSummary.ProcessTask::getAdded))
+            .toList();
     final ProcessSummaries.ProcessSummary processSummary =
         new ProcessSummaries.ProcessSummary(
             LocalDateTime.now(),
