@@ -2,6 +2,7 @@ package dep.mgmt.service;
 
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppData;
+import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.ProcessSummaries;
@@ -9,6 +10,9 @@ import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
+import dep.mgmt.update.GradleProjectUpdate;
+import dep.mgmt.update.NodeProjectUpdate;
+import dep.mgmt.update.PythonProjectUpdate;
 import dep.mgmt.update.UpdateBranchDelete;
 import dep.mgmt.update.UpdateDependencies;
 import dep.mgmt.update.UpdateGradleSpotless;
@@ -136,6 +140,7 @@ public class UpdateRepoService {
       case ALL, GRADLE, NODE, PYTHON -> {
         isPrCreateRequired = true;
         isPrMergeRequired = true;
+        executeUpdateRepositories(requestMetadata);
         executeUpdateDependencies(requestMetadata, Boolean.FALSE);
       }
       default ->
@@ -515,6 +520,80 @@ public class UpdateRepoService {
         getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
         getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
         () -> UpdateDependencies.execute(repository, scriptFile, branchName, Boolean.FALSE),
+        ConstantUtils.TASK_DELAY_ZERO);
+  }
+
+  private void executeUpdateRepositories(final RequestMetadata requestMetadata) {
+    final AppData appData = AppDataUtils.getAppData();
+    final String repoName = requestMetadata.getRepoName();
+
+    final List<AppDataRepository> repositories =
+        appData.getRepositories().stream()
+            .filter(
+                repository ->
+                    CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
+            .toList();
+    if (!CommonUtilities.isEmpty(repoName) && CommonUtilities.isEmpty(repositories)) {
+      throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
+    }
+
+    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)
+        || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.GRADLE)) {
+      final List<AppDataRepository> gradleRepositories =
+          repositories.stream()
+              .filter(repository -> repository.getType().equals(RequestParams.UpdateType.GRADLE))
+              .toList();
+      gradleRepositories.forEach(
+          gradleRepository ->
+              executeUpdateGradleProjects(appData.getLatestVersions(), gradleRepository));
+    }
+
+    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)
+        || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.NODE)) {
+      final List<AppDataRepository> nodeRepositories =
+          repositories.stream()
+              .filter(repository -> repository.getType().equals(RequestParams.UpdateType.NODE))
+              .toList();
+      nodeRepositories.forEach(
+          nodeRepository -> executeUpdateNodeProjects(appData.getLatestVersions(), nodeRepository));
+    }
+
+    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)
+        || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PYTHON)) {
+      final List<AppDataRepository> pythonRepositories =
+          repositories.stream()
+              .filter(repository -> repository.getType().equals(RequestParams.UpdateType.PYTHON))
+              .toList();
+      pythonRepositories.forEach(
+          pythonRepository ->
+              executeUpdateGradleProjects(appData.getLatestVersions(), pythonRepository));
+    }
+  }
+
+  private void executeUpdateGradleProjects(
+      final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
+    addTaskToQueue(
+        getUpdateDependenciesQueueName(ConstantUtils.GRADLE_NAME),
+        getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.GRADLE_NAME),
+        () -> new GradleProjectUpdate(latestVersions, repository).execute(),
+        ConstantUtils.TASK_DELAY_ZERO);
+  }
+
+  private void executeUpdateNodeProjects(
+      final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
+    addTaskToQueue(
+        getUpdateDependenciesQueueName(ConstantUtils.NODE_NAME),
+        getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.NODE_NAME),
+        () -> new NodeProjectUpdate(latestVersions, repository).execute(),
+        ConstantUtils.TASK_DELAY_ZERO);
+  }
+
+  private void executeUpdatePythonProjects(
+      final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
+    addTaskToQueue(
+        getUpdateDependenciesQueueName(ConstantUtils.PYTHON_NAME),
+        getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.PYTHON_NAME),
+        () -> new PythonProjectUpdate(latestVersions, repository).execute(),
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
