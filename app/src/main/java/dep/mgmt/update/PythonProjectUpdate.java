@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdatePythonProject {
-  private static final Logger log = LoggerFactory.getLogger(UpdatePythonProject.class);
+public class PythonProjectUpdate {
+  private static final Logger log = LoggerFactory.getLogger(PythonProjectUpdate.class);
 
   private final AppDataLatestVersions latestVersions;
   private final AppDataRepository repository;
   private final PythonPackageVersionService pythonPackageVersionService;
   private final Map<String, DependencyEntity> packagesMap;
 
-  public UpdatePythonProject(
+  public PythonProjectUpdate(
       final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;

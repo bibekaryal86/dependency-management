@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateGradleProject {
+public class GradleProjectUpdate {
 
-  private static final Logger log = LoggerFactory.getLogger(UpdateGradleProject.class);
+  private static final Logger log = LoggerFactory.getLogger(GradleProjectUpdate.class);
 
   private final AppDataLatestVersions latestVersions;
   private final AppDataRepository repository;
@@ -38,7 +38,7 @@ public class UpdateGradleProject {
   private final Map<String, DependencyEntity> pluginsMap;
   private final Map<String, DependencyEntity> dependenciesMap;
 
-  public UpdateGradleProject(
+  public GradleProjectUpdate(
       final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
