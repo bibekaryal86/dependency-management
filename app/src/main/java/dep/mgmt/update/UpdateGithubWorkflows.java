@@ -21,26 +21,19 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateGithubWorkflows {
   private static final Logger log = LoggerFactory.getLogger(UpdateGithubWorkflows.class);
-  private final AppDataRepository repository;
-  private final AppDataLatestVersions latestVersions;
-  private final Path githubWorkflowsFolderPath;
 
-  public UpdateGithubWorkflows(
+  public static boolean execute(
       final AppDataRepository repository, final AppDataLatestVersions latestVersions) {
-    this.repository = repository;
-    this.latestVersions = latestVersions;
-    githubWorkflowsFolderPath = this.repository.getRepoPath().resolve(".github");
-  }
-
-  public boolean execute() {
+    final Path githubWorkflowsFolderPath = repository.getRepoPath().resolve(".github");
     boolean isUpdated = false;
-    if (Files.exists(this.githubWorkflowsFolderPath)) {
-      List<Path> githubWorkflowPaths = findGithubWorkflows();
+
+    if (Files.exists(githubWorkflowsFolderPath)) {
+      List<Path> githubWorkflowPaths = findGithubWorkflows(githubWorkflowsFolderPath);
       for (Path githubWorkflowPath : githubWorkflowPaths) {
-        List<String> githubWorkflowContent = readGithubWorkflowFile(githubWorkflowPath);
-        githubWorkflowContent = updateGithubWorkflowFile(githubWorkflowContent);
+        List<String> githubWorkflowContent = readGithubWorkflowFile(githubWorkflowPath, repository);
+        githubWorkflowContent = updateGithubWorkflowFile(githubWorkflowContent, latestVersions);
         boolean isWrittenToFile =
-            writeGithubWorkflowFile(githubWorkflowPath, githubWorkflowContent);
+            writeGithubWorkflowFile(githubWorkflowPath, githubWorkflowContent, repository);
 
         if (isWrittenToFile && !isUpdated) {
           isUpdated = true;
@@ -50,31 +43,33 @@ public class UpdateGithubWorkflows {
     return isUpdated;
   }
 
-  private List<Path> findGithubWorkflows() {
-    try (Stream<Path> stream = Files.walk(this.githubWorkflowsFolderPath, 2)) {
+  private static List<Path> findGithubWorkflows(final Path githubWorkflowsFolderPath) {
+    try (Stream<Path> stream = Files.walk(githubWorkflowsFolderPath, 2)) {
       return stream
           .filter(Files::isRegularFile)
           .filter(path -> path.toString().endsWith(".yml"))
           .collect(Collectors.toList());
     } catch (IOException ex) {
-      log.error("Find Github Actions Files: [{}]", this.githubWorkflowsFolderPath, ex);
+      log.error("Find Github Actions Files: [{}]", githubWorkflowsFolderPath, ex);
       return Collections.emptyList();
     }
   }
 
-  private List<String> readGithubWorkflowFile(final Path githubWorkflowPath) {
+  private static List<String> readGithubWorkflowFile(
+      final Path githubWorkflowPath, final AppDataRepository repository) {
     try {
       return Files.readAllLines(githubWorkflowPath);
     } catch (IOException ex) {
       log.error(
           "Error Reading Github Workflow [{}] of Repository [{}]",
           githubWorkflowPath,
-          this.repository.getRepoName());
+          repository.getRepoName());
       return Collections.emptyList();
     }
   }
 
-  private List<String> updateGithubWorkflowFile(final List<String> githubWorkflowContent) {
+  private static List<String> updateGithubWorkflowFile(
+      final List<String> githubWorkflowContent, final AppDataLatestVersions latestVersions) {
     if (CommonUtilities.isEmpty(githubWorkflowContent)) {
       return githubWorkflowContent;
     }
@@ -89,13 +84,14 @@ public class UpdateGithubWorkflows {
         continue;
       }
 
-      String updatedLine = updateGithubActions(line);
+      String updatedLine = updateGithubActions(line, latestVersions);
       if (line.equals(updatedLine)) {
-        updatedLine = updateLanguageVersion(updatedLine);
+        updatedLine = updateLanguageVersion(updatedLine, latestVersions);
       }
       if (line.equals(updatedLine) && i > 0) {
         final String lineMinusOne = githubWorkflowContent.get(i - 1);
-        List<String> updatedLines = updateToolVersionFlyway(updatedLine, lineMinusOne);
+        List<String> updatedLines =
+            updateToolVersionFlyway(updatedLine, lineMinusOne, latestVersions);
         updatedLine = updatedLines.getFirst();
 
         final String updatedLineMinusOne = updatedLines.get(1);
@@ -114,28 +110,28 @@ public class UpdateGithubWorkflows {
     return isUpdated ? updatedGithubWorkflowContent : Collections.emptyList();
   }
 
-  private String updateGithubActions(final String githubActionLine) {
+  private static String updateGithubActions(
+      final String githubActionLine, final AppDataLatestVersions latestVersions) {
     String currentVersion = "";
     String latestVersion = "";
 
     if (githubActionLine.contains("actions/checkout")) {
       latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getCheckout().getVersionMajor();
+          latestVersions.getLatestVersionGithubActions().getCheckout().getVersionMajor();
     } else if (githubActionLine.contains("actions/setup-java")) {
       latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getSetupJava().getVersionMajor();
+          latestVersions.getLatestVersionGithubActions().getSetupJava().getVersionMajor();
     } else if (githubActionLine.contains("gradle/actions/setup-gradle")) {
       latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getSetupGradle().getVersionMajor();
+          latestVersions.getLatestVersionGithubActions().getSetupGradle().getVersionMajor();
     } else if (githubActionLine.contains("actions/setup-node")) {
       latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getSetupNode().getVersionMajor();
+          latestVersions.getLatestVersionGithubActions().getSetupNode().getVersionMajor();
     } else if (githubActionLine.contains("actions/setup-python")) {
       latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getSetupPython().getVersionMajor();
+          latestVersions.getLatestVersionGithubActions().getSetupPython().getVersionMajor();
     } else if (githubActionLine.contains("github/codeql-action")) {
-      latestVersion =
-          this.latestVersions.getLatestVersionGithubActions().getCodeql().getVersionMajor();
+      latestVersion = latestVersions.getLatestVersionGithubActions().getCodeql().getVersionMajor();
     }
 
     if (!CommonUtilities.isEmpty(latestVersion)) {
@@ -155,9 +151,10 @@ public class UpdateGithubWorkflows {
     return githubActionLine.replace(currentVersion, latestVersion);
   }
 
-  private String updateLanguageVersion(final String versionLine) {
+  private static String updateLanguageVersion(
+      final String versionLine, final AppDataLatestVersions latestVersions) {
     String currentVersion = "";
-    String latestVersion = getLatestLanguageVersion(versionLine);
+    String latestVersion = getLatestLanguageVersion(versionLine, latestVersions);
 
     if (!CommonUtilities.isEmpty(latestVersion)) {
       currentVersion = getCurrentLanguageVersion(versionLine);
@@ -175,10 +172,12 @@ public class UpdateGithubWorkflows {
     return versionLine.replace(currentVersion, latestVersion);
   }
 
-  private List<String> updateToolVersionFlyway(
-      final String versionLine, final String versionLineMinusOne) {
+  private static List<String> updateToolVersionFlyway(
+      final String versionLine,
+      final String versionLineMinusOne,
+      final AppDataLatestVersions latestVersions) {
     String currentVersion = "";
-    String latestVersion = getLatestToolVersionFlyway(versionLine);
+    String latestVersion = getLatestToolVersionFlyway(versionLine, latestVersions);
 
     if (!CommonUtilities.isEmpty(latestVersion)) {
       currentVersion = getCurrentToolVersionFlyway(versionLine);
@@ -199,33 +198,35 @@ public class UpdateGithubWorkflows {
     return List.of(updatedVersionLine, updatedVersionLineMinusOne);
   }
 
-  private String getLatestLanguageVersion(final String versionLine) {
+  private static String getLatestLanguageVersion(
+      final String versionLine, final AppDataLatestVersions latestVersions) {
     String latestVersion = "";
 
     if (versionLine.contains("node-version") && !versionLine.contains("matrix.node-version")) {
-      latestVersion = this.latestVersions.getLatestVersionLanguages().getNode().getVersionMajor();
+      latestVersion = latestVersions.getLatestVersionLanguages().getNode().getVersionMajor();
     } else if (versionLine.contains("python-version")
         && !versionLine.contains("matrix.python-version")) {
       latestVersion =
           VersionUtils.getVersionMajorMinor(
-              this.latestVersions.getLatestVersionLanguages().getPython().getVersionFull(), true);
+              latestVersions.getLatestVersionLanguages().getPython().getVersionFull(), true);
     } else if (versionLine.contains("java-version")
         && !versionLine.contains("matrix.java-version")) {
-      latestVersion = this.latestVersions.getLatestVersionLanguages().getJava().getVersionMajor();
+      latestVersion = latestVersions.getLatestVersionLanguages().getJava().getVersionMajor();
     }
 
     return latestVersion;
   }
 
-  private String getLatestToolVersionFlyway(final String versionLine) {
+  private static String getLatestToolVersionFlyway(
+      final String versionLine, final AppDataLatestVersions latestVersions) {
     String latestVersion = "";
     if (versionLine.contains("flyway/flyway")) {
-      latestVersion = this.latestVersions.getLatestVersionTools().getFlyway().getVersionFull();
+      latestVersion = latestVersions.getLatestVersionTools().getFlyway().getVersionFull();
     }
     return latestVersion;
   }
 
-  private String getCurrentLanguageVersion(final String versionLine) {
+  private static String getCurrentLanguageVersion(final String versionLine) {
     String currentVersion = "";
 
     if (versionLine.contains("[") && versionLine.contains("]")) {
@@ -242,11 +243,11 @@ public class UpdateGithubWorkflows {
     return currentVersion;
   }
 
-  private String getCurrentToolVersionFlyway(final String versionLine) {
+  private static String getCurrentToolVersionFlyway(final String versionLine) {
     return versionLine.replaceAll("[^0-9.]", "");
   }
 
-  private String getLowestCurrentVersionFromMatrix(final String versionLine) {
+  private static String getLowestCurrentVersionFromMatrix(final String versionLine) {
     Pattern pattern = Pattern.compile("\\[(.*?)]");
     Matcher matcher = pattern.matcher(versionLine);
 
@@ -267,8 +268,10 @@ public class UpdateGithubWorkflows {
     return "";
   }
 
-  private boolean writeGithubWorkflowFile(
-      final Path githubWorkflowPath, final List<String> githubWorkflowContent) {
+  private static boolean writeGithubWorkflowFile(
+      final Path githubWorkflowPath,
+      final List<String> githubWorkflowContent,
+      final AppDataRepository repository) {
     if (CommonUtilities.isEmpty(githubWorkflowContent)) {
       return false;
     }
@@ -280,7 +283,7 @@ public class UpdateGithubWorkflows {
       log.error(
           "Error Writing Updated Github Workflow [{}] of repository: [{}]",
           githubWorkflowPath,
-          this.repository.getRepoName());
+          repository.getRepoName());
       return false;
     }
   }

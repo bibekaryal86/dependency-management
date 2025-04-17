@@ -16,43 +16,38 @@ import org.slf4j.LoggerFactory;
 public class UpdateGcpConfigs {
   private static final Logger log = LoggerFactory.getLogger(UpdateGcpConfigs.class);
 
-  private final AppDataRepository repository;
-  private final LatestVersion latestVersion;
-  private final Path yamlFilePath;
-
-  public UpdateGcpConfigs(final AppDataRepository repository, final LatestVersion latestVersion) {
-    this.repository = repository;
-    this.latestVersion = latestVersion;
-    yamlFilePath =
+  public static boolean execute(
+      final AppDataRepository repository, final LatestVersion latestVersion) {
+    final Path yamlFilePath =
         repository.getType().equals(RequestParams.UpdateType.PYTHON)
-            ? this.repository.getRepoPath().resolve("app.yaml")
-            : this.repository.getRepoPath().resolve("gcp/app.yaml");
-  }
+            ? repository.getRepoPath().resolve("app.yaml")
+            : repository.getRepoPath().resolve("gcp/app.yaml");
 
-  public boolean execute() {
-    if (Files.exists(this.yamlFilePath)) {
-      List<String> yamlData = readGcpAppYaml();
-      yamlData = updateGcpAppYaml(yamlData);
-      return writeGcpAppYaml(yamlData);
+    if (Files.exists(yamlFilePath)) {
+      List<String> yamlData = readGcpAppYaml(yamlFilePath, repository);
+      yamlData = updateGcpAppYaml(yamlData, latestVersion);
+      return writeGcpAppYaml(yamlData, yamlFilePath, repository);
     }
     return false;
   }
 
-  private List<String> readGcpAppYaml() {
+  private static List<String> readGcpAppYaml(
+      final Path yamlFilePath, final AppDataRepository repository) {
     try {
-      return Files.readAllLines(this.yamlFilePath);
+      return Files.readAllLines(yamlFilePath);
     } catch (IOException ex) {
-      log.error("Error Reading GCP App Yaml of Repository [{}]", this.repository.getRepoName());
+      log.error("Error Reading GCP App Yaml of Repository [{}]", repository.getRepoName());
       return Collections.emptyList();
     }
   }
 
-  private List<String> updateGcpAppYaml(final List<String> yamlData) {
+  private static List<String> updateGcpAppYaml(
+      final List<String> yamlData, final LatestVersion latestVersion) {
     if (CommonUtilities.isEmpty(yamlData)) {
       return yamlData;
     }
 
-    final String latestGcpRuntime = this.latestVersion.getVersionGcp();
+    final String latestGcpRuntime = latestVersion.getVersionGcp();
     // assumption: gcp app yaml's first line is always runtime
     final String currentGcpRuntime = getCurrentGcpRuntime(yamlData.getFirst());
 
@@ -65,7 +60,7 @@ public class UpdateGcpConfigs {
     return yamlData;
   }
 
-  private String getCurrentGcpRuntime(final String runtimeLine) {
+  private static String getCurrentGcpRuntime(final String runtimeLine) {
     final String[] runtimeArray = runtimeLine.split(":");
 
     if (runtimeArray.length != 2) {
@@ -83,21 +78,21 @@ public class UpdateGcpConfigs {
     return runtimeArray[1].trim();
   }
 
-  private boolean isSupportedRuntime(String runtime) {
+  private static boolean isSupportedRuntime(String runtime) {
     return runtime.contains("java") || runtime.contains("node") || runtime.contains("python");
   }
 
-  private boolean writeGcpAppYaml(final List<String> yamlData) {
+  private static boolean writeGcpAppYaml(
+      final List<String> yamlData, final Path yamlFilePath, final AppDataRepository repository) {
     if (CommonUtilities.isEmpty(yamlData)) {
       return false;
     }
 
     try {
-      Files.write(this.yamlFilePath, yamlData, StandardCharsets.UTF_8);
+      Files.write(yamlFilePath, yamlData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error(
-          "Error Writing Updated GCP App Yaml of repository: [{}]", this.repository.getRepoName());
+      log.error("Error Writing Updated GCP App Yaml of repository: [{}]", repository.getRepoName());
       return false;
     }
   }

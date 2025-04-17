@@ -22,30 +22,25 @@ public class UpdateNodeProject {
   private final AppDataLatestVersions latestVersions;
   private final AppDataRepository repository;
   private final NodeDependencyVersionService nodeDependencyVersionService;
-  private final UpdateDockerFile updateDockerFile;
-  private final UpdateGcpConfigs updateGcpConfigs;
-  private final UpdateGithubWorkflows updateGithubWorkflows;
   private final Map<String, DependencyEntity> dependenciesMap;
 
   public UpdateNodeProject(
       final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
-
     this.nodeDependencyVersionService = new NodeDependencyVersionService();
-    this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs =
-        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getNode());
-    this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
-
     this.dependenciesMap = this.nodeDependencyVersionService.getNodeDependenciesMap();
   }
 
   public boolean execute() {
     final boolean isPackageJsonUpdated = executePackageJsonUpdate();
-    final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
-    final boolean isDockerfileUpdated = this.updateDockerFile.execute();
-    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.execute();
+    final boolean isGcpConfigUpdated =
+        UpdateGcpConfigs.execute(
+            this.repository, this.latestVersions.getLatestVersionLanguages().getJava());
+    final boolean isDockerfileUpdated =
+        UpdateDockerFile.execute(this.repository, this.latestVersions);
+    final boolean isGithubWorkflowsUpdated =
+        UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
 
     return isPackageJsonUpdated
         || isGcpConfigUpdated

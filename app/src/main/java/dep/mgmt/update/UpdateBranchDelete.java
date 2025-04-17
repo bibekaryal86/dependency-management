@@ -11,47 +11,25 @@ import org.slf4j.LoggerFactory;
 public class UpdateBranchDelete {
   private static final Logger log = LoggerFactory.getLogger(UpdateBranchDelete.class);
 
-  private final String repoHome;
-  private final AppDataRepository repository;
-  private final AppDataScriptFile scriptFile;
-  private final boolean isDeleteUpdateDependenciesOnly;
-
-  public UpdateBranchDelete(
+  public static void execute(
       final String repoHome,
-      AppDataScriptFile scriptFile,
-      final boolean isDeleteUpdateDependenciesOnly) {
-    this.repoHome = repoHome;
-    this.repository = null;
-    this.scriptFile = scriptFile;
-    this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
-  }
-
-  public UpdateBranchDelete(
       final AppDataRepository repository,
-      AppDataScriptFile scriptFile,
+      final AppDataScriptFile scriptFile,
       final boolean isDeleteUpdateDependenciesOnly) {
-    this.repoHome = null;
-    this.repository = repository;
-    this.scriptFile = scriptFile;
-    this.isDeleteUpdateDependenciesOnly = isDeleteUpdateDependenciesOnly;
-  }
-
-  public void execute() {
     log.info(
         "Execute Update Branch Delete: [{}] | [{}] | [{}]",
-        this.repoHome,
-        this.repository,
-        this.isDeleteUpdateDependenciesOnly);
+        repoHome,
+        repository,
+        isDeleteUpdateDependenciesOnly);
     List<String> arguments = new LinkedList<>();
-    if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
-      arguments.add(this.repository.getRepoPath().toString());
-    } else if (!CommonUtilities.isEmpty(this.repoHome) && this.repository == null) {
-      arguments.add(this.repoHome);
+    if (CommonUtilities.isEmpty(repoHome) && repository != null) {
+      arguments.add(repository.getRepoPath().toString());
+    } else if (!CommonUtilities.isEmpty(repoHome) && repository == null) {
+      arguments.add(repoHome);
     } else {
       arguments.add("N/A");
     }
-    arguments.add(String.valueOf(this.isDeleteUpdateDependenciesOnly));
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, this.repository)
-        .executeScript();
+    arguments.add(String.valueOf(isDeleteUpdateDependenciesOnly));
+    ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.TRUE, repository);
   }
 }

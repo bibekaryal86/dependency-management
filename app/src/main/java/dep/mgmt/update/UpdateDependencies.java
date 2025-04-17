@@ -11,48 +11,26 @@ import org.slf4j.LoggerFactory;
 public class UpdateDependencies {
   private static final Logger log = LoggerFactory.getLogger(UpdateDependencies.class);
 
-  private final AppDataRepository repository;
-  private final AppDataScriptFile scriptFile;
-  private final boolean isInit;
-  private final String branchName;
-
-  public UpdateDependencies(
+  public static void execute(
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
+      final String branchName,
       final boolean isInit) {
-    this.repository = repository;
-    this.scriptFile = scriptFile;
-    this.isInit = isInit;
-    this.branchName = null;
-  }
-
-  public UpdateDependencies(
-      final AppDataRepository repository,
-      final AppDataScriptFile scriptFile,
-      final String branchName) {
-    this.repository = repository;
-    this.scriptFile = scriptFile;
-    this.branchName = branchName;
-    this.isInit = Boolean.FALSE;
-  }
-
-  public void execute() {
     log.info(
         "Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]",
-        this.repository.getRepoName(),
-        this.scriptFile.getScriptFileName(),
-        this.isInit,
-        this.branchName);
+        repository.getRepoName(),
+        scriptFile.getScriptFileName(),
+        isInit,
+        branchName);
     List<String> arguments = new LinkedList<>();
-    arguments.add(this.repository.getRepoPath().toString());
+    arguments.add(repository.getRepoPath().toString());
 
     if (CommonUtilities.isEmpty(branchName)) {
-      arguments.add(String.valueOf(this.isInit));
+      arguments.add(String.valueOf(isInit));
     } else {
-      arguments.add(this.branchName);
+      arguments.add(branchName);
     }
 
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.FALSE, this.repository)
-        .executeScript();
+    ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
   }
 }

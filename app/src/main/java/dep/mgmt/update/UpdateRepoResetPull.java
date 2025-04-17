@@ -11,60 +11,30 @@ import org.slf4j.LoggerFactory;
 public class UpdateRepoResetPull {
   private static final Logger log = LoggerFactory.getLogger(UpdateRepoResetPull.class);
 
-  private final String repoHome;
-  private final AppDataRepository repository;
-  private final AppDataScriptFile scriptFile;
-  private final boolean isReset;
-  private final boolean isPull;
-  private final boolean isRunAsync;
-
-  public UpdateRepoResetPull(
+  public static void execute(
       final String repoHome,
-      final AppDataScriptFile scriptFile,
-      final boolean isReset,
-      final boolean isPull,
-      final boolean isRunAsync) {
-    this.repoHome = repoHome;
-    this.repository = null;
-    this.scriptFile = scriptFile;
-    this.isReset = isReset;
-    this.isPull = isPull;
-    this.isRunAsync = isRunAsync;
-  }
-
-  public UpdateRepoResetPull(
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
       final boolean isReset,
       final boolean isPull,
       final boolean isRunAsync) {
-    this.repoHome = null;
-    this.repository = repository;
-    this.scriptFile = scriptFile;
-    this.isReset = isReset;
-    this.isPull = isPull;
-    this.isRunAsync = isRunAsync;
-  }
-
-  public void execute() {
     log.info(
         "Execute Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}] | [{}]",
-        this.repoHome,
-        this.repository,
-        this.isReset,
-        this.isPull,
-        this.isRunAsync);
+        repoHome,
+        repository,
+        isReset,
+        isPull,
+        isRunAsync);
     List<String> arguments = new LinkedList<>();
-    if (CommonUtilities.isEmpty(this.repoHome) && this.repository != null) {
-      arguments.add(this.repository.getRepoPath().toString());
-    } else if (!CommonUtilities.isEmpty(this.repoHome) && this.repository == null) {
-      arguments.add(this.repoHome);
+    if (CommonUtilities.isEmpty(repoHome) && repository != null) {
+      arguments.add(repository.getRepoPath().toString());
+    } else if (!CommonUtilities.isEmpty(repoHome) && repository == null) {
+      arguments.add(repoHome);
     } else {
       arguments.add("N/A");
     }
-    arguments.add(String.valueOf(this.isReset));
-    arguments.add(String.valueOf(this.isPull));
-    new ExecuteScriptFile(this.scriptFile, arguments, this.isRunAsync, this.repository)
-        .executeScript();
+    arguments.add(String.valueOf(isReset));
+    arguments.add(String.valueOf(isPull));
+    ExecuteScriptFile.executeScript(scriptFile, arguments, isRunAsync, repository);
   }
 }

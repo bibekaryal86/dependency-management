@@ -34,6 +34,6 @@ public class UpdateNpmSnapshots {
     List<String> arguments = new LinkedList<>();
     arguments.add(repository.getRepoPath().toString());
     arguments.add(branchName);
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, repository).executeScript();
+    ExecuteScriptFile.executeScript(this.scriptFile, arguments, Boolean.TRUE, repository);
   }
 }

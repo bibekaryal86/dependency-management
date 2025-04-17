@@ -14,50 +14,47 @@ import org.slf4j.LoggerFactory;
 
 public class ExecuteScriptFile {
   private static final Logger log = LoggerFactory.getLogger(ExecuteScriptFile.class);
-  private final String scriptPath;
-  private final List<String> arguments;
-  private final boolean isRunAsync;
 
-  private final String repoName;
-  private final String type;
-
-  public ExecuteScriptFile(
+  public static void executeScript(
       final AppDataScriptFile scriptFile,
       final List<String> arguments,
       final boolean isRunAsync,
       final AppDataRepository repository) {
-    this.arguments = arguments;
-    this.scriptPath =
+    final String repoName;
+    final String type;
+    if (repository == null) {
+      repoName = null;
+      type = null;
+    } else {
+      repoName = repository.getRepoName();
+      type = repository.getType().toString();
+    }
+    final String scriptPath =
         ConstantUtils.JAVA_SYSTEM_TMPDIR
             + ConstantUtils.PATH_DELIMITER
             + ConstantUtils.SCRIPTS_DIRECTORY
             + ConstantUtils.PATH_DELIMITER
             + scriptFile.getScriptFileName();
-    this.isRunAsync = isRunAsync;
-    if (repository == null) {
-      this.repoName = null;
-      this.type = null;
-    } else {
-      this.repoName = repository.getRepoName();
-      this.type = repository.getType().toString();
-    }
-  }
 
-  public void executeScript() {
     if (isRunAsync) {
-      runAsync();
+      runAsync(scriptPath, repoName, type, arguments, isRunAsync);
       log.info("Script execution started asynchronously: [{}] | [{}]", scriptPath, repoName);
     } else {
-      runSync();
+      runSync(scriptPath, repoName, type, arguments, isRunAsync);
     }
   }
 
-  private void runAsync() {
+  private static void runAsync(
+      final String scriptPath,
+      final String repoName,
+      final String type,
+      final List<String> arguments,
+      final boolean isRunAsync) {
     new Thread(
             () -> {
               try {
-                Process process = startProcess();
-                processOutput(process);
+                Process process = startProcess(scriptPath, arguments, isRunAsync);
+                processOutput(process, scriptPath, repoName, type);
               } catch (Exception ex) {
                 log.error("Error in Execute Script (async): [{}] | [{}]", scriptPath, repoName, ex);
               }
@@ -65,21 +62,28 @@ public class ExecuteScriptFile {
         .start();
   }
 
-  private void runSync() {
+  private static void runSync(
+      final String scriptPath,
+      final String repoName,
+      final String type,
+      final List<String> arguments,
+      final boolean isRunAsync) {
     try {
-      Process process = startProcess();
-      processOutput(process);
+      final Process process = startProcess(scriptPath, arguments, isRunAsync);
+      processOutput(process, scriptPath, repoName, type);
     } catch (Exception ex) {
       log.error("Error in Execute Script: [{}] | [{}]", scriptPath, repoName, ex);
     }
   }
 
-  private Process startProcess() throws IOException, InterruptedException {
+  private static Process startProcess(
+      final String scriptPath, final List<String> arguments, final boolean isRunAsync)
+      throws IOException, InterruptedException {
     try {
       List<String> command = new LinkedList<>();
       command.add(ConstantUtils.COMMAND_PATH);
-      command.add(this.scriptPath);
-      command.addAll(this.arguments);
+      command.add(scriptPath);
+      command.addAll(arguments);
 
       ProcessBuilder processBuilder = new ProcessBuilder(command);
       Process process = processBuilder.start();
@@ -98,7 +102,9 @@ public class ExecuteScriptFile {
     }
   }
 
-  private void processOutput(final Process process) throws IOException {
+  private static void processOutput(
+      final Process process, final String scriptPath, final String repoName, final String type)
+      throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line;
     boolean isError = false;
@@ -121,30 +127,32 @@ public class ExecuteScriptFile {
       }
 
       if (isError) {
-        log.info(
-            "ERROR in Process: [{}] | [{}]\n{}", this.scriptPath, this.repoName, stringBuilder);
+        log.info("ERROR in Process: [{}] | [{}]\n{}", scriptPath, repoName, stringBuilder);
       } else {
-        log.debug(
-            "Process output: [{}] | [{}] \n{}", this.scriptPath, this.repoName, stringBuilder);
+        log.debug("Process output: [{}] | [{}] \n{}", scriptPath, repoName, stringBuilder);
       }
 
-      checkProcessedRepository(stringBuilder);
+      checkProcessedRepository(stringBuilder, scriptPath, repoName, type);
     } catch (IOException ex) {
       throw new IOException(
           "Error in Process Stream Output: "
               + ", "
-              + this.scriptPath
+              + scriptPath
               + " | "
-              + this.repoName
+              + repoName
               + "---"
               + ex.getCause().getMessage());
     }
   }
 
-  private void checkProcessedRepository(final StringBuilder stringBuilder) {
-    if (this.scriptPath.contains(ConstantUtils.SCRIPT_UPDATE_EXEC)) {
+  private static void checkProcessedRepository(
+      final StringBuilder stringBuilder,
+      final String scriptPath,
+      final String repoName,
+      final String type) {
+    if (scriptPath.contains(ConstantUtils.SCRIPT_UPDATE_EXEC)) {
       final boolean isPushedNewBranch = stringBuilder.toString().contains("Pushed new branch");
-      ProcessUtils.addProcessedRepositories(this.repoName, this.type, isPushedNewBranch);
+      ProcessUtils.addProcessedRepositories(repoName, type, isPushedNewBranch);
     }
   }
 }

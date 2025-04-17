@@ -16,36 +16,30 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateDockerFile {
   private static final Logger log = LoggerFactory.getLogger(UpdateDockerFile.class);
-  private final AppDataRepository repository;
-  private final AppDataLatestVersions latestVersions;
-  private final Path dockerfilePath;
 
-  public UpdateDockerFile(
+  public static boolean execute(
       final AppDataRepository repository, final AppDataLatestVersions latestVersions) {
-    this.repository = repository;
-    this.latestVersions = latestVersions;
-    dockerfilePath = this.repository.getRepoPath().resolve("Dockerfile");
-  }
-
-  public boolean execute() {
-    if (Files.exists(this.dockerfilePath)) {
-      List<String> dockerfileData = readDockerfile();
-      dockerfileData = updateDockerfile(dockerfileData);
-      return writeDockerfile(dockerfileData);
+    final Path dockerfilePath = repository.getRepoPath().resolve("Dockerfile");
+    if (Files.exists(dockerfilePath)) {
+      List<String> dockerfileData = readDockerfile(dockerfilePath, repository);
+      dockerfileData = updateDockerfile(dockerfileData, latestVersions);
+      return writeDockerfile(dockerfileData, dockerfilePath, repository);
     }
     return false;
   }
 
-  private List<String> readDockerfile() {
+  private static List<String> readDockerfile(
+      final Path dockerfilePath, final AppDataRepository repository) {
     try {
-      return Files.readAllLines(this.dockerfilePath);
+      return Files.readAllLines(dockerfilePath);
     } catch (IOException ex) {
-      log.error("Error Reading Dockerfile of Repository [{}]", this.repository.getRepoName());
+      log.error("Error Reading Dockerfile of Repository [{}]", repository.getRepoName());
       return Collections.emptyList();
     }
   }
 
-  private List<String> updateDockerfile(final List<String> dockerfileData) {
+  private static List<String> updateDockerfile(
+      final List<String> dockerfileData, final AppDataLatestVersions latestVersions) {
     if (CommonUtilities.isEmpty(dockerfileData)) {
       return dockerfileData;
     }
@@ -56,7 +50,7 @@ public class UpdateDockerFile {
     for (String line : dockerfileData) {
       if (line.startsWith("FROM")) {
         final String currentVersion = getCurrentVersionDocker(line);
-        final String latestVersion = getLatestVersionDocker(line);
+        final String latestVersion = getLatestVersionDocker(line, latestVersions);
 
         if (isSupportedFrom(currentVersion)
             && isSupportedFrom(latestVersion)
@@ -75,7 +69,7 @@ public class UpdateDockerFile {
     return isUpdated ? updatedDockerfileData : Collections.emptyList();
   }
 
-  private String getCurrentVersionDocker(final String fromLine) {
+  private static String getCurrentVersionDocker(final String fromLine) {
     final String[] fromArray = fromLine.split(" ");
     if (fromArray.length > 1) {
       return fromArray[1];
@@ -83,26 +77,27 @@ public class UpdateDockerFile {
     return fromLine;
   }
 
-  private String getLatestVersionDocker(final String fromLine) {
+  private static String getLatestVersionDocker(
+      final String fromLine, final AppDataLatestVersions latestVersions) {
     if (fromLine.contains("gradle")) {
-      return this.latestVersions.getLatestVersionTools().getGradle().getVersionDocker();
+      return latestVersions.getLatestVersionTools().getGradle().getVersionDocker();
     }
     if (fromLine.contains(ConstantUtils.DOCKER_JRE)) {
-      return this.latestVersions.getLatestVersionLanguages().getJava().getVersionDocker();
+      return latestVersions.getLatestVersionLanguages().getJava().getVersionDocker();
     }
     if (fromLine.contains("node")) {
-      return this.latestVersions.getLatestVersionLanguages().getNode().getVersionDocker();
+      return latestVersions.getLatestVersionLanguages().getNode().getVersionDocker();
     }
     if (fromLine.contains("nginx")) {
-      return this.latestVersions.getLatestVersionServers().getNginx().getVersionDocker();
+      return latestVersions.getLatestVersionServers().getNginx().getVersionDocker();
     }
     if (fromLine.contains("python")) {
-      return this.latestVersions.getLatestVersionLanguages().getPython().getVersionDocker();
+      return latestVersions.getLatestVersionLanguages().getPython().getVersionDocker();
     }
     return fromLine;
   }
 
-  private boolean isSupportedFrom(String from) {
+  private static boolean isSupportedFrom(String from) {
     return from.startsWith("gradle")
         || from.contains(ConstantUtils.DOCKER_JRE)
         || from.contains("node")
@@ -110,17 +105,19 @@ public class UpdateDockerFile {
         || from.contains("python");
   }
 
-  private boolean writeDockerfile(final List<String> dockerfileData) {
+  private static boolean writeDockerfile(
+      final List<String> dockerfileData,
+      final Path dockerfilePath,
+      final AppDataRepository repository) {
     if (CommonUtilities.isEmpty(dockerfileData)) {
       return false;
     }
 
     try {
-      Files.write(this.dockerfilePath, dockerfileData, StandardCharsets.UTF_8);
+      Files.write(dockerfilePath, dockerfileData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error(
-          "Error Writing Updated Dockerfile of repository: [{}]", this.repository.getRepoName());
+      log.error("Error Writing Updated Dockerfile of repository: [{}]", repository.getRepoName());
       return false;
     }
   }

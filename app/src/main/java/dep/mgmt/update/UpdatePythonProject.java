@@ -25,31 +25,26 @@ public class UpdatePythonProject {
   private final AppDataLatestVersions latestVersions;
   private final AppDataRepository repository;
   private final PythonPackageVersionService pythonPackageVersionService;
-  private final UpdateDockerFile updateDockerFile;
-  private final UpdateGcpConfigs updateGcpConfigs;
-  private final UpdateGithubWorkflows updateGithubWorkflows;
   private final Map<String, DependencyEntity> packagesMap;
 
   public UpdatePythonProject(
       final AppDataLatestVersions latestVersions, final AppDataRepository repository) {
     this.latestVersions = latestVersions;
     this.repository = repository;
-
     this.pythonPackageVersionService = new PythonPackageVersionService();
-    this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs =
-        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getPython());
-    this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
-
     this.packagesMap = this.pythonPackageVersionService.getPythonPackagesMap();
   }
 
   public boolean execute() {
     final boolean isProjectTomlUpdated = executePyProjectTomlUpdate();
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
-    final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
-    final boolean isDockerfileUpdated = this.updateDockerFile.execute();
-    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.execute();
+    final boolean isGcpConfigUpdated =
+        UpdateGcpConfigs.execute(
+            this.repository, this.latestVersions.getLatestVersionLanguages().getJava());
+    final boolean isDockerfileUpdated =
+        UpdateDockerFile.execute(this.repository, this.latestVersions);
+    final boolean isGithubWorkflowsUpdated =
+        UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
 
     return isProjectTomlUpdated
         || isRequirementsTxtUpdated

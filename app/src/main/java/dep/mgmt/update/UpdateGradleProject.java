@@ -35,9 +35,6 @@ public class UpdateGradleProject {
   private final AppDataRepository repository;
   private final GradleDependencyVersionService gradleDependencyVersionService;
   private final GradlePluginVersionService gradlePluginVersionService;
-  private final UpdateDockerFile updateDockerFile;
-  private final UpdateGcpConfigs updateGcpConfigs;
-  private final UpdateGithubWorkflows updateGithubWorkflows;
   private final Map<String, DependencyEntity> pluginsMap;
   private final Map<String, DependencyEntity> dependenciesMap;
 
@@ -48,10 +45,6 @@ public class UpdateGradleProject {
 
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
     this.gradlePluginVersionService = new GradlePluginVersionService();
-    this.updateDockerFile = new UpdateDockerFile(repository, latestVersions);
-    this.updateGcpConfigs =
-        new UpdateGcpConfigs(repository, latestVersions.getLatestVersionLanguages().getJava());
-    this.updateGithubWorkflows = new UpdateGithubWorkflows(repository, latestVersions);
 
     this.dependenciesMap = this.gradleDependencyVersionService.getGradleDependenciesMap();
     this.pluginsMap = this.gradlePluginVersionService.getGradlePluginsMap();
@@ -60,9 +53,13 @@ public class UpdateGradleProject {
   public boolean execute() {
     final boolean isBuildGradleUpdated = executeBuildGradleUpdate();
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
-    final boolean isGcpConfigUpdated = this.updateGcpConfigs.execute();
-    final boolean isDockerfileUpdated = this.updateDockerFile.execute();
-    final boolean isGithubWorkflowsUpdated = this.updateGithubWorkflows.execute();
+    final boolean isGcpConfigUpdated =
+        UpdateGcpConfigs.execute(
+            this.repository, this.latestVersions.getLatestVersionLanguages().getJava());
+    final boolean isDockerfileUpdated =
+        UpdateDockerFile.execute(this.repository, this.latestVersions);
+    final boolean isGithubWorkflowsUpdated =
+        UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
 
     return isBuildGradleUpdated
         || isGradleWrapperUpdated

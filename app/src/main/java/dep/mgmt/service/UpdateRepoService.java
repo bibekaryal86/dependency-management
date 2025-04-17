@@ -354,7 +354,7 @@ public class UpdateRepoService {
     addTaskToQueue(
         ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_QUEUE_NAME,
         ConstantUtils.TASK_GRADLE_SPOTLESS + ConstantUtils.APPENDER_TASK_NAME,
-        () -> new UpdateGradleSpotless(repositories, scriptFile, branchName).execute(),
+        () -> UpdateGradleSpotless.execute(repositories, scriptFile, branchName),
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
@@ -375,8 +375,8 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_TASK_NAME,
           () ->
-              new UpdateBranchDelete(repoHome, scriptFile, isDeleteUpdateDependenciesOnly)
-                  .execute(),
+              UpdateBranchDelete.execute(
+                  repoHome, null, scriptFile, isDeleteUpdateDependenciesOnly),
           ConstantUtils.TASK_DELAY_ZERO);
     } else {
       final AppDataRepository repository =
@@ -398,8 +398,8 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_TASK_NAME,
           () ->
-              new UpdateBranchDelete(repository, scriptFile, isDeleteUpdateDependenciesOnly)
-                  .execute(),
+              UpdateBranchDelete.execute(
+                  null, repository, scriptFile, isDeleteUpdateDependenciesOnly),
           ConstantUtils.TASK_DELAY_ZERO);
     }
   }
@@ -423,7 +423,7 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () ->
-              new UpdateRepoResetPull(repoHome, scriptFile, isReset, isPull, isRunAsync).execute(),
+              UpdateRepoResetPull.execute(repoHome, null, scriptFile, isReset, isPull, isRunAsync),
           ConstantUtils.TASK_DELAY_ZERO);
     } else {
       final AppDataRepository repository =
@@ -445,8 +445,8 @@ public class UpdateRepoService {
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_TASK_NAME,
           () ->
-              new UpdateRepoResetPull(repository, scriptFile, isReset, isPull, isRunAsync)
-                  .execute(),
+              UpdateRepoResetPull.execute(
+                  null, repository, scriptFile, isReset, isPull, isRunAsync),
           ConstantUtils.TASK_DELAY_ZERO);
     }
   }
@@ -504,7 +504,7 @@ public class UpdateRepoService {
         getUpdateDependenciesTaskName(
             repository.getRepoName(),
             isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
-        () -> new UpdateDependencies(repository, scriptFile, isInit).execute(),
+        () -> UpdateDependencies.execute(repository, scriptFile, null, isInit),
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
@@ -516,7 +516,7 @@ public class UpdateRepoService {
     addTaskToQueue(
         getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
         getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
-        () -> new UpdateDependencies(repository, scriptFile, branchName).execute(),
+        () -> UpdateDependencies.execute(repository, scriptFile, branchName, Boolean.FALSE),
         ConstantUtils.TASK_DELAY_ZERO);
   }
 

@@ -10,30 +10,23 @@ import org.slf4j.LoggerFactory;
 public class UpdateGradleSpotless {
   private static final Logger log = LoggerFactory.getLogger(UpdateGradleSpotless.class);
 
-  private final List<AppDataRepository> repositories;
-  private final AppDataScriptFile scriptFile;
-  private final String branchName;
-
-  public UpdateGradleSpotless(
+  public static void execute(
       final List<AppDataRepository> repositories,
       final AppDataScriptFile scriptFile,
       final String branchName) {
-    this.repositories = repositories;
-    this.scriptFile = scriptFile;
-    this.branchName = branchName;
-  }
-
-  public void execute() {
     // updating Gradle Spotless is fairly straightforward because everything is done by the gradlew
     // script, we just need to execute it for each repository
-    this.repositories.forEach(this::executeUpdate);
+    repositories.forEach(repository -> executeUpdate(repository, scriptFile, branchName));
   }
 
-  private void executeUpdate(final AppDataRepository repository) {
+  private static void executeUpdate(
+      final AppDataRepository repository,
+      final AppDataScriptFile scriptFile,
+      final String branchName) {
     log.info("Execute Update Gradle Spotless: [ {} ]", repository.getRepoName());
     List<String> arguments = new LinkedList<>();
     arguments.add(repository.getRepoPath().toString());
     arguments.add(branchName);
-    new ExecuteScriptFile(this.scriptFile, arguments, Boolean.TRUE, repository).executeScript();
+    ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.TRUE, repository);
   }
 }
