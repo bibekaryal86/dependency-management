@@ -9,7 +9,6 @@ public class Endpoints {
   public static final String APP_TESTS_RATE = APP_TESTS_CONTROLLER + "/github-rate-limit";
   public static final String APP_TESTS_TASKS = APP_TESTS_CONTROLLER + "/task-queue";
   public static final String APP_TESTS_CLEAR = APP_TESTS_CONTROLLER + "/clear-queue";
-  public static final String APP_TESTS_LOGS = APP_TESTS_CONTROLLER + "/log-entry";
 
   public static final String UPDATE_DEPENDENCIES_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/update";
   public static final String UPDATE_DEPENDENCIES_EXECUTE =
@@ -24,4 +23,5 @@ public class Endpoints {
   public static final String MONGO_LATEST_VERSION = MONGO_REPO_CONTROLLER + "/latest-version";
   public static final String MONGO_PROCESS_SUMMARY = MONGO_REPO_CONTROLLER + "/process-summary";
   public static final String MONGO_EXCLUDED_REPO = MONGO_REPO_CONTROLLER + "/excluded-repo";
+  public static final String MONGO_LOG_ENTRY = MONGO_REPO_CONTROLLER + "/log-entry";
 }

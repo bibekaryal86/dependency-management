@@ -3,15 +3,18 @@ package dep.mgmt.controller;
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.Dependencies;
 import dep.mgmt.model.ExcludedRepos;
+import dep.mgmt.model.LogEntry;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.ExcludedRepoEntity;
+import dep.mgmt.model.entity.LogEntryEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.server.Endpoints;
 import dep.mgmt.service.ExcludedRepoService;
 import dep.mgmt.service.GradleDependencyVersionService;
 import dep.mgmt.service.GradlePluginVersionService;
 import dep.mgmt.service.LatestVersionService;
+import dep.mgmt.service.LogEntryService;
 import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.service.PythonPackageVersionService;
@@ -24,6 +27,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -37,6 +41,7 @@ public class MongoRepoController {
   private final LatestVersionService latestVersionService;
   private final ProcessSummaryService processSummaryService;
   private final ExcludedRepoService excludedRepoService;
+  private final LogEntryService logEntryService;
 
   public MongoRepoController() {
     this.gradlePluginVersionService = new GradlePluginVersionService();
@@ -46,6 +51,7 @@ public class MongoRepoController {
     this.latestVersionService = new LatestVersionService();
     this.processSummaryService = new ProcessSummaryService();
     this.excludedRepoService = new ExcludedRepoService();
+    this.logEntryService = new LogEntryService();
   }
 
   public void handleRequest(
@@ -93,6 +99,21 @@ public class MongoRepoController {
           break;
         case Endpoints.MONGO_EXCLUDED_REPO:
           ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK, null);
+          break;
+        case Endpoints.MONGO_LOG_ENTRY:
+          final String logDateParam =
+              ServerUtils.getQueryParam(
+                  fullHttpRequest.uri(), "logDate", LocalDate.now().toString());
+          final LocalDate logDate = getLogDate(logDateParam);
+          if (logDate == null) {
+            ServerUtils.sendResponse(
+                ctx, "Invalid Log Date Value/Format...", HttpResponseStatus.BAD_REQUEST);
+          } else {
+            final List<LogEntryEntity> logEntryEntities = logEntryService.getLogEntries(logDate);
+            final List<LogEntry> logEntries =
+                ConvertUtils.convertLogEntryEntities(logEntryEntities);
+            ServerUtils.sendResponse(ctx, logEntries, HttpResponseStatus.OK, null);
+          }
           break;
         case null, default:
           ServerUtils.sendResponse(
@@ -309,6 +330,14 @@ public class MongoRepoController {
       excludedRepoService.deleteAllExcludedRepos();
     } else {
       excludedRepoService.deleteExcludedRepo(name);
+    }
+  }
+
+  private LocalDate getLogDate(final String logDate) {
+    try {
+      return LocalDate.parse(logDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    } catch (Exception ignored) {
+      return null;
     }
   }
 }
