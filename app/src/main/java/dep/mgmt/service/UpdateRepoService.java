@@ -45,7 +45,6 @@ public class UpdateRepoService {
   private final EmailService emailService;
   private final LogEntryService logEntryService;
   private final ProcessSummaryService processSummaryService;
-  private final ScriptUtils scriptUtils;
 
   public UpdateRepoService() {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
@@ -57,7 +56,6 @@ public class UpdateRepoService {
     this.emailService = new EmailService();
     this.logEntryService = new LogEntryService();
     this.processSummaryService = new ProcessSummaryService();
-    this.scriptUtils = new ScriptUtils();
   }
 
   public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues() {
@@ -254,12 +252,12 @@ public class UpdateRepoService {
     addTaskToQueue(
         ConstantUtils.QUEUE_FILES,
         ConstantUtils.TASK_DELETE_SCRIPT_FILES,
-        scriptUtils::deleteTempScriptFiles,
+        ScriptUtils::deleteTempScriptFiles,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
         ConstantUtils.QUEUE_FILES,
         ConstantUtils.TASK_CREATE_SCRIPT_FILES,
-        scriptUtils::createTempScriptFiles,
+        ScriptUtils::createTempScriptFiles,
         ConstantUtils.TASK_DELAY_DEFAULT);
   }
 
@@ -272,7 +270,7 @@ public class UpdateRepoService {
     }
 
     if (requestMetadata.getRecreateScriptFiles()
-        || scriptUtils.isScriptFilesMissingInFileSystem()) {
+        || ScriptUtils.isScriptFilesMissingInFileSystem()) {
       recreateScriptFiles();
     }
 

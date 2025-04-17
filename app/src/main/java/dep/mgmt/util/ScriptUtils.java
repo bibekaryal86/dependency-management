@@ -20,15 +20,15 @@ public class ScriptUtils {
       ConstantUtils.JAVA_SYSTEM_TMPDIR
           + ConstantUtils.PATH_DELIMITER
           + ConstantUtils.SCRIPTS_DIRECTORY;
-  private final Path tempScriptsDirectoryPath = Path.of(TEMP_SCRIPTS_DIRECTORY);
+  private static final Path tempScriptsDirectoryPath = Path.of(TEMP_SCRIPTS_DIRECTORY);
 
-  public void deleteTempScriptFiles() {
+  public static void deleteTempScriptFiles() {
     log.info("Delete Temp Script Files...");
 
     try {
-      if (Files.exists(this.tempScriptsDirectoryPath)) {
+      if (Files.exists(tempScriptsDirectoryPath)) {
         try (Stream<Path> paths = Files.walk(tempScriptsDirectoryPath)) {
-          paths.sorted(Comparator.reverseOrder()).forEach(this::delete);
+          paths.sorted(Comparator.reverseOrder()).forEach(ScriptUtils::delete);
         }
       }
     } catch (IOException ex) {
@@ -36,7 +36,7 @@ public class ScriptUtils {
     }
   }
 
-  public void createTempScriptFiles() {
+  public static void createTempScriptFiles() {
     boolean isError = createTempScriptsDirectory();
     if (isError) {
       throw new RuntimeException("Unable to create temp directory to store scripts...");
@@ -55,9 +55,9 @@ public class ScriptUtils {
     }
   }
 
-  public boolean isScriptFilesMissingInFileSystem() {
+  public static boolean isScriptFilesMissingInFileSystem() {
     try {
-      if (!Files.exists(this.tempScriptsDirectoryPath)) {
+      if (!Files.exists(tempScriptsDirectoryPath)) {
         return true;
       }
 
@@ -79,7 +79,7 @@ public class ScriptUtils {
     return false;
   }
 
-  private void delete(final Path path) {
+  private static void delete(final Path path) {
     try {
       boolean isDeleted = Files.deleteIfExists(path);
       log.info("Delete: [ {} ] | [ {} ]", path, isDeleted);
@@ -88,11 +88,11 @@ public class ScriptUtils {
     }
   }
 
-  private boolean createTempScriptsDirectory() {
+  private static boolean createTempScriptsDirectory() {
     try {
-      if (!Files.exists(this.tempScriptsDirectoryPath)) {
-        log.debug("Creating temp script directory: [ {} ]", this.tempScriptsDirectoryPath);
-        Files.createDirectory(this.tempScriptsDirectoryPath);
+      if (!Files.exists(tempScriptsDirectoryPath)) {
+        log.debug("Creating temp script directory: [ {} ]", tempScriptsDirectoryPath);
+        Files.createDirectory(tempScriptsDirectoryPath);
       }
       return false;
     } catch (IOException ex) {
@@ -101,7 +101,7 @@ public class ScriptUtils {
     }
   }
 
-  private boolean createTempScriptFile(final AppDataScriptFile scriptFile) {
+  private static boolean createTempScriptFile(final AppDataScriptFile scriptFile) {
     try {
       Path filePath =
           Files.createFile(
@@ -110,7 +110,7 @@ public class ScriptUtils {
                       + ConstantUtils.PATH_DELIMITER
                       + scriptFile.getScriptFileName()));
       try (InputStream inputStream =
-          getClass()
+          ScriptUtils.class
               .getClassLoader()
               .getResourceAsStream(
                   ConstantUtils.SCRIPTS_DIRECTORY
@@ -127,7 +127,7 @@ public class ScriptUtils {
     }
   }
 
-  private void giveExecutePermissionToFile(final AppDataScriptFile scriptFile) {
+  private static void giveExecutePermissionToFile(final AppDataScriptFile scriptFile) {
     try {
       String scriptPath =
           ConstantUtils.JAVA_SYSTEM_TMPDIR
