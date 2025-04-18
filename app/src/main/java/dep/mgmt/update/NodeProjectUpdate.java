@@ -61,6 +61,7 @@ public class NodeProjectUpdate {
     final JsonNode rootNode = readPackageJsonContents(packageJsonFile);
 
     if (rootNode == null) {
+      log.error("Root Node is NULL: [{}]", packageJsonPath);
       return false;
     }
 
@@ -133,6 +134,8 @@ public class NodeProjectUpdate {
           isUpdated = true;
         }
       }
+    } else {
+      log.error("Dependencies Section is NULL: [{}}", this.repository.getRepoName());
     }
 
     return isUpdated;
