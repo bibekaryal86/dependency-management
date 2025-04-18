@@ -113,7 +113,6 @@ public class UpdateRepoService {
             Boolean.FALSE,
             LocalDate.now(),
             null);
-    LogCaptureUtils.start(requestMetadata.getIncludeDebugLogs());
     scheduledCleanup();
     updateRepos(requestMetadata);
   }
@@ -139,6 +138,10 @@ public class UpdateRepoService {
   }
 
   public void updateRepos(final RequestMetadata requestMetadata) {
+    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)) {
+      LogCaptureUtils.start(requestMetadata.getIncludeDebugLogs());
+    }
+
     log.info("Update Repos: [{}]", requestMetadata);
     updateInit(requestMetadata);
 
