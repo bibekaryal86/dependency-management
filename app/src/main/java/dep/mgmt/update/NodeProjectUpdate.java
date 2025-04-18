@@ -33,6 +33,7 @@ public class NodeProjectUpdate {
   }
 
   public boolean execute() {
+    log.debug("Updating [{}]", this.repository.getRepoName());
     final boolean isPackageJsonUpdated = executePackageJsonUpdate();
     final boolean isGcpConfigUpdated =
         UpdateGcpConfigs.execute(

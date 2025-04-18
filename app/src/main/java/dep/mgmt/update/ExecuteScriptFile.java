@@ -68,6 +68,7 @@ public class ExecuteScriptFile {
       final String type,
       final List<String> arguments,
       final boolean isRunAsync) {
+    log.debug("Running: [{}] | [{}]", scriptPath, repoName);
     try {
       final Process process = startProcess(scriptPath, arguments, isRunAsync);
       processOutput(process, scriptPath, repoName, type);
@@ -79,6 +80,7 @@ public class ExecuteScriptFile {
   private static Process startProcess(
       final String scriptPath, final List<String> arguments, final boolean isRunAsync)
       throws IOException, InterruptedException {
+    log.debug("Starting: [{}] | [{}]", scriptPath, arguments);
     try {
       List<String> command = new LinkedList<>();
       command.add(ConstantUtils.COMMAND_PATH);

@@ -51,6 +51,7 @@ public class GradleProjectUpdate {
   }
 
   public boolean execute() {
+    log.debug("Updating [{}]", this.repository.getRepoName());
     final boolean isBuildGradleUpdated = executeBuildGradleUpdate();
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
     final boolean isGcpConfigUpdated =

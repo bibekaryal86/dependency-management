@@ -50,7 +50,7 @@ public class TaskQueues {
   }
 
   public Future<String> processQueues() {
-    log.info("Process Queues...");
+    log.debug("Process Queues...");
     if (isProcessing()) {
       throw new IllegalStateException("Queues are already being processed...");
     }
@@ -181,7 +181,7 @@ public class TaskQueues {
       }
 
       public Object execute() {
-        log.info("Execute Task: [{}]", name);
+        log.debug("Execute Task: [{}]", name);
         ProcessUtils.updateProcessedTasksStarted(name);
         Object result = null;
         Future<Object> future = null;

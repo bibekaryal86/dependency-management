@@ -36,6 +36,7 @@ public class PythonProjectUpdate {
   }
 
   public boolean execute() {
+    log.debug("Updating [{}]", this.repository.getRepoName());
     final boolean isProjectTomlUpdated = executePyProjectTomlUpdate();
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
     final boolean isGcpConfigUpdated =
