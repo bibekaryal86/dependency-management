@@ -28,4 +28,10 @@ public class LogEntryRepository extends MongoRepository<LogEntryEntity> {
         .sort(Sorts.descending(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME))
         .into(new ArrayList<>());
   }
+
+  // Delete all entities where updateDateTime is before the given date
+  public void deleteByUpdateDateTimeBefore(final LocalDateTime date) {
+    final Bson filter = Filters.lt(ConstantUtils.MONGODB_COLUMN_UPDATE_DATETIME, date);
+    collection.deleteMany(filter);
+  }
 }

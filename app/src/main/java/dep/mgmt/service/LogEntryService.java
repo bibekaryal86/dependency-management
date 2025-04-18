@@ -49,4 +49,9 @@ public class LogEntryService {
     log.debug("Get Log Entries: [{}]", logDate);
     return logEntryRepository.getLogEntriesByDate(logDate);
   }
+
+  public void scheduledCleanup(final LocalDateTime cleanupBeforeDate) {
+    logEntryRepository.deleteByUpdateDateTimeBefore(cleanupBeforeDate);
+    log.info("Deleted Log Entries before: [{}]", cleanupBeforeDate);
+  }
 }

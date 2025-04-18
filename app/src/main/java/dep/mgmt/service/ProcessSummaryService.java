@@ -4,7 +4,6 @@ import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.repository.ProcessSummaryRepository;
-import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,9 +21,7 @@ public class ProcessSummaryService {
     this.processSummaryRepository = new ProcessSummaryRepository(MongoDbConfig.getDatabase());
   }
 
-  public void scheduledCleanup() {
-    LocalDateTime cleanupBeforeDate =
-        LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
+  public void scheduledCleanup(final LocalDateTime cleanupBeforeDate) {
     processSummaryRepository.deleteByUpdateDateTimeBefore(cleanupBeforeDate);
     log.info("Deleted Process Summaries before: [{}]", cleanupBeforeDate);
   }

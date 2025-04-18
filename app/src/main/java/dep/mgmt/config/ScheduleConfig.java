@@ -46,13 +46,20 @@ public class ScheduleConfig {
                 }));
 
     updateReposSchedule();
-    cleanupProcessSummariesSchedule();
   }
 
   private static void updateReposSchedule() {
     final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-    final ZonedDateTime executionTime =
-        getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_UPDATE_REPO);
+    ZonedDateTime executionTime =
+        ZonedDateTime.now(ZoneId.systemDefault())
+            .withHour(ConstantUtils.SCHEDULER_START_HOUR_UPDATE_REPO)
+            .withMinute(ConstantUtils.SCHEDULER_START_MINUTE)
+            .withSecond(ConstantUtils.SCHEDULER_START_SECOND);
+
+    if (now.isAfter(executionTime)) {
+      executionTime = executionTime.plusDays(1);
+    }
+
     final long initialDelay = Duration.between(now, executionTime).toMillis();
     final long period = TimeUnit.DAYS.toMillis(1);
 
@@ -64,37 +71,5 @@ public class ScheduleConfig {
         initialDelay,
         period,
         TimeUnit.MILLISECONDS);
-  }
-
-  private static void cleanupProcessSummariesSchedule() {
-    final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-    final ZonedDateTime executionTime =
-        getExecutionTime(now, ConstantUtils.SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES);
-    final long initialDelay = Duration.between(now, executionTime).toMillis();
-    final long period = TimeUnit.DAYS.toMillis(1);
-
-    scheduler.scheduleAtFixedRate(
-        () -> {
-          log.info("Starting Scheduler to Cleanup Process Summaries...");
-          processSummaryService.scheduledCleanup();
-        },
-        initialDelay,
-        period,
-        TimeUnit.MILLISECONDS);
-  }
-
-  private static ZonedDateTime getExecutionTime(
-      final ZonedDateTime now, final int schedulerStartHour) {
-    ZonedDateTime executionTime =
-        ZonedDateTime.now(ZoneId.systemDefault())
-            .withHour(schedulerStartHour)
-            .withMinute(ConstantUtils.SCHEDULER_START_MINUTE)
-            .withSecond(ConstantUtils.SCHEDULER_START_SECOND);
-
-    if (now.isAfter(executionTime)) {
-      executionTime = executionTime.plusDays(1);
-    }
-
-    return executionTime;
   }
 }

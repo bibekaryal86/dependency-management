@@ -205,4 +205,9 @@ public class LatestVersionService {
     latestVersionEntity.setUpdateDateTime(LocalDateTime.now());
     latestVersionRepository.insert(latestVersionEntity);
   }
+
+  public void scheduledCleanup(final LocalDateTime cleanupBeforeDate) {
+    latestVersionRepository.deleteByUpdateDateTimeBefore(cleanupBeforeDate);
+    log.info("Deleted Latest Versions before: [{}]", cleanupBeforeDate);
+  }
 }

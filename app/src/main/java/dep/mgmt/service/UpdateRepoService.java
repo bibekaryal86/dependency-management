@@ -49,6 +49,7 @@ public class UpdateRepoService {
   private final EmailService emailService;
   private final LogEntryService logEntryService;
   private final ProcessSummaryService processSummaryService;
+  private final LatestVersionService latestVersionService;
 
   public UpdateRepoService() {
     this.gradleDependencyVersionService = new GradleDependencyVersionService();
@@ -60,6 +61,7 @@ public class UpdateRepoService {
     this.emailService = new EmailService();
     this.logEntryService = new LogEntryService();
     this.processSummaryService = new ProcessSummaryService();
+    this.latestVersionService = new LatestVersionService();
   }
 
   public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues() {
@@ -111,14 +113,32 @@ public class UpdateRepoService {
             Boolean.FALSE,
             LocalDate.now(),
             null);
+    LogCaptureUtils.start(requestMetadata.getIncludeDebugLogs());
+    scheduledCleanup();
     updateRepos(requestMetadata);
   }
 
-  public void updateRepos(final RequestMetadata requestMetadata) {
-    if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)) {
-      LogCaptureUtils.start(requestMetadata.getIncludeDebugLogs());
-    }
+  public void scheduledCleanup() {
+    LocalDateTime cleanupBeforeDate =
+        LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_DATA_CLEANUP,
+        ConstantUtils.TASK_DATA_CLEANUP_PROCESS_SUMMARY,
+        () -> processSummaryService.scheduledCleanup(cleanupBeforeDate),
+        ConstantUtils.TASK_DELAY_DEFAULT);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_DATA_CLEANUP,
+        ConstantUtils.TASK_DATA_CLEANUP_LOG_ENTRY,
+        () -> logEntryService.scheduledCleanup(cleanupBeforeDate),
+        ConstantUtils.TASK_DELAY_DEFAULT);
+    addTaskToQueue(
+        ConstantUtils.QUEUE_DATA_CLEANUP,
+        ConstantUtils.TASK_DATA_CLEANUP_LATEST_VERSION,
+        () -> latestVersionService.scheduledCleanup(cleanupBeforeDate),
+        ConstantUtils.TASK_DELAY_DEFAULT);
+  }
 
+  public void updateRepos(final RequestMetadata requestMetadata) {
     log.info("Update Repos: [{}]", requestMetadata);
     updateInit(requestMetadata);
 

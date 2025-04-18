@@ -128,7 +128,6 @@ public class ConstantUtils {
   public static final int CLEANUP_BEFORE_DAYS = 45;
   public static final int SCHEDULER_TIMEOUT = 5;
   public static final int SCHEDULER_START_HOUR_UPDATE_REPO = 20;
-  public static final int SCHEDULER_START_HOUR_CLEANUP_PROCESS_SUMMARIES = 23;
   public static final int SCHEDULER_START_MINUTE = 0;
   public static final int SCHEDULER_START_SECOND = 0;
   public static final long TASK_DELAY_ZERO = 0L;
@@ -170,6 +169,7 @@ public class ConstantUtils {
   public static final String QUEUE_MERGE_PULL_REQUESTS = "PULL_REQUESTS_MERGE";
   public static final String QUEUE_MERGE_PULL_REQUESTS_RETRY = "PULL_REQUESTS_MERGE_RETRY";
   public static final String QUEUE_PROCESS_SUMMARY = "PROCESS_SUMMARY";
+  public static final String QUEUE_DATA_CLEANUP = "DATA_CLEANUP";
   public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
   public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
   public static final String TASK_RESET_GRADLE_DEPENDENCIES = "RESET_GRADLE_DEPENDENCIES";
@@ -198,6 +198,9 @@ public class ConstantUtils {
   public static final String TASK_GITHUB_RATE_LIMIT = "GITHUB_RATE_LIMIT";
   public static final String TASK_LOG_CAPTURE_STOP = "STOP_LOG_CAPTURE";
   public static final String TASK_LOG_CAPTURE_SAVE = "SAVE_LOG_CAPTURE";
+  public static final String TASK_DATA_CLEANUP_PROCESS_SUMMARY = "CLEANUP_PROCESS_SUMMARY";
+  public static final String TASK_DATA_CLEANUP_LOG_ENTRY = "CLEANUP_LOG_ENTRY";
+  public static final String TASK_DATA_CLEANUP_LATEST_VERSION = "CLEANUP_LATEST_VERSION";
 
   public static final String APPENDER_INIT = "INIT";
   public static final String APPENDER_EXEC = "EXEC";
@@ -210,6 +213,4 @@ public class ConstantUtils {
 
   public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
   public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";
-  public static final String RESPONSE_BAD_BRANCH_DATE =
-      "{\"branchDate\": \"empty or invalid format\"}";
 }
