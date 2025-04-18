@@ -125,7 +125,7 @@ public class ConstantUtils {
   public static final String SCRIPT_UPDATE_EXEC = "UPDATE_DEPS_EXEC";
 
   // UPDATES
-  public static final int CLEANUP_BEFORE_DAYS = 45;
+  public static final int CLEANUP_BEFORE_DAYS = 30;
   public static final int SCHEDULER_TIMEOUT = 5;
   public static final int SCHEDULER_START_HOUR_UPDATE_REPO = 20;
   public static final int SCHEDULER_START_MINUTE = 0;
