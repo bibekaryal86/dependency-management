@@ -589,7 +589,7 @@ public class UpdateRepoService {
               .toList();
       pythonRepositories.forEach(
           pythonRepository ->
-              executeUpdateGradleProjects(appData.getLatestVersions(), pythonRepository));
+              executeUpdatePythonProjects(appData.getLatestVersions(), pythonRepository));
     }
   }
 
