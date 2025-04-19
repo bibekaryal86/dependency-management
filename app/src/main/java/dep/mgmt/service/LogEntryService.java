@@ -33,7 +33,10 @@ public class LogEntryService {
     }
 
     if (!CommonUtilities.isEmpty(logEntries)) {
-      CompletableFuture.runAsync(() -> log.info("Log not saved..."))
+      CompletableFuture.runAsync(
+              () ->
+                  logEntryRepository.insert(
+                      new LogEntryEntity(null, LocalDateTime.now(), logEntries)))
           .exceptionally(
               ex -> {
                 log.error("Error Saving Log Entry...", ex);
