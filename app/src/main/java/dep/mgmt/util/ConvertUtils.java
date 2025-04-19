@@ -8,12 +8,17 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.ExcludedRepoEntity;
 import dep.mgmt.model.entity.LogEntryEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import java.util.Collections;
 import java.util.List;
 
 public class ConvertUtils {
 
   public static List<Dependencies.Dependency> convertDependencyEntities(
       final List<DependencyEntity> dependencyEntities) {
+    if (CommonUtilities.isEmpty(dependencyEntities)) {
+      return Collections.emptyList();
+    }
     return dependencyEntities.stream()
         .map(
             dependencyEntity ->
@@ -26,6 +31,9 @@ public class ConvertUtils {
 
   public static List<ProcessSummaries.ProcessSummary> convertProcessSummaryEntities(
       final List<ProcessSummaryEntity> processSummaryEntities) {
+    if (CommonUtilities.isEmpty(processSummaryEntities)) {
+      return Collections.emptyList();
+    }
     return processSummaryEntities.stream()
         .map(
             processSummaryEntity ->
@@ -49,6 +57,9 @@ public class ConvertUtils {
   private static List<ProcessSummaries.ProcessSummary.ProcessRepository>
       convertProcessSummaryRepositoryEntities(
           final List<ProcessSummaryEntity.ProcessRepositoryEntity> processRepositoryEntities) {
+    if (CommonUtilities.isEmpty(processRepositoryEntities)) {
+      return Collections.emptyList();
+    }
     return processRepositoryEntities.stream()
         .map(
             processRepositoryEntity ->
@@ -65,6 +76,9 @@ public class ConvertUtils {
   private static List<ProcessSummaries.ProcessSummary.ProcessTask>
       convertProcessSummaryTaskEntities(
           final List<ProcessSummaryEntity.ProcessTaskEntity> processTaskEntities) {
+    if (CommonUtilities.isEmpty(processTaskEntities)) {
+      return Collections.emptyList();
+    }
     return processTaskEntities.stream()
         .map(
             processTaskEntity ->
@@ -79,6 +93,9 @@ public class ConvertUtils {
 
   public static ProcessSummaryEntity convertProcessSummary(
       final ProcessSummaries.ProcessSummary processSummary) {
+    if (processSummary == null) {
+      return null;
+    }
     return new ProcessSummaryEntity(
         null,
         processSummary.getUpdateDateTime(),
@@ -98,6 +115,9 @@ public class ConvertUtils {
   private static List<ProcessSummaryEntity.ProcessRepositoryEntity>
       convertProcessSummaryRepositories(
           final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories) {
+    if (CommonUtilities.isEmpty(processRepositories)) {
+      return Collections.emptyList();
+    }
     return processRepositories.stream()
         .map(
             processRepository ->
@@ -113,6 +133,9 @@ public class ConvertUtils {
 
   private static List<ProcessSummaryEntity.ProcessTaskEntity> convertProcessSummaryTasks(
       final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks) {
+    if (CommonUtilities.isEmpty(processTasks)) {
+      return Collections.emptyList();
+    }
     return processTasks.stream()
         .map(
             processTask ->
@@ -127,6 +150,9 @@ public class ConvertUtils {
 
   public static List<ExcludedRepos.ExcludedRepo> convertExcludedRepoEntities(
       final List<ExcludedRepoEntity> excludedRepoEntities) {
+    if (CommonUtilities.isEmpty(excludedRepoEntities)) {
+      return Collections.emptyList();
+    }
     return excludedRepoEntities.stream()
         .map(excludedRepoEntity -> new ExcludedRepos.ExcludedRepo(excludedRepoEntity.getName()))
         .toList();
@@ -134,6 +160,9 @@ public class ConvertUtils {
 
   public static List<LogEntry> convertLogEntryEntities(
       final List<LogEntryEntity> logEntryEntities) {
+    if (CommonUtilities.isEmpty(logEntryEntities)) {
+      return Collections.emptyList();
+    }
     return logEntryEntities.stream()
         .map(
             logEntryEntity ->
