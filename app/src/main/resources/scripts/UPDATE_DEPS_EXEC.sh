@@ -33,8 +33,11 @@ echo "Creating new branch"
 git checkout -b "$branch_name" 2>&1
 
 # Commit and push
-echo "Committing and pushing"
-if ! git status | grep "nothing to commit" > /dev/null 2>&1; then
+echo "Committing and pushing"  2>&1
+echo git status 2>&1
+
+# Check if there are uncommitted changes
+if ! git diff-index --quiet HEAD --; then
 	git add . 2>&1
 	git commit -am 'Dependencies Updated (https://bit.ly/dep-mgmt)' 2>&1
 	git push origin -u "$branch_name" 2>&1
@@ -46,4 +49,4 @@ echo "Cleaning up"
 git checkout main 2>&1
 git branch -D "$branch_name" 2>&1
 
-echo "Finished: $repo_loc"
+echo "Finished: $repo_loc"  2>&1
