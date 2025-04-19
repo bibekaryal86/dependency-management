@@ -163,8 +163,8 @@ public class UpdateRepoService {
       case ALL, GRADLE, NODE, PYTHON -> {
         isPrCreateRequired = true;
         isPrMergeRequired = true;
-        executeUpdateRepositories(requestMetadata);
         executeUpdateDependencies(requestMetadata, Boolean.FALSE);
+        executeUpdateRepositories(requestMetadata);
       }
       default ->
           throw new IllegalArgumentException(
