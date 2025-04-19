@@ -110,7 +110,7 @@ public class UpdateRepoService {
             Boolean.FALSE,
             Boolean.TRUE,
             Boolean.TRUE,
-            Boolean.TRUE, // TODO set as false
+            Boolean.FALSE,
             LocalDate.now(),
             null);
     scheduledCleanup();
