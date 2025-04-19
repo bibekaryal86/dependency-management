@@ -61,7 +61,7 @@ public class ScriptUtils {
         return true;
       }
 
-      List<AppDataScriptFile> scriptFiles = AppDataUtils.setAppData().getScriptFiles();
+      List<AppDataScriptFile> scriptFiles = AppDataUtils.getAppData().getScriptFiles();
       for (final AppDataScriptFile scriptFile : scriptFiles) {
         Path filePath =
             Path.of(

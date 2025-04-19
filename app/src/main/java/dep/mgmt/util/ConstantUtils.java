@@ -1,5 +1,6 @@
 package dep.mgmt.util;
 
+import dep.mgmt.model.enums.RequestParams;
 import io.netty.util.AttributeKey;
 import java.util.List;
 
@@ -158,6 +159,14 @@ public class ConstantUtils {
   public static final String GITHUB_ACTIONS_SETUP_NODE = "setup-node";
   public static final String GITHUB_ACTIONS_SETUP_PYTHON = "setup-python";
   public static final String GITHUB_ACTIONS_CODEQL = "codeql-action";
+  public static final List<RequestParams.UpdateType> RATE_LIMIT_UPDATE_TYPES_LIST =
+      List.of(
+          RequestParams.UpdateType.ALL,
+          RequestParams.UpdateType.GRADLE,
+          RequestParams.UpdateType.NODE,
+          RequestParams.UpdateType.PYTHON,
+          RequestParams.UpdateType.PULL_REQ,
+          RequestParams.UpdateType.MERGE);
 
   // UPDATES
   public static final String QUEUE_RESET = "RESET_DATA";

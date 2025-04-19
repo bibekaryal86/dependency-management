@@ -317,7 +317,9 @@ public class UpdateRepoService {
   }
 
   private void updateExit(final RequestMetadata requestMetadata) {
-    checkGithubRateLimits();
+    if (ConstantUtils.RATE_LIMIT_UPDATE_TYPES_LIST.contains(requestMetadata.getUpdateType())) {
+      checkGithubRateLimits();
+    }
     executeUpdateDependencies(requestMetadata, Boolean.TRUE);
     makeProcessSummaryTask(requestMetadata);
     resetProcessedSummariesTask();
