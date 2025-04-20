@@ -320,9 +320,15 @@ public class UpdateRepoService {
   private void updateExit(final RequestMetadata requestMetadata) {
     if (ConstantUtils.RATE_LIMIT_UPDATE_TYPES_LIST.contains(requestMetadata.getUpdateType())) {
       checkGithubRateLimits();
+      executeUpdateDependenciesInitExit(requestMetadata, Boolean.FALSE);
     }
-    executeUpdateDependenciesInitExit(requestMetadata, Boolean.FALSE);
-    makeProcessSummaryTask(requestMetadata);
+    if (requestMetadata.getProcessSummaryRequired()) {
+      addTaskToQueue(
+              ConstantUtils.QUEUE_PROCESS_SUMMARY,
+              ConstantUtils.QUEUE_PROCESS_SUMMARY,
+              () -> makeProcessSummary(requestMetadata),
+              ConstantUtils.TASK_DELAY_DEFAULT);
+    }
     resetProcessedSummariesTask();
     stopLogCapture();
   }
@@ -505,8 +511,8 @@ public class UpdateRepoService {
     repositories.forEach(
         repository -> {
           addTaskToQueue(
-              getUpdateDependenciesQueueName(ConstantUtils.APPENDER_INIT),
-              getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
+              getUpdateDependenciesQueueName(isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+              getUpdateDependenciesTaskName(repository.getRepoName(), isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
               () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
               ConstantUtils.TASK_DELAY_ZERO);
         });
@@ -792,16 +798,6 @@ public class UpdateRepoService {
       taskQueues.addQueue(taskQueue);
     } else {
       taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(taskName, action, delayMillis));
-    }
-  }
-
-  private void makeProcessSummaryTask(final RequestMetadata requestMetadata) {
-    if (requestMetadata.getProcessSummaryRequired()) {
-      addTaskToQueue(
-          ConstantUtils.QUEUE_PROCESS_SUMMARY,
-          ConstantUtils.QUEUE_PROCESS_SUMMARY,
-          () -> makeProcessSummary(requestMetadata),
-          ConstantUtils.TASK_DELAY_DEFAULT);
     }
   }
 
