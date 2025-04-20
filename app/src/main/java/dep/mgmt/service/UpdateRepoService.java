@@ -163,8 +163,9 @@ public class UpdateRepoService {
       case ALL, GRADLE, NODE, PYTHON -> {
         isPrCreateRequired = true;
         isPrMergeRequired = true;
-        executeUpdateDependencies(requestMetadata, Boolean.FALSE);
-        executeUpdateRepositories(requestMetadata);
+        executeUpdateDependenciesInitExit(requestMetadata, Boolean.TRUE);
+        executeUpdateDependencies(requestMetadata);
+        executeUpdateDependenciesExec(requestMetadata);
       }
       default ->
           throw new IllegalArgumentException(
@@ -320,7 +321,7 @@ public class UpdateRepoService {
     if (ConstantUtils.RATE_LIMIT_UPDATE_TYPES_LIST.contains(requestMetadata.getUpdateType())) {
       checkGithubRateLimits();
     }
-    executeUpdateDependencies(requestMetadata, Boolean.TRUE);
+    executeUpdateDependenciesInitExit(requestMetadata, Boolean.FALSE);
     makeProcessSummaryTask(requestMetadata);
     resetProcessedSummariesTask();
     stopLogCapture();
@@ -479,8 +480,8 @@ public class UpdateRepoService {
     }
   }
 
-  private void executeUpdateDependencies(
-      final RequestMetadata requestMetadata, final boolean isExit) {
+  private void executeUpdateDependenciesInitExit(
+      final RequestMetadata requestMetadata, final boolean isInit) {
     final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
 
@@ -494,12 +495,37 @@ public class UpdateRepoService {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
     }
 
-    final AppDataScriptFile scriptFileInit =
+    final AppDataScriptFile scriptFileInitExit =
         appData.getScriptFiles().stream()
             .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_INIT))
             .findFirst()
             .orElseThrow(
                 () -> new IllegalStateException("Update Dependencies Init/Exit Script Not Found"));
+
+    repositories.forEach(
+        repository -> {
+          addTaskToQueue(
+              getUpdateDependenciesQueueName(ConstantUtils.APPENDER_INIT),
+              getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
+              () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
+              ConstantUtils.TASK_DELAY_ZERO);
+        });
+  }
+
+  private void executeUpdateDependenciesExec(final RequestMetadata requestMetadata) {
+    final AppData appData = AppDataUtils.getAppData();
+    final String repoName = requestMetadata.getRepoName();
+
+    final List<AppDataRepository> repositories =
+        appData.getRepositories().stream()
+            .filter(
+                repository ->
+                    CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
+            .toList();
+    if (!CommonUtilities.isEmpty(repoName) && CommonUtilities.isEmpty(repositories)) {
+      throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
+    }
+
     final AppDataScriptFile scriptFileExec =
         appData.getScriptFiles().stream()
             .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_EXEC))
@@ -507,48 +533,21 @@ public class UpdateRepoService {
             .orElseThrow(
                 () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
 
-    if (isExit) {
-      repositories.forEach(
-          repository ->
-              executeUpdateDependenciesInitExit(repository, scriptFileInit, Boolean.FALSE));
-    } else {
-      repositories.forEach(
-          repository ->
-              executeUpdateDependenciesInitExit(repository, scriptFileInit, Boolean.TRUE));
-      repositories.forEach(
-          repository ->
-              executeUpdateDependenciesExec(
-                  repository, scriptFileExec, requestMetadata.getBranchDate()));
-    }
+    repositories.forEach(
+        repository -> {
+          final String branchName =
+              String.format(
+                  ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, requestMetadata.getBranchDate());
+          addTaskToQueue(
+              getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
+              getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
+              () ->
+                  UpdateDependencies.execute(repository, scriptFileExec, branchName, Boolean.FALSE),
+              ConstantUtils.TASK_DELAY_ZERO);
+        });
   }
 
-  private void executeUpdateDependenciesInitExit(
-      final AppDataRepository repository,
-      final AppDataScriptFile scriptFile,
-      final boolean isInit) {
-    addTaskToQueue(
-        getUpdateDependenciesQueueName(
-            isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
-        getUpdateDependenciesTaskName(
-            repository.getRepoName(),
-            isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
-        () -> UpdateDependencies.execute(repository, scriptFile, null, isInit),
-        ConstantUtils.TASK_DELAY_ZERO);
-  }
-
-  private void executeUpdateDependenciesExec(
-      final AppDataRepository repository,
-      final AppDataScriptFile scriptFile,
-      final LocalDate branchDate) {
-    final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
-    addTaskToQueue(
-        getUpdateDependenciesQueueName(ConstantUtils.APPENDER_EXEC),
-        getUpdateDependenciesTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXEC),
-        () -> UpdateDependencies.execute(repository, scriptFile, branchName, Boolean.FALSE),
-        ConstantUtils.TASK_DELAY_ZERO);
-  }
-
-  private void executeUpdateRepositories(final RequestMetadata requestMetadata) {
+  private void executeUpdateDependencies(final RequestMetadata requestMetadata) {
     final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
 
