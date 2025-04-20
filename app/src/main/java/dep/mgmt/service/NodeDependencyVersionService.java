@@ -57,7 +57,7 @@ public class NodeDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getNodeDependenciesMap() {
-    log.info("Get Node Dependencies Map...");
+    log.debug("Get Node Dependencies Map...");
     Map<String, DependencyEntity> nodeDependenciesMap = CacheConfig.getNodeDependenciesMap();
     if (CommonUtilities.isEmpty(nodeDependenciesMap)) {
       final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();

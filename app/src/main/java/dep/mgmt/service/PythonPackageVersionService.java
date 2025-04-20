@@ -58,7 +58,7 @@ public class PythonPackageVersionService {
   }
 
   public Map<String, DependencyEntity> getPythonPackagesMap() {
-    log.info("Get Python Packages Map...");
+    log.debug("Get Python Packages Map...");
     Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
