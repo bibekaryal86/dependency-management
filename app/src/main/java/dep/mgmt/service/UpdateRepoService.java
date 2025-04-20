@@ -324,10 +324,10 @@ public class UpdateRepoService {
     }
     if (requestMetadata.getProcessSummaryRequired()) {
       addTaskToQueue(
-              ConstantUtils.QUEUE_PROCESS_SUMMARY,
-              ConstantUtils.QUEUE_PROCESS_SUMMARY,
-              () -> makeProcessSummary(requestMetadata),
-              ConstantUtils.TASK_DELAY_DEFAULT);
+          ConstantUtils.QUEUE_PROCESS_SUMMARY,
+          ConstantUtils.QUEUE_PROCESS_SUMMARY,
+          () -> makeProcessSummary(requestMetadata),
+          ConstantUtils.TASK_DELAY_DEFAULT);
     }
     resetProcessedSummariesTask();
     stopLogCapture();
@@ -511,8 +511,11 @@ public class UpdateRepoService {
     repositories.forEach(
         repository -> {
           addTaskToQueue(
-              getUpdateDependenciesQueueName(isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
-              getUpdateDependenciesTaskName(repository.getRepoName(), isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+              getUpdateDependenciesQueueName(
+                  isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
+              getUpdateDependenciesTaskName(
+                  repository.getRepoName(),
+                  isInit ? ConstantUtils.APPENDER_INIT : ConstantUtils.APPENDER_EXIT),
               () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
               ConstantUtils.TASK_DELAY_ZERO);
         });
