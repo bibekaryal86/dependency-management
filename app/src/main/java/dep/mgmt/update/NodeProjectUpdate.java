@@ -134,8 +134,6 @@ public class NodeProjectUpdate {
           isUpdated = true;
         }
       }
-    } else {
-      log.error("Dependencies Section is NULL: [{}}", this.repository.getRepoName());
     }
 
     return isUpdated;
