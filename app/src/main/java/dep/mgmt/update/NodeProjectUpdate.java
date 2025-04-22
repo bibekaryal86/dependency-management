@@ -37,7 +37,7 @@ public class NodeProjectUpdate {
     final boolean isPackageJsonUpdated = executePackageJsonUpdate();
     final boolean isGcpConfigUpdated =
         UpdateGcpConfigs.execute(
-            this.repository, this.latestVersions.getLatestVersionLanguages().getJava());
+            this.repository, this.latestVersions.getLatestVersionLanguages().getNode());
     final boolean isDockerfileUpdated =
         UpdateDockerFile.execute(this.repository, this.latestVersions);
     final boolean isGithubWorkflowsUpdated =

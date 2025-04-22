@@ -41,7 +41,7 @@ public class PythonProjectUpdate {
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
     final boolean isGcpConfigUpdated =
         UpdateGcpConfigs.execute(
-            this.repository, this.latestVersions.getLatestVersionLanguages().getJava());
+            this.repository, this.latestVersions.getLatestVersionLanguages().getPython());
     final boolean isDockerfileUpdated =
         UpdateDockerFile.execute(this.repository, this.latestVersions);
     final boolean isGithubWorkflowsUpdated =
