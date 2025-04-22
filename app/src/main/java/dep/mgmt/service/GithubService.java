@@ -36,10 +36,16 @@ public class GithubService {
   public void mergeGithubPullRequest(
       final String repoName, final LocalDate branchDate, final Integer prNumber) {
     log.info("Merge Github Pull Request: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
+
     final Integer prNumberFromWorkflowRun = checkWorkflowRun(repoName, branchDate);
 
     if (prNumberFromWorkflowRun == null) {
-      log.info("PR Not Found in Workflow Run: [{}] | [{}]", repoName, branchDate);
+      log.info("PR Number from Workflow Run NOT Found: [{}] | [{}]", repoName, branchDate);
+    }
+
+    if (prNumber == null && prNumberFromWorkflowRun == null) {
+      log.error("No PR Number to Merge: [{}] | [{}]", repoName, branchDate);
+      return;
     }
 
     if (prNumber != null && !Objects.equals(prNumber, prNumberFromWorkflowRun)) {
@@ -50,21 +56,19 @@ public class GithubService {
           prNumber,
           prNumberFromWorkflowRun);
       ProcessUtils.addRepositoriesToRetryMerge(repoName);
+      return;
     }
 
-    if ((prNumber != null && Objects.equals(prNumber, prNumberFromWorkflowRun))
-        || prNumberFromWorkflowRun != null) {
-      final GithubApiModel.MergePullRequestResponse mergePullRequestResponse =
-          githubConnector.mergePullRequest(repoName, prNumber);
+    final GithubApiModel.MergePullRequestResponse mergePullRequestResponse =
+        githubConnector.mergePullRequest(repoName, prNumberFromWorkflowRun);
 
-      if (mergePullRequestResponse != null
-          && mergePullRequestResponse.getMerged() != null
-          && mergePullRequestResponse.getMerged()) {
-        ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
-        ProcessUtils.removeRepositoriesToRetryMerge(repoName);
-      } else {
-        ProcessUtils.addRepositoriesToRetryMerge(repoName);
-      }
+    if (mergePullRequestResponse != null
+        && mergePullRequestResponse.getMerged() != null
+        && mergePullRequestResponse.getMerged()) {
+      ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
+      ProcessUtils.removeRepositoriesToRetryMerge(repoName);
+    } else {
+      ProcessUtils.addRepositoriesToRetryMerge(repoName);
     }
   }
 
