@@ -31,7 +31,7 @@ public class App {
       log.info("Completed Data Migration...");
     } else {
       App.init();
-      ScheduleConfig.init();
+      // ScheduleConfig.init(); // TODO revert this
       NettyServer.init();
       MongoDbConfig.init();
       log.info("Started Dependency Management Service...");
