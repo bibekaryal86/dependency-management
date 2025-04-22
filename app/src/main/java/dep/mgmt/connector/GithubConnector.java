@@ -109,7 +109,10 @@ public class GithubConnector {
         String.format(ConstantUtils.GITHUB_MERGE_PR_ENDPOINT, repoOwner, repoName, pullNumber);
     final Map<String, String> headers = getDefaultHeaders();
     final GithubApiModel.MergePullRequestRequest requestBody =
-        new GithubApiModel.MergePullRequestRequest(ConstantUtils.GITHUB_PR_MERGE_METHOD);
+        new GithubApiModel.MergePullRequestRequest(
+            ConstantUtils.GITHUB_PR_TITLE_BODY,
+            ConstantUtils.GITHUB_PR_TITLE_BODY,
+            ConstantUtils.GITHUB_PR_MERGE_METHOD);
 
     HttpResponse<GithubApiModel.MergePullRequestResponse> response =
         Connector.sendRequest(

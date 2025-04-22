@@ -126,11 +126,26 @@ public class GithubApiModel implements Serializable {
   }
 
   public static class MergePullRequestRequest implements Serializable {
+    private final String commitTitle;
+    private final String commitMessage;
     private final String mergeMethod;
 
     @JsonCreator
-    public MergePullRequestRequest(@JsonProperty("merge_method") String mergeMethod) {
+    public MergePullRequestRequest(
+        @JsonProperty("commit_title") String commitTitle,
+        @JsonProperty("commit_message") String commitMessage,
+        @JsonProperty("merge_method") String mergeMethod) {
+      this.commitTitle = commitTitle;
+      this.commitMessage = commitMessage;
       this.mergeMethod = mergeMethod;
+    }
+
+    public String getCommitTitle() {
+      return commitTitle;
+    }
+
+    public String getCommitMessage() {
+      return commitMessage;
     }
 
     public String getMergeMethod() {
@@ -139,7 +154,17 @@ public class GithubApiModel implements Serializable {
 
     @Override
     public String toString() {
-      return "GithubApiModel.MergePullRequestRequest{" + "mergeMethod='" + mergeMethod + '\'' + '}';
+      return "MergePullRequestRequest{"
+          + "commitTitle='"
+          + commitTitle
+          + '\''
+          + ", commitMessage='"
+          + commitMessage
+          + '\''
+          + ", mergeMethod='"
+          + mergeMethod
+          + '\''
+          + '}';
     }
   }
 
