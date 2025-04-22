@@ -4,7 +4,6 @@
 package dep.mgmt;
 
 import dep.mgmt.config.MongoDbConfig;
-import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.migration.MigrationService;
 import dep.mgmt.server.NettyServer;
 import dep.mgmt.util.AppDataUtils;
