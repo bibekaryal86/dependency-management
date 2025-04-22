@@ -4,6 +4,7 @@
 package dep.mgmt;
 
 import dep.mgmt.config.MongoDbConfig;
+import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.migration.MigrationService;
 import dep.mgmt.server.NettyServer;
 import dep.mgmt.util.AppDataUtils;
@@ -30,7 +31,7 @@ public class App {
       log.info("Completed Data Migration...");
     } else {
       App.init();
-      // ScheduleConfig.init(); // TODO revert this
+      ScheduleConfig.init();
       NettyServer.init();
       MongoDbConfig.init();
       log.info("Started Dependency Management Service...");

@@ -138,6 +138,7 @@ public class ConstantUtils {
   public static final long TASK_DELAY_PULL_REQUEST_RETRY = 1000 * 60 * 30; // 30 minutes
   public static final String DOCKER_JRE = "eclipse-temurin";
   public static final String DOCKER_ALPINE = "alpine";
+  public static final String DOCKER_CURRENT = "current";
   public static final String GITHUB_ENDPOINT_TAGS = "tags";
   public static final String GITHUB_ENDPOINT_RELEASES = "releases";
   public static final String JAVA_JDK = "jdk";

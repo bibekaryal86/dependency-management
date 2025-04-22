@@ -89,7 +89,8 @@ public class JavaVersionService {
   private String getVersionDocker(
       final String versionMajor, final String latestDockerVersionFromMongo) {
     final String library = ConstantUtils.DOCKER_JRE;
-    final String tag = versionMajor + "-" + ConstantUtils.JAVA_JRE + ConstantUtils.DOCKER_ALPINE;
+    final String tag =
+        versionMajor + "-" + ConstantUtils.JAVA_JRE + "-" + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
     if (isNewDockerImageExists) {

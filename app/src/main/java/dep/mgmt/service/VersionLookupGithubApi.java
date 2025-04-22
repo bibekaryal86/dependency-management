@@ -15,7 +15,8 @@ public abstract class VersionLookupGithubApi {
   private static final Logger log = LoggerFactory.getLogger(VersionLookupGithubApi.class);
 
   protected LatestVersion getGithubApiLatestVersion(final String owner, final String repo) {
-    ApiReleaseResponse apiReleaseResponse = getGithubApiReleaseResponse(owner, repo, Boolean.FALSE);
+    ApiReleaseResponse apiReleaseResponse =
+        getGithubApiReleaseResponse(owner, repo, Boolean.FALSE, Boolean.TRUE);
     if (apiReleaseResponse == null) {
       return null;
     }
@@ -26,7 +27,7 @@ public abstract class VersionLookupGithubApi {
   }
 
   protected ApiReleaseResponse getGithubApiReleaseResponse(
-      final String owner, final String repo, final boolean isTags) {
+      final String owner, final String repo, final boolean isTags, final boolean isCheckMain) {
     ApiReleaseResponse apiReleaseResponse = null;
     try {
       final String url =
@@ -53,8 +54,10 @@ public abstract class VersionLookupGithubApi {
               : apiReleaseResponses.stream()
                   .filter(
                       arr ->
-                          "main".equals(arr.getTargetCommitish())
-                              && !(arr.getPrerelease() || arr.getDraft()))
+                          isCheckMain
+                              ? ("main".equals(arr.getTargetCommitish())
+                                  && !(arr.getPrerelease() || arr.getDraft()))
+                              : !(arr.getPrerelease() || arr.getDraft()))
                   .findFirst()
                   .orElse(null);
       if (apiReleaseResponse == null) {

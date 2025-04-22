@@ -22,7 +22,7 @@ public class PythonVersionService extends VersionLookupGithubApi {
       final String latestGcpRuntimeVersion, final String latestDockerVersionFromMongo) {
     ApiReleaseResponse apiReleaseResponse =
         getGithubApiReleaseResponse(
-            ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE);
+            ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE, Boolean.FALSE);
 
     if (apiReleaseResponse == null) {
       return null;

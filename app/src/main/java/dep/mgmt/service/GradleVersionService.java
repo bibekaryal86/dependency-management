@@ -16,7 +16,7 @@ public class GradleVersionService extends VersionLookupGithubApi {
       final String latestJavaVersionMajor, final String latestDockerVersionFromMongo) {
     final ApiReleaseResponse apiReleaseResponse =
         getGithubApiReleaseResponse(
-            ConstantUtils.GRADLE_NAME, ConstantUtils.GRADLE_NAME, Boolean.FALSE);
+            ConstantUtils.GRADLE_NAME, ConstantUtils.GRADLE_NAME, Boolean.FALSE, Boolean.FALSE);
 
     if (apiReleaseResponse == null) {
       return null;
@@ -37,7 +37,16 @@ public class GradleVersionService extends VersionLookupGithubApi {
       final String latestJavaVersionMajor,
       final String latestDockerVersionFromMongo) {
     final String library = ConstantUtils.GRADLE_NAME;
-    final String tag = versionFull + "-" + ConstantUtils.JAVA_JDK + ConstantUtils.DOCKER_ALPINE;
+    final String tag =
+        versionFull
+            + "-"
+            + ConstantUtils.JAVA_JDK
+            + "-"
+            + ConstantUtils.VERSION_LTS.toLowerCase()
+            + "-and-"
+            + ConstantUtils.DOCKER_CURRENT
+            + "-"
+            + ConstantUtils.DOCKER_ALPINE;
     final boolean isNewDockerImageExists =
         dockerVersionService.checkDockerVersionExists(library, tag);
     if (isNewDockerImageExists) {
