@@ -51,7 +51,10 @@ public abstract class VersionLookupGithubApi {
                   .findFirst()
                   .orElse(null)
               : apiReleaseResponses.stream()
-                  .filter(arr -> !(arr.getPrerelease() || arr.getDraft()))
+                  .filter(
+                      arr ->
+                          "main".equals(arr.getTargetCommitish())
+                              && !(arr.getPrerelease() || arr.getDraft()))
                   .findFirst()
                   .orElse(null);
       if (apiReleaseResponse == null) {
