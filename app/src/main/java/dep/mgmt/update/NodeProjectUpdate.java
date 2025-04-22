@@ -7,10 +7,13 @@ import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.service.NodeDependencyVersionService;
 import dep.mgmt.util.ConstantUtils;
+import dep.mgmt.util.CustomPrettyPrinter;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -96,9 +99,12 @@ public class NodeProjectUpdate {
 
   private boolean writePackageJsonContents(final File file, final JsonNode jsonNode) {
     try {
-      CommonUtilities.objectMapperProvider()
-          .writerWithDefaultPrettyPrinter()
-          .writeValue(file, jsonNode);
+      final String jsonContent =
+          CommonUtilities.objectMapperProvider()
+              .writer(new CustomPrettyPrinter())
+              .writeValueAsString(jsonNode)
+              .concat(System.lineSeparator());
+      Files.write(Paths.get(file.toURI()), jsonContent.getBytes());
       return true;
     } catch (Exception ex) {
       log.error("Write Package Json Contents: [{}]", file.getPath(), ex);
