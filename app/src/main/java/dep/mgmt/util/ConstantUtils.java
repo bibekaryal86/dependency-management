@@ -215,6 +215,7 @@ public class ConstantUtils {
   public static final String APPENDER_INIT = "INIT";
   public static final String APPENDER_EXEC = "EXEC";
   public static final String APPENDER_EXIT = "EXIT";
+  public static final String APPENDER_DELETE = "DELETE";
   public static final String APPENDER_QUEUE_NAME = "_QUEUE";
   public static final String APPENDER_TASK_NAME = "_TASK";
   public static final String APPENDER_RETRY = "_RETRY";

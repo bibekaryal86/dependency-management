@@ -150,9 +150,7 @@ public class UpdateRepoService {
 
     switch (requestMetadata.getUpdateType()) {
       case PULL, RESET -> log.info("Pull/Reset covered in updateInit...");
-      case DELETE ->
-          executeGithubBranchDelete(
-              requestMetadata.getDeleteUpdateDependenciesOnly(), requestMetadata.getRepoName());
+      case DELETE -> executeGithubBranchDelete(requestMetadata);
       case SNAPSHOT ->
           executeNpmSnapshotsUpdate(requestMetadata.getBranchDate(), requestMetadata.getRepoName());
       case SPOTLESS ->
@@ -178,6 +176,7 @@ public class UpdateRepoService {
 
     if (isPrMergeRequired) {
       executeUpdateMergePullRequests(requestMetadata);
+      executeGithubBranchDelete(requestMetadata);
     }
 
     executeUpdateContinuedForMergeRetry(requestMetadata);
@@ -337,11 +336,7 @@ public class UpdateRepoService {
     final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
-    final AppDataScriptFile scriptFile =
-        appData.getScriptFiles().stream()
-            .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_SNAPSHOT))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("NPM Snapshot Script File Not Found"));
+    final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_SNAPSHOT);
 
     List<AppDataRepository> repositories =
         appData.getRepositories().stream()
@@ -367,11 +362,7 @@ public class UpdateRepoService {
     final AppData appData = AppDataUtils.getAppData();
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
 
-    final AppDataScriptFile scriptFile =
-        appData.getScriptFiles().stream()
-            .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_SPOTLESS))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Gradle Spotless Script File Not Found"));
+    final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_SPOTLESS);
 
     List<AppDataRepository> repositories =
         appData.getRepositories().stream()
@@ -393,18 +384,36 @@ public class UpdateRepoService {
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
-  private void executeGithubBranchDelete(
-      final boolean isDeleteUpdateDependenciesOnly, final String repoName) {
+  private void executeGithubBranchDelete(final RequestMetadata requestMetadata) {
     final AppData appData = AppDataUtils.getAppData();
+    final String repoName = requestMetadata.getRepoName();
+    final boolean isDeleteUpdateDependenciesOnly =
+        requestMetadata.getDeleteUpdateDependenciesOnly();
 
-    if (CommonUtilities.isEmpty(repoName)) {
+    final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories =
+        ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
+
+    if (!CommonUtilities.isEmpty(processRepositories)) {
+      for (ProcessSummaries.ProcessSummary.ProcessRepository processRepository :
+          processRepositories) {
+        if (processRepository.getUpdateBranchCreated().equals(Boolean.TRUE)
+            && processRepository.getPrMerged().equals(Boolean.TRUE)) {
+          final AppDataRepository repository = getRepository(processRepository.getRepoName());
+          final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_DELETE_ONE);
+
+          addTaskToQueue(
+              ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
+              getUpdateDependenciesTaskName(
+                  processRepository.getRepoName(), ConstantUtils.APPENDER_DELETE),
+              () ->
+                  UpdateBranchDelete.execute(
+                      null, repository, scriptFile, isDeleteUpdateDependenciesOnly),
+              ConstantUtils.TASK_DELAY_PULL_REQUEST);
+        }
+      }
+    } else if (CommonUtilities.isEmpty(repoName)) {
       final String repoHome = appData.getArgsMap().get(ConstantUtils.ENV_REPO_HOME);
-      final AppDataScriptFile scriptFile =
-          appData.getScriptFiles().stream()
-              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_DELETE))
-              .findFirst()
-              .orElseThrow(
-                  () -> new IllegalStateException("Gradle Spotless Script File Not Found"));
+      final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_DELETE);
 
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
@@ -414,20 +423,8 @@ public class UpdateRepoService {
                   repoHome, null, scriptFile, isDeleteUpdateDependenciesOnly),
           ConstantUtils.TASK_DELAY_ZERO);
     } else {
-      final AppDataRepository repository =
-          appData.getRepositories().stream()
-              .filter(repo -> repo.getRepoName().equals(repoName))
-              .findFirst()
-              .orElseThrow(
-                  () ->
-                      new IllegalArgumentException(
-                          "Repo Not Found by Repo Name ['" + repoName + "']"));
-      final AppDataScriptFile scriptFile =
-          appData.getScriptFiles().stream()
-              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_DELETE_ONE))
-              .findFirst()
-              .orElseThrow(
-                  () -> new IllegalStateException("Gradle Spotless One Script File Not Found"));
+      final AppDataRepository repository = getRepository(repoName);
+      final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_DELETE_ONE);
 
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_BRANCH_DELETE + ConstantUtils.APPENDER_QUEUE_NAME,
@@ -448,11 +445,7 @@ public class UpdateRepoService {
 
     if (CommonUtilities.isEmpty(repoName)) {
       final String repoHome = appData.getArgsMap().get(ConstantUtils.ENV_REPO_HOME);
-      final AppDataScriptFile scriptFile =
-          appData.getScriptFiles().stream()
-              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_RESET_PULL))
-              .findFirst()
-              .orElseThrow(() -> new IllegalStateException("GitHub Reset Pull Script Not Found"));
+      final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_RESET_PULL);
 
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
@@ -461,20 +454,8 @@ public class UpdateRepoService {
               UpdateRepoResetPull.execute(repoHome, null, scriptFile, isReset, isPull, isRunAsync),
           ConstantUtils.TASK_DELAY_ZERO);
     } else {
-      final AppDataRepository repository =
-          appData.getRepositories().stream()
-              .filter(repo -> repo.getRepoName().equals(repoName))
-              .findFirst()
-              .orElseThrow(
-                  () ->
-                      new IllegalArgumentException(
-                          "Repo Not Found by Repo Name ['" + repoName + "']"));
-      final AppDataScriptFile scriptFile =
-          appData.getScriptFiles().stream()
-              .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_RESET_PULL_ONE))
-              .findFirst()
-              .orElseThrow(
-                  () -> new IllegalStateException("GitHub Reset Pull One Script Not Found"));
+      final AppDataRepository repository = getRepository(repoName);
+      final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_RESET_PULL_ONE);
 
       addTaskToQueue(
           ConstantUtils.TASK_GITHUB_RESET_PULL + ConstantUtils.APPENDER_QUEUE_NAME,
@@ -501,12 +482,7 @@ public class UpdateRepoService {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
     }
 
-    final AppDataScriptFile scriptFileInitExit =
-        appData.getScriptFiles().stream()
-            .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_INIT))
-            .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("Update Dependencies Init/Exit Script Not Found"));
+    final AppDataScriptFile scriptFileInitExit = getScriptFile(ConstantUtils.SCRIPT_UPDATE_INIT);
 
     repositories.forEach(
         repository -> {
@@ -535,12 +511,7 @@ public class UpdateRepoService {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
     }
 
-    final AppDataScriptFile scriptFileExec =
-        appData.getScriptFiles().stream()
-            .filter(script -> script.getScriptName().equals(ConstantUtils.SCRIPT_UPDATE_EXEC))
-            .findFirst()
-            .orElseThrow(
-                () -> new IllegalStateException("Update Dependencies Execute Script Not Found"));
+    final AppDataScriptFile scriptFileExec = getScriptFile(ConstantUtils.SCRIPT_UPDATE_EXEC);
 
     repositories.forEach(
         repository -> {
@@ -636,14 +607,7 @@ public class UpdateRepoService {
 
     if (!CommonUtilities.isEmpty(requestRepoName)) {
       // process requested repo only
-      final AppDataRepository repository =
-          appData.getRepositories().stream()
-              .filter(repo -> repo.getRepoName().equals(requestRepoName))
-              .findFirst()
-              .orElseThrow(
-                  () ->
-                      new IllegalArgumentException(
-                          "Repo Not Found by Repo Name ['" + requestRepoName + "']"));
+      final AppDataRepository repository = getRepository(requestRepoName);
       addTaskToQueue(
           ConstantUtils.QUEUE_CREATE_PULL_REQUESTS,
           getPullRequestsTaskName(requestRepoName, ConstantUtils.APPENDER_INIT),
@@ -687,14 +651,7 @@ public class UpdateRepoService {
 
     if (!CommonUtilities.isEmpty(requestRepoName)) {
       // process the requested repository
-      final AppDataRepository repository =
-          appData.getRepositories().stream()
-              .filter(repo -> repo.getRepoName().equals(requestRepoName))
-              .findFirst()
-              .orElseThrow(
-                  () ->
-                      new IllegalArgumentException(
-                          "Repo Not Found by Repo Name ['" + requestRepoName + "']"));
+      final AppDataRepository repository = getRepository(requestRepoName);
       addTaskToQueue(
           ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
           getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
@@ -905,5 +862,20 @@ public class UpdateRepoService {
         ConstantUtils.TASK_LOG_CAPTURE_STOP + ConstantUtils.APPENDER_TASK_NAME,
         LogCaptureUtils::stop,
         ConstantUtils.TASK_DELAY_DEFAULT);
+  }
+
+  private AppDataScriptFile getScriptFile(final String scriptFileName) {
+    return AppDataUtils.getAppData().getScriptFiles().stream()
+        .filter(script -> script.getScriptName().equals(scriptFileName))
+        .findFirst()
+        .orElseThrow(
+            () -> new IllegalStateException("'" + scriptFileName + "' Script File Not Found..."));
+  }
+
+  private AppDataRepository getRepository(final String repoName) {
+    return AppDataUtils.getAppData().getRepositories().stream()
+        .filter(repo -> repo.getRepoName().equals(repoName))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("'" + repoName + "' Repository Not Found..."));
   }
 }
