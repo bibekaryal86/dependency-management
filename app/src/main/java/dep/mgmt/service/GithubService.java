@@ -113,6 +113,7 @@ public class GithubService {
     if (!isWorkflowRunSuccessful) {
       log.info(
           "Workflow Run Not Successful: [{}] | [{}] | [{}]", repoName, branchName, workflowRun);
+      return null;
     }
 
     return workflowRun.getPullRequests().getFirst().getNumber();

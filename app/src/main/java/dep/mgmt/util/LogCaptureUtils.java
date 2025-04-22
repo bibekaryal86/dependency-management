@@ -44,6 +44,10 @@ public class LogCaptureUtils {
   }
 
   public static String getCapturedLogs() {
+    if (listAppender == null || !listAppender.isStarted()) {
+      return null;
+    }
+
     DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.systemDefault());
     List<String> logs =
