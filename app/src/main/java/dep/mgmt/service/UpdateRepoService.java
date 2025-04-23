@@ -150,7 +150,7 @@ public class UpdateRepoService {
 
     switch (requestMetadata.getUpdateType()) {
       case PULL, RESET -> log.info("Pull/Reset covered in updateInit...");
-      case DELETE -> executeGithubBranchDelete(requestMetadata);
+      case DELETE -> executeGithubBranchDelete(requestMetadata, Boolean.FALSE);
       case SNAPSHOT ->
           executeNpmSnapshotsUpdate(requestMetadata.getBranchDate(), requestMetadata.getRepoName());
       case SPOTLESS ->
@@ -176,7 +176,7 @@ public class UpdateRepoService {
 
     if (isPrMergeRequired) {
       executeUpdateMergePullRequests(requestMetadata);
-      executeGithubBranchDelete(requestMetadata);
+      executeGithubBranchDelete(requestMetadata, isPrMergeRequired);
     }
 
     executeUpdateContinuedForMergeRetry(requestMetadata);
@@ -384,16 +384,16 @@ public class UpdateRepoService {
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
-  private void executeGithubBranchDelete(final RequestMetadata requestMetadata) {
+  private void executeGithubBranchDelete(
+      final RequestMetadata requestMetadata, final boolean isPrMergeRequiredDelete) {
     final AppData appData = AppDataUtils.getAppData();
     final String repoName = requestMetadata.getRepoName();
     final boolean isDeleteUpdateDependenciesOnly =
         requestMetadata.getDeleteUpdateDependenciesOnly();
 
-    final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories =
-        ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
-
-    if (!CommonUtilities.isEmpty(processRepositories)) {
+    if (isPrMergeRequiredDelete) {
+      final List<ProcessSummaries.ProcessSummary.ProcessRepository> processRepositories =
+          ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
       for (ProcessSummaries.ProcessSummary.ProcessRepository processRepository :
           processRepositories) {
         if (processRepository.getUpdateBranchCreated() && processRepository.getPrMerged()) {
@@ -601,10 +601,12 @@ public class UpdateRepoService {
   }
 
   private void executeUpdateCreatePullRequests(final RequestMetadata requestMetadata) {
+    log.info("Create PR 1");
     final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
     if (!CommonUtilities.isEmpty(requestRepoName)) {
+      log.info("Create PR 2");
       // process requested repo only
       final AppDataRepository repository = getRepository(requestRepoName);
       addTaskToQueue(
@@ -615,6 +617,7 @@ public class UpdateRepoService {
                   repository.getRepoName(), requestMetadata.getBranchDate()),
           ConstantUtils.TASK_DELAY_ZERO);
     } else if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PULL_REQ)) {
+      log.info("Create PR 3");
       // process all repositories
       final List<AppDataRepository> repositories = appData.getRepositories();
       for (AppDataRepository repository : repositories) {
@@ -627,9 +630,12 @@ public class UpdateRepoService {
             ConstantUtils.TASK_DELAY_PULL_REQUEST);
       }
     } else {
+      log.info("Create PR 4");
       // process the processed repositories
       final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories =
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
+      log.info("Create PR 5: [{}}", repositories);
+
       for (ProcessSummaries.ProcessSummary.ProcessRepository repository : repositories) {
         if (repository.getUpdateBranchCreated()) {
           addTaskToQueue(
@@ -645,10 +651,12 @@ public class UpdateRepoService {
   }
 
   private void executeUpdateMergePullRequests(final RequestMetadata requestMetadata) {
+    log.info("Merge PR 1");
     final AppData appData = AppDataUtils.getAppData();
     final String requestRepoName = requestMetadata.getRepoName();
 
     if (!CommonUtilities.isEmpty(requestRepoName)) {
+      log.info("Merge PR 2");
       // process the requested repository
       final AppDataRepository repository = getRepository(requestRepoName);
       addTaskToQueue(
@@ -659,6 +667,7 @@ public class UpdateRepoService {
                   repository.getRepoName(), requestMetadata.getBranchDate(), null),
           ConstantUtils.TASK_DELAY_PULL_REQUEST);
     } else if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.MERGE)) {
+      log.info("Merge PR 3");
       // process all repositories
       final List<AppDataRepository> repositories = appData.getRepositories();
       for (int i = 0; i < repositories.size(); i++) {
@@ -674,9 +683,11 @@ public class UpdateRepoService {
                 : ConstantUtils.TASK_DELAY_PULL_REQUEST);
       }
     } else {
+      log.info("Merge PR 4");
       // process the processed repositories
       final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories =
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
+      log.info("Merge PR 5: [{}]", repositories);
       for (int i = 0; i < repositories.size(); i++) {
         ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
         if (repository.getPrCreated()) {
