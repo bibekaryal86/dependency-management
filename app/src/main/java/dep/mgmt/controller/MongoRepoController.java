@@ -112,7 +112,8 @@ public class MongoRepoController {
             final List<LogEntryEntity> logEntryEntities = logEntryService.getLogEntries(logDate);
             final List<LogEntry> logEntries =
                 ConvertUtils.convertLogEntryEntities(logEntryEntities);
-            ServerUtils.sendResponse(ctx, logEntries, HttpResponseStatus.OK, null);
+            ServerUtils.sendResponseText(
+                ctx, HttpResponseStatus.OK, logEntries.getFirst().getLogEntries());
           }
           break;
         case null, default:

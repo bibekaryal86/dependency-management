@@ -17,6 +17,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,17 @@ public class ServerUtils {
             HttpVersion.HTTP_1_1, status, Unpooled.wrappedBuffer(jsonResponse));
     fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, jsonResponse.length);
     fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
+    ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+  }
+
+  public static void sendResponseText(
+      final ChannelHandlerContext ctx, final HttpResponseStatus status, final String textString) {
+    final byte[] textResponse = textString.getBytes(StandardCharsets.UTF_8);
+    final FullHttpResponse fullHttpResponse =
+        new DefaultFullHttpResponse(
+            HttpVersion.HTTP_1_1, status, Unpooled.wrappedBuffer(textResponse));
+    fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, textResponse.length);
+    fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN);
     ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
   }
 
