@@ -1,5 +1,6 @@
 package dep.mgmt.util;
 
+import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.ProcessSummaries;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -146,5 +147,29 @@ public class ProcessUtils {
     setMongoPythonPackagesToUpdate(0);
     setMongoNodeDependenciesToUpdate(0);
     setErrorsOrExceptions(false);
+  }
+
+  public static boolean isRepoUpdateBranchCreatedCheck(final String repoName) {
+    return getProcessedRepositoriesMap().values().stream()
+        .anyMatch(
+            processRepository ->
+                processRepository.getRepoName().equals(repoName)
+                    && processRepository.getUpdateBranchCreated());
+  }
+
+  public static boolean isRepoPrCreatedCheck(final String repoName) {
+    return getProcessedRepositoriesMap().values().stream()
+        .anyMatch(
+            processRepository ->
+                processRepository.getRepoName().equals(repoName)
+                    && processRepository.getPrCreated());
+  }
+
+  public static boolean isRepoPrMergedCheck(final AppDataRepository repository) {
+    return getProcessedRepositoriesMap().values().stream()
+        .anyMatch(
+            processRepository ->
+                processRepository.getRepoName().equals(repository.getRepoName())
+                    && processRepository.getPrMerged());
   }
 }

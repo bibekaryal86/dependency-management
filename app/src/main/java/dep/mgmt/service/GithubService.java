@@ -19,8 +19,24 @@ public class GithubService {
     this.githubConnector = new GithubConnector();
   }
 
-  public void createGithubPullRequest(final String repoName, final LocalDate branchDate) {
-    log.info("Create Github Pull Request: [{}] | [{}]", repoName, branchDate);
+  public void createGithubPullRequest(
+      final String repoName,
+      final LocalDate branchDate,
+      final boolean isCheckUpdateBranchBeforeCreate) {
+    log.info(
+        "Create Github Pull Request: [{}] | [{}] | [{}]",
+        repoName,
+        branchDate,
+        isCheckUpdateBranchBeforeCreate);
+
+    if (isCheckUpdateBranchBeforeCreate && !ProcessUtils.isRepoUpdateBranchCreatedCheck(repoName)) {
+      log.debug(
+          "PR Not Created, Update Branch Created Check is False: [{}] | [{}]",
+          repoName,
+          branchDate);
+      return;
+    }
+
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     final GithubApiModel.CreatePullRequestResponse createPullRequestResponse =
         githubConnector.createPullRequest(repoName, branchName);
@@ -34,8 +50,25 @@ public class GithubService {
   }
 
   public void mergeGithubPullRequest(
-      final String repoName, final LocalDate branchDate, final Integer prNumber) {
-    log.info("Merge Github Pull Request: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
+      final String repoName,
+      final LocalDate branchDate,
+      final Integer prNumber,
+      final boolean isCheckPrCreatedBeforeMerge) {
+    log.info(
+        "Merge Github Pull Request: [{}] | [{}] | [{}] | [{}]",
+        repoName,
+        branchDate,
+        prNumber,
+        isCheckPrCreatedBeforeMerge);
+
+    if (isCheckPrCreatedBeforeMerge && !ProcessUtils.isRepoPrCreatedCheck(repoName)) {
+      log.debug(
+          "PR Not Merged, PR Create Check is False: [{}] | [{}] | [{}]",
+          repoName,
+          branchDate,
+          prNumber);
+      return;
+    }
 
     final Integer prNumberFromWorkflowRun = checkWorkflowRun(repoName, branchDate);
 
