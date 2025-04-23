@@ -396,8 +396,7 @@ public class UpdateRepoService {
     if (!CommonUtilities.isEmpty(processRepositories)) {
       for (ProcessSummaries.ProcessSummary.ProcessRepository processRepository :
           processRepositories) {
-        if (processRepository.getUpdateBranchCreated().equals(Boolean.TRUE)
-            && processRepository.getPrMerged().equals(Boolean.TRUE)) {
+        if (processRepository.getUpdateBranchCreated() && processRepository.getPrMerged()) {
           final AppDataRepository repository = getRepository(processRepository.getRepoName());
           final AppDataScriptFile scriptFile = getScriptFile(ConstantUtils.SCRIPT_DELETE_ONE);
 
@@ -632,7 +631,7 @@ public class UpdateRepoService {
       final List<ProcessSummaries.ProcessSummary.ProcessRepository> repositories =
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
       for (ProcessSummaries.ProcessSummary.ProcessRepository repository : repositories) {
-        if (repository.getUpdateBranchCreated().equals(Boolean.TRUE)) {
+        if (repository.getUpdateBranchCreated()) {
           addTaskToQueue(
               ConstantUtils.QUEUE_CREATE_PULL_REQUESTS,
               getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_INIT),
@@ -680,7 +679,7 @@ public class UpdateRepoService {
           ProcessUtils.getProcessedRepositoriesMap().values().stream().toList();
       for (int i = 0; i < repositories.size(); i++) {
         ProcessSummaries.ProcessSummary.ProcessRepository repository = repositories.get(i);
-        if (repository.getPrCreated().equals(Boolean.TRUE)) {
+        if (repository.getPrCreated()) {
           addTaskToQueue(
               ConstantUtils.QUEUE_MERGE_PULL_REQUESTS,
               getPullRequestsTaskName(repository.getRepoName(), ConstantUtils.APPENDER_EXIT),
