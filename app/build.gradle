@@ -8,7 +8,7 @@
 
 buildscript {
     dependencies {
-        classpath 'org.yaml:snakeyaml:2.3'
+        classpath 'org.yaml:snakeyaml:2.4'
     }
 }
 
@@ -16,7 +16,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
-    id 'com.diffplug.spotless' version '7.0.0'
+    id 'com.diffplug.spotless' version '7.0.3'
 }
 
 java {
@@ -37,12 +37,12 @@ dependencies {
 
     implementation 'io.netty:netty-all:4.1.119.Final'
 
-    implementation 'org.slf4j:slf4j-api:2.0.16'
-    implementation 'ch.qos.logback:logback-classic:1.5.16'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
 
-    implementation 'org.mongodb:mongodb-driver-sync:5.2.1'
-    implementation 'com.mailjet:mailjet-client:5.2.5'
-    implementation 'org.jsoup:jsoup:1.18.3'
+    implementation 'org.mongodb:mongodb-driver-sync:5.4.0'
+    implementation 'com.mailjet:mailjet-client:5.2.6'
+    implementation 'org.jsoup:jsoup:1.19.1'
 }
 
 application {
