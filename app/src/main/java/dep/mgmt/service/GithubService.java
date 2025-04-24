@@ -24,16 +24,13 @@ public class GithubService {
       final LocalDate branchDate,
       final boolean isCheckUpdateBranchBeforeCreate) {
     log.info(
-        "Create Github Pull Request: [{}] | [{}] | [{}]",
+        "Github Pull Request Create: [{}] | [{}] | [{}]",
         repoName,
         branchDate,
         isCheckUpdateBranchBeforeCreate);
 
     if (isCheckUpdateBranchBeforeCreate && !ProcessUtils.isRepoUpdateBranchCreatedCheck(repoName)) {
-      log.debug(
-          "PR Not Created, Update Branch Created Check is False: [{}] | [{}]",
-          repoName,
-          branchDate);
+      log.info("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
       return;
     }
 
@@ -55,18 +52,15 @@ public class GithubService {
       final Integer prNumber,
       final boolean isCheckPrCreatedBeforeMerge) {
     log.info(
-        "Merge Github Pull Request: [{}] | [{}] | [{}] | [{}]",
+        "Github Pull Request Merge: [{}] | [{}] | [{}] | [{}]",
         repoName,
         branchDate,
         prNumber,
         isCheckPrCreatedBeforeMerge);
 
     if (isCheckPrCreatedBeforeMerge && !ProcessUtils.isRepoPrCreatedCheck(repoName)) {
-      log.debug(
-          "PR Not Merged, PR Create Check is False: [{}] | [{}] | [{}]",
-          repoName,
-          branchDate,
-          prNumber);
+      log.info(
+          "Github Pull Request NOT Merged: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
       return;
     }
 

@@ -79,7 +79,7 @@ public class GradlePluginVersionService {
     Map<String, DependencyEntity> gradlePluginsMap = CacheConfig.getGradlePluginsMap();
     if (CommonUtilities.isEmpty(gradlePluginsMap)) {
       final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
-      log.info("Gradle Plugins List: [ {} ]", gradlePlugins.size());
+      log.debug("Gradle Plugins List: [ {} ]", gradlePlugins.size());
       gradlePluginsMap =
           gradlePlugins.stream()
               .collect(Collectors.toMap(DependencyEntity::getName, gradlePlugin -> gradlePlugin));

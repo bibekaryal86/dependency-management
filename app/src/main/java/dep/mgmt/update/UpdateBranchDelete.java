@@ -19,9 +19,9 @@ public class UpdateBranchDelete {
       final boolean isDeleteUpdateDependenciesOnly,
       final boolean isCheckMergedPrBeforeDelete) {
     log.info(
-        "Execute Update Branch Delete: [{}] | [{}] | [{}] | [{}]",
+        "Update Branch Delete: [{}] | [{}] | [{}] | [{}]",
         repoHome,
-        repository,
+        repository == null ? null : repository.getRepoName(),
         isDeleteUpdateDependenciesOnly,
         isCheckMergedPrBeforeDelete);
     List<String> arguments = new LinkedList<>();
@@ -38,8 +38,8 @@ public class UpdateBranchDelete {
       if (ProcessUtils.isRepoPrMergedCheck(repository)) {
         ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
       } else {
-        log.debug(
-            "Branch Not Deleted Before PR Not Created/Merged: [{}] | [{}] | [{}] | [{}]",
+        log.info(
+            "Update Branch NOT Deleted: [{}] | [{}] | [{}] | [{}]",
             repoHome,
             repository,
             isDeleteUpdateDependenciesOnly,
