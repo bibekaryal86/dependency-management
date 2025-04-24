@@ -87,7 +87,7 @@ public class ProcessUtils {
     processedRepositories.computeIfPresent(
         repoName,
         (key, processedRepository) -> {
-          processedRepository.setPrCreated(true);
+          processedRepository.setPrMerged(true);
           return processedRepository;
         });
   }

@@ -62,7 +62,7 @@ public class PythonPackageVersionService {
     Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
-      log.info("Python Packages List: [ {} ]", pythonPackages.size());
+      log.debug("Python Packages List: [ {} ]", pythonPackages.size());
       pythonPackagesMap =
           pythonPackages.stream()
               .collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));

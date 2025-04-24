@@ -89,7 +89,7 @@ public class GradleDependencyVersionService {
     Map<String, DependencyEntity> gradleDependenciesMap = CacheConfig.getGradleDependenciesMap();
     if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
       final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
-      log.info("Gradle Dependencies List: [ {} ]", gradleDependencies.size());
+      log.debug("Gradle Dependencies List: [ {} ]", gradleDependencies.size());
       gradleDependenciesMap =
           gradleDependencies.stream()
               .collect(
