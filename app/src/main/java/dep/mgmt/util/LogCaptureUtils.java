@@ -16,12 +16,9 @@ public class LogCaptureUtils {
       (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private static boolean isStarted = false;
   private static ListAppender<ILoggingEvent> listAppender;
-  private static Level previousLogLevel;
 
   public static void start(final boolean isIncludeDebugLogs) {
     if (!isStarted) {
-      previousLogLevel = ROOT_LOGGER.getLevel();
-
       if (isIncludeDebugLogs) {
         ROOT_LOGGER.setLevel(Level.DEBUG);
       }
@@ -39,7 +36,7 @@ public class LogCaptureUtils {
       ROOT_LOGGER.detachAppender(listAppender);
       listAppender.stop();
       isStarted = false;
-      ROOT_LOGGER.setLevel(previousLogLevel);
+      ROOT_LOGGER.setLevel(Level.INFO);
     }
   }
 

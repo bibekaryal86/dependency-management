@@ -136,17 +136,14 @@ public class GradleDependencyVersionService {
           }
         });
 
-    log.info(
-        "Gradle Dependencies to Update: [{}]\n[{}]",
-        gradleDependenciesToUpdate.size(),
-        gradleDependenciesToUpdate);
+    log.info("Gradle Dependencies to Update: [{}]", gradleDependenciesToUpdate.size());
+    log.debug("{}", gradleDependenciesToUpdate);
 
     if (!gradleDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {
         gradleDependencyRepository.update(
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
-      log.info("Gradle Dependencies Updated...");
       ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
     }
   }

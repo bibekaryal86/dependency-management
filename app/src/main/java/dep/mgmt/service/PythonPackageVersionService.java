@@ -107,15 +107,14 @@ public class PythonPackageVersionService {
         });
 
     log.info(
-        "Python Packages to Update: [{}]\n[{}]",
-        pythonPackagesToUpdate.size(),
-        pythonPackagesToUpdate);
+        "Python Packages to Update: [{}]",
+        pythonPackagesToUpdate.size());
+    log.debug("{}", pythonPackagesToUpdate);
 
     if (!pythonPackagesToUpdate.isEmpty()) {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {
         pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
       }
-      log.info("Python Packages Updated...");
       ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
     }
   }

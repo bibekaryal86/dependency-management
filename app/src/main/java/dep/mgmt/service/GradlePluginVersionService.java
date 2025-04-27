@@ -123,16 +123,13 @@ public class GradlePluginVersionService {
           }
         });
 
-    log.info(
-        "Gradle Plugins to Update: [{}]\n[{}]",
-        gradlePluginsToUpdate.size(),
-        gradlePluginsToUpdate);
+    log.info("Gradle Plugins to Update: [{}]", gradlePluginsToUpdate.size());
+    log.debug("{}", gradlePluginsToUpdate);
 
     if (!gradlePluginsToUpdate.isEmpty()) {
       for (DependencyEntity gradlePluginToUpdate : gradlePluginsToUpdate) {
         gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
       }
-      log.info("Gradle Plugins Updated...");
       ProcessUtils.setMongoGradlePluginsToUpdate(gradlePluginsToUpdate.size());
     }
   }
