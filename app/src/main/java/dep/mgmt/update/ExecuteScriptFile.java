@@ -66,7 +66,6 @@ public class ExecuteScriptFile {
       final String repoName,
       final String type,
       final List<String> arguments) {
-    log.debug("Running: [{}] | [{}]", scriptPath, repoName);
     try {
       final Process process = startProcess(scriptPath, arguments, Boolean.FALSE);
       processOutput(process, scriptPath, repoName, type);
@@ -153,8 +152,6 @@ public class ExecuteScriptFile {
     if (scriptPath.contains(ConstantUtils.SCRIPT_UPDATE_EXEC)) {
       final boolean isPushedNewBranch = stringBuilder.toString().contains("Pushed new branch");
       ProcessUtils.addProcessedRepositories(repoName, type, isPushedNewBranch);
-
-      // TODO logging
     }
   }
 }
