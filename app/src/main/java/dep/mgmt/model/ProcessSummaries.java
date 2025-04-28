@@ -290,6 +290,7 @@ public class ProcessSummaries implements Serializable {
 
       private LocalDateTime started;
       private LocalDateTime ended;
+      private Boolean isTimedOut;
 
       @JsonCreator
       public ProcessTask(
@@ -297,24 +298,28 @@ public class ProcessSummaries implements Serializable {
           @JsonProperty("taskName") String taskName,
           @JsonProperty("added") LocalDateTime added,
           @JsonProperty("started") LocalDateTime started,
-          @JsonProperty("ended") LocalDateTime ended) {
+          @JsonProperty("ended") LocalDateTime ended,
+          @JsonProperty("isTimedOut") Boolean isTimedOut) {
         this.queueName = queueName;
         this.taskName = taskName;
         this.added = added;
         this.started = started;
         this.ended = ended;
+        this.isTimedOut = isTimedOut;
       }
 
       public ProcessTask(final String queueName, final String taskName, final LocalDateTime added) {
         this.queueName = queueName;
         this.taskName = taskName;
         this.added = added;
+        this.isTimedOut = Boolean.FALSE;
       }
 
       public ProcessTask(final String queueName, final String taskName) {
         this.queueName = queueName;
         this.taskName = taskName;
         this.added = null;
+        this.isTimedOut = Boolean.FALSE;
       }
 
       public String getQueueName() {
@@ -333,7 +338,7 @@ public class ProcessSummaries implements Serializable {
         return started;
       }
 
-      public void setStarted(LocalDateTime started) {
+      public void setStarted(final LocalDateTime started) {
         this.started = started;
       }
 
@@ -341,8 +346,16 @@ public class ProcessSummaries implements Serializable {
         return ended;
       }
 
-      public void setEnded(LocalDateTime ended) {
+      public void setEnded(final LocalDateTime ended) {
         this.ended = ended;
+      }
+
+      public Boolean getTimedOut() {
+        return isTimedOut;
+      }
+
+      public void setTimedOut(final boolean isTimedOut) {
+        this.isTimedOut = isTimedOut;
       }
 
       @Override
@@ -360,6 +373,8 @@ public class ProcessSummaries implements Serializable {
             + started
             + ", ended="
             + ended
+            + ", isTimedOut="
+            + isTimedOut
             + '}';
       }
     }

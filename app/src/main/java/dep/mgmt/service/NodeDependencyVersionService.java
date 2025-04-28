@@ -106,16 +106,13 @@ public class NodeDependencyVersionService {
           }
         });
 
-    log.info(
-        "Node Dependencies to Update: [{}]\n[{}]",
-        nodeDependenciesToUpdate.size(),
-        nodeDependenciesToUpdate);
+    log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
+    log.debug("{}", nodeDependenciesToUpdate);
 
     if (!nodeDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity nodeDependencyToUpdate : nodeDependenciesToUpdate) {
         nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
       }
-      log.info("Node Dependencies Updated...");
       ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
     }
   }

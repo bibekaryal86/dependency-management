@@ -37,10 +37,10 @@ public class ExecuteScriptFile {
             + scriptFile.getScriptFileName();
 
     if (isRunAsync) {
-      runAsync(scriptPath, repoName, type, arguments, isRunAsync);
+      runAsync(scriptPath, repoName, type, arguments);
       log.info("Script execution started asynchronously: [{}] | [{}]", scriptPath, repoName);
     } else {
-      runSync(scriptPath, repoName, type, arguments, isRunAsync);
+      runSync(scriptPath, repoName, type, arguments);
     }
   }
 
@@ -48,12 +48,11 @@ public class ExecuteScriptFile {
       final String scriptPath,
       final String repoName,
       final String type,
-      final List<String> arguments,
-      final boolean isRunAsync) {
+      final List<String> arguments) {
     new Thread(
             () -> {
               try {
-                Process process = startProcess(scriptPath, arguments, isRunAsync);
+                Process process = startProcess(scriptPath, arguments, Boolean.TRUE);
                 processOutput(process, scriptPath, repoName, type);
               } catch (Exception ex) {
                 log.error("Error in Execute Script (async): [{}] | [{}]", scriptPath, repoName, ex);
@@ -66,11 +65,9 @@ public class ExecuteScriptFile {
       final String scriptPath,
       final String repoName,
       final String type,
-      final List<String> arguments,
-      final boolean isRunAsync) {
-    log.debug("Running: [{}] | [{}]", scriptPath, repoName);
+      final List<String> arguments) {
     try {
-      final Process process = startProcess(scriptPath, arguments, isRunAsync);
+      final Process process = startProcess(scriptPath, arguments, Boolean.FALSE);
       processOutput(process, scriptPath, repoName, type);
     } catch (Exception ex) {
       log.error("Error in Execute Script: [{}] | [{}]", scriptPath, repoName, ex);

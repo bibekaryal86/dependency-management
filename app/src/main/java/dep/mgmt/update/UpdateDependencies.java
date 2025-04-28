@@ -16,10 +16,20 @@ public class UpdateDependencies {
       final AppDataScriptFile scriptFile,
       final String branchName,
       final boolean isInit) {
+    final String actionType;
+    if (isInit) {
+      actionType = "INIT";
+    } else if (CommonUtilities.isEmpty(branchName)) {
+      actionType = "EXIT";
+    } else {
+      actionType = "EXEC";
+    }
+
     log.info(
-        "Execute Update Dependencies: [{}] | [{}] | [{}] | [{}]",
+        "Execute Update Dependencies {}: [{}] | [{}] | [{}] | [{}]",
+        actionType,
         repository.getRepoName(),
-        scriptFile.getScriptFileName(),
+        scriptFile.getScriptName(),
         isInit,
         branchName);
     List<String> arguments = new LinkedList<>();

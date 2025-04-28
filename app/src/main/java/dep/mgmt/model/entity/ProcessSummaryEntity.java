@@ -292,6 +292,7 @@ public class ProcessSummaryEntity implements Serializable {
     private LocalDateTime added;
     private LocalDateTime started;
     private LocalDateTime ended;
+    private Boolean isTimedOut;
 
     public ProcessTaskEntity() {}
 
@@ -300,12 +301,14 @@ public class ProcessSummaryEntity implements Serializable {
         String taskName,
         LocalDateTime added,
         LocalDateTime started,
-        LocalDateTime ended) {
+        LocalDateTime ended,
+        Boolean isTimedOut) {
       this.queueName = queueName;
       this.taskName = taskName;
       this.added = added;
       this.started = started;
       this.ended = ended;
+      this.isTimedOut = isTimedOut;
     }
 
     public String getQueueName() {
@@ -348,6 +351,14 @@ public class ProcessSummaryEntity implements Serializable {
       this.ended = ended;
     }
 
+    public Boolean getTimedOut() {
+      return isTimedOut;
+    }
+
+    public void setTimedOut(Boolean timedOut) {
+      isTimedOut = timedOut;
+    }
+
     @Override
     public String toString() {
       return "ProcessTaskEntity{"
@@ -363,6 +374,8 @@ public class ProcessSummaryEntity implements Serializable {
           + started
           + ", ended="
           + ended
+          + ", isTimedOut="
+          + isTimedOut
           + '}';
     }
   }
