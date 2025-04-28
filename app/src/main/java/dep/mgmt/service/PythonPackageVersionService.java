@@ -106,9 +106,7 @@ public class PythonPackageVersionService {
           }
         });
 
-    log.info(
-        "Python Packages to Update: [{}]",
-        pythonPackagesToUpdate.size());
+    log.info("Python Packages to Update: [{}]", pythonPackagesToUpdate.size());
     log.debug("{}", pythonPackagesToUpdate);
 
     if (!pythonPackagesToUpdate.isEmpty()) {

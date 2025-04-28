@@ -106,9 +106,7 @@ public class NodeDependencyVersionService {
           }
         });
 
-    log.info(
-        "Node Dependencies to Update: [{}]",
-        nodeDependenciesToUpdate.size());
+    log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
     log.debug("{}", nodeDependenciesToUpdate);
 
     if (!nodeDependenciesToUpdate.isEmpty()) {

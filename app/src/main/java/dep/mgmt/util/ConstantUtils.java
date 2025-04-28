@@ -170,57 +170,84 @@ public class ConstantUtils {
           RequestParams.UpdateType.MERGE);
 
   // UPDATES
-  public static final String QUEUE_RESET = "RESET_DATA";
-  public static final String QUEUE_SET = "SET_DATA";
-  public static final String QUEUE_UPDATE = "UPDATE_DATA";
-  public static final String QUEUE_FILES = "RECREATE_FILES";
-  public static final String QUEUE_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s";
-  public static final String QUEUE_CREATE_PULL_REQUESTS = "PULL_REQUESTS_CREATE";
-  public static final String QUEUE_MERGE_PULL_REQUESTS = "PULL_REQUESTS_MERGE";
-  public static final String QUEUE_MERGE_PULL_REQUESTS_RETRY = "PULL_REQUESTS_MERGE_RETRY";
-  public static final String QUEUE_PROCESS_SUMMARY = "PROCESS_SUMMARY";
-  public static final String QUEUE_DATA_CLEANUP = "DATA_CLEANUP";
-  public static final String TASK_RESET_APP_DATA = "RESET_APP_DATA";
-  public static final String TASK_SET_APP_DATA = "SET_APP_DATA";
-  public static final String TASK_RESET_GRADLE_DEPENDENCIES = "RESET_GRADLE_DEPENDENCIES";
-  public static final String TASK_SET_GRADLE_DEPENDENCIES = "SET_GRADLE_DEPENDENCIES";
-  public static final String TASK_UPDATE_GRADLE_DEPENDENCIES = "UPDATE_GRADLE_DEPENDENCIES";
-  public static final String TASK_RESET_GRADLE_PLUGINS = "RESET_GRADLE_PLUGINS";
-  public static final String TASK_SET_GRADLE_PLUGINS = "SET_GRADLE_PLUGINS";
-  public static final String TASK_UPDATE_GRADLE_PLUGINS = "UPDATE_GRADLE_PLUGINS";
-  public static final String TASK_RESET_NODE_DEPENDENCIES = "RESET_NODE_DEPENDENCIES";
-  public static final String TASK_SET_NODE_DEPENDENCIES = "SET_NODE_DEPENDENCIES";
-  public static final String TASK_UPDATE_NODE_DEPENDENCIES = "UPDATE_NODE_DEPENDENCIES";
-  public static final String TASK_RESET_PYTHON_PACKAGES = "RESET_PYTHON_PACKAGES";
-  public static final String TASK_SET_PYTHON_PACKAGES = "SET_PYTHON_PACKAGES";
-  public static final String TASK_UPDATE_PYTHON_PACKAGES = "UPDATE_PYTHON_PACKAGES";
-  public static final String TASK_RESET_EXCLUDED_REPOS = "RESET_EXCLUDED_REPOS";
-  public static final String TASK_SET_EXCLUDED_REPOS = "SET_EXCLUDED_REPOS";
-  public static final String TASK_DELETE_SCRIPT_FILES = "DELETE_SCRIPT_FILES";
-  public static final String TASK_CREATE_SCRIPT_FILES = "CREATE_SCRIPT_FILES";
-  public static final String TASK_GITHUB_RESET_PULL = "GITHUB_RESET_PULL";
-  public static final String TASK_GITHUB_BRANCH_DELETE = "GITHUB_BRANCH_DELETE";
-  public static final String TASK_GRADLE_SPOTLESS = "GRADLE_SPOTLESS";
-  public static final String TASK_NPM_SNAPSHOTS = "NPM_SNAPSHOTS";
-  public static final String TASK_UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES_%s_%s";
-  public static final String TASK_PULL_REQUESTS = "PULL_REQUESTS_%s_%s";
-  public static final String TASK_RESET_PROCESS_SUMMARIES = "RESET_PROCESS_SUMMARIES";
-  public static final String TASK_GITHUB_RATE_LIMIT = "GITHUB_RATE_LIMIT";
-  public static final String TASK_LOG_CAPTURE_STOP = "STOP_LOG_CAPTURE";
-  public static final String TASK_LOG_CAPTURE_SAVE = "SAVE_LOG_CAPTURE";
-  public static final String TASK_DATA_CLEANUP_PROCESS_SUMMARY = "CLEANUP_PROCESS_SUMMARY";
-  public static final String TASK_DATA_CLEANUP_LOG_ENTRY = "CLEANUP_LOG_ENTRY";
-  public static final String TASK_DATA_CLEANUP_LATEST_VERSION = "CLEANUP_LATEST_VERSION";
+  public static final String QUEUE_RESET_LOCAL = "QUEUE_RESET_DATA_LOCAL";
+  public static final String QUEUE_RESET_REMOTE = "QUEUE_RESET_DATA_REMOTE";
+  public static final String QUEUE_SET_LOCAL = "QUEUE_SET_DATA_LOCAL";
+  public static final String QUEUE_SET_REMOTE = "QUEUE_SET_DATA_REMOTE";
+  public static final String QUEUE_MONGO_UPDATE = "QUEUE_MONGO_UPDATE";
+  public static final String QUEUE_RECREATE_FILES = "QUEUE_RECREATE_FILES";
+  public static final String QUEUE_UPDATE_DEPENDENCIES_INIT = "QUEUE_UPDATE_DEPENDENCIES_INIT";
+  public static final String QUEUE_UPDATE_DEPENDENCIES = "QUEUE_UPDATE_DEPENDENCIES_%s";
+  public static final String QUEUE_UPDATE_DEPENDENCIES_EXEC = "QUEUE_UPDATE_DEPENDENCIES_EXEC";
+  public static final String QUEUE_UPDATE_DEPENDENCIES_EXIT = "QUEUE_UPDATE_DEPENDENCIES_EXIT";
+  public static final String QUEUE_PULL_REQUESTS_CREATE = "QUEUE_PULL_REQUESTS_CREATE";
+  public static final String QUEUE_PULL_REQUESTS_MERGE = "QUEUE_PULL_REQUESTS_MERGE";
+  public static final String QUEUE_PROCESS_SUMMARY_REQUIRED = "QUEUE_PROCESS_SUMMARY_REQUIRED";
+  public static final String QUEUE_DATA_CLEANUP = "QUEUE_DATA_CLEANUP";
+  public static final String QUEUE_NPM_SNAPSHOTS = "QUEUE_NPM_SNAPSHOTS";
+  public static final String QUEUE_GRADLE_SPOTLESS = "QUEUE_GRADLE_SPOTLESS";
+  public static final String QUEUE_GITHUB_BRANCH_DELETE = "QUEUE_GITHUB_BRANCH_DELETE";
+  public static final String QUEUE_GITHUB_RESET_PULL = "QUEUE_GITHUB_RESET_PULL";
+  public static final String QUEUE_PROCESS_SUMMARY_RESET = "QUEUE_PROCESS_SUMMARY_RESET";
+  public static final String QUEUE_GITHUB_RATE_LIMIT = "QUEUE_GITHUB_RATE_LIMIT";
+  public static final String QUEUE_LOG_CAPTURE = "QUEUE_LOG_CAPTURE";
 
-  public static final String APPENDER_INIT = "INIT";
-  public static final String APPENDER_EXEC = "EXEC";
-  public static final String APPENDER_EXIT = "EXIT";
-  public static final String APPENDER_DELETE = "DELETE";
-  public static final String APPENDER_QUEUE_NAME = "_QUEUE";
-  public static final String APPENDER_TASK_NAME = "_TASK";
-  public static final String APPENDER_RETRY = "_RETRY";
-  public static final String APPENDER_LOCAL = "_LOCAL";
-  public static final String APPENDER_REMOTE = "_REMOTE";
+  public static final String TASK_RESET_LOCAL = "TASK_RESET_DATA_LOCAL";
+  public static final String TASK_RESET_REMOTE = "TASK_RESET_DATA_REMOTE";
+  public static final String TASK_SET_LOCAL = "TASK_SET_DATA_LOCAL";
+  public static final String TASK_SET_REMOTE = "TASK_SET_DATA_REMOTE";
+  public static final String TASK_RESET_GRADLE_DEPENDENCIES_LOCAL =
+      "TASK_RESET_GRADLE_DEPENDENCIES_LOCAL";
+  public static final String TASK_RESET_GRADLE_DEPENDENCIES_REMOTE =
+      "TASK_RESET_GRADLE_DEPENDENCIES_REMOTE";
+  public static final String TASK_SET_GRADLE_DEPENDENCIES_LOCAL =
+      "TASK_SET_GRADLE_DEPENDENCIES_LOCAL";
+  public static final String TASK_SET_GRADLE_DEPENDENCIES_REMOTE =
+      "TASK_SET_GRADLE_DEPENDENCIES_REMOTE";
+  public static final String TASK_UPDATE_GRADLE_DEPENDENCIES = "TASK_UPDATE_GRADLE_DEPENDENCIES";
+  public static final String TASK_RESET_GRADLE_PLUGINS_LOCAL = "TASK_RESET_GRADLE_PLUGINS_LOCAL";
+  public static final String TASK_RESET_GRADLE_PLUGINS_REMOTE = "TASK_RESET_GRADLE_PLUGINS_REMOTE";
+  public static final String TASK_SET_GRADLE_PLUGINS_LOCAL = "TASK_SET_GRADLE_PLUGINS_LOCAL";
+  public static final String TASK_SET_GRADLE_PLUGINS_REMOTE = "TASK_SET_GRADLE_PLUGINS_REMOTE";
+  public static final String TASK_UPDATE_GRADLE_PLUGINS = "TASK_UPDATE_GRADLE_PLUGINS";
+  public static final String TASK_RESET_NODE_DEPENDENCIES_LOCAL =
+      "TASK_RESET_NODE_DEPENDENCIES_LOCAL";
+  public static final String TASK_RESET_NODE_DEPENDENCIES_REMOTE =
+      "TASK_RESET_NODE_DEPENDENCIES_REMOTE";
+  public static final String TASK_SET_NODE_DEPENDENCIES_LOCAL = "TASK_SET_NODE_DEPENDENCIES_LOCAL";
+  public static final String TASK_SET_NODE_DEPENDENCIES_REMOTE =
+      "TASK_SET_NODE_DEPENDENCIES_REMOTE";
+  public static final String TASK_UPDATE_NODE_DEPENDENCIES = "TASK_UPDATE_NODE_DEPENDENCIES";
+  public static final String TASK_RESET_PYTHON_PACKAGES_LOCAL = "TASK_RESET_PYTHON_PACKAGES_LOCAL";
+  public static final String TASK_RESET_PYTHON_PACKAGES_REMOTE =
+      "TASK_RESET_PYTHON_PACKAGES_REMOTE";
+  public static final String TASK_SET_PYTHON_PACKAGES_LOCAL = "TASK_SET_PYTHON_PACKAGES_LOCAL";
+  public static final String TASK_SET_PYTHON_PACKAGES_REMOTE = "TASK_SET_PYTHON_PACKAGES_REMOTE";
+  public static final String TASK_UPDATE_PYTHON_PACKAGES = "TASK_UPDATE_PYTHON_PACKAGES";
+  public static final String TASK_RESET_EXCLUDED_REPOS_LOCAL = "TASK_RESET_EXCLUDED_REPOS_LOCAL";
+  public static final String TASK_RESET_EXCLUDED_REPOS_REMOTE = "TASK_RESET_EXCLUDED_REPOS_REMOTE";
+  public static final String TASK_SET_EXCLUDED_REPOS_LOCAL = "TASK_SET_EXCLUDED_REPOS_LOCAL";
+  public static final String TASK_SET_EXCLUDED_REPOS_REMOTE = "TASK_SET_EXCLUDED_REPOS_REMOTE";
+  public static final String TASK_DELETE_SCRIPT_FILES = "TASK_DELETE_SCRIPT_FILES";
+  public static final String TASK_CREATE_SCRIPT_FILES = "TASK_CREATE_SCRIPT_FILES";
+  public static final String TASK_NPM_SNAPSHOTS = "TASK_NPM_SNAPSHOTS";
+  public static final String TASK_GRADLE_SPOTLESS = "TASK_GRADLE_SPOTLESS";
+  public static final String TASK_GITHUB_BRANCH_DELETE = "TASK_GITHUB_BRANCH_DELETE_%s";
+  public static final String TASK_GITHUB_RESET_PULL = "TASK_GITHUB_RESET_PULL_%s";
+  public static final String TASK_UPDATE_DEPENDENCIES_INIT = "TASK_UPDATE_DEPENDENCIES_INIT_%s";
+  public static final String TASK_UPDATE_DEPENDENCIES = "TASK_UPDATE_DEPENDENCIES_%s";
+  public static final String TASK_UPDATE_DEPENDENCIES_EXEC = "TASK_UPDATE_DEPENDENCIES_EXEC_%s";
+  public static final String TASK_UPDATE_DEPENDENCIES_EXIT = "TASK_UPDATE_DEPENDENCIES_EXIT_%s";
+  public static final String TASK_PULL_REQUESTS_CREATE = "TASK_PULL_REQUESTS_CREATE_%s";
+  public static final String TASK_PULL_REQUESTS_MERGE = "TASK_PULL_REQUESTS_MERGE_%s";
+  public static final String TASK_PROCESS_SUMMARY_REQUIRED = "TASK_PROCESS_SUMMARY_REQUIRED";
+  public static final String TASK_GITHUB_RATE_LIMIT = "TASK_GITHUB_RATE_LIMIT";
+  public static final String TASK_PROCESS_SUMMARY_RESET = "TASK_PROCESS_SUMMARY_RESET";
+  public static final String TASK_LOG_CAPTURE_STOP = "TASK_STOP_LOG_CAPTURE";
+  public static final String TASK_LOG_CAPTURE_SAVE = "TASK_SAVE_LOG_CAPTURE";
+  public static final String TASK_DATA_CLEANUP_PROCESS_SUMMARY = "TASK_CLEANUP_PROCESS_SUMMARY";
+  public static final String TASK_DATA_CLEANUP_LOG_ENTRY = "TASK_CLEANUP_LOG_ENTRY";
+  public static final String TASK_DATA_CLEANUP_LATEST_VERSION = "TASK_CLEANUP_LATEST_VERSION";
 
   public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
   public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";
