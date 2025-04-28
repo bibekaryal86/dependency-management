@@ -133,6 +133,15 @@ public class ProcessUtils {
         });
   }
 
+  public static void updateProcessedTasksTimedOut(final String taskName) {
+    processedTasks.computeIfPresent(
+        taskName,
+        (key, processedTask) -> {
+          processedTask.setTimedOut(Boolean.TRUE);
+          return processedTask;
+        });
+  }
+
   public static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessTask>
       getProcessedTasks() {
     return processedTasks;

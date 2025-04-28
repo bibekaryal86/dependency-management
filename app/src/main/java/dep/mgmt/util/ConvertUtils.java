@@ -87,7 +87,8 @@ public class ConvertUtils {
                     processTaskEntity.getTaskName(),
                     processTaskEntity.getAdded(),
                     processTaskEntity.getStarted(),
-                    processTaskEntity.getEnded()))
+                    processTaskEntity.getEnded(),
+                    processTaskEntity.getTimedOut()))
         .toList();
   }
 
@@ -144,7 +145,8 @@ public class ConvertUtils {
                     processTask.getTaskName(),
                     processTask.getAdded(),
                     processTask.getStarted(),
-                    processTask.getEnded()))
+                    processTask.getEnded(),
+                    processTask.getTimedOut()))
         .toList();
   }
 

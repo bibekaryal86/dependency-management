@@ -211,6 +211,7 @@ public class TaskQueues {
                   this.name, e.getClass().getSimpleName(), e.getMessage());
           log.error(message);
           result = message;
+          ProcessUtils.updateProcessedTasksTimedOut(name);
         } finally {
           ProcessUtils.updateProcessedTasksEnded(name);
           singleTaskExecutor.shutdownNow();
