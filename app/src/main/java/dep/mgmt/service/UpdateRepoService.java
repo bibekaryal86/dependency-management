@@ -173,9 +173,10 @@ public class UpdateRepoService {
     }
 
     log.debug(
-        "Update Repo: isPrCreateRequired={}, isPrMergeRequired={}",
+        "Update Repo: isPrCreateRequired={}, isPrMergeRequired={}, isPrCreateMergeCheckRequired={}",
         isPrCreateRequired,
-        isPrMergeRequired);
+        isPrMergeRequired,
+        isPrCreateMergeCheckRequired);
 
     if (isPrCreateRequired) {
       executeUpdateCreatePullRequests(requestMetadata, isPrCreateMergeCheckRequired);

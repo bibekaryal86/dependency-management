@@ -95,6 +95,13 @@ public class GithubService {
       ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
       ProcessUtils.removeRepositoriesToRetryMerge(repoName);
     } else {
+      log.error(
+          "PR Not Merged: [{}] | [{}] | [{}] | [{}] | [{}]",
+          repoName,
+          branchDate,
+          prNumber,
+          prNumberFromWorkflowRun,
+          mergePullRequestResponse);
       ProcessUtils.addRepositoriesToRetryMerge(repoName);
     }
   }
