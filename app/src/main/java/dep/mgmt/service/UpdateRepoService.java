@@ -815,14 +815,14 @@ public class UpdateRepoService {
         () -> {
           logEntryService.saveLogEntry(null);
         },
-        ConstantUtils.TASK_DELAY_PULL_REQUEST);
+        ConstantUtils.TASK_DELAY_DEFAULT);
 
     // stop log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
         ConstantUtils.TASK_LOG_CAPTURE_STOP,
         LogCaptureUtils::stop,
-        ConstantUtils.TASK_DELAY_PULL_REQUEST);
+        ConstantUtils.TASK_DELAY_DEFAULT);
   }
 
   private AppDataScriptFile getScriptFile(final String scriptFileName) {
