@@ -38,10 +38,10 @@ public class UpdateBranchDelete {
       if (ProcessUtils.isRepoPrMergedCheck(repository)) {
         ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
       } else {
-        log.info(
+        log.debug(
             "Update Branch NOT Deleted: [{}] | [{}] | [{}] | [{}]",
             repoHome,
-            repository,
+            repository == null ? null : repository.getRepoName(),
             isDeleteUpdateDependenciesOnly,
             Boolean.TRUE);
       }

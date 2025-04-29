@@ -30,7 +30,7 @@ public class GithubService {
         isCheckUpdateBranchBeforeCreate);
 
     if (isCheckUpdateBranchBeforeCreate && !ProcessUtils.isRepoUpdateBranchCreatedCheck(repoName)) {
-      log.info("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
+      log.debug("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
       return;
     }
 
@@ -59,7 +59,7 @@ public class GithubService {
         isCheckPrCreatedBeforeMerge);
 
     if (isCheckPrCreatedBeforeMerge && !ProcessUtils.isRepoPrCreatedCheck(repoName)) {
-      log.info(
+      log.debug(
           "Github Pull Request NOT Merged: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
       return;
     }

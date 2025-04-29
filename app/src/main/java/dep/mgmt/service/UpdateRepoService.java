@@ -424,7 +424,8 @@ public class UpdateRepoService {
       for (AppDataRepository repository : repositories) {
         addTaskToQueue(
             ConstantUtils.QUEUE_GITHUB_BRANCH_DELETE,
-            String.format(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, repository.getRepoName()),
+            String.format(
+                ConstantUtils.TASK_GITHUB_BRANCH_DELETE, repository.getRepoName().toUpperCase()),
             () ->
                 UpdateBranchDelete.execute(
                     null, repository, scriptFile, Boolean.TRUE, Boolean.TRUE),
@@ -447,7 +448,8 @@ public class UpdateRepoService {
 
       addTaskToQueue(
           ConstantUtils.QUEUE_GITHUB_BRANCH_DELETE,
-          String.format(ConstantUtils.TASK_GITHUB_BRANCH_DELETE, repository.getRepoName()),
+          String.format(
+              ConstantUtils.TASK_GITHUB_BRANCH_DELETE, repository.getRepoName().toUpperCase()),
           () ->
               UpdateBranchDelete.execute(
                   null, repository, scriptFile, isDeleteUpdateDependenciesOnly, Boolean.FALSE),
@@ -478,7 +480,8 @@ public class UpdateRepoService {
 
       addTaskToQueue(
           ConstantUtils.QUEUE_GITHUB_RESET_PULL,
-          String.format(ConstantUtils.TASK_GITHUB_RESET_PULL, repository.getRepoName()),
+          String.format(
+              ConstantUtils.TASK_GITHUB_RESET_PULL, repository.getRepoName().toUpperCase()),
           () ->
               UpdateRepoResetPull.execute(
                   null, repository, scriptFile, isReset, isPull, isRunAsync),
@@ -511,9 +514,11 @@ public class UpdateRepoService {
                   : ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXIT,
               isInit
                   ? String.format(
-                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_INIT, repository.getRepoName())
+                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_INIT,
+                      repository.getRepoName().toUpperCase())
                   : String.format(
-                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXIT, repository.getRepoName()),
+                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXIT,
+                      repository.getRepoName().toUpperCase()),
               () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
               ConstantUtils.TASK_DELAY_ZERO);
         });
@@ -542,7 +547,9 @@ public class UpdateRepoService {
                   ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, requestMetadata.getBranchDate());
           addTaskToQueue(
               ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXEC,
-              String.format(ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXEC, repository.getRepoName()),
+              String.format(
+                  ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXEC,
+                  repository.getRepoName().toUpperCase()),
               () ->
                   UpdateDependencies.execute(repository, scriptFileExec, branchName, Boolean.FALSE),
               ConstantUtils.TASK_DELAY_ZERO);
@@ -673,7 +680,8 @@ public class UpdateRepoService {
         AppDataRepository repository = repositories.get(i);
         addTaskToQueue(
             ConstantUtils.QUEUE_PULL_REQUESTS_MERGE,
-            String.format(ConstantUtils.TASK_PULL_REQUESTS_MERGE, repository.getRepoName()),
+            String.format(
+                ConstantUtils.TASK_PULL_REQUESTS_MERGE, repository.getRepoName().toUpperCase()),
             () ->
                 githubService.mergeGithubPullRequest(
                     repository.getRepoName(),
@@ -688,7 +696,8 @@ public class UpdateRepoService {
       final AppDataRepository repository = getRepository(requestRepoName);
       addTaskToQueue(
           ConstantUtils.QUEUE_PULL_REQUESTS_MERGE,
-          String.format(ConstantUtils.TASK_PULL_REQUESTS_MERGE, repository.getRepoName()),
+          String.format(
+              ConstantUtils.TASK_PULL_REQUESTS_MERGE, repository.getRepoName().toUpperCase()),
           () ->
               githubService.mergeGithubPullRequest(
                   repository.getRepoName(),
