@@ -59,7 +59,7 @@ public class GithubService {
         isCheckPrCreatedBeforeMerge);
 
     if (isCheckPrCreatedBeforeMerge && !ProcessUtils.isRepoPrCreatedCheck(repoName)) {
-      log.debug(
+      log.info(
           "Github Pull Request NOT Merged: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
       return;
     }
