@@ -181,7 +181,7 @@ public class TaskQueues {
       }
 
       public Object execute() {
-        log.debug("Execute Task: [{}]", name);
+        log.debug("Update Processed Task Started: [{}]", name);
         ProcessUtils.updateProcessedTasksStarted(name);
         Object result = null;
         Future<Object> future = null;
@@ -204,6 +204,8 @@ public class TaskQueues {
           String msg = String.format("OneTask [%s] timed out after %d ms", name, timeoutMillis);
           log.warn(msg);
           result = msg;
+          log.debug("Update Processed Task Timed Out: [{}]", name);
+          ProcessUtils.updateProcessedTasksTimedOut(name);
         } catch (Exception e) {
           final String message =
               String.format(
@@ -211,8 +213,8 @@ public class TaskQueues {
                   this.name, e.getClass().getSimpleName(), e.getMessage());
           log.error(message);
           result = message;
-          ProcessUtils.updateProcessedTasksTimedOut(name);
         } finally {
+          log.debug("Update Processed Task Ended: [{}]", name);
           ProcessUtils.updateProcessedTasksEnded(name);
           singleTaskExecutor.shutdownNow();
         }
