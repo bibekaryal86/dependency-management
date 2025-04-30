@@ -171,6 +171,7 @@ public class ProcessUtils {
         .anyMatch(
             processRepository ->
                 processRepository.getRepoName().equals(repoName)
+                    && processRepository.getUpdateBranchCreated()
                     && processRepository.getPrCreated());
   }
 
@@ -179,6 +180,7 @@ public class ProcessUtils {
         .anyMatch(
             processRepository ->
                 processRepository.getRepoName().equals(repository.getRepoName())
+                    && processRepository.getUpdateBranchCreated()
                     && processRepository.getPrMerged());
   }
 }

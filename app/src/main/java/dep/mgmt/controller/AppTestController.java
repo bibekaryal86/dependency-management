@@ -25,9 +25,9 @@ public class AppTestController {
 
   public void handleRequest(
       final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {
-    final String requestUri = ServerUtils.getRequestUriLessParams(fullHttpRequest.uri());
+    final String requestUriLessParams = ServerUtils.getRequestUriLessParams(fullHttpRequest.uri());
 
-    switch (requestUri) {
+    switch (requestUriLessParams) {
       case Endpoints.APP_TESTS_PING ->
           ServerUtils.sendResponse(
               ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_TESTS_PING);

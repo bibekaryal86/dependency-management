@@ -41,7 +41,7 @@ public class UpdateBranchDelete {
         log.info(
             "Update Branch NOT Deleted: [{}] | [{}] | [{}] | [{}]",
             repoHome,
-            repository,
+            repository == null ? null : repository.getRepoName(),
             isDeleteUpdateDependenciesOnly,
             Boolean.TRUE);
       }

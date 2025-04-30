@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class MongoRepoController {
@@ -56,11 +57,12 @@ public class MongoRepoController {
 
   public void handleRequest(
       final FullHttpRequest fullHttpRequest, final ChannelHandlerContext ctx) {
-    final String requestUri = ServerUtils.getRequestUriLessParams(fullHttpRequest.uri());
+    final String requestUri = fullHttpRequest.uri();
+    final String requestUriLessParams = ServerUtils.getRequestUriLessParams(requestUri);
     final HttpMethod requestMethod = fullHttpRequest.method();
 
     if (requestMethod.equals(HttpMethod.GET)) {
-      switch (requestUri) {
+      switch (requestUriLessParams) {
         case Endpoints.MONGO_GRADLE_PLUGIN:
           ServerUtils.sendResponse(ctx, getGradlePlugins(), HttpResponseStatus.OK, null);
           break;
@@ -77,10 +79,11 @@ public class MongoRepoController {
           ServerUtils.sendResponse(ctx, getLatestVersion(), HttpResponseStatus.OK, null);
           break;
         case Endpoints.MONGO_PROCESS_SUMMARY:
-          final String updateType = ServerUtils.getQueryParam(requestUri, "updateType", "");
-          final String updateDate = ServerUtils.getQueryParam(requestUri, "updateDate", "");
-          final String pageNumber = ServerUtils.getQueryParam(requestUri, "pageNumber", "1");
-          final String pageSize = ServerUtils.getQueryParam(requestUri, "pageSize", "100");
+          final Map<String, List<String>> queryParams = ServerUtils.getQueryParams(requestUri);
+          final String updateType = queryParams.getOrDefault("updateType", List.of("")).getFirst();
+          final String updateDate = queryParams.getOrDefault("updateDate", List.of("")).getFirst();
+          final String pageNumber = queryParams.getOrDefault("pageNumber", List.of("1")).getFirst();
+          final String pageSize = queryParams.getOrDefault("pageSize", List.of("100")).getFirst();
 
           if (validateProcessSummaryUpdateType(updateType)) {
             ServerUtils.sendResponse(
@@ -102,8 +105,7 @@ public class MongoRepoController {
           break;
         case Endpoints.MONGO_LOG_ENTRY:
           final String logDateParam =
-              ServerUtils.getQueryParam(
-                  fullHttpRequest.uri(), "logDate", LocalDate.now().toString());
+              ServerUtils.getQueryParam(requestUri, "logDate", LocalDate.now().toString());
           final LocalDate logDate = getLogDate(logDateParam);
           if (logDate == null) {
             ServerUtils.sendResponse(
@@ -127,12 +129,12 @@ public class MongoRepoController {
       if (dependencyRequest == null
           || CommonUtilities.isEmpty(dependencyRequest.getName())
           || (CommonUtilities.isEmpty(dependencyRequest.getVersion())
-              && !requestUri.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
+              && !requestUriLessParams.equals(Endpoints.MONGO_EXCLUDED_REPO))) {
         ServerUtils.sendResponse(ctx, "Missing Input...", HttpResponseStatus.BAD_REQUEST);
         return;
       }
 
-      switch (requestUri) {
+      switch (requestUriLessParams) {
         case Endpoints.MONGO_GRADLE_PLUGIN:
           saveGradlePlugin(dependencyRequest);
           ServerUtils.sendResponse(
@@ -164,12 +166,11 @@ public class MongoRepoController {
           break;
       }
     } else if (requestMethod.equals(HttpMethod.DELETE)) {
-      switch (requestUri) {
+      switch (requestUriLessParams) {
         case Endpoints.MONGO_EXCLUDED_REPO:
-          final String repoName = ServerUtils.getQueryParam(fullHttpRequest.uri(), "repoName", "");
+          final String repoName = ServerUtils.getQueryParam(requestUri, "repoName", "");
           final boolean isDeleteAll =
-              Boolean.parseBoolean(
-                  ServerUtils.getQueryParam(fullHttpRequest.uri(), "deleteAll", ""));
+              Boolean.parseBoolean(ServerUtils.getQueryParam(requestUri, "deleteAll", ""));
           deletedExcludedRepo(repoName, isDeleteAll);
           ServerUtils.sendResponse(
               ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);

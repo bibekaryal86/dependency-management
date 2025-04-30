@@ -14,7 +14,7 @@
         </encoder>
     </appender>
 
-    <logger name="io.github.bibekaryal86" level="DEBUG" additivity="false">
+    <logger name="io.github.bibekaryal86" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.mongodb.driver" level="WARN" additivity="false">

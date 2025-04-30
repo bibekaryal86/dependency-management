@@ -11,14 +11,14 @@ current_user=$(whoami)
 chown -R "$current_user" "$repo_loc"
 
 # Go to repo location or exit with message
-cd "repo_loc" || { echo "Repo Location Not Found"; exit 1; }
+cd "$repo_loc" || { echo "Repo Location Not Found"; exit 1; }
 
 # echo "Current User--$current_user"
 # echo "Current Location--$PWD"
 # echo "Repo Home--$repo_home"
 
 # Keeping this as fallback check
-if [ "$PWD" != "repo_loc" ]; then
+if [ "$PWD" != "$repo_loc" ]; then
   echo "Current Location and Repo Location are different"
   exit 1
 fi
