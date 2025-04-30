@@ -112,8 +112,13 @@ public class UpdateRepoService {
             Boolean.FALSE,
             LocalDate.now(),
             null);
+    scheduledMongoUpdate();
     scheduledCleanup();
     updateRepos(requestMetadata);
+  }
+
+  public void scheduledMongoUpdate() {
+    recreateRemoteCaches();
   }
 
   public void scheduledCleanup() {
