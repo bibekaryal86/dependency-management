@@ -361,7 +361,7 @@ public class UpdateRepoService {
           ConstantUtils.TASK_DELAY_DEFAULT);
     }
     resetProcessedSummariesTask();
-    stopLogCapture();
+    saveStopLogCapture();
   }
 
   private void executeNpmSnapshotsUpdate(final LocalDate branchDate, final String repoName) {
@@ -822,7 +822,9 @@ public class UpdateRepoService {
         ConstantUtils.TASK_DELAY_DEFAULT);
   }
 
-  private void stopLogCapture() {
+  private void saveStopLogCapture() {
+    boolean isSendEmail =
+        "true".equals(AppDataUtils.getAppData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
     // save log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
@@ -830,14 +832,14 @@ public class UpdateRepoService {
         () -> {
           logEntryService.saveLogEntry(null);
         },
-        ConstantUtils.TASK_DELAY_DEFAULT);
+        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
 
     // stop log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
         ConstantUtils.TASK_LOG_CAPTURE_STOP,
         LogCaptureUtils::stop,
-        ConstantUtils.TASK_DELAY_DEFAULT);
+        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
   }
 
   private AppDataScriptFile getScriptFile(final String scriptFileName) {

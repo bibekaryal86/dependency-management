@@ -28,13 +28,14 @@ public class EmailService {
     log.info("Sending Email...");
     final EmailRequest emailRequest =
         buildEmailRequest(subject, html, attachmentFileName, attachment);
-    CompletableFuture.runAsync(() -> email.sendEmail(emailRequest))
+
+    CompletableFuture.supplyAsync(() -> email.sendEmail(emailRequest))
+        .thenAccept(response -> log.info("Email sent response: {}", response))
         .exceptionally(
             ex -> {
               log.error("Error Sending Email...", ex);
               return null;
             });
-    log.info("Email Request Sent...");
   }
 
   private EmailRequest buildEmailRequest(
