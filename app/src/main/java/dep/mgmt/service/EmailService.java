@@ -3,10 +3,10 @@ package dep.mgmt.service;
 import dep.mgmt.util.ConstantUtils;
 import io.github.bibekaryal86.shdsvc.Email;
 import io.github.bibekaryal86.shdsvc.dtos.EmailRequest;
+import io.github.bibekaryal86.shdsvc.dtos.EmailResponse;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,17 +25,11 @@ public class EmailService {
       final String html,
       final String attachmentFileName,
       final String attachment) {
-    log.info("Sending Email...");
+    log.info("Email Request...");
     final EmailRequest emailRequest =
         buildEmailRequest(subject, html, attachmentFileName, attachment);
-
-    CompletableFuture.supplyAsync(() -> email.sendEmail(emailRequest))
-        .thenAccept(response -> log.info("Email sent response: {}", response))
-        .exceptionally(
-            ex -> {
-              log.error("Error Sending Email...", ex);
-              return null;
-            });
+    EmailResponse emailResponse = email.sendEmail(emailRequest);
+    log.info("Email Response: [{}]", emailResponse);
   }
 
   private EmailRequest buildEmailRequest(
