@@ -2,6 +2,7 @@ package dep.mgmt.update;
 
 import dep.mgmt.model.AppDataRepository;
 import dep.mgmt.model.AppDataScriptFile;
+import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.util.ProcessUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.LinkedList;
@@ -35,16 +36,31 @@ public class UpdateBranchDelete {
     arguments.add(String.valueOf(isDeleteUpdateDependenciesOnly));
 
     if (isCheckMergedPrBeforeDelete) {
-      if (ProcessUtils.isRepoPrMergedCheck(repository)) {
-        ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
-      } else {
-        log.info(
-            "Update Branch NOT Deleted: [{}] | [{}] | [{}] | [{}]",
-            repoHome,
-            repository == null ? null : repository.getRepoName(),
-            isDeleteUpdateDependenciesOnly,
-            Boolean.TRUE);
+      if (repository == null) {
+        log.error("Repository is NULL...");
+        return;
       }
+
+      ProcessSummaries.ProcessSummary.ProcessRepository processRepository =
+          ProcessUtils.getProcessedRepositoryFromMap(repository.getRepoName());
+
+      if (!processRepository.getUpdateBranchCreated()) {
+        log.debug("Update Branch NOT Deleted, No Update Branch: [{}]", repository.getRepoName());
+        return;
+      }
+
+      if (!processRepository.getPrCreated()) {
+        log.debug("Update Branch NOT Deleted, No Pull Request: [{}]", repository.getRepoName());
+        return;
+      }
+
+      if (!processRepository.getPrMerged()) {
+        log.debug(
+            "Update Branch NOT Deleted, Pull Request Not Merged: [{}]", repository.getRepoName());
+        return;
+      }
+
+      ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
     } else {
       ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.TRUE, repository);
     }

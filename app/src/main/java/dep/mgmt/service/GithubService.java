@@ -1,6 +1,7 @@
 package dep.mgmt.service;
 
 import dep.mgmt.connector.GithubConnector;
+import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.ProcessUtils;
@@ -29,9 +30,14 @@ public class GithubService {
         branchDate,
         isCheckUpdateBranchBeforeCreate);
 
-    if (isCheckUpdateBranchBeforeCreate && !ProcessUtils.isRepoUpdateBranchCreatedCheck(repoName)) {
-      log.debug("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
-      return;
+    if (isCheckUpdateBranchBeforeCreate) {
+      ProcessSummaries.ProcessSummary.ProcessRepository processRepository =
+          ProcessUtils.getProcessedRepositoryFromMap(repoName);
+
+      if (!processRepository.getUpdateBranchCreated()) {
+        log.debug("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
+        return;
+      }
     }
 
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
@@ -58,10 +64,27 @@ public class GithubService {
         prNumber,
         isCheckPrCreatedBeforeMerge);
 
-    if (isCheckPrCreatedBeforeMerge && !ProcessUtils.isRepoPrCreatedCheck(repoName)) {
-      log.info(
-          "Github Pull Request NOT Merged: [{}] | [{}] | [{}]", repoName, branchDate, prNumber);
-      return;
+    if (isCheckPrCreatedBeforeMerge) {
+      ProcessSummaries.ProcessSummary.ProcessRepository processRepository =
+          ProcessUtils.getProcessedRepositoryFromMap(repoName);
+
+      if (!processRepository.getUpdateBranchCreated()) {
+        log.debug(
+            "Github Pull Request NOT Merged, No Update Branch: [{}] | [{}] | [{}]",
+            repoName,
+            branchDate,
+            prNumber);
+        return;
+      }
+
+      if (!processRepository.getPrCreated()) {
+        log.info(
+            "Github Pull Request NOT Merged, No Pull Request: [{}] | [{}] | [{}]",
+            repoName,
+            branchDate,
+            prNumber);
+        return;
+      }
     }
 
     final Integer prNumberFromWorkflowRun = checkWorkflowRun(repoName, branchDate);

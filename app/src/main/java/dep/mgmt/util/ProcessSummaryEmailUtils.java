@@ -1,8 +1,9 @@
 package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummaries;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProcessSummaryEmailUtils {
 
@@ -12,24 +13,40 @@ public class ProcessSummaryEmailUtils {
         processSummary.getProcessTasks();
     List<ProcessSummaries.ProcessSummary.ProcessRepository> allProcessedRepositories =
         processSummary.getProcessRepositories();
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> prCreatedAndMerged =
-        processSummary.getProcessRepositories().stream()
-            .filter(
-                processedRepository ->
-                    processedRepository.getPrCreated() && processedRepository.getPrMerged())
-            .sorted(
-                Comparator.comparing(
-                    ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName))
+
+    Set<String> pullRequestCreatedRepoNames =
+        allProcessedRepositories.stream()
+            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrCreated)
+            .map(ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName)
+            .collect(Collectors.toSet());
+
+    Set<String> pullRequestMergedRepoNames =
+        allProcessedRepositories.stream()
+            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrMerged)
+            .map(ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName)
+            .collect(Collectors.toSet());
+
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchPullRequestCreatedMerged =
+        allProcessedRepositories.stream()
+            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getUpdateBranchCreated)
+            .filter(repo -> pullRequestCreatedRepoNames.contains(repo.getRepoName()))
+            .filter(repo -> pullRequestMergedRepoNames.contains(repo.getRepoName()))
             .toList();
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> prCreatedNotMerged =
-        processSummary.getProcessRepositories().stream()
-            .filter(
-                processedRepository ->
-                    processedRepository.getPrCreated() && !processedRepository.getPrMerged())
-            .sorted(
-                Comparator.comparing(
-                    ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName))
+
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchCreatedPullRequestNotCreated =
+        allProcessedRepositories.stream()
+            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getUpdateBranchCreated)
+            .filter(repo -> !pullRequestCreatedRepoNames.contains(repo.getRepoName()))
             .toList();
+
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> pullRequestCreatedNotMerged =
+        allProcessedRepositories.stream()
+            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrCreated)
+            .filter(repo -> !pullRequestMergedRepoNames.contains(repo.getRepoName()))
+            .toList();
+
+    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchNotCreated =
+        allProcessedRepositories.stream().filter(repo -> !repo.getUpdateBranchCreated()).toList();
 
     StringBuilder html = new StringBuilder();
     html.append(
@@ -117,55 +134,108 @@ public class ProcessSummaryEmailUtils {
                 processSummary.getErrorsOrExceptions() ? " color: red;" : "",
                 processSummary.getErrorsOrExceptions()));
 
-    if (prCreatedAndMerged.isEmpty()) {
+    if (branchPullRequestCreatedMerged.isEmpty()) {
       html.append(
           """
                 <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Created and Merged: N/A</p>
+                <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged: N/A</p>
                 <br />
               """);
     } else {
       html.append(
           """
                 <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Created and Merged</p>
+                <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged</p>
                 <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
                   <tr>
-                    <th>Repository</th>
+                    <th>Name</th>
                     <th>Type</th>
+                    <th>Updated</th>
                     <th>PR Created</th>
+                    <th>PR Number</th>
                     <th>PR Merged</th>
                   </tr>
               """);
 
-      processedRepositoryTable(prCreatedAndMerged, html);
+      processedRepositoryTable(branchPullRequestCreatedMerged, html);
     }
 
-    if (prCreatedNotMerged.isEmpty()) {
+    if (branchCreatedPullRequestNotCreated.isEmpty()) {
       html.append(
           """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Created but NOT Merged: N/A</p>
-                <br />
-              """);
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created: N/A</p>
+                    <br />
+                  """);
     } else {
       html.append(
           """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with PR Created but NOT Merged</p>
-                <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                  <tr>
-                    <th>Repository</th>
-                    <th>Type</th>
-                    <th>PR Created</th>
-                    <th>PR Merged</th>
-                  </tr>
-                  <br />
-                    <p style='font-size: 10px; font-weight: bold;'>The system will attempt to merge these again in about an hour...</p>
-                  <br />
-              """);
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged</p>
+                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Updated</th>
+                        <th>PR Created</th>
+                        <th>PR Number</th>
+                        <th>PR Merged</th>
+                      </tr>
+                  """);
 
-      processedRepositoryTable(prCreatedNotMerged, html);
+      processedRepositoryTable(branchCreatedPullRequestNotCreated, html);
+    }
+
+    if (pullRequestCreatedNotMerged.isEmpty()) {
+      html.append(
+          """
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged: N/A</p>
+                    <br />
+                  """);
+    } else {
+      html.append(
+          """
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged</p>
+                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Updated</th>
+                        <th>PR Created</th>
+                        <th>PR Number</th>
+                        <th>PR Merged</th>
+                      </tr>
+                  """);
+
+      processedRepositoryTable(pullRequestCreatedNotMerged, html);
+    }
+
+    if (branchNotCreated.isEmpty()) {
+      html.append(
+          """
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with NO Updates: N/A</p>
+                    <br />
+                  """);
+    } else {
+      html.append(
+          """
+                    <br />
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with NO Updates</p>
+                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Updated</th>
+                        <th>PR Created</th>
+                        <th>PR Number</th>
+                        <th>PR Merged</th>
+                      </tr>
+                  """);
+
+      processedRepositoryTable(branchNotCreated, html);
     }
 
     html.append(
@@ -174,9 +244,11 @@ public class ProcessSummaryEmailUtils {
               <p style='font-size: 14px; font-weight: bold;'>All Repositories</p>
               <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
                 <tr>
-                  <th>Repository</th>
+                  <th>Name</th>
                   <th>Type</th>
+                  <th>Updated</th>
                   <th>PR Created</th>
+                  <th>PR Number</th>
                   <th>PR Merged</th>
                 </tr>
             """);
@@ -216,7 +288,11 @@ public class ProcessSummaryEmailUtils {
       html.append("<tr>");
       html.append("<td>").append(processedRepository.getRepoName()).append("</td>");
       html.append("<td>").append(processedRepository.getRepoType()).append("</td>");
+      html.append("<td>")
+          .append(processedRepository.getUpdateBranchCreated() ? "Y" : "N")
+          .append("</td>");
       html.append("<td>").append(processedRepository.getPrCreated() ? "Y" : "N").append("</td>");
+      html.append("<td>").append(processedRepository.getPrNumber()).append("</td>");
       html.append("<td>").append(processedRepository.getPrMerged() ? "Y" : "N").append("</td>");
       html.append("</tr>");
     }
@@ -236,6 +312,7 @@ public class ProcessSummaryEmailUtils {
       html.append("<td>").append(processedTask.getAdded()).append("</td>");
       html.append("<td>").append(processedTask.getStarted()).append("</td>");
       html.append("<td>").append(processedTask.getEnded()).append("</td>");
+      html.append("<td>").append(processedTask.getTimedOut() ? "Y" : "N").append("</td>");
       html.append("</tr>");
     }
 
