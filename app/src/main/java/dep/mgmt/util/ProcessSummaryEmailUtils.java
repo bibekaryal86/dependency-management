@@ -266,6 +266,7 @@ public class ProcessSummaryEmailUtils {
                       <th>Added</th>
                       <th>Started</th>
                       <th>Ended</th>
+                      <th>TimedOut?</th>
                     </tr>
                 """);
 

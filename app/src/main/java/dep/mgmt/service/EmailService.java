@@ -39,7 +39,7 @@ public class EmailService {
       final String attachment) {
     final String emailToFromAddress =
         CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_MAILJET_EMAIL_ADDRESS);
-    final String emailToFromName = "MailJet--" + emailToFromAddress;
+    final String emailToFromName = "Dependency Management";
     final EmailRequest.EmailContact emailToFromContact =
         new EmailRequest.EmailContact(emailToFromAddress, emailToFromName);
     final EmailRequest.EmailAttachment emailAttachment =
