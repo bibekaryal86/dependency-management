@@ -40,7 +40,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'ch.qos.logback:logback-classic:1.5.18'
 
-    implementation 'org.mongodb:mongodb-driver-sync:5.4.0'
+    implementation 'org.mongodb:mongodb-driver-sync:5.5.0'
     implementation 'com.mailjet:mailjet-client:5.2.6'
     implementation 'org.jsoup:jsoup:1.20.1'
 }
