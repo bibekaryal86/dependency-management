@@ -30,6 +30,8 @@ public class EmailService {
         buildEmailRequest(subject, html, attachmentFileName, attachment);
     EmailResponse emailResponse = email.sendEmail(emailRequest);
     log.info("Email Response: [{}]", emailResponse);
+    emailResponse = email.sendEmailMailgun(emailRequest);
+    log.info("Email Response Mailgun: [{}]", emailResponse);
   }
 
   private EmailRequest buildEmailRequest(
