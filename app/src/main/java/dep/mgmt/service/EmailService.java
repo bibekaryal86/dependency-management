@@ -25,13 +25,11 @@ public class EmailService {
       final String html,
       final String attachmentFileName,
       final String attachment) {
-    log.info("Email Request...");
+    log.info("Sending email...");
     final EmailRequest emailRequest =
         buildEmailRequest(subject, html, attachmentFileName, attachment);
-    EmailResponse emailResponse = email.sendEmail(emailRequest);
+    final EmailResponse emailResponse = email.sendEmailMailgun(emailRequest);
     log.info("Email Response: [{}]", emailResponse);
-    emailResponse = email.sendEmailMailgun(emailRequest);
-    log.info("Email Response Mailgun: [{}]", emailResponse);
   }
 
   private EmailRequest buildEmailRequest(
