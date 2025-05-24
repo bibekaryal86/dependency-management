@@ -786,7 +786,7 @@ public class UpdateRepoService {
             processedRepositories.stream()
                 .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrMerged)
                 .count();
-    final Integer totalPrMergeErrorCount = ProcessUtils.getRepositoriesToRetryMerge().size();
+    final Integer totalPrMergeErrorCount = totalPrCreatedCount - totalPrMergedCount;
 
     List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks =
         ProcessUtils.getProcessedTasks().values().stream()

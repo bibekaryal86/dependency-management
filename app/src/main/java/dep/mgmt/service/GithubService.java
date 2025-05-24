@@ -105,7 +105,6 @@ public class GithubService {
           branchDate,
           prNumber,
           prNumberFromWorkflowRun);
-      ProcessUtils.addRepositoriesToRetryMerge(repoName);
       return;
     }
 
@@ -116,7 +115,6 @@ public class GithubService {
         && mergePullRequestResponse.getMerged() != null
         && mergePullRequestResponse.getMerged()) {
       ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
-      ProcessUtils.removeRepositoriesToRetryMerge(repoName);
     } else {
       log.error(
           "PR Not Merged: [{}] | [{}] | [{}] | [{}] | [{}]",
@@ -125,7 +123,6 @@ public class GithubService {
           prNumber,
           prNumberFromWorkflowRun,
           mergePullRequestResponse);
-      ProcessUtils.addRepositoriesToRetryMerge(repoName);
     }
   }
 

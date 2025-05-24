@@ -2,8 +2,6 @@ package dep.mgmt.util;
 
 import dep.mgmt.model.ProcessSummaries;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,7 +19,6 @@ public class ProcessUtils {
       new ConcurrentHashMap<>();
   private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
       processedRepositories = new ConcurrentHashMap<>();
-  private static Set<String> repositoriesToRetryMerge = new HashSet<>();
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
@@ -96,18 +93,6 @@ public class ProcessUtils {
     return processedRepositories;
   }
 
-  public static synchronized void addRepositoriesToRetryMerge(final String repository) {
-    repositoriesToRetryMerge.add(repository);
-  }
-
-  public static synchronized void removeRepositoriesToRetryMerge(final String repository) {
-    repositoriesToRetryMerge.remove(repository);
-  }
-
-  public static synchronized Set<String> getRepositoriesToRetryMerge() {
-    return repositoriesToRetryMerge;
-  }
-
   public static void addProcessedTasks(final String queueName, final String taskName) {
     processedTasks.put(
         taskName,
@@ -148,7 +133,6 @@ public class ProcessUtils {
 
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
-    repositoriesToRetryMerge = new HashSet<>();
     processedTasks = new ConcurrentHashMap<>();
     setMongoGradlePluginsToUpdate(0);
     setMongoGradleDependenciesToUpdate(0);
