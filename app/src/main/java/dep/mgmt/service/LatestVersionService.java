@@ -57,6 +57,7 @@ public class LatestVersionService {
     final String currentDockerVersionNode = latestVersionEntity.getNode().getVersionDocker();
     final String currentDockerVersionGradle = latestVersionEntity.getGradle().getVersionDocker();
     final String currentDockerVersionFlyway = latestVersionEntity.getFlyway().getVersionDocker();
+    final String currentDockerVersionNginx = latestVersionEntity.getNginx().getVersionDocker();
 
     // languages
     LatestVersion python =
@@ -77,9 +78,9 @@ public class LatestVersionService {
     // tools
     LatestVersion gradle =
         gradleVersionService.getGradleVersion(java.getVersionMajor(), currentDockerVersionGradle);
-    LatestVersion flyway = flywayVersionService.getFlywayVersion();
+    LatestVersion flyway = flywayVersionService.getFlywayVersion(currentDockerVersionFlyway);
     // servers
-    LatestVersion nginx = nginxVersionService.getNginxVersion(currentDockerVersionFlyway);
+    LatestVersion nginx = nginxVersionService.getNginxVersion(currentDockerVersionNginx);
 
     AppDataLatestVersions latestVersions =
         new AppDataLatestVersions(
