@@ -121,8 +121,8 @@ public class ProcessSummaryEmailUtils {
                 processSummary.getPythonPackagesToUpdate(),
                 processSummary.getNodeDependenciesToUpdate(),
                 processSummary.getTotalPrCreatedCount(),
-                processSummary.getTotalPrMergeErrorsCount(),
-                processSummary.getTotalPrMergedCount()));
+                processSummary.getTotalPrMergedCount(),
+                processSummary.getTotalPrMergeErrorsCount()));
 
     html.append(
         """

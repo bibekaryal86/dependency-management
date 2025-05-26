@@ -124,11 +124,10 @@ public class NodeProjectUpdate {
     boolean isUpdated = false;
 
     if (sectionNode != null) {
-      final Iterator<Map.Entry<String, JsonNode>> fields = sectionNode.fields();
-      while (fields.hasNext()) {
-        final Map.Entry<String, JsonNode> entry = fields.next();
-        final String name = entry.getKey();
-        final String version = entry.getValue().asText();
+      Iterator<String> fieldNames = sectionNode.fieldNames();
+      while (fieldNames.hasNext()) {
+        final String name = fieldNames.next();
+        final String version = sectionNode.get(name).textValue();
         final String currentVersion = getCurrentVersion(version);
 
         final DependencyEntity dependency = this.dependenciesMap.get(name);

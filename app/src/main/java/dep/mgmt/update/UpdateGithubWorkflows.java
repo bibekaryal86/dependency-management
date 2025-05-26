@@ -2,6 +2,7 @@ package dep.mgmt.update;
 
 import dep.mgmt.model.AppDataLatestVersions;
 import dep.mgmt.model.AppDataRepository;
+import dep.mgmt.model.LatestVersion;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.io.IOException;
@@ -219,11 +220,23 @@ public class UpdateGithubWorkflows {
 
   private static String getLatestToolVersionFlyway(
       final String versionLine, final AppDataLatestVersions latestVersions) {
-    String latestVersion = "";
     if (versionLine.contains("flyway/flyway")) {
-      latestVersion = latestVersions.getLatestVersionTools().getFlyway().getVersionFull();
+      final LatestVersion latestVersion = latestVersions.getLatestVersionTools().getFlyway();
+      if (latestVersion != null
+          && !CommonUtilities.isEmpty(latestVersion.getVersionFull())
+          && !CommonUtilities.isEmpty(latestVersion.getVersionDocker())) {
+        final String versionFull = latestVersion.getVersionFull();
+        final String versionDocker = latestVersion.getVersionDocker();
+        // version 11.8.2 was released but docker version was still 11.8.1
+        // so all pipelines were failing because github workflows uses docker images
+        // hence check if docker version contains full version or not
+        if (versionDocker.contains(versionFull)) {
+          return versionFull;
+        }
+      }
     }
-    return latestVersion;
+
+    return "";
   }
 
   private static String getCurrentLanguageVersion(final String versionLine) {
