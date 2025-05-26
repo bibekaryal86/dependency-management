@@ -15,8 +15,6 @@ public class ConstantUtils {
   public static final String ENV_DB_PWD = "DB_PASSWORD";
   public static final String ENV_REPO_HOME = "REPO_HOME";
   public static final String ENV_SEND_EMAIL = "SEND_EMAIL";
-  public static final String ENV_MAILJET_PUBLIC_KEY = "MJ_PUBLIC";
-  public static final String ENV_MAILJET_PRIVATE_KEY = "MJ_PUBLIC";
   public static final String ENV_MAILJET_EMAIL_ADDRESS = "MJ_EMAIL";
   public static final String ENV_MAILGUN_API_KEY = "MG_KEY";
   public static final String ENV_MAILGUN_DOMAIN = "MG_DOMAIN";
@@ -33,8 +31,6 @@ public class ConstantUtils {
           ENV_DB_PWD,
           ENV_REPO_HOME,
           ENV_SEND_EMAIL,
-          ENV_MAILJET_PUBLIC_KEY,
-          ENV_MAILJET_PRIVATE_KEY,
           ENV_MAILGUN_API_KEY,
           ENV_MAILGUN_DOMAIN,
           ENV_MAILJET_EMAIL_ADDRESS,
