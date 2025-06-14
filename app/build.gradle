@@ -41,7 +41,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.18'
 
     implementation 'org.mongodb:mongodb-driver-sync:5.5.1'
-    implementation 'com.mailjet:mailjet-client:5.2.6'
+    implementation 'com.mailjet:mailjet-client:6.0.0'
     implementation 'org.jsoup:jsoup:1.20.1'
 }
 
