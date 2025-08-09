@@ -249,6 +249,5 @@ public class ConstantUtils {
   public static final String TASK_DATA_CLEANUP_LOG_ENTRY = "TASK_CLEANUP_LOG_ENTRY";
   public static final String TASK_DATA_CLEANUP_LATEST_VERSION = "TASK_CLEANUP_LATEST_VERSION";
 
-  public static final String RESPONSE_TESTS_PING = "{\"ping\": \"successful\"}";
-  public static final String RESPONSE_REQUEST_SUBMITTED = "{\"request\": \"submitted\"}";
+  public static final String JSON_RESPONSE = "{\"%s\": \"%s\"}";
 }

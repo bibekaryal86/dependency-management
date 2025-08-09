@@ -43,7 +43,10 @@ public class UpdateRepoController {
 
         updateRepoService.updateRepos(requestMetadata);
         ServerUtils.sendResponse(
-            ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+            ctx,
+            null,
+            HttpResponseStatus.ACCEPTED,
+            String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
       }
       case null, default ->
           ServerUtils.sendResponse(

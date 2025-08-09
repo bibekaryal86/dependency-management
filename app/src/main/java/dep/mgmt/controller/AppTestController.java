@@ -1,5 +1,6 @@
 package dep.mgmt.controller;
 
+import dep.mgmt.config.ScheduleConfig;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.web.GithubApiModel;
 import dep.mgmt.server.Endpoints;
@@ -10,6 +11,7 @@ import dep.mgmt.util.ServerUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +32,16 @@ public class AppTestController {
     switch (requestUriLessParams) {
       case Endpoints.APP_TESTS_PING ->
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_TESTS_PING);
+              ctx,
+              null,
+              HttpResponseStatus.OK,
+              String.format(ConstantUtils.JSON_RESPONSE, "ping", "successful"));
       case Endpoints.APP_TESTS_RESET -> {
         ServerUtils.sendResponse(
-            ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+            ctx,
+            null,
+            HttpResponseStatus.OK,
+            String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
         updateRepoService.recreateLocalCaches();
         updateRepoService.executeTaskQueues();
       }
@@ -49,8 +57,19 @@ public class AppTestController {
       }
       case Endpoints.APP_TESTS_CLEAR -> {
         ServerUtils.sendResponse(
-            ctx, null, HttpResponseStatus.OK, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+            ctx,
+            null,
+            HttpResponseStatus.OK,
+            String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
         updateRepoService.clearTaskQueues();
+      }
+      case Endpoints.APP_TESTS_SCHEDULE -> {
+        ZonedDateTime nextRunTime = ScheduleConfig.getNextRunTime();
+        ServerUtils.sendResponse(
+            ctx,
+            null,
+            HttpResponseStatus.OK,
+            String.format(ConstantUtils.JSON_RESPONSE, "nextRunTime", nextRunTime));
       }
       case null, default ->
           ServerUtils.sendResponse(
