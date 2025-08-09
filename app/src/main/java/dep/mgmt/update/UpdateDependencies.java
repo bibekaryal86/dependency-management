@@ -41,6 +41,7 @@ public class UpdateDependencies {
       arguments.add(branchName);
     }
 
+    arguments.add(repository.getType().name());
     ExecuteScriptFile.executeScript(scriptFile, arguments, Boolean.FALSE, repository);
   }
 }

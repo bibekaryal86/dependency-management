@@ -5,6 +5,7 @@
 # echo "Process Id--$$"
 repo_loc="$1"
 branch_name="$2"
+repo_type="$3"
 
 # Give access to current user
 current_user=$(whoami)
@@ -31,6 +32,12 @@ git checkout main 2>&1
 # Create new branch for updates
 echo "Creating new branch"
 git checkout -b "$branch_name" 2>&1
+
+# Run npm install if repo type is npm
+if [ "$repo_type" = "NODE" ]; then
+    echo "Running npm install for NODE repo"
+    npm install --package-lock-only 2>&1
+fi
 
 # Commit and push
 echo "Committing and pushing"  2>&1
