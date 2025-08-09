@@ -9,6 +9,7 @@ public class Endpoints {
   public static final String APP_TESTS_RATE = APP_TESTS_CONTROLLER + "/github-rate-limit";
   public static final String APP_TESTS_TASKS = APP_TESTS_CONTROLLER + "/task-queue";
   public static final String APP_TESTS_CLEAR = APP_TESTS_CONTROLLER + "/clear-queue";
+  public static final String APP_TESTS_SCHEDULE = APP_TESTS_CONTROLLER + "/schedule";
 
   public static final String UPDATE_DEPENDENCIES_CONTROLLER = "/" + CONTEXT_PATH + "/api/v1/update";
   public static final String UPDATE_DEPENDENCIES_EXECUTE =

@@ -27,6 +27,8 @@ public class ScheduleConfig {
   private static final UpdateRepoService updateRepoService = new UpdateRepoService();
   private static final ProcessSummaryService processSummaryService = new ProcessSummaryService();
 
+  private static volatile ZonedDateTime nextRunTime;
+
   public static void init() {
     Runtime.getRuntime()
         .addShutdownHook(
@@ -51,25 +53,32 @@ public class ScheduleConfig {
   private static void updateReposSchedule() {
     final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
     ZonedDateTime executionTime =
-        ZonedDateTime.now(ZoneId.systemDefault())
-            .withHour(ConstantUtils.SCHEDULER_START_HOUR_UPDATE_REPO)
-            .withMinute(ConstantUtils.SCHEDULER_START_MINUTE)
-            .withSecond(ConstantUtils.SCHEDULER_START_SECOND);
+        ZonedDateTime.now(ZoneId.systemDefault()).withHour(20).withMinute(0).withSecond(0);
 
     if (now.isAfter(executionTime)) {
       executionTime = executionTime.plusDays(1);
     }
 
-    final long initialDelay = Duration.between(now, executionTime).toMillis();
-    final long period = TimeUnit.DAYS.toMillis(1);
+    nextRunTime = executionTime;
 
-    scheduler.scheduleAtFixedRate(
+    final long initialDelay = Duration.between(now, executionTime).toMillis();
+
+    scheduler.schedule(
         () -> {
-          log.info("Starting Scheduler to Update Repos...");
-          updateRepoService.scheduledUpdate();
+          try {
+            log.info("Starting Scheduler to Update Repos...");
+            updateRepoService.scheduledUpdate();
+          } catch (Exception exception) {
+            log.error("Error in Scheduler...", exception);
+          } finally {
+            updateReposSchedule();
+          }
         },
         initialDelay,
-        period,
         TimeUnit.MILLISECONDS);
+  }
+
+  public static ZonedDateTime getNextRunTime() {
+    return nextRunTime;
   }
 }

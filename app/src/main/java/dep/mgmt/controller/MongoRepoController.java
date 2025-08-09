@@ -98,7 +98,10 @@ public class MongoRepoController {
         case Endpoints.MONGO_REPO_UPDATE:
           updateDependenciesInMongo();
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case Endpoints.MONGO_EXCLUDED_REPO:
           ServerUtils.sendResponse(ctx, getExcludedRepos(), HttpResponseStatus.OK, null);
@@ -115,7 +118,11 @@ public class MongoRepoController {
             final List<LogEntry> logEntries =
                 ConvertUtils.convertLogEntryEntities(logEntryEntities);
             ServerUtils.sendResponseText(
-                ctx, HttpResponseStatus.OK, logEntries.getFirst().getLogEntries());
+                ctx,
+                HttpResponseStatus.OK,
+                CommonUtilities.isEmpty(logEntries)
+                    ? String.format("Log Entries Unavailable for '%s'", logDateParam)
+                    : logEntries.getFirst().getLogEntries());
           }
           break;
         case null, default:
@@ -138,27 +145,42 @@ public class MongoRepoController {
         case Endpoints.MONGO_GRADLE_PLUGIN:
           saveGradlePlugin(dependencyRequest);
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case Endpoints.MONGO_GRADLE_DEPENDENCY:
           saveGradleDependency(dependencyRequest);
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case Endpoints.MONGO_NODE_DEPENDENCY:
           saveNpmDependency(dependencyRequest);
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case Endpoints.MONGO_PYTHON_PACKAGE:
           savePythonPackage(dependencyRequest);
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case Endpoints.MONGO_EXCLUDED_REPO:
           saveExcludedRepo(dependencyRequest.getName());
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case null, default:
           ServerUtils.sendResponse(
@@ -173,7 +195,10 @@ public class MongoRepoController {
               Boolean.parseBoolean(ServerUtils.getQueryParam(requestUri, "deleteAll", ""));
           deletedExcludedRepo(repoName, isDeleteAll);
           ServerUtils.sendResponse(
-              ctx, null, HttpResponseStatus.ACCEPTED, ConstantUtils.RESPONSE_REQUEST_SUBMITTED);
+              ctx,
+              null,
+              HttpResponseStatus.ACCEPTED,
+              String.format(ConstantUtils.JSON_RESPONSE, "request", "submitted"));
           break;
         case null, default:
           ServerUtils.sendResponse(
