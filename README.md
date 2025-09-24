@@ -13,6 +13,7 @@
 * System Requirements:
     * Java (https://adoptium.net/temurin/releases/)
     * git (https://git-scm.com/downloads)
+    * NPM (https://nodejs.org/en/download)
 
 * Technologies Used:
   * Java
