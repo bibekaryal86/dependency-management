@@ -171,7 +171,7 @@ public class ProcessSummaryEmailUtils {
       html.append(
           """
                     <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged</p>
+                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created</p>
                     <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
                       <tr>
                         <th>Name</th>

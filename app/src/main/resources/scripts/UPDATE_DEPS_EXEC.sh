@@ -45,10 +45,15 @@ echo git status 2>&1
 
 # Check if there are uncommitted changes
 if ! git diff-index --quiet HEAD --; then
-	git add . 2>&1
-	git commit -am 'Dependencies Updated (https://bit.ly/dep-mgmt)' 2>&1
-	git push origin -u "$branch_name" 2>&1
-	echo "Pushed new branch"
+    git add . 2>&1
+    if git commit -am 'Dependencies Updated (https://bit.ly/dep-mgmt)' 2>&1; then
+        git push origin -u "$branch_name" 2>&1
+        echo "Pushed new branch"
+    else
+        echo "No changes to commit"
+    fi
+else
+    echo "Working tree clean — nothing to push"
 fi
 
 # Cleanup
