@@ -96,7 +96,7 @@ public class MongoRepoController {
           }
           break;
         case Endpoints.MONGO_REPO_UPDATE:
-          updateDependenciesInMongo();
+          updateDependenciesInMongo(requestUri);
           ServerUtils.sendResponse(
               ctx,
               null,
@@ -333,11 +333,33 @@ public class MongoRepoController {
     }
   }
 
-  private void updateDependenciesInMongo() {
-    CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
-    CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
-    CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
-    CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+  private void updateDependenciesInMongo(final String requestUri) {
+    final String updateTypeParam =
+        ServerUtils.getQueryParam(requestUri, ConstantUtils.REQUEST_UPDATE_TYPE, null);
+    RequestParams.UpdateType updateType = null;
+    if (updateTypeParam != null
+        && List.of(
+                RequestParams.UpdateType.NODE.name(),
+                RequestParams.UpdateType.PYTHON.name(),
+                RequestParams.UpdateType.GRADLE.name())
+            .contains(updateTypeParam)) {
+      updateType = RequestParams.UpdateType.valueOf(updateTypeParam);
+    }
+
+    switch (updateType) {
+      case NODE -> CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
+      case PYTHON -> CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+      case GRADLE -> {
+        CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
+        CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+      }
+      case null, default -> {
+        CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
+        CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+        CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
+        CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+      }
+    }
   }
 
   private ExcludedRepos getExcludedRepos() {

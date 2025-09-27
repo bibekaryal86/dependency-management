@@ -31,7 +31,7 @@ public class GradlePluginVersionService {
   public String getGradlePluginVersion(final String group) {
     log.debug("Get Latest Gradle Plugin: [ {} ]", group);
     Document document = getGradlePlugins(group);
-    log.debug("Gradle Plugin Document: [ {} ] | [ {} ]", group, document);
+    log.trace("Gradle Plugin Document: [ {} ] | [ {} ]", group, document);
     if (document != null) {
       Element versionElement = document.getElementsByClass("version-info").first();
 
