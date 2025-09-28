@@ -133,4 +133,20 @@ public class GradlePluginVersionService {
       ProcessUtils.setMongoGradlePluginsToUpdate(gradlePluginsToUpdate.size());
     }
   }
+
+  public void updateGradlePlugin(final String library) {
+    log.info("Update Gradle Plugin: [{}]", library);
+    final DependencyEntity gradlePluginLocal = getGradlePluginsMap().get(library);
+    final DependencyEntity gradlePluginMongo =
+        gradlePluginRepository.findByAttribute("name", library);
+
+    final String currentVersion = gradlePluginMongo.getVersion();
+    final String latestVersion = getGradlePluginVersion(library);
+
+    if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+      final DependencyEntity gradlePluginToUpdate =
+          new DependencyEntity(gradlePluginLocal.getId(), library, latestVersion, Boolean.FALSE);
+      gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
+    }
+  }
 }

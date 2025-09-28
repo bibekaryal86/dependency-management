@@ -115,6 +115,7 @@ public class ConstantUtils {
   // http requests
   public static final AttributeKey<String> REQUEST_ID = AttributeKey.valueOf("REQUEST_ID");
   public static final String REQUEST_UPDATE_TYPE = "updateType";
+  public static final String REQUEST_UPDATE_LIBRARY = "library";
 
   // SCRIPT FILE NAMES
   public static final String SCRIPT_DELETE = "DELETE_UPDATE_DEPS";

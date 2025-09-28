@@ -30,6 +30,10 @@ public class MongoRepository<T> {
     return collection.find(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id)).first();
   }
 
+  public T findByAttribute(final String attributeName, final String attributeValue) {
+    return collection.find(Filters.eq(attributeName, attributeValue)).first();
+  }
+
   // UPDATE
   public void update(final ObjectId id, final T updatedEntity) {
     collection.replaceOne(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id), updatedEntity);

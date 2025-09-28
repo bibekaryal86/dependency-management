@@ -335,7 +335,10 @@ public class MongoRepoController {
 
   private void updateDependenciesInMongo(final String requestUri) {
     final String updateTypeParam =
-        ServerUtils.getQueryParam(requestUri, ConstantUtils.REQUEST_UPDATE_TYPE, null);
+        ServerUtils.getQueryParam(requestUri, ConstantUtils.REQUEST_UPDATE_TYPE, "");
+    final String updateTypeLibrary =
+        ServerUtils.getQueryParam(requestUri, ConstantUtils.REQUEST_UPDATE_LIBRARY, "");
+
     RequestParams.UpdateType updateType = null;
     if (updateTypeParam != null
         && List.of(
@@ -347,11 +350,29 @@ public class MongoRepoController {
     }
 
     switch (updateType) {
-      case NODE -> CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
-      case PYTHON -> CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+      case NODE -> {
+        if (CommonUtilities.isEmpty(updateTypeLibrary)) {
+          CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
+        } else {
+          nodeDependencyVersionService.updateNodeDependency(updateTypeLibrary);
+        }
+      }
+      case PYTHON -> {
+        if (CommonUtilities.isEmpty(updateTypeLibrary)) {
+          CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
+        } else {
+          pythonPackageVersionService.updatePythonPackage(updateTypeLibrary);
+        }
+      }
       case GRADLE -> {
-        CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
-        CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+        if (CommonUtilities.isEmpty(updateTypeLibrary)) {
+          CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
+          CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+        } else if (updateTypeLibrary.contains(":")) {
+          gradleDependencyVersionService.updateGradleDependency(updateTypeLibrary);
+        } else {
+          gradlePluginVersionService.updateGradlePlugin(updateTypeLibrary);
+        }
       }
       case null, default -> {
         CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);

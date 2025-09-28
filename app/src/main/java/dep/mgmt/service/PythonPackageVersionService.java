@@ -116,4 +116,20 @@ public class PythonPackageVersionService {
       ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
     }
   }
+
+  public void updatePythonPackage(final String library) {
+    log.info("Update Python Package: [{}]", library);
+    final DependencyEntity pythonPackageLocal = getPythonPackagesMap().get(library);
+    final DependencyEntity pythonPackageMongo =
+        pythonPackageRepository.findByAttribute("name", library);
+
+    final String currentVersion = pythonPackageMongo.getVersion();
+    final String latestVersion = getPythonPackageVersion(library);
+
+    if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+      final DependencyEntity pythonPackageToUpdate =
+          new DependencyEntity(pythonPackageLocal.getId(), library, latestVersion, Boolean.FALSE);
+      pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
+    }
+  }
 }
