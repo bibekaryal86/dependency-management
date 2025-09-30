@@ -1,6 +1,8 @@
 package dep.mgmt.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.entity.DependencyEntity;
@@ -16,7 +18,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +38,7 @@ public class GradleDependencyVersionService {
 
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
-    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact, 0);
+    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
     MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =
         getLatestDependencyVersion(mavenSearchResponse);
     log.debug(
@@ -48,8 +55,7 @@ public class GradleDependencyVersionService {
     return mavenDoc.getV();
   }
 
-  private MavenSearchResponse getMavenSearchResponse(
-      final String group, final String artifact, final int attempt) {
+  private MavenSearchResponse getMavenSearchResponse(final String group, final String artifact) {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
       return Connector.sendRequest(
@@ -62,17 +68,64 @@ public class GradleDependencyVersionService {
           .responseBody();
     } catch (Exception ex) {
       log.error(
-          "ERROR in Get Maven Search Response: [ {} ] | [ {} ] [ {} ] || [ {}-{} ]",
-          attempt,
+          "ERROR in Get Maven Search Response: [ {} ] [ {} ] || [ {}-{} ]",
           group,
           artifact,
           ex.getClass().getName(),
           ex.getMessage());
-      if (attempt < 3) {
-        getMavenSearchResponse(group, artifact, attempt + 1);
-      }
+      return getMavenJsoupResponse(group, artifact);
+    }
+  }
+
+  private MavenSearchResponse getMavenJsoupResponse(final String group, final String artifact) {
+    try {
+      final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
+      final Document document = Jsoup.connect(url).get();
+      log.trace("Maven Jsoup Document: [ {} ] | [ {} ]", group, document);
+      final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs =
+          getMavenJsoupResponseDocs(document, group, artifact);
+      return new MavenSearchResponse(new MavenSearchResponse.MavenResponse(mavenDocs));
+    } catch (Exception ex) {
+      log.error(
+          "ERROR in Get Maven Jsoup Response: [ {} ] [ {} ] || [ {}-{} ]",
+          group,
+          artifact,
+          ex.getClass().getName(),
+          ex.getMessage());
     }
     return null;
+  }
+
+  private List<MavenSearchResponse.MavenResponse.MavenDoc> getMavenJsoupResponseDocs(
+      final Document document, final String group, final String artifact) {
+    final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
+
+    try {
+      for (final Element element : document.select("script")) {
+        final String script = element.data();
+        final Matcher m = Pattern.compile("\"versions\":\\[(.*?)\\]").matcher(script);
+        if (m.find()) {
+          String versionsJson = "[" + m.group(1) + "]";
+          ObjectMapper mapper = CommonUtilities.objectMapperProvider();
+          JsonNode versionsNode = mapper.readTree(versionsJson);
+
+          for (JsonNode version : versionsNode) {
+            mavenDocs.add(
+                new MavenSearchResponse.MavenResponse.MavenDoc(group, artifact, version.asText()));
+          }
+        }
+      }
+    } catch (Exception ex) {
+      log.error(
+          "ERROR in Get Maven Response: [ {}] | [ {} ] [ {} ] || [ {}-{} ]",
+          document == null,
+          group,
+          artifact,
+          ex.getClass().getName(),
+          ex.getMessage());
+    }
+
+    return mavenDocs;
   }
 
   private MavenSearchResponse.MavenResponse.MavenDoc getLatestDependencyVersion(
