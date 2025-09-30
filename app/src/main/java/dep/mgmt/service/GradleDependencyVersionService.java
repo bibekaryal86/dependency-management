@@ -31,7 +31,7 @@ public class GradleDependencyVersionService {
 
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
-    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
+    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact, 0);
     MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =
         getLatestDependencyVersion(mavenSearchResponse);
     log.debug(
@@ -48,7 +48,8 @@ public class GradleDependencyVersionService {
     return mavenDoc.getV();
   }
 
-  private MavenSearchResponse getMavenSearchResponse(final String group, final String artifact) {
+  private MavenSearchResponse getMavenSearchResponse(
+      final String group, final String artifact, final int attempt) {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
       return Connector.sendRequest(
@@ -60,7 +61,16 @@ public class GradleDependencyVersionService {
               null)
           .responseBody();
     } catch (Exception ex) {
-      log.error("ERROR in Get Maven Search Response: [ {} ] [ {} ]", group, artifact, ex);
+      log.error(
+          "ERROR in Get Maven Search Response: [ {} ] | [ {} ] [ {} ] || [ {}-{} ]",
+          attempt,
+          group,
+          artifact,
+          ex.getClass().getName(),
+          ex.getMessage());
+      if (attempt < 3) {
+        getMavenSearchResponse(group, artifact, attempt + 1);
+      }
     }
     return null;
   }
@@ -145,6 +155,26 @@ public class GradleDependencyVersionService {
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
       ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
+    }
+  }
+
+  public void updateGradleDependency(final String library) {
+    log.info("Update Gradle Dependency: [{}]", library);
+    final String[] groupArtifact = library.split(":");
+    final String group = groupArtifact[0];
+    final String artifact = groupArtifact[1];
+    final DependencyEntity gradleDependencyLocal = getGradleDependenciesMap().get(library);
+    final DependencyEntity gradleDependencyMongo =
+        gradleDependencyRepository.findByAttribute("name", library);
+
+    final String currentVersion = gradleDependencyMongo.getVersion();
+    final String latestVersion = getGradleDependencyVersion(group, artifact, currentVersion);
+
+    if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+      final DependencyEntity gradleDependencyToUpdate =
+          new DependencyEntity(
+              gradleDependencyLocal.getId(), library, latestVersion, Boolean.FALSE);
+      gradleDependencyRepository.update(gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
     }
   }
 }

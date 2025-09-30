@@ -116,4 +116,20 @@ public class NodeDependencyVersionService {
       ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
     }
   }
+
+  public void updateNodeDependency(final String library) {
+    log.info("Update Node Dependency: [{}]", library);
+    final DependencyEntity nodeDependencyLocal = getNodeDependenciesMap().get(library);
+    final DependencyEntity nodeDependencyMongo =
+        nodeDependencyRepository.findByAttribute("name", library);
+
+    final String currentVersion = nodeDependencyMongo.getVersion();
+    final String latestVersion = getNodeDependencyVersion(library);
+
+    if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+      final DependencyEntity nodeDependencyToUpdate =
+          new DependencyEntity(nodeDependencyLocal.getId(), library, latestVersion, Boolean.FALSE);
+      nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
+    }
+  }
 }
