@@ -1,8 +1,6 @@
 package dep.mgmt.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.model.entity.DependencyEntity;
@@ -18,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -77,7 +73,9 @@ public class GradleDependencyVersionService {
     }
   }
 
-  private MavenSearchResponse getMavenJsoupResponse(final String group, final String artifact) {
+  public static MavenSearchResponse getMavenJsoupResponse(
+      final String group, final String artifact) {
+    log.info("Get Maven Jsoup Response: [{}] | [{}]", group, artifact);
     try {
       final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
       final Document document = Jsoup.connect(url).get();
@@ -96,23 +94,15 @@ public class GradleDependencyVersionService {
     return null;
   }
 
-  private List<MavenSearchResponse.MavenResponse.MavenDoc> getMavenJsoupResponseDocs(
+  private static List<MavenSearchResponse.MavenResponse.MavenDoc> getMavenJsoupResponseDocs(
       final Document document, final String group, final String artifact) {
     final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
 
     try {
       for (final Element element : document.select("script")) {
         final String script = element.data();
-        final Matcher m = Pattern.compile("\"versions\":\\[(.*?)\\]").matcher(script);
-        if (m.find()) {
-          String versionsJson = "[" + m.group(1) + "]";
-          ObjectMapper mapper = CommonUtilities.objectMapperProvider();
-          JsonNode versionsNode = mapper.readTree(versionsJson);
-
-          for (JsonNode version : versionsNode) {
-            mavenDocs.add(
-                new MavenSearchResponse.MavenResponse.MavenDoc(group, artifact, version.asText()));
-          }
+        if (script.contains("version") && script.contains("versions")) {
+          return extractVersionsList(script, group, artifact);
         }
       }
     } catch (Exception ex) {
@@ -123,6 +113,30 @@ public class GradleDependencyVersionService {
           artifact,
           ex.getClass().getName(),
           ex.getMessage());
+    }
+
+    return mavenDocs;
+  }
+
+  private static List<MavenSearchResponse.MavenResponse.MavenDoc> extractVersionsList(
+      final String scriptContent, final String group, final String artifact) {
+    final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
+    final String versionsKey = "versions";
+    int startIndex = scriptContent.indexOf(versionsKey);
+    System.out.println(startIndex);
+
+    if (startIndex != -1) {
+      startIndex += versionsKey.length();
+      final int endIndex = scriptContent.indexOf("]", startIndex);
+      String versionsString = scriptContent.substring(startIndex, endIndex + 1);
+      versionsString =
+          versionsString.replace(":[\\", "").replaceAll("\"", "").replaceAll("\\\\", "");
+      final String[] versionsArray = versionsString.split(",");
+
+      for (String version : versionsArray) {
+        mavenDocs.add(
+            new MavenSearchResponse.MavenResponse.MavenDoc(group, artifact, version.trim()));
+      }
     }
 
     return mavenDocs;
