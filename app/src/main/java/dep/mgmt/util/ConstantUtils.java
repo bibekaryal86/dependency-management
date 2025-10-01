@@ -70,6 +70,8 @@ public class ConstantUtils {
   public static final String NODE_RELEASES_ENDPOINT = "https://nodejs.org/dist/index.json";
   public static final String MAVEN_SEARCH_ENDPOINT =
       "https://search.maven.org/solrsearch/select?core=gav&rows=5&wt=json&q=g:%s+AND+a:%s";
+  public static final String MAVEN_JSOUP_ENDPOINT =
+      "https://central.sonatype.com/artifact/%s/%s/overview";
   public static final String NPM_REGISTRY_ENDPOINT = "https://registry.npmjs.org/%s";
   public static final String PYPI_SEARCH_ENDPOINT = "https://pypi.org/pypi/%s/json";
   public static final String GCP_RUNTIME_SUPPORT_ENDPOINT =

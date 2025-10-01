@@ -17,6 +17,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +34,7 @@ public class GradleDependencyVersionService {
 
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
-    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact, 0);
+    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
     MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =
         getLatestDependencyVersion(mavenSearchResponse);
     log.debug(
@@ -48,8 +51,7 @@ public class GradleDependencyVersionService {
     return mavenDoc.getV();
   }
 
-  private MavenSearchResponse getMavenSearchResponse(
-      final String group, final String artifact, final int attempt) {
+  private MavenSearchResponse getMavenSearchResponse(final String group, final String artifact) {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
       return Connector.sendRequest(
@@ -62,17 +64,82 @@ public class GradleDependencyVersionService {
           .responseBody();
     } catch (Exception ex) {
       log.error(
-          "ERROR in Get Maven Search Response: [ {} ] | [ {} ] [ {} ] || [ {}-{} ]",
-          attempt,
+          "ERROR in Get Maven Search Response: [ {} ] [ {} ] || [ {}-{} ]",
           group,
           artifact,
           ex.getClass().getName(),
           ex.getMessage());
-      if (attempt < 3) {
-        getMavenSearchResponse(group, artifact, attempt + 1);
-      }
+      return getMavenJsoupResponse(group, artifact);
+    }
+  }
+
+  public static MavenSearchResponse getMavenJsoupResponse(
+      final String group, final String artifact) {
+    log.info("Get Maven Jsoup Response: [{}] | [{}]", group, artifact);
+    try {
+      final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
+      final Document document = Jsoup.connect(url).get();
+      log.trace("Maven Jsoup Document: [ {} ] | [ {} ]", group, document);
+      final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs =
+          getMavenJsoupResponseDocs(document, group, artifact);
+      return new MavenSearchResponse(new MavenSearchResponse.MavenResponse(mavenDocs));
+    } catch (Exception ex) {
+      log.error(
+          "ERROR in Get Maven Jsoup Response: [ {} ] [ {} ] || [ {}-{} ]",
+          group,
+          artifact,
+          ex.getClass().getName(),
+          ex.getMessage());
     }
     return null;
+  }
+
+  private static List<MavenSearchResponse.MavenResponse.MavenDoc> getMavenJsoupResponseDocs(
+      final Document document, final String group, final String artifact) {
+    final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
+
+    try {
+      for (final Element element : document.select("script")) {
+        final String script = element.data();
+        if (script.contains("version") && script.contains("versions")) {
+          return extractVersionsList(script, group, artifact);
+        }
+      }
+    } catch (Exception ex) {
+      log.error(
+          "ERROR in Get Maven Response: [ {}] | [ {} ] [ {} ] || [ {}-{} ]",
+          document == null,
+          group,
+          artifact,
+          ex.getClass().getName(),
+          ex.getMessage());
+    }
+
+    return mavenDocs;
+  }
+
+  private static List<MavenSearchResponse.MavenResponse.MavenDoc> extractVersionsList(
+      final String scriptContent, final String group, final String artifact) {
+    final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
+    final String versionsKey = "versions";
+    int startIndex = scriptContent.indexOf(versionsKey);
+    System.out.println(startIndex);
+
+    if (startIndex != -1) {
+      startIndex += versionsKey.length();
+      final int endIndex = scriptContent.indexOf("]", startIndex);
+      String versionsString = scriptContent.substring(startIndex, endIndex + 1);
+      versionsString =
+          versionsString.replace(":[\\", "").replaceAll("\"", "").replaceAll("\\\\", "");
+      final String[] versionsArray = versionsString.split(",");
+
+      for (String version : versionsArray) {
+        mavenDocs.add(
+            new MavenSearchResponse.MavenResponse.MavenDoc(group, artifact, version.trim()));
+      }
+    }
+
+    return mavenDocs;
   }
 
   private MavenSearchResponse.MavenResponse.MavenDoc getLatestDependencyVersion(
