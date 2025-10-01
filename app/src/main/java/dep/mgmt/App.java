@@ -5,7 +5,6 @@ package dep.mgmt;
 
 import dep.mgmt.config.MongoDbConfig;
 import dep.mgmt.config.ScheduleConfig;
-import dep.mgmt.migration.MigrationService;
 import dep.mgmt.server.NettyServer;
 import dep.mgmt.util.AppDataUtils;
 import dep.mgmt.util.ConstantUtils;
@@ -20,22 +19,11 @@ public class App {
 
   public static void main(String[] args) throws Exception {
     log.info("Starting Dependency Management Service...");
-    if (isMigration(args)) {
-      log.info("Starting Data Migration...");
-      MigrationService migrationService = new MigrationService();
-      migrationService.migrateProcessSummaries(Boolean.TRUE);
-      migrationService.migrateLatestVersions(Boolean.TRUE);
-      migrationService.migrateGradleDependencies(Boolean.TRUE);
-      migrationService.migrateGradlePlugins(Boolean.TRUE);
-      migrationService.migratePythonPlugins(Boolean.TRUE);
-      log.info("Completed Data Migration...");
-    } else {
-      App.init();
-      ScheduleConfig.init();
-      NettyServer.init();
-      MongoDbConfig.init();
-      log.info("Started Dependency Management Service...");
-    }
+    App.init();
+    ScheduleConfig.init();
+    NettyServer.init();
+    MongoDbConfig.init();
+    log.info("Started Dependency Management Service...");
   }
 
   private static void init() {
@@ -55,12 +43,5 @@ public class App {
 
     // APP DATA
     AppDataUtils.setAppData();
-  }
-
-  private static boolean isMigration(String[] args) {
-    if (args.length == 1) {
-      return Boolean.parseBoolean(args[0]);
-    }
-    return false;
   }
 }
