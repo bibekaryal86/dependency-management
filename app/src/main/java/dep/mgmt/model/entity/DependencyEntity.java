@@ -1,6 +1,7 @@
 package dep.mgmt.model.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
@@ -9,8 +10,25 @@ public class DependencyEntity implements Serializable {
   private String name;
   private String version;
   private Boolean skipVersion;
+  private LocalDateTime lastCheckedDate;
+  private LocalDateTime lastUpdatedDate;
 
   public DependencyEntity() {}
+
+  public DependencyEntity(
+      ObjectId id,
+      String name,
+      String version,
+      Boolean skipVersion,
+      LocalDateTime lastCheckedDate,
+      LocalDateTime lastUpdatedDate) {
+    this.id = id;
+    this.name = name;
+    this.version = version;
+    this.skipVersion = skipVersion;
+    this.lastCheckedDate = lastCheckedDate;
+    this.lastUpdatedDate = lastUpdatedDate;
+  }
 
   public DependencyEntity(
       final ObjectId id, final String name, final String version, final Boolean skipVersion) {
@@ -18,13 +36,22 @@ public class DependencyEntity implements Serializable {
     this.name = name;
     this.version = version;
     this.skipVersion = skipVersion;
+    this.lastCheckedDate = LocalDateTime.now();
+    this.lastUpdatedDate = LocalDateTime.now();
   }
 
-  public DependencyEntity(final String name, final String version, final Boolean skipVersion) {
-    this.id = null;
+  public DependencyEntity(
+      final ObjectId id,
+      final String name,
+      final String version,
+      final Boolean skipVersion,
+      final LocalDateTime lastUpdatedDate) {
+    this.id = id;
     this.name = name;
     this.version = version;
     this.skipVersion = skipVersion;
+    this.lastCheckedDate = LocalDateTime.now();
+    this.lastUpdatedDate = lastUpdatedDate;
   }
 
   public DependencyEntity(final String name, final String version) {
@@ -32,6 +59,8 @@ public class DependencyEntity implements Serializable {
     this.name = name;
     this.version = version;
     this.skipVersion = false;
+    this.lastCheckedDate = LocalDateTime.now();
+    this.lastUpdatedDate = LocalDateTime.now();
   }
 
   public ObjectId getId() {
@@ -66,9 +95,25 @@ public class DependencyEntity implements Serializable {
     this.skipVersion = skipVersion;
   }
 
+  public LocalDateTime getLastCheckedDate() {
+    return lastCheckedDate;
+  }
+
+  public void setLastCheckedDate(LocalDateTime lastCheckedDate) {
+    this.lastCheckedDate = lastCheckedDate;
+  }
+
+  public LocalDateTime getLastUpdatedDate() {
+    return lastUpdatedDate;
+  }
+
+  public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) {
+    this.lastUpdatedDate = lastUpdatedDate;
+  }
+
   @Override
   public String toString() {
-    return "Dependency{"
+    return "DependencyEntity{"
         + "id="
         + id
         + ", name='"
@@ -79,6 +124,10 @@ public class DependencyEntity implements Serializable {
         + '\''
         + ", skipVersion="
         + skipVersion
+        + ", lastCheckedDate="
+        + lastCheckedDate
+        + ", lastUpdatedDate="
+        + lastUpdatedDate
         + '}';
   }
 }

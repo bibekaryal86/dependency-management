@@ -86,7 +86,6 @@ public class NodeDependencyVersionService {
 
   public void updateNodeDependencies() {
     log.info("Update Node Dependencies...");
-    final Map<String, DependencyEntity> nodeDependenciesLocal = getNodeDependenciesMap();
     final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
     List<DependencyEntity> nodeDependenciesToUpdate = new ArrayList<>();
 
@@ -99,10 +98,18 @@ public class NodeDependencyVersionService {
           if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
             nodeDependenciesToUpdate.add(
                 new DependencyEntity(
-                    nodeDependenciesLocal.get(nodeDependency.getName()).getId(),
+                    nodeDependency.getId(),
                     nodeDependency.getName(),
                     latestVersion,
                     Boolean.FALSE));
+          } else {
+            nodeDependenciesToUpdate.add(
+                new DependencyEntity(
+                    nodeDependency.getId(),
+                    nodeDependency.getName(),
+                    latestVersion,
+                    Boolean.FALSE,
+                    nodeDependency.getLastUpdatedDate()));
           }
         });
 
@@ -119,16 +126,24 @@ public class NodeDependencyVersionService {
 
   public void updateNodeDependency(final String library) {
     log.info("Update Node Dependency: [{}]", library);
-    final DependencyEntity nodeDependencyLocal = getNodeDependenciesMap().get(library);
-    final DependencyEntity nodeDependencyMongo =
+    final DependencyEntity nodeDependency =
         nodeDependencyRepository.findByAttribute("name", library);
 
-    final String currentVersion = nodeDependencyMongo.getVersion();
+    final String currentVersion = nodeDependency.getVersion();
     final String latestVersion = getNodeDependencyVersion(library);
 
     if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
       final DependencyEntity nodeDependencyToUpdate =
-          new DependencyEntity(nodeDependencyLocal.getId(), library, latestVersion, Boolean.FALSE);
+          new DependencyEntity(nodeDependency.getId(), library, latestVersion, Boolean.FALSE);
+      nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
+    } else {
+      final DependencyEntity nodeDependencyToUpdate =
+          new DependencyEntity(
+              nodeDependency.getId(),
+              library,
+              latestVersion,
+              Boolean.FALSE,
+              nodeDependency.getLastUpdatedDate());
       nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
     }
   }
