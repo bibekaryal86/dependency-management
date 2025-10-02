@@ -86,7 +86,6 @@ public class PythonPackageVersionService {
 
   public void updatePythonPackages() {
     log.info("Update Python Packages...");
-    final Map<String, DependencyEntity> pythonPackagesLocal = getPythonPackagesMap();
     final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 
@@ -99,10 +98,15 @@ public class PythonPackageVersionService {
           if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
             pythonPackagesToUpdate.add(
                 new DependencyEntity(
-                    pythonPackagesLocal.get(pythonPackage.getName()).getId(),
+                    pythonPackage.getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
+          } else {
+            pythonPackagesToUpdate.add(
+                new DependencyEntity(
+                    pythonPackage.getId(),
                     pythonPackage.getName(),
                     latestVersion,
-                    Boolean.FALSE));
+                    Boolean.FALSE,
+                    pythonPackage.getLastUpdatedDate()));
           }
         });
 
@@ -119,16 +123,23 @@ public class PythonPackageVersionService {
 
   public void updatePythonPackage(final String library) {
     log.info("Update Python Package: [{}]", library);
-    final DependencyEntity pythonPackageLocal = getPythonPackagesMap().get(library);
-    final DependencyEntity pythonPackageMongo =
-        pythonPackageRepository.findByAttribute("name", library);
+    final DependencyEntity pythonPackage = pythonPackageRepository.findByAttribute("name", library);
 
-    final String currentVersion = pythonPackageMongo.getVersion();
+    final String currentVersion = pythonPackage.getVersion();
     final String latestVersion = getPythonPackageVersion(library);
 
     if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
       final DependencyEntity pythonPackageToUpdate =
-          new DependencyEntity(pythonPackageLocal.getId(), library, latestVersion, Boolean.FALSE);
+          new DependencyEntity(pythonPackage.getId(), library, latestVersion, Boolean.FALSE);
+      pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
+    } else {
+      final DependencyEntity pythonPackageToUpdate =
+          new DependencyEntity(
+              pythonPackage.getId(),
+              library,
+              latestVersion,
+              Boolean.FALSE,
+              pythonPackage.getLastUpdatedDate());
       pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
     }
   }

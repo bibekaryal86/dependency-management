@@ -103,7 +103,6 @@ public class GradlePluginVersionService {
 
   public void updateGradlePlugins() {
     log.info("Update Gradle Plugins...");
-    final Map<String, DependencyEntity> gradlePluginsLocal = getGradlePluginsMap();
     final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
     List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();
 
@@ -116,10 +115,15 @@ public class GradlePluginVersionService {
           if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
             gradlePluginsToUpdate.add(
                 new DependencyEntity(
-                    gradlePluginsLocal.get(gradlePlugin.getName()).getId(),
+                    gradlePlugin.getId(), gradlePlugin.getName(), latestVersion, Boolean.FALSE));
+          } else {
+            gradlePluginsToUpdate.add(
+                new DependencyEntity(
+                    gradlePlugin.getId(),
                     gradlePlugin.getName(),
                     latestVersion,
-                    Boolean.FALSE));
+                    Boolean.FALSE,
+                    gradlePlugin.getLastUpdatedDate()));
           }
         });
 
@@ -136,16 +140,23 @@ public class GradlePluginVersionService {
 
   public void updateGradlePlugin(final String library) {
     log.info("Update Gradle Plugin: [{}]", library);
-    final DependencyEntity gradlePluginLocal = getGradlePluginsMap().get(library);
-    final DependencyEntity gradlePluginMongo =
-        gradlePluginRepository.findByAttribute("name", library);
+    final DependencyEntity gradlePlugin = gradlePluginRepository.findByAttribute("name", library);
 
-    final String currentVersion = gradlePluginMongo.getVersion();
+    final String currentVersion = gradlePlugin.getVersion();
     final String latestVersion = getGradlePluginVersion(library);
 
     if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
       final DependencyEntity gradlePluginToUpdate =
-          new DependencyEntity(gradlePluginLocal.getId(), library, latestVersion, Boolean.FALSE);
+          new DependencyEntity(gradlePlugin.getId(), library, latestVersion, Boolean.FALSE);
+      gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
+    } else {
+      final DependencyEntity gradlePluginToUpdate =
+          new DependencyEntity(
+              gradlePlugin.getId(),
+              library,
+              latestVersion,
+              Boolean.FALSE,
+              gradlePlugin.getLastUpdatedDate());
       gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
     }
   }

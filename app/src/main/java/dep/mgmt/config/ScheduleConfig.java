@@ -1,6 +1,5 @@
 package dep.mgmt.config;
 
-import dep.mgmt.service.ProcessSummaryService;
 import dep.mgmt.service.UpdateRepoService;
 import dep.mgmt.util.ConstantUtils;
 import java.time.Duration;
@@ -17,7 +16,7 @@ public class ScheduleConfig {
   private static final Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
   private static final ScheduledExecutorService scheduler =
       Executors.newScheduledThreadPool(
-          1,
+          3,
           runnable -> {
             Thread thread = new Thread(runnable);
             thread.setDaemon(true); // Allow JVM to exit if this is the only thread left
@@ -25,8 +24,6 @@ public class ScheduleConfig {
           });
 
   private static final UpdateRepoService updateRepoService = new UpdateRepoService();
-  private static final ProcessSummaryService processSummaryService = new ProcessSummaryService();
-
   private static volatile ZonedDateTime nextRunTime;
 
   public static void init() {
