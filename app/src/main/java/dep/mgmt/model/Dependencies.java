@@ -19,7 +19,7 @@ public class Dependencies implements Serializable {
 
   @Override
   public String toString() {
-    return "DependencyResponse{" + "dependencies='" + dependencies.size() + '}';
+    return "DependencyResponse{" + "dependencies=" + dependencies.size() + '}';
   }
 
   public static class Dependency implements Serializable {
