@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,51 +95,25 @@ public class UpdateRepoService {
   }
 
   public void recreateLocalCaches() {
-    resetCaches(Boolean.TRUE);
-    setCaches(Boolean.TRUE);
+    resetCaches();
+    setCaches();
   }
 
-  public void scheduledUpdate() {
-    log.info("Scheduled Update...");
-    final RequestMetadata requestMetadata =
-        new RequestMetadata(
-            RequestParams.UpdateType.ALL,
-            Boolean.FALSE,
-            Boolean.FALSE,
-            Boolean.FALSE,
-            Boolean.FALSE,
-            Boolean.TRUE,
-            Boolean.TRUE,
-            Boolean.FALSE,
-            LocalDate.now(),
-            null);
-    scheduledMongoUpdate();
-    scheduledCleanup();
+  public void scheduledUpdate(final RequestMetadata requestMetadata) {
     updateRepos(requestMetadata);
   }
 
   public void scheduledMongoUpdate() {
-    recreateRemoteCaches();
+    CompletableFuture.runAsync(gradleDependencyVersionService::updateGradleDependencies);
+    CompletableFuture.runAsync(gradlePluginVersionService::updateGradlePlugins);
+    CompletableFuture.runAsync(nodeDependencyVersionService::updateNodeDependencies);
+    CompletableFuture.runAsync(pythonPackageVersionService::updatePythonPackages);
   }
 
-  public void scheduledCleanup() {
-    LocalDateTime cleanupBeforeDate =
-        LocalDateTime.now().minusDays(ConstantUtils.CLEANUP_BEFORE_DAYS);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_DATA_CLEANUP,
-        ConstantUtils.TASK_DATA_CLEANUP_PROCESS_SUMMARY,
-        () -> processSummaryService.scheduledCleanup(cleanupBeforeDate),
-        ConstantUtils.TASK_DELAY_DEFAULT);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_DATA_CLEANUP,
-        ConstantUtils.TASK_DATA_CLEANUP_LOG_ENTRY,
-        () -> logEntryService.scheduledCleanup(cleanupBeforeDate),
-        ConstantUtils.TASK_DELAY_DEFAULT);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_DATA_CLEANUP,
-        ConstantUtils.TASK_DATA_CLEANUP_LATEST_VERSION,
-        () -> latestVersionService.scheduledCleanup(cleanupBeforeDate),
-        ConstantUtils.TASK_DELAY_DEFAULT);
+  public void scheduledCleanup(final LocalDateTime cleanupBeforeDate) {
+    CompletableFuture.runAsync(() -> processSummaryService.scheduledCleanup(cleanupBeforeDate));
+    CompletableFuture.runAsync(() -> logEntryService.scheduledCleanup(cleanupBeforeDate));
+    CompletableFuture.runAsync(() -> latestVersionService.scheduledCleanup(cleanupBeforeDate));
   }
 
   public void updateRepos(final RequestMetadata requestMetadata) {
@@ -196,116 +171,70 @@ public class UpdateRepoService {
     executeTaskQueues();
   }
 
-  private void resetCaches(final boolean isLocalReset) {
+  private void resetCaches() {
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset ? ConstantUtils.TASK_RESET_LOCAL : ConstantUtils.TASK_RESET_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_LOCAL,
         CacheConfig::resetAppData,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset
-            ? ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES_LOCAL
-            : ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_GRADLE_DEPENDENCIES_LOCAL,
         CacheConfig::resetGradleDependenciesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset
-            ? ConstantUtils.TASK_RESET_GRADLE_PLUGINS_LOCAL
-            : ConstantUtils.TASK_RESET_GRADLE_PLUGINS_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_GRADLE_PLUGINS_LOCAL,
         CacheConfig::resetGradlePluginsMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset
-            ? ConstantUtils.TASK_RESET_NODE_DEPENDENCIES_LOCAL
-            : ConstantUtils.TASK_RESET_NODE_DEPENDENCIES_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_NODE_DEPENDENCIES_LOCAL,
         CacheConfig::resetNodeDependenciesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset
-            ? ConstantUtils.TASK_RESET_PYTHON_PACKAGES_LOCAL
-            : ConstantUtils.TASK_RESET_PYTHON_PACKAGES_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_PYTHON_PACKAGES_LOCAL,
         CacheConfig::resetPythonPackagesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalReset ? ConstantUtils.QUEUE_RESET_LOCAL : ConstantUtils.QUEUE_RESET_REMOTE,
-        isLocalReset
-            ? ConstantUtils.TASK_RESET_EXCLUDED_REPOS_LOCAL
-            : ConstantUtils.TASK_RESET_EXCLUDED_REPOS_REMOTE,
+        ConstantUtils.QUEUE_RESET_LOCAL,
+        ConstantUtils.TASK_RESET_EXCLUDED_REPOS_LOCAL,
         CacheConfig::resetExcludedReposMap,
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
-  private void setCaches(final boolean isLocalSet) {
+  private void setCaches() {
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet ? ConstantUtils.TASK_SET_LOCAL : ConstantUtils.TASK_SET_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_LOCAL,
         AppDataUtils::setAppData,
         ConstantUtils.TASK_DELAY_DEFAULT);
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet
-            ? ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES_LOCAL
-            : ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_GRADLE_DEPENDENCIES_LOCAL,
         gradleDependencyVersionService::getGradleDependenciesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet
-            ? ConstantUtils.TASK_SET_GRADLE_PLUGINS_LOCAL
-            : ConstantUtils.TASK_SET_GRADLE_PLUGINS_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_GRADLE_PLUGINS_LOCAL,
         gradlePluginVersionService::getGradlePluginsMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet
-            ? ConstantUtils.TASK_SET_NODE_DEPENDENCIES_LOCAL
-            : ConstantUtils.TASK_SET_NODE_DEPENDENCIES_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_NODE_DEPENDENCIES_LOCAL,
         nodeDependencyVersionService::getNodeDependenciesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet
-            ? ConstantUtils.TASK_SET_PYTHON_PACKAGES_LOCAL
-            : ConstantUtils.TASK_SET_PYTHON_PACKAGES_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_PYTHON_PACKAGES_LOCAL,
         pythonPackageVersionService::getPythonPackagesMap,
         ConstantUtils.TASK_DELAY_ZERO);
     addTaskToQueue(
-        isLocalSet ? ConstantUtils.QUEUE_SET_LOCAL : ConstantUtils.QUEUE_SET_REMOTE,
-        isLocalSet
-            ? ConstantUtils.TASK_SET_EXCLUDED_REPOS_LOCAL
-            : ConstantUtils.TASK_SET_EXCLUDED_REPOS_REMOTE,
+        ConstantUtils.QUEUE_SET_LOCAL,
+        ConstantUtils.TASK_SET_EXCLUDED_REPOS_LOCAL,
         excludedRepoService::getExcludedReposMap,
         ConstantUtils.TASK_DELAY_ZERO);
-  }
-
-  private void recreateRemoteCaches() {
-    // clear and set caches after pull (gradle version in repo could have changed)
-    resetCaches(Boolean.FALSE);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_MONGO_UPDATE,
-        ConstantUtils.TASK_UPDATE_GRADLE_DEPENDENCIES,
-        gradleDependencyVersionService::updateGradleDependencies,
-        ConstantUtils.TASK_DELAY_ZERO);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_MONGO_UPDATE,
-        ConstantUtils.TASK_UPDATE_GRADLE_PLUGINS,
-        gradlePluginVersionService::updateGradlePlugins,
-        ConstantUtils.TASK_DELAY_ZERO);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_MONGO_UPDATE,
-        ConstantUtils.TASK_UPDATE_NODE_DEPENDENCIES,
-        nodeDependencyVersionService::updateNodeDependencies,
-        ConstantUtils.TASK_DELAY_ZERO);
-    addTaskToQueue(
-        ConstantUtils.QUEUE_MONGO_UPDATE,
-        ConstantUtils.TASK_UPDATE_PYTHON_PACKAGES,
-        pythonPackageVersionService::updatePythonPackages,
-        ConstantUtils.TASK_DELAY_ZERO);
-    setCaches(Boolean.FALSE);
   }
 
   private void recreateScriptFiles() {
@@ -343,7 +272,7 @@ public class UpdateRepoService {
               || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PULL)));
 
       if (requestMetadata.getRecreateCaches()) {
-        recreateRemoteCaches();
+        recreateLocalCaches();
       }
     }
   }

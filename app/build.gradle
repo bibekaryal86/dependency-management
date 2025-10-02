@@ -40,7 +40,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'ch.qos.logback:logback-classic:1.5.18'
     implementation 'org.codehaus.janino:janino:3.1.9'
-
+    implementation 'org.quartz-scheduler:quartz:2.5.0'
     implementation 'org.mongodb:mongodb-driver-sync:5.5.1'
     implementation 'com.mailjet:mailjet-client:6.0.0'
     implementation 'org.jsoup:jsoup:1.21.1'
