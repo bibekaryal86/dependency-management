@@ -7,6 +7,7 @@ import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.ProcessUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +88,8 @@ public class GithubService {
       }
     }
 
-    final Integer prNumberFromWorkflowRun = checkWorkflowRun(repoName, branchDate);
+    final Integer prNumberFromWorkflowRun =
+        checkWorkflowRun(repoName, branchDate, "?event=pull_request");
 
     if (prNumberFromWorkflowRun == null) {
       log.info("PR Number from Workflow Run NOT Found: [{}] | [{}]", repoName, branchDate);
@@ -126,12 +128,13 @@ public class GithubService {
     }
   }
 
-  public Integer checkWorkflowRun(final String repoName, final LocalDate branchDate) {
-    log.info("Check Workflow Run: [{}] | [{}]", repoName, branchDate);
+  public Integer checkWorkflowRun(
+      final String repoName, final LocalDate branchDate, final String queryParams) {
+    log.info("Check Workflow Run: [{}] | [{}] | [{}]", repoName, branchDate, queryParams);
 
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     final GithubApiModel.ListWorkflowRunsResponse workflowRunsResponse =
-        githubConnector.listWorkflowRuns(repoName);
+        githubConnector.listWorkflowRuns(repoName, queryParams);
 
     if (workflowRunsResponse == null
         || CommonUtilities.isEmpty(workflowRunsResponse.getWorkflowRuns())) {
@@ -143,34 +146,36 @@ public class GithubService {
       return null;
     }
 
-    GithubApiModel.ListWorkflowRunsResponse.WorkflowRun workflowRun =
+    List<GithubApiModel.ListWorkflowRunsResponse.WorkflowRun> workflowRuns =
         workflowRunsResponse.getWorkflowRuns().stream()
             .filter(
                 wr ->
                     wr.getHeadBranch().equals(branchName)
                         && !CommonUtilities.isEmpty(wr.getPullRequests()))
-            .findFirst()
-            .orElse(null);
+            .toList();
 
-    if (workflowRun == null) {
+    if (CommonUtilities.isEmpty(workflowRuns)) {
       log.error(
-          "Workflow Runs IS null: [{}] | [{}] | [{}]", repoName, branchDate, workflowRunsResponse);
+          "Workflow Runs IS empty: [{}] | [{}] | [{}]", repoName, branchDate, workflowRunsResponse);
       return null;
     }
 
     final boolean isWorkflowRunSuccessful =
-        Objects.equals(branchName, workflowRun.getHeadBranch())
-            && Objects.equals("pull_request", workflowRun.getEvent())
-            && Objects.equals("completed", workflowRun.getStatus())
-            && Objects.equals("success", workflowRun.getConclusion());
+        workflowRuns.stream()
+            .allMatch(
+                run ->
+                    Objects.equals(branchName, run.getHeadBranch())
+                        && Objects.equals("pull_request", run.getEvent())
+                        && Objects.equals("completed", run.getStatus())
+                        && Objects.equals("success", run.getConclusion()));
 
     if (!isWorkflowRunSuccessful) {
-      log.info(
-          "Workflow Run Not Successful: [{}] | [{}] | [{}]", repoName, branchName, workflowRun);
+      log.error(
+          "Workflow Run Not Successful: [{}] | [{}] | [{}]", repoName, branchName, workflowRuns);
       return null;
     }
 
-    return workflowRun.getPullRequests().getFirst().getNumber();
+    return workflowRuns.getFirst().getPullRequests().getFirst().getNumber();
   }
 
   public GithubApiModel.RateLimitResponse getCurrentGithubRateLimits() {

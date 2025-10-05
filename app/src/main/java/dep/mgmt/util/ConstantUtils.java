@@ -89,7 +89,7 @@ public class ConstantUtils {
   public static final String GITHUB_MERGE_PR_ENDPOINT =
       "https://api.github.com/repos/%s/%s/pulls/%s/merge";
   public static final String GITHUB_LIST_CHECKS_ENDPOINT =
-      "https://api.github.com/repos/%s/%s/actions/runs?per_page=5";
+      "https://api.github.com/repos/%s/%s/actions/runs";
   public static final String GITHUB_PR_TITLE_BODY =
       "Dependencies Updated (https://bit.ly/dep-mgmt)";
   public static final String GITHUB_PR_BASE_BRANCH = "main";

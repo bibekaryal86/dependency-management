@@ -136,10 +136,13 @@ public class GithubConnector {
     return null;
   }
 
-  public GithubApiModel.ListWorkflowRunsResponse listWorkflowRuns(final String repoName) {
+  public GithubApiModel.ListWorkflowRunsResponse listWorkflowRuns(
+      final String repoName, final String queryParams) {
     final String repoOwner = CommonUtilities.getSystemEnvProperty(ConstantUtils.ENV_GITHUB_OWNER);
-    final String url =
-        String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
+    String url = String.format(ConstantUtils.GITHUB_LIST_CHECKS_ENDPOINT, repoOwner, repoName);
+    if (!CommonUtilities.isEmpty(queryParams)) {
+      url = url + queryParams;
+    }
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.ListWorkflowRunsResponse> response =
         Connector.sendRequest(
