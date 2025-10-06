@@ -268,4 +268,12 @@ public class GradleDependencyVersionService {
       gradleDependencyRepository.update(gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
     }
   }
+
+  public int getCheckedCountInPastDay() {
+    return gradleDependencyRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return gradleDependencyRepository.findBetweenDates("lastUpdatedDate").size();
+  }
 }

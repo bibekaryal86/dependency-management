@@ -170,4 +170,12 @@ public class GradlePluginVersionService {
       gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
     }
   }
+
+  public int getCheckedCountInPastDay() {
+    return gradlePluginRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return gradlePluginRepository.findBetweenDates("lastUpdatedDate").size();
+  }
 }

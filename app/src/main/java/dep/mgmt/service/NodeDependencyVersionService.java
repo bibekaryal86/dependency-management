@@ -157,4 +157,12 @@ public class NodeDependencyVersionService {
       nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
     }
   }
+
+  public int getCheckedCountInPastDay() {
+    return nodeDependencyRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return nodeDependencyRepository.findBetweenDates("lastUpdatedDate").size();
+  }
 }

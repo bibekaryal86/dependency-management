@@ -153,4 +153,12 @@ public class PythonPackageVersionService {
       pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
     }
   }
+
+  public int getCheckedCountInPastDay() {
+    return pythonPackageRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return pythonPackageRepository.findBetweenDates("lastUpdatedDate").size();
+  }
 }
