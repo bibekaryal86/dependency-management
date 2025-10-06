@@ -725,6 +725,10 @@ public class UpdateRepoService {
         new ProcessSummaries.ProcessSummary(
             LocalDateTime.now(),
             updateType.name(),
+            ProcessUtils.getMongoGradlePluginsChecked(),
+            ProcessUtils.getMongoGradleDependenciesChecked(),
+            ProcessUtils.getMongoNodeDependenciesChecked(),
+            ProcessUtils.getMongoPythonPackagesChecked(),
             ProcessUtils.getMongoGradlePluginsToUpdate(),
             ProcessUtils.getMongoGradleDependenciesToUpdate(),
             ProcessUtils.getMongoPythonPackagesToUpdate(),

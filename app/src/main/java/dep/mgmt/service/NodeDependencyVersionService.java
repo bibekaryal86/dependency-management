@@ -87,6 +87,7 @@ public class NodeDependencyVersionService {
   public void updateNodeDependencies() {
     log.info("Update Node Dependencies...");
     final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
+    List<DependencyEntity> nodeDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> nodeDependenciesToUpdate = new ArrayList<>();
 
     nodeDependencies.forEach(
@@ -103,7 +104,7 @@ public class NodeDependencyVersionService {
                     latestVersion,
                     Boolean.FALSE));
           } else {
-            nodeDependenciesToUpdate.add(
+            nodeDependenciesChecked.add(
                 new DependencyEntity(
                     nodeDependency.getId(),
                     nodeDependency.getName(),
@@ -114,13 +115,22 @@ public class NodeDependencyVersionService {
         });
 
     log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
-    log.debug("{}", nodeDependenciesToUpdate);
+    log.info("Node Dependencies Checked: [{}]", nodeDependenciesChecked.size());
+    log.debug("nodeDependenciesToUpdate\n{}", nodeDependenciesToUpdate);
+    log.debug("nodeDependenciesChecked\n{}", nodeDependenciesChecked);
 
     if (!nodeDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity nodeDependencyToUpdate : nodeDependenciesToUpdate) {
         nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
       }
       ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
+    }
+
+    if (!nodeDependenciesChecked.isEmpty()) {
+      for (DependencyEntity nodeDependencyChecked : nodeDependenciesChecked) {
+        nodeDependencyRepository.update(nodeDependencyChecked.getId(), nodeDependencyChecked);
+      }
+      ProcessUtils.setMongoNodeDependenciesChecked(nodeDependenciesChecked.size());
     }
   }
 

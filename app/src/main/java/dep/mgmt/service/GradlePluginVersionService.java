@@ -104,6 +104,7 @@ public class GradlePluginVersionService {
   public void updateGradlePlugins() {
     log.info("Update Gradle Plugins...");
     final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
+    List<DependencyEntity> gradlePluginsChecked = new ArrayList<>();
     List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();
 
     gradlePlugins.forEach(
@@ -117,7 +118,7 @@ public class GradlePluginVersionService {
                 new DependencyEntity(
                     gradlePlugin.getId(), gradlePlugin.getName(), latestVersion, Boolean.FALSE));
           } else {
-            gradlePluginsToUpdate.add(
+            gradlePluginsChecked.add(
                 new DependencyEntity(
                     gradlePlugin.getId(),
                     gradlePlugin.getName(),
@@ -128,13 +129,22 @@ public class GradlePluginVersionService {
         });
 
     log.info("Gradle Plugins to Update: [{}]", gradlePluginsToUpdate.size());
-    log.debug("{}", gradlePluginsToUpdate);
+    log.info("Gradle Plugins Checked: [{}]", gradlePluginsChecked.size());
+    log.debug("gradlePluginsToUpdate\n{}", gradlePluginsToUpdate);
+    log.debug("gradlePluginsChecked\n{}", gradlePluginsChecked);
 
     if (!gradlePluginsToUpdate.isEmpty()) {
       for (DependencyEntity gradlePluginToUpdate : gradlePluginsToUpdate) {
         gradlePluginRepository.update(gradlePluginToUpdate.getId(), gradlePluginToUpdate);
       }
       ProcessUtils.setMongoGradlePluginsToUpdate(gradlePluginsToUpdate.size());
+    }
+
+    if (!gradlePluginsChecked.isEmpty()) {
+      for (DependencyEntity gradlePluginChecked : gradlePluginsChecked) {
+        gradlePluginRepository.update(gradlePluginChecked.getId(), gradlePluginChecked);
+      }
+      ProcessUtils.setMongoGradlePluginsChecked(gradlePluginsChecked.size());
     }
   }
 

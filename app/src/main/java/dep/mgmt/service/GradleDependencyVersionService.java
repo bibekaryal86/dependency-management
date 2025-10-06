@@ -193,6 +193,7 @@ public class GradleDependencyVersionService {
   public void updateGradleDependencies() {
     log.info("Update Gradle Dependencies...");
     final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
+    List<DependencyEntity> gradleDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
 
     gradleDependencies.forEach(
@@ -210,7 +211,7 @@ public class GradleDependencyVersionService {
                     latestVersion,
                     Boolean.FALSE));
           } else {
-            gradleDependenciesToUpdate.add(
+            gradleDependenciesChecked.add(
                 new DependencyEntity(
                     gradleDependency.getId(),
                     gradleDependency.getName(),
@@ -221,7 +222,9 @@ public class GradleDependencyVersionService {
         });
 
     log.info("Gradle Dependencies to Update: [{}]", gradleDependenciesToUpdate.size());
-    log.debug("{}", gradleDependenciesToUpdate);
+    log.info("Gradle Dependencies Checked: [{}]", gradleDependenciesChecked.size());
+    log.debug("gradleDependenciesToUpdate\n{}", gradleDependenciesToUpdate);
+    log.debug("gradleDependenciesChecked\n{}", gradleDependenciesChecked);
 
     if (!gradleDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {
@@ -229,6 +232,13 @@ public class GradleDependencyVersionService {
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
       ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
+    }
+
+    if (!gradleDependenciesChecked.isEmpty()) {
+      for (DependencyEntity gradleDependencyChecked : gradleDependenciesChecked) {
+        gradleDependencyRepository.update(gradleDependencyChecked.getId(), gradleDependencyChecked);
+      }
+      ProcessUtils.setMongoGradleDependenciesChecked(gradleDependenciesChecked.size());
     }
   }
 

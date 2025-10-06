@@ -87,6 +87,7 @@ public class PythonPackageVersionService {
   public void updatePythonPackages() {
     log.info("Update Python Packages...");
     final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
+    List<DependencyEntity> pythonPackagesChecked = new ArrayList<>();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 
     pythonPackages.forEach(
@@ -100,7 +101,7 @@ public class PythonPackageVersionService {
                 new DependencyEntity(
                     pythonPackage.getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
           } else {
-            pythonPackagesToUpdate.add(
+            pythonPackagesChecked.add(
                 new DependencyEntity(
                     pythonPackage.getId(),
                     pythonPackage.getName(),
@@ -111,13 +112,22 @@ public class PythonPackageVersionService {
         });
 
     log.info("Python Packages to Update: [{}]", pythonPackagesToUpdate.size());
-    log.debug("{}", pythonPackagesToUpdate);
+    log.info("Python Packages Checked: [{}]", pythonPackagesChecked.size());
+    log.debug("pythonPackagesToUpdate\n{}", pythonPackagesToUpdate);
+    log.debug("pythonPackagesChecked\n{}", pythonPackagesChecked);
 
     if (!pythonPackagesToUpdate.isEmpty()) {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {
         pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
       }
       ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
+    }
+
+    if (!pythonPackagesChecked.isEmpty()) {
+      for (DependencyEntity pythonPackageChecked : pythonPackagesChecked) {
+        pythonPackageRepository.update(pythonPackageChecked.getId(), pythonPackageChecked);
+      }
+      ProcessUtils.setMongoPythonPackagesChecked(pythonPackagesChecked.size());
     }
   }
 
