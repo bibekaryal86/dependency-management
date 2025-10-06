@@ -7,7 +7,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.PythonPackageSearchResponse;
 import dep.mgmt.repository.PythonPackageRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -120,14 +119,12 @@ public class PythonPackageVersionService {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {
         pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
       }
-      ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
     }
 
     if (!pythonPackagesChecked.isEmpty()) {
       for (DependencyEntity pythonPackageChecked : pythonPackagesChecked) {
         pythonPackageRepository.update(pythonPackageChecked.getId(), pythonPackageChecked);
       }
-      ProcessUtils.setMongoPythonPackagesChecked(pythonPackagesChecked.size());
     }
   }
 

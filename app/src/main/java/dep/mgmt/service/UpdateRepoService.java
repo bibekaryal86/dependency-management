@@ -275,6 +275,8 @@ public class UpdateRepoService {
         recreateLocalCaches();
       }
     }
+
+    getCheckedUpdatedInPastDayTask();
   }
 
   private void updateExit(final RequestMetadata requestMetadata) {
@@ -650,6 +652,14 @@ public class UpdateRepoService {
         ConstantUtils.TASK_DELAY_ZERO);
   }
 
+  private void getCheckedUpdatedInPastDayTask() {
+    addTaskToQueue(
+        ConstantUtils.QUEUE_MONGO_UPDATE,
+        ConstantUtils.TASK_MONGO_UPDATE,
+        this::getMongoRepoCheckedUpdated,
+        ConstantUtils.TASK_DELAY_ZERO);
+  }
+
   private void addTaskToQueue(
       final String queueName,
       final String taskName,
@@ -788,5 +798,24 @@ public class UpdateRepoService {
         .filter(repo -> repo.getRepoName().equals(repoName))
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("'" + repoName + "' Repository Not Found..."));
+  }
+
+  private void getMongoRepoCheckedUpdated() {
+    ProcessUtils.setMongoGradlePluginsChecked(
+        gradlePluginVersionService.getCheckedCountInPastDay());
+    ProcessUtils.setMongoGradlePluginsToUpdate(
+        gradlePluginVersionService.getUpdatedCountInPastDay());
+    ProcessUtils.setMongoGradleDependenciesChecked(
+        gradleDependencyVersionService.getCheckedCountInPastDay());
+    ProcessUtils.setMongoGradleDependenciesToUpdate(
+        gradleDependencyVersionService.getUpdatedCountInPastDay());
+    ProcessUtils.setMongoPythonPackagesChecked(
+        pythonPackageVersionService.getCheckedCountInPastDay());
+    ProcessUtils.setMongoPythonPackagesToUpdate(
+        pythonPackageVersionService.getUpdatedCountInPastDay());
+    ProcessUtils.setMongoNodeDependenciesChecked(
+        nodeDependencyVersionService.getCheckedCountInPastDay());
+    ProcessUtils.setMongoNodeDependenciesToUpdate(
+        nodeDependencyVersionService.getUpdatedCountInPastDay());
   }
 }

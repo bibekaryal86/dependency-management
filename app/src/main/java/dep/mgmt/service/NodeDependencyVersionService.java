@@ -7,7 +7,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.NpmRegistryResponse;
 import dep.mgmt.repository.NodeDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -123,14 +122,12 @@ public class NodeDependencyVersionService {
       for (DependencyEntity nodeDependencyToUpdate : nodeDependenciesToUpdate) {
         nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
       }
-      ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
     }
 
     if (!nodeDependenciesChecked.isEmpty()) {
       for (DependencyEntity nodeDependencyChecked : nodeDependenciesChecked) {
         nodeDependencyRepository.update(nodeDependencyChecked.getId(), nodeDependencyChecked);
       }
-      ProcessUtils.setMongoNodeDependenciesChecked(nodeDependenciesChecked.size());
     }
   }
 

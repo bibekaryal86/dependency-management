@@ -7,7 +7,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.MavenSearchResponse;
 import dep.mgmt.repository.GradleDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -231,14 +230,12 @@ public class GradleDependencyVersionService {
         gradleDependencyRepository.update(
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
-      ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
     }
 
     if (!gradleDependenciesChecked.isEmpty()) {
       for (DependencyEntity gradleDependencyChecked : gradleDependenciesChecked) {
         gradleDependencyRepository.update(gradleDependencyChecked.getId(), gradleDependencyChecked);
       }
-      ProcessUtils.setMongoGradleDependenciesChecked(gradleDependenciesChecked.size());
     }
   }
 
