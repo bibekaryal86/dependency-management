@@ -25,7 +25,9 @@ public class ConvertUtils {
                 new Dependencies.Dependency(
                     dependencyEntity.getName(),
                     dependencyEntity.getVersion(),
-                    dependencyEntity.getSkipVersion()))
+                    dependencyEntity.getSkipVersion(),
+                    dependencyEntity.getLastCheckedDate(),
+                    dependencyEntity.getLastUpdatedDate()))
         .toList();
   }
 
