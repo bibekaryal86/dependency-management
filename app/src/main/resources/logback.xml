@@ -46,6 +46,11 @@
                 <appender-ref ref="FILELOG"/>
             </logger>
 
+            <logger name="org.quartz.core" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="FILELOG"/>
+            </logger>
+
             <logger name="io.netty" level="WARN" additivity="false">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
@@ -67,6 +72,7 @@
             <logger name="io.github.bibekaryal86" level="INFO" additivity="false">
                 <appender-ref ref="STDOUT"/>
             </logger>
+
             <logger name="org.mongodb.driver" level="WARN" additivity="false">
                 <appender-ref ref="STDOUT"/>
             </logger>
