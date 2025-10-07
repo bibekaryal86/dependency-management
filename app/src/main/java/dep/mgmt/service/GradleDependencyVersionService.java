@@ -10,6 +10,7 @@ import dep.mgmt.util.ConstantUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
+import io.github.bibekaryal86.shdsvc.dtos.HttpResponse;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,14 +54,18 @@ public class GradleDependencyVersionService {
   private MavenSearchResponse getMavenSearchResponse(final String group, final String artifact) {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
-      return Connector.sendRequest(
+      final HttpResponse<MavenSearchResponse> mavenSearchResponseHttpResponse =
+          Connector.sendRequest(
               url,
               Enums.HttpMethod.GET,
               new TypeReference<MavenSearchResponse>() {},
               null,
               null,
-              null)
-          .responseBody();
+              null);
+      if (mavenSearchResponseHttpResponse.statusCode() == 503) {
+        return getMavenJsoupResponse(group, artifact);
+      }
+      return mavenSearchResponseHttpResponse.responseBody();
     } catch (Exception ex) {
       log.error(
           "ERROR in Get Maven Search Response: [ {} ] [ {} ] || [ {}-{} ]",
@@ -68,8 +73,8 @@ public class GradleDependencyVersionService {
           artifact,
           ex.getClass().getName(),
           ex.getMessage());
-      return getMavenJsoupResponse(group, artifact);
     }
+    return null;
   }
 
   public static MavenSearchResponse getMavenJsoupResponse(
