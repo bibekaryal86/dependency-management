@@ -3,9 +3,10 @@ package dep.mgmt.config;
 import dep.mgmt.model.schedule.SchedulerJobs;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -114,18 +115,18 @@ public class ScheduleConfig {
         .build();
   }
 
-  public static String nextRunTimes() {
-    List<String> jobsNextRunTimes = new ArrayList<>();
+  public static Map<String, LocalDateTime> nextRunTimes() {
+    final Map<String, LocalDateTime> jobsNextRunTimes = new HashMap<>();
 
     try {
       for (final String jobGroupName : scheduler.getJobGroupNames()) {
         for (final JobKey jobKey :
             scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroupName))) {
           final List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-          for (Trigger t : triggers) {
-            LocalDateTime nextFireTime =
+          for (final Trigger t : triggers) {
+            final LocalDateTime nextFireTime =
                 LocalDateTime.ofInstant(t.getNextFireTime().toInstant(), ZoneId.systemDefault());
-            jobsNextRunTimes.add(jobKey.getName() + "--" + nextFireTime);
+            jobsNextRunTimes.put(jobKey.getName(), nextFireTime);
           }
         }
       }
@@ -133,6 +134,10 @@ public class ScheduleConfig {
       log.error("Error Getting Next Run Times...", ex);
     }
 
-    return jobsNextRunTimes.stream().sorted().collect(Collectors.joining(",\n"));
+    // sorted by value
+    return jobsNextRunTimes.entrySet().stream()
+        .sorted(Map.Entry.comparingByValue())
+        .collect(
+            LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), LinkedHashMap::putAll);
   }
 }

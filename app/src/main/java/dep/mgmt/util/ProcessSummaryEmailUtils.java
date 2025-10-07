@@ -45,8 +45,10 @@ public class ProcessSummaryEmailUtils {
             .filter(repo -> !pullRequestMergedRepoNames.contains(repo.getRepoName()))
             .toList();
 
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchNotCreated =
-        allProcessedRepositories.stream().filter(repo -> !repo.getUpdateBranchCreated()).toList();
+    // Repositories with NO Updates
+    //    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchNotCreated =
+    //        allProcessedRepositories.stream().filter(repo ->
+    // !repo.getUpdateBranchCreated()).toList();
 
     StringBuilder html = new StringBuilder();
     html.append(
@@ -85,6 +87,22 @@ public class ProcessSummaryEmailUtils {
                   <th>Value</th>
                 </tr>
                 <tr>
+                  <td>Gradle Plugins Checked</td>
+                  <td>%d</td>
+                </tr>
+                <tr>
+                  <td>Gradle Dependencies Checked</td>
+                  <td>%d</td>
+                </tr>
+                <tr>
+                  <td>Python Packages Checked</td>
+                  <td>%d</td>
+                </tr>
+                <tr>
+                  <td>Node Dependencies Checked</td>
+                  <td>%d</td>
+                </tr>
+                <tr>
                   <td>Gradle Plugins To Update</td>
                   <td>%d</td>
                 </tr>
@@ -116,6 +134,10 @@ public class ProcessSummaryEmailUtils {
             """
             .formatted(
                 processSummary.getUpdateType(),
+                processSummary.getGradlePluginsChecked(),
+                processSummary.getGradleDependenciesChecked(),
+                processSummary.getPythonPackagesChecked(),
+                processSummary.getNodeDependenciesChecked(),
                 processSummary.getGradlePluginsToUpdate(),
                 processSummary.getGradleDependenciesToUpdate(),
                 processSummary.getPythonPackagesToUpdate(),
@@ -210,32 +232,6 @@ public class ProcessSummaryEmailUtils {
                   """);
 
       processedRepositoryTable(pullRequestCreatedNotMerged, html);
-    }
-
-    if (branchNotCreated.isEmpty()) {
-      html.append(
-          """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with NO Updates: N/A</p>
-                    <br />
-                  """);
-    } else {
-      html.append(
-          """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with NO Updates</p>
-                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                      <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Updated</th>
-                        <th>PR Created</th>
-                        <th>PR Number</th>
-                        <th>PR Merged</th>
-                      </tr>
-                  """);
-
-      processedRepositoryTable(branchNotCreated, html);
     }
 
     html.append(
