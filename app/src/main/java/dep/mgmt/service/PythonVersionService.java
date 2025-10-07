@@ -25,8 +25,11 @@ public class PythonVersionService extends VersionLookupGithubApi {
             ConstantUtils.PYTHON_NAME, ConstantUtils.CPYTHON_NAME, Boolean.TRUE, Boolean.FALSE);
 
     if (apiReleaseResponse == null) {
+      log.error("Get Python Version Response is null...");
       return null;
     }
+
+    log.info("Get Python Version Response: {}]", apiReleaseResponse);
 
     final String versionActual = apiReleaseResponse.getName();
     final String versionFull = getVersionFull(versionActual);

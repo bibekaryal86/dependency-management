@@ -33,12 +33,13 @@ public class NodeVersionService {
             .findFirst();
 
     NodeReleaseResponse latestNodeRelease = optionalNodeReleaseResponse.orElse(null);
-    log.info("Latest Node Release: [ {} ]", latestNodeRelease);
 
     if (latestNodeRelease == null) {
       log.error("Latest Node Release Null Error...");
       return null;
     }
+
+    log.info("Latest Node Release: [ {} ]", latestNodeRelease);
 
     final String versionActual = latestNodeRelease.getVersion();
     final String versionFull = getVersionFull(versionActual);

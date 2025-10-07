@@ -10,6 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProcessUtils {
 
   private static final AtomicBoolean errorsOrExceptions = new AtomicBoolean(false);
+
+  private static final AtomicInteger mongoGradlePluginsChecked = new AtomicInteger(0);
+  private static final AtomicInteger mongoGradleDependenciesChecked = new AtomicInteger(0);
+  private static final AtomicInteger mongoPythonPackagesChecked = new AtomicInteger(0);
+  private static final AtomicInteger mongoNodeDependenciesChecked = new AtomicInteger(0);
+
   private static final AtomicInteger mongoGradlePluginsToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoGradleDependenciesToUpdate = new AtomicInteger(0);
   private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
@@ -22,6 +28,22 @@ public class ProcessUtils {
 
   public static void setErrorsOrExceptions(boolean value) {
     errorsOrExceptions.set(value);
+  }
+
+  public static void setMongoGradlePluginsChecked(int count) {
+    mongoGradlePluginsChecked.set(count);
+  }
+
+  public static void setMongoGradleDependenciesChecked(int count) {
+    mongoGradleDependenciesChecked.set(count);
+  }
+
+  public static void setMongoPythonPackagesChecked(int count) {
+    mongoPythonPackagesChecked.set(count);
+  }
+
+  public static void setMongoNodeDependenciesChecked(int count) {
+    mongoNodeDependenciesChecked.set(count);
   }
 
   public static void setMongoGradlePluginsToUpdate(int count) {
@@ -42,6 +64,22 @@ public class ProcessUtils {
 
   public static boolean getErrorsOrExceptions() {
     return errorsOrExceptions.get();
+  }
+
+  public static int getMongoGradlePluginsChecked() {
+    return mongoGradlePluginsChecked.get();
+  }
+
+  public static int getMongoGradleDependenciesChecked() {
+    return mongoGradleDependenciesChecked.get();
+  }
+
+  public static int getMongoPythonPackagesChecked() {
+    return mongoPythonPackagesChecked.get();
+  }
+
+  public static int getMongoNodeDependenciesChecked() {
+    return mongoNodeDependenciesChecked.get();
   }
 
   public static int getMongoGradlePluginsToUpdate() {
@@ -134,6 +172,10 @@ public class ProcessUtils {
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
     processedTasks = new ConcurrentHashMap<>();
+    setMongoGradlePluginsChecked(0);
+    setMongoGradleDependenciesChecked(0);
+    setMongoPythonPackagesChecked(0);
+    setMongoNodeDependenciesChecked(0);
     setMongoGradlePluginsToUpdate(0);
     setMongoGradleDependenciesToUpdate(0);
     setMongoPythonPackagesToUpdate(0);

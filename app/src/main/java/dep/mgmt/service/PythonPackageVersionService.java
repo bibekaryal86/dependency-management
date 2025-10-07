@@ -7,7 +7,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.PythonPackageSearchResponse;
 import dep.mgmt.repository.PythonPackageRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -87,6 +86,7 @@ public class PythonPackageVersionService {
   public void updatePythonPackages() {
     log.info("Update Python Packages...");
     final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
+    List<DependencyEntity> pythonPackagesChecked = new ArrayList<>();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 
     pythonPackages.forEach(
@@ -100,7 +100,7 @@ public class PythonPackageVersionService {
                 new DependencyEntity(
                     pythonPackage.getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
           } else {
-            pythonPackagesToUpdate.add(
+            pythonPackagesChecked.add(
                 new DependencyEntity(
                     pythonPackage.getId(),
                     pythonPackage.getName(),
@@ -111,13 +111,20 @@ public class PythonPackageVersionService {
         });
 
     log.info("Python Packages to Update: [{}]", pythonPackagesToUpdate.size());
-    log.debug("{}", pythonPackagesToUpdate);
+    log.info("Python Packages Checked: [{}]", pythonPackagesChecked.size());
+    log.debug("pythonPackagesToUpdate\n{}", pythonPackagesToUpdate);
+    log.debug("pythonPackagesChecked\n{}", pythonPackagesChecked);
 
     if (!pythonPackagesToUpdate.isEmpty()) {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {
         pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
       }
-      ProcessUtils.setMongoPythonPackagesToUpdate(pythonPackagesToUpdate.size());
+    }
+
+    if (!pythonPackagesChecked.isEmpty()) {
+      for (DependencyEntity pythonPackageChecked : pythonPackagesChecked) {
+        pythonPackageRepository.update(pythonPackageChecked.getId(), pythonPackageChecked);
+      }
     }
   }
 
@@ -142,5 +149,13 @@ public class PythonPackageVersionService {
               pythonPackage.getLastUpdatedDate());
       pythonPackageRepository.update(pythonPackageToUpdate.getId(), pythonPackageToUpdate);
     }
+  }
+
+  public int getCheckedCountInPastDay() {
+    return pythonPackageRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return pythonPackageRepository.findBetweenDates("lastUpdatedDate").size();
   }
 }

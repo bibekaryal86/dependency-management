@@ -25,7 +25,9 @@ public class ConvertUtils {
                 new Dependencies.Dependency(
                     dependencyEntity.getName(),
                     dependencyEntity.getVersion(),
-                    dependencyEntity.getSkipVersion()))
+                    dependencyEntity.getSkipVersion(),
+                    dependencyEntity.getLastCheckedDate(),
+                    dependencyEntity.getLastUpdatedDate()))
         .toList();
   }
 
@@ -40,6 +42,10 @@ public class ConvertUtils {
                 new ProcessSummaries.ProcessSummary(
                     processSummaryEntity.getUpdateDateTime(),
                     processSummaryEntity.getUpdateType(),
+                    processSummaryEntity.getGradlePluginsChecked(),
+                    processSummaryEntity.getGradleDependenciesChecked(),
+                    processSummaryEntity.getPythonPackagesChecked(),
+                    processSummaryEntity.getNodeDependenciesChecked(),
                     processSummaryEntity.getGradlePluginsToUpdate(),
                     processSummaryEntity.getGradleDependenciesToUpdate(),
                     processSummaryEntity.getPythonPackagesToUpdate(),
@@ -101,6 +107,10 @@ public class ConvertUtils {
         null,
         processSummary.getUpdateDateTime(),
         processSummary.getUpdateType(),
+        processSummary.getGradlePluginsChecked(),
+        processSummary.getGradleDependenciesChecked(),
+        processSummary.getPythonPackagesChecked(),
+        processSummary.getNodeDependenciesChecked(),
         processSummary.getGradlePluginsToUpdate(),
         processSummary.getGradleDependenciesToUpdate(),
         processSummary.getPythonPackagesToUpdate(),

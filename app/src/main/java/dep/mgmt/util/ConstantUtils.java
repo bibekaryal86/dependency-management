@@ -89,7 +89,7 @@ public class ConstantUtils {
   public static final String GITHUB_MERGE_PR_ENDPOINT =
       "https://api.github.com/repos/%s/%s/pulls/%s/merge";
   public static final String GITHUB_LIST_CHECKS_ENDPOINT =
-      "https://api.github.com/repos/%s/%s/actions/runs?per_page=5";
+      "https://api.github.com/repos/%s/%s/actions/runs";
   public static final String GITHUB_PR_TITLE_BODY =
       "Dependencies Updated (https://bit.ly/dep-mgmt)";
   public static final String GITHUB_PR_BASE_BRANCH = "main";
@@ -175,9 +175,7 @@ public class ConstantUtils {
 
   // UPDATES
   public static final String QUEUE_RESET_LOCAL = "QUEUE_RESET_DATA_LOCAL";
-  public static final String QUEUE_RESET_REMOTE = "QUEUE_RESET_DATA_REMOTE";
   public static final String QUEUE_SET_LOCAL = "QUEUE_SET_DATA_LOCAL";
-  public static final String QUEUE_SET_REMOTE = "QUEUE_SET_DATA_REMOTE";
   public static final String QUEUE_MONGO_UPDATE = "QUEUE_MONGO_UPDATE";
   public static final String QUEUE_RECREATE_FILES = "QUEUE_RECREATE_FILES";
   public static final String QUEUE_UPDATE_DEPENDENCIES_INIT = "QUEUE_UPDATE_DEPENDENCIES_INIT";
@@ -187,7 +185,6 @@ public class ConstantUtils {
   public static final String QUEUE_PULL_REQUESTS_CREATE = "QUEUE_PULL_REQUESTS_CREATE";
   public static final String QUEUE_PULL_REQUESTS_MERGE = "QUEUE_PULL_REQUESTS_MERGE";
   public static final String QUEUE_PROCESS_SUMMARY_REQUIRED = "QUEUE_PROCESS_SUMMARY_REQUIRED";
-  public static final String QUEUE_DATA_CLEANUP = "QUEUE_DATA_CLEANUP";
   public static final String QUEUE_NPM_SNAPSHOTS = "QUEUE_NPM_SNAPSHOTS";
   public static final String QUEUE_GRADLE_SPOTLESS = "QUEUE_GRADLE_SPOTLESS";
   public static final String QUEUE_GITHUB_BRANCH_DELETE = "QUEUE_GITHUB_BRANCH_DELETE";
@@ -197,41 +194,24 @@ public class ConstantUtils {
   public static final String QUEUE_LOG_CAPTURE = "QUEUE_LOG_CAPTURE";
 
   public static final String TASK_RESET_LOCAL = "TASK_RESET_DATA_LOCAL";
-  public static final String TASK_RESET_REMOTE = "TASK_RESET_DATA_REMOTE";
   public static final String TASK_SET_LOCAL = "TASK_SET_DATA_LOCAL";
-  public static final String TASK_SET_REMOTE = "TASK_SET_DATA_REMOTE";
+  public static final String TASK_MONGO_UPDATE = "TASK_MONGO_UPDATE";
   public static final String TASK_RESET_GRADLE_DEPENDENCIES_LOCAL =
       "TASK_RESET_GRADLE_DEPENDENCIES_LOCAL";
-  public static final String TASK_RESET_GRADLE_DEPENDENCIES_REMOTE =
-      "TASK_RESET_GRADLE_DEPENDENCIES_REMOTE";
   public static final String TASK_SET_GRADLE_DEPENDENCIES_LOCAL =
       "TASK_SET_GRADLE_DEPENDENCIES_LOCAL";
   public static final String TASK_SET_GRADLE_DEPENDENCIES_REMOTE =
       "TASK_SET_GRADLE_DEPENDENCIES_REMOTE";
-  public static final String TASK_UPDATE_GRADLE_DEPENDENCIES = "TASK_UPDATE_GRADLE_DEPENDENCIES";
   public static final String TASK_RESET_GRADLE_PLUGINS_LOCAL = "TASK_RESET_GRADLE_PLUGINS_LOCAL";
-  public static final String TASK_RESET_GRADLE_PLUGINS_REMOTE = "TASK_RESET_GRADLE_PLUGINS_REMOTE";
   public static final String TASK_SET_GRADLE_PLUGINS_LOCAL = "TASK_SET_GRADLE_PLUGINS_LOCAL";
-  public static final String TASK_SET_GRADLE_PLUGINS_REMOTE = "TASK_SET_GRADLE_PLUGINS_REMOTE";
-  public static final String TASK_UPDATE_GRADLE_PLUGINS = "TASK_UPDATE_GRADLE_PLUGINS";
   public static final String TASK_RESET_NODE_DEPENDENCIES_LOCAL =
       "TASK_RESET_NODE_DEPENDENCIES_LOCAL";
-  public static final String TASK_RESET_NODE_DEPENDENCIES_REMOTE =
-      "TASK_RESET_NODE_DEPENDENCIES_REMOTE";
   public static final String TASK_SET_NODE_DEPENDENCIES_LOCAL = "TASK_SET_NODE_DEPENDENCIES_LOCAL";
-  public static final String TASK_SET_NODE_DEPENDENCIES_REMOTE =
-      "TASK_SET_NODE_DEPENDENCIES_REMOTE";
   public static final String TASK_UPDATE_NODE_DEPENDENCIES = "TASK_UPDATE_NODE_DEPENDENCIES";
   public static final String TASK_RESET_PYTHON_PACKAGES_LOCAL = "TASK_RESET_PYTHON_PACKAGES_LOCAL";
-  public static final String TASK_RESET_PYTHON_PACKAGES_REMOTE =
-      "TASK_RESET_PYTHON_PACKAGES_REMOTE";
   public static final String TASK_SET_PYTHON_PACKAGES_LOCAL = "TASK_SET_PYTHON_PACKAGES_LOCAL";
-  public static final String TASK_SET_PYTHON_PACKAGES_REMOTE = "TASK_SET_PYTHON_PACKAGES_REMOTE";
-  public static final String TASK_UPDATE_PYTHON_PACKAGES = "TASK_UPDATE_PYTHON_PACKAGES";
   public static final String TASK_RESET_EXCLUDED_REPOS_LOCAL = "TASK_RESET_EXCLUDED_REPOS_LOCAL";
-  public static final String TASK_RESET_EXCLUDED_REPOS_REMOTE = "TASK_RESET_EXCLUDED_REPOS_REMOTE";
   public static final String TASK_SET_EXCLUDED_REPOS_LOCAL = "TASK_SET_EXCLUDED_REPOS_LOCAL";
-  public static final String TASK_SET_EXCLUDED_REPOS_REMOTE = "TASK_SET_EXCLUDED_REPOS_REMOTE";
   public static final String TASK_DELETE_SCRIPT_FILES = "TASK_DELETE_SCRIPT_FILES";
   public static final String TASK_CREATE_SCRIPT_FILES = "TASK_CREATE_SCRIPT_FILES";
   public static final String TASK_NPM_SNAPSHOTS = "TASK_NPM_SNAPSHOTS";
@@ -249,9 +229,6 @@ public class ConstantUtils {
   public static final String TASK_PROCESS_SUMMARY_RESET = "TASK_PROCESS_SUMMARY_RESET";
   public static final String TASK_LOG_CAPTURE_STOP = "TASK_STOP_LOG_CAPTURE";
   public static final String TASK_LOG_CAPTURE_SAVE = "TASK_SAVE_LOG_CAPTURE";
-  public static final String TASK_DATA_CLEANUP_PROCESS_SUMMARY = "TASK_CLEANUP_PROCESS_SUMMARY";
-  public static final String TASK_DATA_CLEANUP_LOG_ENTRY = "TASK_CLEANUP_LOG_ENTRY";
-  public static final String TASK_DATA_CLEANUP_LATEST_VERSION = "TASK_CLEANUP_LATEST_VERSION";
 
   public static final String JSON_RESPONSE = "{\"%s\": \"%s\"}";
 }

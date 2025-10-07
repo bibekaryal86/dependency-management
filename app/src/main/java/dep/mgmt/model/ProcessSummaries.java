@@ -66,6 +66,10 @@ public class ProcessSummaries implements Serializable {
   public static class ProcessSummary implements Serializable {
     private final LocalDateTime updateDateTime;
     private final String updateType;
+    private final Integer gradlePluginsChecked;
+    private final Integer gradleDependenciesChecked;
+    private final Integer pythonPackagesChecked;
+    private final Integer nodeDependenciesChecked;
     private final Integer gradlePluginsToUpdate;
     private final Integer gradleDependenciesToUpdate;
     private final Integer pythonPackagesToUpdate;
@@ -81,6 +85,10 @@ public class ProcessSummaries implements Serializable {
     public ProcessSummary(
         @JsonProperty("updateDateTime") final LocalDateTime updateDateTime,
         @JsonProperty("updateType") final String updateType,
+        @JsonProperty("gradlePluginsChecked") final Integer gradlePluginsChecked,
+        @JsonProperty("gradleDependenciesChecked") final Integer gradleDependenciesChecked,
+        @JsonProperty("pythonPackagesChecked") final Integer pythonPackagesToChecked,
+        @JsonProperty("nodeDependenciesChecked") final Integer nodeDependenciesChecked,
         @JsonProperty("gradlePluginsToUpdate") final Integer gradlePluginsToUpdate,
         @JsonProperty("gradleDependenciesToUpdate") final Integer gradleDependenciesToUpdate,
         @JsonProperty("pythonPackagesToUpdate") final Integer pythonPackagesToUpdate,
@@ -93,6 +101,10 @@ public class ProcessSummaries implements Serializable {
         @JsonProperty("processTasks") final List<ProcessTask> processTasks) {
       this.updateDateTime = updateDateTime;
       this.updateType = updateType;
+      this.gradlePluginsChecked = gradlePluginsChecked;
+      this.gradleDependenciesChecked = gradleDependenciesChecked;
+      this.nodeDependenciesChecked = nodeDependenciesChecked;
+      this.pythonPackagesChecked = pythonPackagesToChecked;
       this.gradlePluginsToUpdate = gradlePluginsToUpdate;
       this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
       this.pythonPackagesToUpdate = pythonPackagesToUpdate;
@@ -111,6 +123,22 @@ public class ProcessSummaries implements Serializable {
 
     public String getUpdateType() {
       return updateType;
+    }
+
+    public Integer getGradlePluginsChecked() {
+      return gradlePluginsChecked;
+    }
+
+    public Integer getGradleDependenciesChecked() {
+      return gradleDependenciesChecked;
+    }
+
+    public Integer getPythonPackagesChecked() {
+      return pythonPackagesChecked;
+    }
+
+    public Integer getNodeDependenciesChecked() {
+      return nodeDependenciesChecked;
     }
 
     public Integer getGradlePluginsToUpdate() {
@@ -161,6 +189,14 @@ public class ProcessSummaries implements Serializable {
           + ", updateType='"
           + updateType
           + '\''
+          + ", gradlePluginsChecked="
+          + gradlePluginsChecked
+          + ", gradleDependenciesChecked="
+          + gradleDependenciesChecked
+          + ", pythonPackagesChecked="
+          + pythonPackagesChecked
+          + ", nodeDependenciesChecked="
+          + nodeDependenciesChecked
           + ", gradlePluginsToUpdate="
           + gradlePluginsToUpdate
           + ", gradleDependenciesToUpdate="

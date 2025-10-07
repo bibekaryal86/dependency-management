@@ -7,10 +7,10 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.MavenSearchResponse;
 import dep.mgmt.repository.GradleDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
+import io.github.bibekaryal86.shdsvc.dtos.HttpResponse;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -54,14 +54,18 @@ public class GradleDependencyVersionService {
   private MavenSearchResponse getMavenSearchResponse(final String group, final String artifact) {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
-      return Connector.sendRequest(
+      final HttpResponse<MavenSearchResponse> mavenSearchResponseHttpResponse =
+          Connector.sendRequest(
               url,
               Enums.HttpMethod.GET,
               new TypeReference<MavenSearchResponse>() {},
               null,
               null,
-              null)
-          .responseBody();
+              null);
+      if (mavenSearchResponseHttpResponse.statusCode() == 503) {
+        return getMavenJsoupResponse(group, artifact);
+      }
+      return mavenSearchResponseHttpResponse.responseBody();
     } catch (Exception ex) {
       log.error(
           "ERROR in Get Maven Search Response: [ {} ] [ {} ] || [ {}-{} ]",
@@ -69,8 +73,8 @@ public class GradleDependencyVersionService {
           artifact,
           ex.getClass().getName(),
           ex.getMessage());
-      return getMavenJsoupResponse(group, artifact);
     }
+    return null;
   }
 
   public static MavenSearchResponse getMavenJsoupResponse(
@@ -193,6 +197,7 @@ public class GradleDependencyVersionService {
   public void updateGradleDependencies() {
     log.info("Update Gradle Dependencies...");
     final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
+    List<DependencyEntity> gradleDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
 
     gradleDependencies.forEach(
@@ -210,7 +215,7 @@ public class GradleDependencyVersionService {
                     latestVersion,
                     Boolean.FALSE));
           } else {
-            gradleDependenciesToUpdate.add(
+            gradleDependenciesChecked.add(
                 new DependencyEntity(
                     gradleDependency.getId(),
                     gradleDependency.getName(),
@@ -221,14 +226,21 @@ public class GradleDependencyVersionService {
         });
 
     log.info("Gradle Dependencies to Update: [{}]", gradleDependenciesToUpdate.size());
-    log.debug("{}", gradleDependenciesToUpdate);
+    log.info("Gradle Dependencies Checked: [{}]", gradleDependenciesChecked.size());
+    log.debug("gradleDependenciesToUpdate\n{}", gradleDependenciesToUpdate);
+    log.debug("gradleDependenciesChecked\n{}", gradleDependenciesChecked);
 
     if (!gradleDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {
         gradleDependencyRepository.update(
             gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
       }
-      ProcessUtils.setMongoGradleDependenciesToUpdate(gradleDependenciesToUpdate.size());
+    }
+
+    if (!gradleDependenciesChecked.isEmpty()) {
+      for (DependencyEntity gradleDependencyChecked : gradleDependenciesChecked) {
+        gradleDependencyRepository.update(gradleDependencyChecked.getId(), gradleDependencyChecked);
+      }
     }
   }
 
@@ -257,5 +269,13 @@ public class GradleDependencyVersionService {
               gradleDependency.getLastUpdatedDate());
       gradleDependencyRepository.update(gradleDependencyToUpdate.getId(), gradleDependencyToUpdate);
     }
+  }
+
+  public int getCheckedCountInPastDay() {
+    return gradleDependencyRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return gradleDependencyRepository.findBetweenDates("lastUpdatedDate").size();
   }
 }

@@ -7,7 +7,6 @@ import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.NpmRegistryResponse;
 import dep.mgmt.repository.NodeDependencyRepository;
 import dep.mgmt.util.ConstantUtils;
-import dep.mgmt.util.ProcessUtils;
 import dep.mgmt.util.VersionUtils;
 import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
@@ -87,6 +86,7 @@ public class NodeDependencyVersionService {
   public void updateNodeDependencies() {
     log.info("Update Node Dependencies...");
     final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
+    List<DependencyEntity> nodeDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> nodeDependenciesToUpdate = new ArrayList<>();
 
     nodeDependencies.forEach(
@@ -103,7 +103,7 @@ public class NodeDependencyVersionService {
                     latestVersion,
                     Boolean.FALSE));
           } else {
-            nodeDependenciesToUpdate.add(
+            nodeDependenciesChecked.add(
                 new DependencyEntity(
                     nodeDependency.getId(),
                     nodeDependency.getName(),
@@ -114,13 +114,20 @@ public class NodeDependencyVersionService {
         });
 
     log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
-    log.debug("{}", nodeDependenciesToUpdate);
+    log.info("Node Dependencies Checked: [{}]", nodeDependenciesChecked.size());
+    log.debug("nodeDependenciesToUpdate\n{}", nodeDependenciesToUpdate);
+    log.debug("nodeDependenciesChecked\n{}", nodeDependenciesChecked);
 
     if (!nodeDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity nodeDependencyToUpdate : nodeDependenciesToUpdate) {
         nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
       }
-      ProcessUtils.setMongoNodeDependenciesToUpdate(nodeDependenciesToUpdate.size());
+    }
+
+    if (!nodeDependenciesChecked.isEmpty()) {
+      for (DependencyEntity nodeDependencyChecked : nodeDependenciesChecked) {
+        nodeDependencyRepository.update(nodeDependencyChecked.getId(), nodeDependencyChecked);
+      }
     }
   }
 
@@ -146,5 +153,13 @@ public class NodeDependencyVersionService {
               nodeDependency.getLastUpdatedDate());
       nodeDependencyRepository.update(nodeDependencyToUpdate.getId(), nodeDependencyToUpdate);
     }
+  }
+
+  public int getCheckedCountInPastDay() {
+    return nodeDependencyRepository.findBetweenDates("lastCheckedDate").size();
+  }
+
+  public int getUpdatedCountInPastDay() {
+    return nodeDependencyRepository.findBetweenDates("lastUpdatedDate").size();
   }
 }

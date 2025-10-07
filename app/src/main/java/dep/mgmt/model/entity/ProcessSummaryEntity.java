@@ -10,8 +10,11 @@ import org.bson.types.ObjectId;
 public class ProcessSummaryEntity implements Serializable {
   @BsonId private ObjectId id;
   private LocalDateTime updateDateTime;
-
   private String updateType;
+  private Integer gradlePluginsChecked;
+  private Integer gradleDependenciesChecked;
+  private Integer pythonPackagesChecked;
+  private Integer nodeDependenciesChecked;
   private Integer gradlePluginsToUpdate;
   private Integer gradleDependenciesToUpdate;
   private Integer pythonPackagesToUpdate;
@@ -29,6 +32,10 @@ public class ProcessSummaryEntity implements Serializable {
       final ObjectId id,
       final LocalDateTime updateDateTime,
       final String updateType,
+      final Integer gradlePluginsChecked,
+      final Integer gradleDependenciesChecked,
+      final Integer pythonPackagesChecked,
+      final Integer nodeDependenciesChecked,
       final Integer gradlePluginsToUpdate,
       final Integer gradleDependenciesToUpdate,
       final Integer pythonPackagesToUpdate,
@@ -42,6 +49,10 @@ public class ProcessSummaryEntity implements Serializable {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.updateType = updateType;
+    this.gradlePluginsChecked = gradlePluginsChecked;
+    this.gradleDependenciesChecked = gradleDependenciesChecked;
+    this.nodeDependenciesChecked = nodeDependenciesChecked;
+    this.pythonPackagesChecked = pythonPackagesChecked;
     this.gradlePluginsToUpdate = gradlePluginsToUpdate;
     this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
     this.pythonPackagesToUpdate = pythonPackagesToUpdate;
@@ -77,6 +88,38 @@ public class ProcessSummaryEntity implements Serializable {
 
   public void setUpdateType(String updateType) {
     this.updateType = updateType;
+  }
+
+  public Integer getGradlePluginsChecked() {
+    return gradlePluginsChecked;
+  }
+
+  public void setGradlePluginsChecked(Integer gradlePluginsChecked) {
+    this.gradlePluginsChecked = gradlePluginsChecked;
+  }
+
+  public Integer getGradleDependenciesChecked() {
+    return gradleDependenciesChecked;
+  }
+
+  public void setGradleDependenciesChecked(Integer gradleDependenciesChecked) {
+    this.gradleDependenciesChecked = gradleDependenciesChecked;
+  }
+
+  public Integer getPythonPackagesChecked() {
+    return pythonPackagesChecked;
+  }
+
+  public void setPythonPackagesChecked(Integer pythonPackagesChecked) {
+    this.pythonPackagesChecked = pythonPackagesChecked;
+  }
+
+  public Integer getNodeDependenciesChecked() {
+    return nodeDependenciesChecked;
+  }
+
+  public void setNodeDependenciesChecked(Integer nodeDependenciesChecked) {
+    this.nodeDependenciesChecked = nodeDependenciesChecked;
   }
 
   public Integer getGradlePluginsToUpdate() {
@@ -169,6 +212,14 @@ public class ProcessSummaryEntity implements Serializable {
         + ", updateType='"
         + updateType
         + '\''
+        + ", gradlePluginsChecked="
+        + gradlePluginsChecked
+        + ", gradleDependenciesChecked="
+        + gradleDependenciesChecked
+        + ", pythonPackagesChecked="
+        + pythonPackagesChecked
+        + ", nodeDependenciesChecked="
+        + nodeDependenciesChecked
         + ", gradlePluginsToUpdate="
         + gradlePluginsToUpdate
         + ", gradleDependenciesToUpdate="

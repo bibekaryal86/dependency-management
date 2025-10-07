@@ -11,7 +11,7 @@ import dep.mgmt.util.ServerUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -64,12 +64,8 @@ public class AppTestController {
         updateRepoService.clearTaskQueues();
       }
       case Endpoints.APP_TESTS_SCHEDULE -> {
-        ZonedDateTime nextRunTime = ScheduleConfig.getNextRunTime();
-        ServerUtils.sendResponse(
-            ctx,
-            null,
-            HttpResponseStatus.OK,
-            String.format(ConstantUtils.JSON_RESPONSE, "nextRunTime", nextRunTime));
+        final Map<String, LocalDateTime> nextRunTimes = ScheduleConfig.nextRunTimes();
+        ServerUtils.sendResponse(ctx, nextRunTimes, HttpResponseStatus.OK, "");
       }
       case null, default ->
           ServerUtils.sendResponse(

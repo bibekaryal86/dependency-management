@@ -33,12 +33,12 @@ public class JavaVersionService {
             .findFirst()
             .orElse(null);
 
-    log.info("Latest Java Release: [ {} ]", latestJavaRelease);
-
     if (latestJavaRelease == null) {
-      log.error("Latest Java Release Null ERROR...");
+      log.error("Latest Java Release is null...");
       return null;
     }
+
+    log.info("Latest Java Release: [ {} ]", latestJavaRelease);
 
     final String versionActual = latestJavaRelease.getSemver();
     final String versionFull = getVersionFull(versionActual);

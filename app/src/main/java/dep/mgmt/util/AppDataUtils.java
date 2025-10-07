@@ -55,7 +55,7 @@ public class AppDataUtils {
   }
 
   private static Map<String, String> validateInputAndMakeArgsMap() {
-    log.debug("Make Args Map...");
+    log.info("Make Args Map...");
     final Map<String, String> properties =
         CommonUtilities.getSystemEnvProperties(ConstantUtils.ENV_KEY_NAMES);
     final List<String> errors =
@@ -72,7 +72,7 @@ public class AppDataUtils {
   }
 
   private static List<AppDataRepository> getRepositoryLocations(final Map<String, String> argsMap) {
-    log.debug("Get Repository Locations...");
+    log.info("Get Repository Locations...");
 
     List<Path> repoPaths;
     try (Stream<Path> pathStream =
@@ -180,7 +180,7 @@ public class AppDataUtils {
   }
 
   private static List<AppDataScriptFile> getScriptFilesInResources() {
-    log.debug("Get Script Files in Resources...");
+    log.info("Get Script Files in Resources...");
     List<AppDataScriptFile> scriptFiles = new ArrayList<>();
 
     try (InputStream listStream =
