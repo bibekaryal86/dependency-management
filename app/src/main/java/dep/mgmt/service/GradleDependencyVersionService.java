@@ -101,13 +101,12 @@ public class GradleDependencyVersionService {
     return null;
   }
 
-  public static MavenSearchResponse getMavenJsoupResponse(
-      final String group, final String artifact) {
+  private MavenSearchResponse getMavenJsoupResponse(final String group, final String artifact) {
     log.info("Get Maven Jsoup Response: Group=[{}] | Artifact=[{}]", group, artifact);
     try {
       final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
       final Document document = Jsoup.connect(url).get();
-      log.trace(
+      log.info(
           "Maven Jsoup Document: Group=[{}] | Artifact=[{}] | Document={}",
           group,
           artifact,
@@ -133,7 +132,9 @@ public class GradleDependencyVersionService {
     try {
       for (final Element element : document.select("script")) {
         final String script = element.data();
-        if (script.contains("version") && script.contains("versions")) {
+        if (script.contains("version")
+            && script.contains("versions")
+            && !script.contains("xml version")) {
           return extractVersionsList(script, group, artifact);
         }
       }
@@ -155,7 +156,6 @@ public class GradleDependencyVersionService {
     final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs = new ArrayList<>();
     final String versionsKey = "versions";
     int startIndex = scriptContent.indexOf(versionsKey);
-    System.out.println(startIndex);
 
     if (startIndex != -1) {
       startIndex += versionsKey.length();
