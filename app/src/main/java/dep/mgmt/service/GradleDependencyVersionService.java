@@ -34,15 +34,36 @@ public class GradleDependencyVersionService {
 
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
-    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
-    MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =
-        getLatestDependencyVersion(mavenSearchResponse);
     log.debug(
-        "Maven Search Response: [ {} ], [ {} ], [ {} ], [ {} ]",
+        "Get Gradle Dependency Version: [ {} ] | [ {} ] | [ {} ]", group, artifact, currentVersion);
+
+    MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
+
+    if (mavenSearchResponse == null
+        || mavenSearchResponse.getResponse() == null
+        || CommonUtilities.isEmpty(mavenSearchResponse.getResponse().getDocs())) {
+      log.debug(
+          "Maven Response is NULL/EMPTY: [ {} ] | [ {} ] | [ {} ]",
+          group,
+          artifact,
+          mavenSearchResponse);
+      return currentVersion;
+    }
+
+    log.trace(
+        "Get Gradle Dependency Version Maven Search Response: [ {} ] | [ {} ] | [ {} ]",
         group,
         artifact,
-        mavenDoc,
         mavenSearchResponse);
+
+    MavenSearchResponse.MavenResponse.MavenDoc mavenDoc =
+        getLatestDependencyVersion(mavenSearchResponse);
+
+    log.debug(
+        "Get Gradle Dependency Version Latest MavenDoc: [ {} ], [ {} ], [ {} ]",
+        group,
+        artifact,
+        mavenDoc);
 
     if (mavenDoc == null) {
       return currentVersion;
@@ -150,23 +171,18 @@ public class GradleDependencyVersionService {
       final MavenSearchResponse mavenSearchResponse) {
     // the search returns 5 latest, filter to not get RC or alpha/beta or unfinished releases
     // the search returns sorted list already, but need to filter and get max after
-    if (mavenSearchResponse != null
-        && mavenSearchResponse.getResponse() != null
-        && !CommonUtilities.isEmpty(mavenSearchResponse.getResponse().getDocs())) {
-      MavenSearchResponse.MavenResponse mavenResponse = mavenSearchResponse.getResponse();
-      return mavenResponse.getDocs().stream()
-          .filter(mavenDoc -> VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
-          .max(
-              Comparator.comparing(
-                  MavenSearchResponse.MavenResponse.MavenDoc::getV,
-                  Comparator.comparing(VersionUtils::getVersionToCompare)))
-          .orElse(null);
-    }
-    return null;
+    MavenSearchResponse.MavenResponse mavenResponse = mavenSearchResponse.getResponse();
+    return mavenResponse.getDocs().stream()
+        .filter(mavenDoc -> VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
+        .max(
+            Comparator.comparing(
+                MavenSearchResponse.MavenResponse.MavenDoc::getV,
+                Comparator.comparing(VersionUtils::getVersionToCompare)))
+        .orElse(null);
   }
 
   public Map<String, DependencyEntity> getGradleDependenciesMap() {
-    log.debug("Get Gradle Dependencies Map...");
+    log.trace("Get Gradle Dependencies Map...");
     Map<String, DependencyEntity> gradleDependenciesMap = CacheConfig.getGradleDependenciesMap();
     if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
       final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
@@ -227,8 +243,8 @@ public class GradleDependencyVersionService {
 
     log.info("Gradle Dependencies to Update: [{}]", gradleDependenciesToUpdate.size());
     log.info("Gradle Dependencies Checked: [{}]", gradleDependenciesChecked.size());
-    log.debug("gradleDependenciesToUpdate\n{}", gradleDependenciesToUpdate);
-    log.debug("gradleDependenciesChecked\n{}", gradleDependenciesChecked);
+    log.trace("gradleDependenciesToUpdate\n{}", gradleDependenciesToUpdate);
+    log.trace("gradleDependenciesChecked\n{}", gradleDependenciesChecked);
 
     if (!gradleDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity gradleDependencyToUpdate : gradleDependenciesToUpdate) {

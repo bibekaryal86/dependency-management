@@ -656,7 +656,7 @@ public class UpdateRepoService {
       final String taskName,
       final Runnable action,
       final long delayMillis) {
-    log.info("Add Task To Queue: [{}] [{}] [{}]", queueName, taskName, delayMillis);
+    log.debug("Add Task To Queue: [{}] [{}] [{}]", queueName, taskName, delayMillis);
     TaskQueues.TaskQueue taskQueue = taskQueues.getQueueByName(queueName);
     if (taskQueue == null) {
       taskQueue = new TaskQueues.TaskQueue(queueName);

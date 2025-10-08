@@ -28,18 +28,18 @@ public class GradlePluginVersionService {
   }
 
   public String getGradlePluginVersion(final String group) {
-    log.debug("Get Latest Gradle Plugin: [ {} ]", group);
-    Document document = getGradlePlugins(group);
+    log.debug("Get Gradle Plugin Version: [ {} ]", group);
+    final Document document = getGradlePlugins(group);
     log.trace("Gradle Plugin Document: [ {} ] | [ {} ]", group, document);
     if (document != null) {
-      Element versionElement = document.getElementsByClass("version-info").first();
+      final Element versionElement = document.getElementsByClass("version-info").first();
 
       if (versionElement != null) {
-        Element latestVersionElement = versionElement.selectFirst("h3");
+        final Element latestVersionElement = versionElement.selectFirst("h3");
 
         if (latestVersionElement != null) {
-          String latestVersionText = latestVersionElement.text();
-          return getGradlePluginVersionLatest(latestVersionText);
+          final String latestVersionText = latestVersionElement.text();
+          return getGradlePluginVersionLatest(group, latestVersionText);
         } else {
           log.error("ERROR Latest Version Element is NULL: [ {} ]", group);
         }
@@ -60,11 +60,12 @@ public class GradlePluginVersionService {
     return null;
   }
 
-  private String getGradlePluginVersionLatest(final String latestVersionText) {
+  private String getGradlePluginVersionLatest(final String group, final String latestVersionText) {
     String[] latestVersionTextArray = latestVersionText.split(" ");
     if (latestVersionTextArray.length == 3) {
       String version = latestVersionTextArray[1];
       if (VersionUtils.isCheckPreReleaseVersion(version)) {
+        log.debug("Get Gradle Plugin Version Latest: [ {} ] | [ {} ]", group, version);
         return version;
       }
     } else {
@@ -74,7 +75,7 @@ public class GradlePluginVersionService {
   }
 
   public Map<String, DependencyEntity> getGradlePluginsMap() {
-    log.debug("Get Gradle Plugins Map...");
+    log.trace("Get Gradle Plugins Map...");
     Map<String, DependencyEntity> gradlePluginsMap = CacheConfig.getGradlePluginsMap();
     if (CommonUtilities.isEmpty(gradlePluginsMap)) {
       final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
@@ -129,8 +130,8 @@ public class GradlePluginVersionService {
 
     log.info("Gradle Plugins to Update: [{}]", gradlePluginsToUpdate.size());
     log.info("Gradle Plugins Checked: [{}]", gradlePluginsChecked.size());
-    log.debug("gradlePluginsToUpdate\n{}", gradlePluginsToUpdate);
-    log.debug("gradlePluginsChecked\n{}", gradlePluginsChecked);
+    log.trace("gradlePluginsToUpdate\n{}", gradlePluginsToUpdate);
+    log.trace("gradlePluginsChecked\n{}", gradlePluginsChecked);
 
     if (!gradlePluginsToUpdate.isEmpty()) {
       for (DependencyEntity gradlePluginToUpdate : gradlePluginsToUpdate) {

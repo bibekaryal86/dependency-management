@@ -46,7 +46,7 @@ public class NodeProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished: [{}]--[{}-{}-{}-{}]",
+        "Update Finished: [{}]--[isPackageJsonUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isPackageJsonUpdated,
         isGcpConfigUpdated,

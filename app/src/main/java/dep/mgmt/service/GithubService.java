@@ -45,6 +45,12 @@ public class GithubService {
     final GithubApiModel.CreatePullRequestResponse createPullRequestResponse =
         githubConnector.createPullRequest(repoName, branchName);
 
+    log.info(
+        "Github Pull Request Create Response: [{}] | [{}] | [{}]",
+        repoName,
+        branchDate,
+        createPullRequestResponse);
+
     if (createPullRequestResponse != null
         && createPullRequestResponse.getNumber() != null
         && createPullRequestResponse.getNumber() > 0) {
@@ -70,7 +76,7 @@ public class GithubService {
           ProcessUtils.getProcessedRepositoryFromMap(repoName);
 
       if (!processRepository.getUpdateBranchCreated()) {
-        log.debug(
+        log.info(
             "Github Pull Request NOT Merged, No Update Branch: [{}] | [{}] | [{}]",
             repoName,
             branchDate,
@@ -96,7 +102,7 @@ public class GithubService {
     }
 
     if (prNumber == null && prNumberFromWorkflowRun == null) {
-      log.error("No PR Number to Merge: [{}] | [{}]", repoName, branchDate);
+      log.info("No PR Number to Merge: [{}] | [{}]", repoName, branchDate);
       return;
     }
 
@@ -112,6 +118,14 @@ public class GithubService {
 
     final GithubApiModel.MergePullRequestResponse mergePullRequestResponse =
         githubConnector.mergePullRequest(repoName, prNumberFromWorkflowRun);
+
+    log.info(
+        "Github Pull Request Merge Response: [{}] | [{}] | [{}] | [{}] | [{}]",
+        repoName,
+        branchDate,
+        prNumber,
+        prNumberFromWorkflowRun,
+        mergePullRequestResponse);
 
     if (mergePullRequestResponse != null
         && mergePullRequestResponse.getMerged() != null
@@ -159,6 +173,8 @@ public class GithubService {
           "Workflow Runs IS empty: [{}] | [{}] | [{}]", repoName, branchDate, workflowRunsResponse);
       return null;
     }
+
+    log.info("Check Workflow Run Response: [{}] | [{}] | [{}]", repoName, branchDate, workflowRuns);
 
     final boolean isWorkflowRunSuccessful =
         workflowRuns.stream()

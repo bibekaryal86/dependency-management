@@ -28,11 +28,17 @@ public class PythonPackageVersionService {
   }
 
   public String getPythonPackageVersion(final String name) {
+    log.debug("Get Python Package Version: [ {} ]", name);
+
     PythonPackageSearchResponse pythonPackageSearchResponse = getPythonPackageSearchResponse(name);
 
     if (pythonPackageSearchResponse == null
         || pythonPackageSearchResponse.getInfo() == null
         || pythonPackageSearchResponse.getInfo().getYanked()) {
+      log.debug(
+          "Python Package Response is NULL/EMPTY: [ {} ] | [ {} ]",
+          name,
+          pythonPackageSearchResponse);
       return null;
     }
 
@@ -57,7 +63,7 @@ public class PythonPackageVersionService {
   }
 
   public Map<String, DependencyEntity> getPythonPackagesMap() {
-    log.debug("Get Python Packages Map...");
+    log.trace("Get Python Packages Map...");
     Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
@@ -112,8 +118,8 @@ public class PythonPackageVersionService {
 
     log.info("Python Packages to Update: [{}]", pythonPackagesToUpdate.size());
     log.info("Python Packages Checked: [{}]", pythonPackagesChecked.size());
-    log.debug("pythonPackagesToUpdate\n{}", pythonPackagesToUpdate);
-    log.debug("pythonPackagesChecked\n{}", pythonPackagesChecked);
+    log.trace("pythonPackagesToUpdate\n{}", pythonPackagesToUpdate);
+    log.trace("pythonPackagesChecked\n{}", pythonPackagesChecked);
 
     if (!pythonPackagesToUpdate.isEmpty()) {
       for (DependencyEntity pythonPackageToUpdate : pythonPackagesToUpdate) {

@@ -38,8 +38,6 @@ public class JavaVersionService {
       return null;
     }
 
-    log.info("Latest Java Release: [ {} ]", latestJavaRelease);
-
     final String versionActual = latestJavaRelease.getSemver();
     final String versionFull = getVersionFull(versionActual);
     final String versionMajor = getVersionMajor(versionFull);

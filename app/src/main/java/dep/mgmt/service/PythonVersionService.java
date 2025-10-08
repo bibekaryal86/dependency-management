@@ -29,8 +29,6 @@ public class PythonVersionService extends VersionLookupGithubApi {
       return null;
     }
 
-    log.info("Get Python Version Response: {}]", apiReleaseResponse);
-
     final String versionActual = apiReleaseResponse.getName();
     final String versionFull = getVersionFull(versionActual);
     final String versionDocker = getVersionDocker(versionFull, latestDockerVersionFromMongo);

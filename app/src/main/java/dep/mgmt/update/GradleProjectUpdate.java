@@ -62,7 +62,7 @@ public class GradleProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished: [{}]--[{}-{}-{}-{}-{}]",
+        "Update Finished: [{}]--[isBuildGradleUpdated={}|isGradleWrapperUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isBuildGradleUpdated,
         isGradleWrapperUpdated,

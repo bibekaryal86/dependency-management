@@ -152,7 +152,7 @@ public class AppDataUtils {
     repositories.addAll(pythonRepositories);
 
     log.info("Repository list: [ {} ]", repositories.size());
-    log.debug("Repository list: [ {} ]", repositories);
+    log.trace("Repository list: [ {} ]", repositories);
     return repositories;
   }
 
@@ -203,7 +203,7 @@ public class AppDataUtils {
       }
 
       log.info("Script Files list: [ {} ]", scriptFiles.size());
-      log.debug("Script Files list: [ {} ]", scriptFiles);
+      log.trace("Script Files list: [ {} ]", scriptFiles);
 
       return scriptFiles;
     } catch (IOException ex) {

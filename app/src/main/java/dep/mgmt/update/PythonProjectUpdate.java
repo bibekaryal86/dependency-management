@@ -47,7 +47,7 @@ public class PythonProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished [{}]--[{}-{}-{}-{}-{}]",
+        "Update Finished [{}]--[isProjectTomlUpdated={}|isRequirementsTxtUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isProjectTomlUpdated,
         isRequirementsTxtUpdated,

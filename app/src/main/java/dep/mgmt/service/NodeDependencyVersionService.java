@@ -28,11 +28,14 @@ public class NodeDependencyVersionService {
   }
 
   public String getNodeDependencyVersion(final String name) {
+    log.debug("Get Node Dependency Version: [ {} ]", name);
+
     NpmRegistryResponse npmRegistryResponse = getNpmRegistrySearchResponse(name);
 
     if (npmRegistryResponse == null
         || npmRegistryResponse.getDistTags() == null
         || CommonUtilities.isEmpty(npmRegistryResponse.getDistTags().getLatest())) {
+      log.debug("NPM Registry Response is NULL/EMPTY: [ {} ] | [ {} ]", name, npmRegistryResponse);
       return null;
     }
     return npmRegistryResponse.getDistTags().getLatest();
@@ -56,7 +59,7 @@ public class NodeDependencyVersionService {
   }
 
   public Map<String, DependencyEntity> getNodeDependenciesMap() {
-    log.debug("Get Node Dependencies Map...");
+    log.trace("Get Node Dependencies Map...");
     Map<String, DependencyEntity> nodeDependenciesMap = CacheConfig.getNodeDependenciesMap();
     if (CommonUtilities.isEmpty(nodeDependenciesMap)) {
       final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
@@ -115,8 +118,8 @@ public class NodeDependencyVersionService {
 
     log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
     log.info("Node Dependencies Checked: [{}]", nodeDependenciesChecked.size());
-    log.debug("nodeDependenciesToUpdate\n{}", nodeDependenciesToUpdate);
-    log.debug("nodeDependenciesChecked\n{}", nodeDependenciesChecked);
+    log.trace("nodeDependenciesToUpdate\n{}", nodeDependenciesToUpdate);
+    log.trace("nodeDependenciesChecked\n{}", nodeDependenciesChecked);
 
     if (!nodeDependenciesToUpdate.isEmpty()) {
       for (DependencyEntity nodeDependencyToUpdate : nodeDependenciesToUpdate) {
