@@ -1,10 +1,18 @@
 package dep.mgmt.util;
 
+import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.enums.RequestParams;
 import io.netty.util.AttributeKey;
 import java.util.List;
 
 public class ConstantUtils {
+
+  public static final TaskQueues TASK_QUEUES;
+
+  static {
+    TASK_QUEUES = new TaskQueues();
+  }
+
   // provided at runtime
   public static final String ENV_SERVER_PORT = "PORT";
   public static final String ENV_SELF_USER = "SELF_USERNAME";
