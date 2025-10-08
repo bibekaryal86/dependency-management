@@ -37,6 +37,7 @@ public class TaskQueues {
 
   public void clearQueue() {
     nonEmptyQueueCount.set(0);
+    queueOfQueues.forEach(TaskQueue::clearQueue);
     queueOfQueues.clear();
   }
 
