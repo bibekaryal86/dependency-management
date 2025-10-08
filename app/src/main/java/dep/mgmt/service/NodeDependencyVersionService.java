@@ -28,14 +28,14 @@ public class NodeDependencyVersionService {
   }
 
   public String getNodeDependencyVersion(final String name) {
-    log.debug("Get Node Dependency Version: [ {} ]", name);
+    log.debug("Get Node Dependency Version: Name=[{}]", name);
 
     NpmRegistryResponse npmRegistryResponse = getNpmRegistrySearchResponse(name);
 
     if (npmRegistryResponse == null
         || npmRegistryResponse.getDistTags() == null
         || CommonUtilities.isEmpty(npmRegistryResponse.getDistTags().getLatest())) {
-      log.debug("NPM Registry Response is NULL/EMPTY: [ {} ] | [ {} ]", name, npmRegistryResponse);
+      log.debug("NPM Registry Response is NULL/EMPTY: Name=[{}] | [{}]", name, npmRegistryResponse);
       return null;
     }
     return npmRegistryResponse.getDistTags().getLatest();
@@ -53,7 +53,7 @@ public class NodeDependencyVersionService {
               null)
           .responseBody();
     } catch (Exception ex) {
-      log.error("ERROR in Get NPM Registry Search Response: [ {} ]", name, ex);
+      log.error("ERROR in Get NPM Registry Search Response: Name=[{}]", name, ex);
     }
     return null;
   }
@@ -63,7 +63,7 @@ public class NodeDependencyVersionService {
     Map<String, DependencyEntity> nodeDependenciesMap = CacheConfig.getNodeDependenciesMap();
     if (CommonUtilities.isEmpty(nodeDependenciesMap)) {
       final List<DependencyEntity> nodeDependencies = nodeDependencyRepository.findAll();
-      log.debug("Node Dependencies List: [ {} ]", nodeDependencies.size());
+      log.debug("Node Dependencies List: ListSize=[{}]", nodeDependencies.size());
       nodeDependenciesMap =
           nodeDependencies.stream()
               .collect(
@@ -74,14 +74,14 @@ public class NodeDependencyVersionService {
   }
 
   public void insertNodeDependency(final String name, final String version) {
-    log.info("Insert Node Dependency: [ {} ] | [ {} ]", name, version);
+    log.info("Insert Node Dependency: Name=[{}] | Version=[{}]", name, version);
     CacheConfig.resetNodeDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     nodeDependencyRepository.insert(dependencyEntity);
   }
 
   public void updateNodeDependency(final DependencyEntity dependencyEntity) {
-    log.info("Update Node Dependency: [ {} ]", dependencyEntity);
+    log.info("Update Node Dependency: [{}]", dependencyEntity);
     CacheConfig.resetNodeDependenciesMap();
     nodeDependencyRepository.update(dependencyEntity.getId(), dependencyEntity);
   }
@@ -116,8 +116,8 @@ public class NodeDependencyVersionService {
           }
         });
 
-    log.info("Node Dependencies to Update: [{}]", nodeDependenciesToUpdate.size());
-    log.info("Node Dependencies Checked: [{}]", nodeDependenciesChecked.size());
+    log.info("Node Dependencies to Update: ListSize=[{}]", nodeDependenciesToUpdate.size());
+    log.info("Node Dependencies Checked: ListSize=[{}]", nodeDependenciesChecked.size());
     log.trace("nodeDependenciesToUpdate\n{}", nodeDependenciesToUpdate);
     log.trace("nodeDependenciesChecked\n{}", nodeDependenciesChecked);
 
@@ -135,7 +135,7 @@ public class NodeDependencyVersionService {
   }
 
   public void updateNodeDependency(final String library) {
-    log.info("Update Node Dependency: [{}]", library);
+    log.info("Update Node Dependency: Library=[{}]", library);
     final DependencyEntity nodeDependency =
         nodeDependencyRepository.findByAttribute("name", library);
 

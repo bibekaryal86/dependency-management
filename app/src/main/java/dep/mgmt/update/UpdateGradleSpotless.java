@@ -23,7 +23,7 @@ public class UpdateGradleSpotless {
       final AppDataRepository repository,
       final AppDataScriptFile scriptFile,
       final String branchName) {
-    log.info("Execute Update Gradle Spotless: [ {} ]", repository.getRepoName());
+    log.info("Execute Update Gradle Spotless: RepoName=[{}]", repository.getRepoName());
     List<String> arguments = new LinkedList<>();
     arguments.add(repository.getRepoPath().toString());
     arguments.add(branchName);

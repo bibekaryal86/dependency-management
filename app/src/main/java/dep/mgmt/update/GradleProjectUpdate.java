@@ -51,7 +51,7 @@ public class GradleProjectUpdate {
   }
 
   public boolean execute() {
-    log.debug("Updating [{}]", this.repository.getRepoName());
+    log.debug("Updating RepoName=[{}]", this.repository.getRepoName());
     final boolean isBuildGradleUpdated = executeBuildGradleUpdate();
     final boolean isGradleWrapperUpdated = executeGradleWrapperUpdate();
     final boolean isGcpConfigUpdated =
@@ -62,7 +62,7 @@ public class GradleProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished: [{}]--[isBuildGradleUpdated={}|isGradleWrapperUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
+        "Update Finished: RepoName=[{}]--[isBuildGradleUpdated={}|isGradleWrapperUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isBuildGradleUpdated,
         isGradleWrapperUpdated,
@@ -82,7 +82,7 @@ public class GradleProjectUpdate {
       Files.write(path, content, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Saving Updated File: [ {} ]", path, ex);
+      log.error("Error Saving Updated File: Path=[{}]", path, ex);
       return false;
     }
   }
@@ -98,17 +98,18 @@ public class GradleProjectUpdate {
       List<String> gradleModules = this.repository.getGradleModules();
       for (String gradleModule : gradleModules) {
         log.debug(
-            "Update Gradle Build File for Module: [ {} ] [ {} ]",
+            "Update Gradle Build File for Module: RepoName=[{}] GradleModule=[{}]",
             this.repository.getRepoName(),
             gradleModule);
         BuildGradleConfigs buildGradleConfigs = readBuildGradle(gradleModule);
         if (buildGradleConfigs == null) {
-          log.error("Build Gradle Configs is null: [ {} ]", this.repository.getRepoPath());
+          log.error("Build Gradle Configs is null: RepoPath=[{}]", this.repository.getRepoPath());
         } else {
           List<String> buildGradleContent = modifyBuildGradle(buildGradleConfigs);
 
           if (CommonUtilities.isEmpty(buildGradleContent)) {
-            log.debug("Build Gradle Configs not updated: [ {} ]", this.repository.getRepoPath());
+            log.debug(
+                "Build Gradle Configs not updated: RepoPath=[{}]", this.repository.getRepoPath());
           } else {
             boolean isWriteToFile =
                 writeBuildGradleToFile(buildGradleConfigs.getBuildGradlePath(), buildGradleContent);
@@ -117,7 +118,7 @@ public class GradleProjectUpdate {
               isBuildGradleUpdated = true;
             } else {
               log.debug(
-                  "Build Gradle Changes Not Written to File: [ {} ]",
+                  "Build Gradle Changes Not Written to File: RepoPath=[{}]",
                   this.repository.getRepoPath());
             }
           }
@@ -132,7 +133,7 @@ public class GradleProjectUpdate {
 
   private boolean writeBuildGradleToFile(
       final Path buildGradlePath, final List<String> buildGradleContent) {
-    log.debug("Writing to build.gradle file: [ {} ]", buildGradlePath);
+    log.debug("Writing to build.gradle file: BuildGradlePath=[{}]", buildGradlePath);
     return writeToFile(buildGradlePath, buildGradleContent);
   }
 
@@ -167,7 +168,9 @@ public class GradleProjectUpdate {
           buildGradlePath, allLines, plugins, List.of(dependencies, dependenciesBuildScript));
     } catch (IOException e) {
       log.error(
-          "Error reading build.gradle: [ {} ] [ {} ]", this.repository.getRepoName(), gradleModule);
+          "Error reading build.gradle: RepoName=[{}] [{}]",
+          this.repository.getRepoName(),
+          gradleModule);
     }
 
     return null;
@@ -580,7 +583,7 @@ public class GradleProjectUpdate {
 
     if (plugin == null) {
       // It is likely plugin information is not available in the local repository
-      log.info("Plugin information missing in local repo: [ {} ]", group);
+      log.info("Plugin information missing in local repo: Group=[{}]", group);
       // Save to mongo repository
       this.gradlePluginVersionService.insertGradlePlugin(group, gradlePlugin.getVersion());
     }
@@ -606,7 +609,7 @@ public class GradleProjectUpdate {
 
     if (dependency == null) {
       // It is likely dependency information is not available in the local repository
-      log.info("Dependency information missing in local repo: [ {} ]", mavenId);
+      log.info("Dependency information missing in local repo: MavenId=[{}]", mavenId);
       // Save to mongo repository
       this.gradleDependencyVersionService.insertGradleDependency(
           mavenId, gradleDependency.getVersion());
@@ -697,7 +700,7 @@ public class GradleProjectUpdate {
       isGradleWrapperUpdated = true;
     } else {
       log.debug(
-          "Gradle Wrapper Properties Changes Not Written to File: [ {} ]",
+          "Gradle Wrapper Properties Changes Not Written to File: RepoPath=[{}]",
           this.repository.getRepoPath());
     }
 
@@ -724,7 +727,7 @@ public class GradleProjectUpdate {
 
       return updatedWrapperProperties;
     } catch (IOException e) {
-      log.error("Error reading gradle-wrapper.properties: [ {} ]", repository);
+      log.error("Error reading gradle-wrapper.properties: Repository=[{}]", repository);
     }
     return Collections.emptyList();
   }
@@ -738,7 +741,9 @@ public class GradleProjectUpdate {
 
   private boolean writeGradleWrapperPropertiesToFile(
       final Path gradleWrapperPropertiesPath, final List<String> gradleWrapperPropertiesContent) {
-    log.debug("Writing to gradle-wrapper.properties file: [ {} ]", gradleWrapperPropertiesPath);
+    log.debug(
+        "Writing to gradle-wrapper.properties file: GradleWrapperPropertiesPath=[{}]",
+        gradleWrapperPropertiesPath);
     return writeToFile(gradleWrapperPropertiesPath, gradleWrapperPropertiesContent);
   }
 

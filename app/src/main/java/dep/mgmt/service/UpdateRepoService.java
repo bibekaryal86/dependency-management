@@ -656,7 +656,11 @@ public class UpdateRepoService {
       final String taskName,
       final Runnable action,
       final long delayMillis) {
-    log.debug("Add Task To Queue: [{}] [{}] [{}]", queueName, taskName, delayMillis);
+    log.debug(
+        "Add Task To Queue: QueueName=[{}] TaskName=[{}] DelayMillis=[{}]",
+        queueName,
+        taskName,
+        delayMillis);
     TaskQueues.TaskQueue taskQueue = taskQueues.getQueueByName(queueName);
     if (taskQueue == null) {
       taskQueue = new TaskQueues.TaskQueue(queueName);
@@ -672,7 +676,7 @@ public class UpdateRepoService {
     boolean isSendEmail =
         "true".equals(AppDataUtils.getAppData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
 
-    log.info("Make Process Summary: [ {} ] | [ {} ]", isSendEmail, updateType);
+    log.info("Make Process Summary: IsSendEmail=[{}] | UpdateType=[{}]", isSendEmail, updateType);
 
     ProcessSummaries.ProcessSummary processSummary = processSummary(updateType);
 

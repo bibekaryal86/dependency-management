@@ -32,7 +32,7 @@ public class DockerVersionService {
         return apiReleaseResponse.getName().trim();
       }
     } catch (Exception ex) {
-      log.error("Get Docker Image Tag: [{}/{}]", library, tag, ex);
+      log.error("Get Docker Image Tag: Library={} | Tag={}", library, tag, ex);
     }
     return null;
   }

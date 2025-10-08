@@ -46,7 +46,7 @@ public class LogEntryService {
   }
 
   public List<LogEntryEntity> getLogEntries(final LocalDate logDate) {
-    log.debug("Get Log Entries: [{}]", logDate);
+    log.debug("Get Log Entries: LogDate=[{}]", logDate);
     return logEntryRepository.getLogEntriesByDate(logDate);
   }
 

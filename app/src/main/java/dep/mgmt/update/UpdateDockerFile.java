@@ -33,7 +33,7 @@ public class UpdateDockerFile {
     try {
       return Files.readAllLines(dockerfilePath);
     } catch (IOException ex) {
-      log.error("Error Reading Dockerfile of Repository [{}]", repository.getRepoName());
+      log.error("Error Reading Dockerfile of RepoName=[{}]", repository.getRepoName());
       return Collections.emptyList();
     }
   }
@@ -117,7 +117,7 @@ public class UpdateDockerFile {
       Files.write(dockerfilePath, dockerfileData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Writing Updated Dockerfile of repository: [{}]", repository.getRepoName());
+      log.error("Error Writing Updated Dockerfile of RepoName=[{}]", repository.getRepoName());
       return false;
     }
   }

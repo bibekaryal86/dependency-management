@@ -26,7 +26,7 @@ public class ServerLogging extends ChannelDuplexHandler {
               .headers()
               .get(HttpHeaderNames.CONTENT_LENGTH, ConstantUtils.CONTENT_LENGTH_DEFAULT);
       log.info(
-          "[{}] Request IN: [{}], [{}], [{}]",
+          "[{}] Request IN: Method=[{}], Uri=[{}], RequestContentLength=[{}]",
           requestId,
           fullHttpRequest.method(),
           fullHttpRequest.uri(),
@@ -50,7 +50,11 @@ public class ServerLogging extends ChannelDuplexHandler {
       final HttpResponseStatus responseStatus = fullHttpResponse.status();
       final String requestId = channelHandlerContext.channel().attr(ConstantUtils.REQUEST_ID).get();
 
-      log.info("[{}] Response OUT: [{}], [{}]", requestId, responseStatus, responseContentLength);
+      log.info(
+          "[{}] Response OUT: ResponseStatus=[{}], ResponseContentLength=[{}]",
+          requestId,
+          responseStatus,
+          responseContentLength);
     }
     super.write(channelHandlerContext, object, channelPromise);
   }

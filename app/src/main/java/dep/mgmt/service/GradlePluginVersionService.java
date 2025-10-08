@@ -28,9 +28,9 @@ public class GradlePluginVersionService {
   }
 
   public String getGradlePluginVersion(final String group) {
-    log.debug("Get Gradle Plugin Version: [ {} ]", group);
+    log.debug("Get Gradle Plugin Version: Group=[{}]", group);
     final Document document = getGradlePlugins(group);
-    log.trace("Gradle Plugin Document: [ {} ] | [ {} ]", group, document);
+    log.trace("Gradle Plugin Document: Group=[{}] | Document=[{}]", group, document);
     if (document != null) {
       final Element versionElement = document.getElementsByClass("version-info").first();
 
@@ -41,10 +41,10 @@ public class GradlePluginVersionService {
           final String latestVersionText = latestVersionElement.text();
           return getGradlePluginVersionLatest(group, latestVersionText);
         } else {
-          log.error("ERROR Latest Version Element is NULL: [ {} ]", group);
+          log.error("ERROR Latest Version Element is NULL: Group=[{}]", group);
         }
       } else {
-        log.error("ERROR Version Element is NULL: [ {} ]", group);
+        log.error("ERROR Version Element is NULL: Group=[{}]", group);
       }
     }
     return null;
@@ -55,7 +55,7 @@ public class GradlePluginVersionService {
       String url = String.format(ConstantUtils.GRADLE_PLUGINS_ENDPOINT, group);
       return Jsoup.connect(url).get();
     } catch (IOException ex) {
-      log.error("ERROR Get Gradle Plugins: [ {} ]", group, ex);
+      log.error("ERROR Get Gradle Plugins: Group=[{}]", group, ex);
     }
     return null;
   }
@@ -65,11 +65,14 @@ public class GradlePluginVersionService {
     if (latestVersionTextArray.length == 3) {
       String version = latestVersionTextArray[1];
       if (VersionUtils.isCheckPreReleaseVersion(version)) {
-        log.debug("Get Gradle Plugin Version Latest: [ {} ] | [ {} ]", group, version);
+        log.debug("Get Gradle Plugin Version Latest: Group=[{}] | Version=[{}]", group, version);
         return version;
       }
     } else {
-      log.error("ERROR Get Latest Gradle Plugin Version Wrong Length: [ {} ]", latestVersionText);
+      log.error(
+          "ERROR Get Latest Gradle Plugin Version Wrong Length: Group=[{}] | LatestVersionText=[{}]",
+          group,
+          latestVersionText);
     }
     return null;
   }
@@ -79,7 +82,7 @@ public class GradlePluginVersionService {
     Map<String, DependencyEntity> gradlePluginsMap = CacheConfig.getGradlePluginsMap();
     if (CommonUtilities.isEmpty(gradlePluginsMap)) {
       final List<DependencyEntity> gradlePlugins = gradlePluginRepository.findAll();
-      log.debug("Gradle Plugins List: [ {} ]", gradlePlugins.size());
+      log.debug("Gradle Plugins List: ListSize=[{}]", gradlePlugins.size());
       gradlePluginsMap =
           gradlePlugins.stream()
               .collect(Collectors.toMap(DependencyEntity::getName, gradlePlugin -> gradlePlugin));
@@ -89,7 +92,7 @@ public class GradlePluginVersionService {
   }
 
   public void insertGradlePlugin(final String name, final String version) {
-    log.info("Insert Gradle Plugin: [ {} ] | [ {} ]", name, version);
+    log.info("Insert Gradle Plugin: Name=[{}] | Version=[{}]", name, version);
     CacheConfig.resetGradlePluginsMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradlePluginRepository.insert(dependencyEntity);
@@ -128,8 +131,8 @@ public class GradlePluginVersionService {
           }
         });
 
-    log.info("Gradle Plugins to Update: [{}]", gradlePluginsToUpdate.size());
-    log.info("Gradle Plugins Checked: [{}]", gradlePluginsChecked.size());
+    log.info("Gradle Plugins to Update: ListSize=[{}]", gradlePluginsToUpdate.size());
+    log.info("Gradle Plugins Checked: ListSize=[{}]", gradlePluginsChecked.size());
     log.trace("gradlePluginsToUpdate\n{}", gradlePluginsToUpdate);
     log.trace("gradlePluginsChecked\n{}", gradlePluginsChecked);
 
@@ -147,7 +150,7 @@ public class GradlePluginVersionService {
   }
 
   public void updateGradlePlugin(final String library) {
-    log.info("Update Gradle Plugin: [{}]", library);
+    log.info("Update Gradle Plugin: Library=[{}]", library);
     final DependencyEntity gradlePlugin = gradlePluginRepository.findByAttribute("name", library);
 
     final String currentVersion = gradlePlugin.getVersion();

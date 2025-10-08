@@ -26,7 +26,7 @@ public class UpdateDependencies {
     }
 
     log.info(
-        "Execute Update Dependencies {}: [{}] | [{}] | [{}] | [{}]",
+        "Execute Update Dependencies ActionType=[{}] | RepoName=[{}] | ScriptName=[{}] | IsInit=[{}] | BranchName=[{}]",
         actionType,
         repository.getRepoName(),
         scriptFile.getScriptName(),

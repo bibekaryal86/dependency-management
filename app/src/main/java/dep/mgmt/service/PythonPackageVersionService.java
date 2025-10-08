@@ -28,7 +28,7 @@ public class PythonPackageVersionService {
   }
 
   public String getPythonPackageVersion(final String name) {
-    log.debug("Get Python Package Version: [ {} ]", name);
+    log.debug("Get Python Package Version: Name=[{}]", name);
 
     PythonPackageSearchResponse pythonPackageSearchResponse = getPythonPackageSearchResponse(name);
 
@@ -36,7 +36,7 @@ public class PythonPackageVersionService {
         || pythonPackageSearchResponse.getInfo() == null
         || pythonPackageSearchResponse.getInfo().getYanked()) {
       log.debug(
-          "Python Package Response is NULL/EMPTY: [ {} ] | [ {} ]",
+          "Python Package Response is NULL/EMPTY: Name=[{}] | [{}]",
           name,
           pythonPackageSearchResponse);
       return null;
@@ -57,7 +57,7 @@ public class PythonPackageVersionService {
               null)
           .responseBody();
     } catch (Exception ex) {
-      log.error("ERROR in Get Python Package Search Response: [ {} ]", name, ex);
+      log.error("ERROR in Get Python Package Search Response: Name=[{}]", name, ex);
     }
     return null;
   }
@@ -67,7 +67,7 @@ public class PythonPackageVersionService {
     Map<String, DependencyEntity> pythonPackagesMap = CacheConfig.getPythonPackagesMap();
     if (CommonUtilities.isEmpty(pythonPackagesMap)) {
       final List<DependencyEntity> pythonPackages = pythonPackageRepository.findAll();
-      log.debug("Python Packages List: [ {} ]", pythonPackages.size());
+      log.debug("Python Packages List: ListSize=[{}]", pythonPackages.size());
       pythonPackagesMap =
           pythonPackages.stream()
               .collect(Collectors.toMap(DependencyEntity::getName, pythonPackage -> pythonPackage));
@@ -77,14 +77,14 @@ public class PythonPackageVersionService {
   }
 
   public void insertPythonPackage(final String name, final String version) {
-    log.info("Insert Python Package: [ {} ] | [ {} ]", name, version);
+    log.info("Insert Python Package: Name=[{}] | Version=[{}]", name, version);
     CacheConfig.resetPythonPackagesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     pythonPackageRepository.insert(dependencyEntity);
   }
 
   public void updatePythonPackage(final DependencyEntity dependencyEntity) {
-    log.info("Update Python Package: [ {} ]", dependencyEntity);
+    log.info("Update Python Package: [{}]", dependencyEntity);
     CacheConfig.resetPythonPackagesMap();
     pythonPackageRepository.update(dependencyEntity.getId(), dependencyEntity);
   }
@@ -116,8 +116,8 @@ public class PythonPackageVersionService {
           }
         });
 
-    log.info("Python Packages to Update: [{}]", pythonPackagesToUpdate.size());
-    log.info("Python Packages Checked: [{}]", pythonPackagesChecked.size());
+    log.info("Python Packages to Update: ListSize=[{}]", pythonPackagesToUpdate.size());
+    log.info("Python Packages Checked: ListSize=[{}]", pythonPackagesChecked.size());
     log.trace("pythonPackagesToUpdate\n{}", pythonPackagesToUpdate);
     log.trace("pythonPackagesChecked\n{}", pythonPackagesChecked);
 
@@ -135,7 +135,7 @@ public class PythonPackageVersionService {
   }
 
   public void updatePythonPackage(final String library) {
-    log.info("Update Python Package: [{}]", library);
+    log.info("Update Python Package: Library=[{}]", library);
     final DependencyEntity pythonPackage = pythonPackageRepository.findByAttribute("name", library);
 
     final String currentVersion = pythonPackage.getVersion();

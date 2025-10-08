@@ -32,7 +32,7 @@ public class ScriptUtils {
         }
       }
     } catch (IOException ex) {
-      log.error("ERROR Delete Temp Script Files: [ {} ]", ex.getMessage(), ex);
+      log.error("ERROR Delete Temp Script Files: [{}]", ex.getMessage(), ex);
     }
   }
 
@@ -82,16 +82,16 @@ public class ScriptUtils {
   private static void delete(final Path path) {
     try {
       boolean isDeleted = Files.deleteIfExists(path);
-      log.info("Delete: [ {} ] | [ {} ]", path, isDeleted);
+      log.info("Delete: Path=[{}] | IsDeleted=[{}]", path, isDeleted);
     } catch (IOException ex) {
-      log.info("ERROR Delete: [ {} ]", path, ex);
+      log.info("ERROR Delete: Path=[{}]", path, ex);
     }
   }
 
   private static boolean createTempScriptsDirectory() {
     try {
       if (!Files.exists(tempScriptsDirectoryPath)) {
-        log.debug("Creating temp script directory: [ {} ]", tempScriptsDirectoryPath);
+        log.debug("Creating temp script directory: [{}]", tempScriptsDirectoryPath);
         Files.createDirectory(tempScriptsDirectoryPath);
       }
       return false;
@@ -118,11 +118,11 @@ public class ScriptUtils {
                       + scriptFile.getScriptFileName())) {
         assert inputStream != null;
         Files.write(filePath, inputStream.readAllBytes(), StandardOpenOption.WRITE);
-        log.info("Written to file: [ {} ]", filePath);
+        log.info("Written to file: [{}]", filePath);
         return false;
       }
     } catch (IOException | NullPointerException ex) {
-      log.error("Error creating temp script file: [ {} ]", scriptFile, ex);
+      log.error("Error creating temp script file: [{}]", scriptFile, ex);
       return true;
     }
   }
@@ -139,7 +139,7 @@ public class ScriptUtils {
           .start();
     } catch (IOException ex) {
       log.error(
-          "Error on Give Execute Permission to File: [ {} ]", scriptFile.getScriptFileName(), ex);
+          "Error on Give Execute Permission to File: [{}]", scriptFile.getScriptFileName(), ex);
     }
   }
 }

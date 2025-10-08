@@ -36,7 +36,7 @@ public class UpdateGcpConfigs {
     try {
       return Files.readAllLines(yamlFilePath);
     } catch (IOException ex) {
-      log.error("Error Reading GCP App Yaml of Repository [{}]", repository.getRepoName());
+      log.error("Error Reading GCP App Yaml of RepoName=[{}]", repository.getRepoName());
       return Collections.emptyList();
     }
   }
@@ -64,14 +64,14 @@ public class UpdateGcpConfigs {
     final String[] runtimeArray = runtimeLine.split(":");
 
     if (runtimeArray.length != 2) {
-      log.error("Malformed GCP App Yaml Runtime: [{}]", runtimeLine);
+      log.error("Malformed GCP App Yaml RuntimeLine=[{}]", runtimeLine);
       return null;
     }
 
     final String runtimeValue = runtimeArray[1].trim();
 
     if (!isSupportedRuntime(runtimeValue)) {
-      log.error("Incorrect GCP App Yaml Runtime: [{}]", runtimeLine);
+      log.error("Incorrect GCP App Yaml RuntimeLine=[{}]", runtimeLine);
       return null;
     }
 
@@ -92,7 +92,7 @@ public class UpdateGcpConfigs {
       Files.write(yamlFilePath, yamlData, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Writing Updated GCP App Yaml of repository: [{}]", repository.getRepoName());
+      log.error("Error Writing Updated GCP App Yaml of RepoName=[{}]", repository.getRepoName());
       return false;
     }
   }

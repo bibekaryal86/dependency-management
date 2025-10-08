@@ -32,7 +32,7 @@ public class ProcessSummaryService {
       final int pageNumber,
       final int pageSize) {
     log.debug(
-        "Get Process Summaries: [ {} ] | [ {} ] | [ {} ] | [ {} ]",
+        "Get Process Summaries: UpdateType=[{}] | UpdateDate=[{}] | PageNumber=[{}] | PageSize=[{}]",
         updateType,
         updateDate,
         pageNumber,
@@ -54,7 +54,7 @@ public class ProcessSummaryService {
   }
 
   public void saveProcessSummary(final ProcessSummaryEntity processSummary) {
-    log.debug("Save Process Summary: [ {} ]", processSummary);
+    log.debug("Save Process Summary: [{}]", processSummary);
     processSummaryRepository.insert(processSummary);
   }
 }

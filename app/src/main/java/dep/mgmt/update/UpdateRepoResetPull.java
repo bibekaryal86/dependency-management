@@ -19,9 +19,9 @@ public class UpdateRepoResetPull {
       final boolean isPull,
       final boolean isRunAsync) {
     log.info(
-        "Execute Update Repo Reset Pull on: [{}] | [{}] | [{}] | [{}] | [{}]",
+        "Execute Update Repo Reset Pull on: RepoName=[{}] | RepoHome=[{}] | IsReset=[{}] | IsPull=[{}] | IsRunAsync=[{}]",
+        repository == null ? null : repository.getRepoName(),
         repoHome,
-        repository,
         isReset,
         isPull,
         isRunAsync);

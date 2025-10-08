@@ -61,7 +61,8 @@ public abstract class VersionLookupGithubApi {
                   .findFirst()
                   .orElse(null);
       if (apiReleaseResponse == null) {
-        log.error("GitHub Api Response NULL Error: [{}/{}/isTags={}]", owner, repo, isTags);
+        log.error(
+            "GitHub Api Response NULL Error: [Owner={}/Repo={}/isTags={}]", owner, repo, isTags);
       }
     } catch (Exception ex) {
       log.error("ERROR Get Flyway Releases", ex);

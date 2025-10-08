@@ -35,7 +35,10 @@ public class GradleDependencyVersionService {
   public String getGradleDependencyVersion(
       final String group, final String artifact, final String currentVersion) {
     log.debug(
-        "Get Gradle Dependency Version: [ {} ] | [ {} ] | [ {} ]", group, artifact, currentVersion);
+        "Get Gradle Dependency Version: Group=[{}] | Artifact=[{}] | CurrentVersion=[{}]",
+        group,
+        artifact,
+        currentVersion);
 
     MavenSearchResponse mavenSearchResponse = getMavenSearchResponse(group, artifact);
 
@@ -43,7 +46,7 @@ public class GradleDependencyVersionService {
         || mavenSearchResponse.getResponse() == null
         || CommonUtilities.isEmpty(mavenSearchResponse.getResponse().getDocs())) {
       log.debug(
-          "Maven Response is NULL/EMPTY: [ {} ] | [ {} ] | [ {} ]",
+          "Maven Response is NULL/EMPTY: Group=[{}] | Artifact=[{}] | [{}]",
           group,
           artifact,
           mavenSearchResponse);
@@ -51,7 +54,7 @@ public class GradleDependencyVersionService {
     }
 
     log.trace(
-        "Get Gradle Dependency Version Maven Search Response: [ {} ] | [ {} ] | [ {} ]",
+        "Get Gradle Dependency Version Maven Search Response: Group=[{}] | Artifact=[{}] | [{}]",
         group,
         artifact,
         mavenSearchResponse);
@@ -60,7 +63,7 @@ public class GradleDependencyVersionService {
         getLatestDependencyVersion(mavenSearchResponse);
 
     log.debug(
-        "Get Gradle Dependency Version Latest MavenDoc: [ {} ], [ {} ], [ {} ]",
+        "Get Gradle Dependency Version Latest MavenDoc: Group=[{}], Artifact=[{}], [{}]",
         group,
         artifact,
         mavenDoc);
@@ -89,7 +92,7 @@ public class GradleDependencyVersionService {
       return mavenSearchResponseHttpResponse.responseBody();
     } catch (Exception ex) {
       log.error(
-          "ERROR in Get Maven Search Response: [ {} ] [ {} ] || [ {}-{} ]",
+          "ERROR in Get Maven Search Response: Group=[{}] Artifact=[{}] || [ Exception={}-ExMessage={} ]",
           group,
           artifact,
           ex.getClass().getName(),
@@ -100,17 +103,21 @@ public class GradleDependencyVersionService {
 
   public static MavenSearchResponse getMavenJsoupResponse(
       final String group, final String artifact) {
-    log.info("Get Maven Jsoup Response: [{}] | [{}]", group, artifact);
+    log.info("Get Maven Jsoup Response: Group=[{}] | Artifact=[{}]", group, artifact);
     try {
       final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
       final Document document = Jsoup.connect(url).get();
-      log.trace("Maven Jsoup Document: [ {} ] | [ {} ]", group, document);
+      log.trace(
+          "Maven Jsoup Document: Group=[{}] | Artifact=[{}] | Document={}",
+          group,
+          artifact,
+          document);
       final List<MavenSearchResponse.MavenResponse.MavenDoc> mavenDocs =
           getMavenJsoupResponseDocs(document, group, artifact);
       return new MavenSearchResponse(new MavenSearchResponse.MavenResponse(mavenDocs));
     } catch (Exception ex) {
       log.error(
-          "ERROR in Get Maven Jsoup Response: [ {} ] [ {} ] || [ {}-{} ]",
+          "ERROR in Get Maven Jsoup Response: Group=[{}] | Artifact=[{}]|| [ Exception={}-ExMessage={} ]",
           group,
           artifact,
           ex.getClass().getName(),
@@ -132,7 +139,7 @@ public class GradleDependencyVersionService {
       }
     } catch (Exception ex) {
       log.error(
-          "ERROR in Get Maven Response: [ {}] | [ {} ] [ {} ] || [ {}-{} ]",
+          "ERROR in Get Maven Response: IsDocumentNull=[{}] | Group=[{}] | Artifact=[{}] || [ Exception={}-ExMessage={} ]",
           document == null,
           group,
           artifact,
@@ -186,7 +193,7 @@ public class GradleDependencyVersionService {
     Map<String, DependencyEntity> gradleDependenciesMap = CacheConfig.getGradleDependenciesMap();
     if (CommonUtilities.isEmpty(gradleDependenciesMap)) {
       final List<DependencyEntity> gradleDependencies = gradleDependencyRepository.findAll();
-      log.debug("Gradle Dependencies List: [ {} ]", gradleDependencies.size());
+      log.debug("Gradle Dependencies List: ListSize=[{}]", gradleDependencies.size());
       gradleDependenciesMap =
           gradleDependencies.stream()
               .collect(
@@ -198,14 +205,14 @@ public class GradleDependencyVersionService {
   }
 
   public void insertGradleDependency(final String name, final String version) {
-    log.info("Insert Gradle Dependency: [ {} ] | [ {} ]", name, version);
+    log.info("Insert Gradle Dependency: Name=[{}] | Version=[{}]", name, version);
     CacheConfig.resetGradleDependenciesMap();
     final DependencyEntity dependencyEntity = new DependencyEntity(name, version);
     gradleDependencyRepository.insert(dependencyEntity);
   }
 
   public void updateGradleDependency(final DependencyEntity dependencyEntity) {
-    log.info("Update Gradle Dependency: [ {} ]", dependencyEntity);
+    log.info("Update Gradle Dependency: [{}]", dependencyEntity);
     CacheConfig.resetGradleDependenciesMap();
     gradleDependencyRepository.update(dependencyEntity.getId(), dependencyEntity);
   }
@@ -241,8 +248,8 @@ public class GradleDependencyVersionService {
           }
         });
 
-    log.info("Gradle Dependencies to Update: [{}]", gradleDependenciesToUpdate.size());
-    log.info("Gradle Dependencies Checked: [{}]", gradleDependenciesChecked.size());
+    log.info("Gradle Dependencies to Update: ListSize=[{}]", gradleDependenciesToUpdate.size());
+    log.info("Gradle Dependencies Checked: ListSize=[{}]", gradleDependenciesChecked.size());
     log.trace("gradleDependenciesToUpdate\n{}", gradleDependenciesToUpdate);
     log.trace("gradleDependenciesChecked\n{}", gradleDependenciesChecked);
 
@@ -261,7 +268,7 @@ public class GradleDependencyVersionService {
   }
 
   public void updateGradleDependency(final String library) {
-    log.info("Update Gradle Dependency: [{}]", library);
+    log.info("Update Gradle Dependency: Library=[{}]", library);
     final String[] groupArtifact = library.split(":");
     final String group = groupArtifact[0];
     final String artifact = groupArtifact[1];

@@ -20,7 +20,7 @@ public class UpdateBranchDelete {
       final boolean isDeleteUpdateDependenciesOnly,
       final boolean isCheckMergedPrBeforeDelete) {
     log.info(
-        "Update Branch Delete: [{}] | [{}] | [{}] | [{}]",
+        "Update Branch Delete: RepoName=[{}] | RepoHome=[{}] | IsDeleteUpdateDependenciesOnly=[{}] | IsCheckMergedPrBeforeDelete=[{}]",
         repository == null ? null : repository.getRepoName(),
         repoHome,
         isDeleteUpdateDependenciesOnly,
@@ -45,18 +45,21 @@ public class UpdateBranchDelete {
           ProcessUtils.getProcessedRepositoryFromMap(repository.getRepoName());
 
       if (!processRepository.getUpdateBranchCreated()) {
-        log.info("Update Branch NOT Deleted, No Update Branch: [{}]", repository.getRepoName());
+        log.info(
+            "Update Branch NOT Deleted, No Update Branch: RepoName=[{}]", repository.getRepoName());
         return;
       }
 
       if (!processRepository.getPrCreated()) {
-        log.info("Update Branch NOT Deleted, No Pull Request: [{}]", repository.getRepoName());
+        log.info(
+            "Update Branch NOT Deleted, No Pull Request: RepoName=[{}]", repository.getRepoName());
         return;
       }
 
       if (!processRepository.getPrMerged()) {
         log.info(
-            "Update Branch NOT Deleted, Pull Request Not Merged: [{}]", repository.getRepoName());
+            "Update Branch NOT Deleted, Pull Request Not Merged: RepoName=[{}]",
+            repository.getRepoName());
         return;
       }
 

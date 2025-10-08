@@ -126,7 +126,7 @@ public class GithubConnector {
       return response.responseBody();
     } else {
       log.error(
-          "Merge Pull Request Error: [{}] | [{}] | [{}] | [{}]",
+          "Merge Pull Request Error: RepoName=[{}] | PullNumber=[{}] | StatusCode=[{}] | ResponseBody=[{}]",
           repoName,
           pullNumber,
           response.statusCode(),
@@ -156,7 +156,7 @@ public class GithubConnector {
       return response.responseBody();
     } else {
       log.error(
-          "List Workflow Runs Error: [{}] | [{}] [{}]",
+          "List Workflow Runs Error: RepoName=[{}] | StatusCode=[{}] ResponseBody=[{}]",
           repoName,
           response.statusCode(),
           response.responseBody());

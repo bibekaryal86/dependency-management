@@ -36,7 +36,7 @@ public class PythonProjectUpdate {
   }
 
   public boolean execute() {
-    log.debug("Updating [{}]", this.repository.getRepoName());
+    log.debug("Updating RepoName=[{}]", this.repository.getRepoName());
     final boolean isProjectTomlUpdated = executePyProjectTomlUpdate();
     final boolean isRequirementsTxtUpdated = executeRequirementsTxtUpdate();
     final boolean isGcpConfigUpdated =
@@ -47,7 +47,7 @@ public class PythonProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished [{}]--[isProjectTomlUpdated={}|isRequirementsTxtUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
+        "Update Finished RepoName=[{}]--[isProjectTomlUpdated={}|isRequirementsTxtUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isProjectTomlUpdated,
         isRequirementsTxtUpdated,
@@ -66,7 +66,7 @@ public class PythonProjectUpdate {
     try {
       return Files.readAllLines(path);
     } catch (IOException ex) {
-      log.error("Error reading file: [ {} ]", path);
+      log.error("Error reading file: Path=[{}]", path);
     }
     return Collections.emptyList();
   }
@@ -76,7 +76,7 @@ public class PythonProjectUpdate {
       Files.write(path, content, StandardCharsets.UTF_8);
       return true;
     } catch (IOException ex) {
-      log.error("Error Saving Updated File: [ {} ]", path, ex);
+      log.error("Error Saving Updated File: Path=[{}]", path, ex);
       return false;
     }
   }
@@ -102,7 +102,9 @@ public class PythonProjectUpdate {
 
     if (requirementsTxtContent.isEmpty()) {
       log.error(
-          "[ {} ] content is empty: in [ {} ]", requirementsTxt, this.repository.getRepoName());
+          "RequirementsTxt=[{}] content is empty: in RepoName=[{}]",
+          requirementsTxt,
+          this.repository.getRepoName());
     } else {
       return modifyRequirementsTxt(requirementsTxtPath, requirementsTxtContent);
     }
@@ -159,7 +161,7 @@ public class PythonProjectUpdate {
         updatedLine = updatedLine.replace(version, latestVersion);
       }
     } else {
-      log.error("Python Requirement Array Size Incorrect: [ {} ]", requirement);
+      log.error("Python Requirement Array Size Incorrect: Requirement=[{}]", requirement);
     }
     return updatedLine;
   }
@@ -179,7 +181,7 @@ public class PythonProjectUpdate {
     List<String> pyProjectContent = readFromFile(pyProjectTomlPath);
 
     if (pyProjectContent.isEmpty()) {
-      log.error("PyProject Toml Content is empty: [ {} ]", this.repository.getRepoName());
+      log.error("PyProject Toml Content is empty: RepoName=[{}]", this.repository.getRepoName());
     } else {
       return modifyPyProjectToml(pyProjectTomlPath, pyProjectContent);
     }
@@ -310,14 +312,14 @@ public class PythonProjectUpdate {
           updatedLine = updatedLine.replace(version, latestVersion);
         }
       } else {
-        log.error("Build Tool Array Size Incorrect: [ {} ]", buildTool);
+        log.error("Build Tool Array Size Incorrect: BuildTool=[{}]", buildTool);
       }
     }
     return updatedLine;
   }
 
   private void savePackage(final String name, final String version) {
-    log.info("Python Packages information missing in local repo: [ {} ]", name);
+    log.info("Python Packages information missing in local repo: RepoName=[{}]", name);
     this.pythonPackageVersionService.insertPythonPackage(name, version);
   }
 }
