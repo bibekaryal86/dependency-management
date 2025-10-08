@@ -26,7 +26,7 @@ public class GithubService {
       final LocalDate branchDate,
       final boolean isCheckUpdateBranchBeforeCreate) {
     log.info(
-        "Github Pull Request Create: [{}] | [{}] | [{}]",
+        "Github Pull Request Create: RepoName=[{}] | BranchDate=[{}] | IsCheckUpdateBranchBeforeCreate=[{}]",
         repoName,
         branchDate,
         isCheckUpdateBranchBeforeCreate);
@@ -36,7 +36,10 @@ public class GithubService {
           ProcessUtils.getProcessedRepositoryFromMap(repoName);
 
       if (!processRepository.getUpdateBranchCreated()) {
-        log.debug("Github Pull Request NOT Created: [{}] | [{}]", repoName, branchDate);
+        log.debug(
+            "Github Pull Request NOT Created: RepoName=[{}] | BranchDate=[{}]",
+            repoName,
+            branchDate);
         return;
       }
     }
@@ -44,6 +47,12 @@ public class GithubService {
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     final GithubApiModel.CreatePullRequestResponse createPullRequestResponse =
         githubConnector.createPullRequest(repoName, branchName);
+
+    log.info(
+        "Github Pull Request Create Response: RepoName=[{}] | BranchDate=[{}] | [{}]",
+        repoName,
+        branchDate,
+        createPullRequestResponse);
 
     if (createPullRequestResponse != null
         && createPullRequestResponse.getNumber() != null
@@ -59,7 +68,7 @@ public class GithubService {
       final Integer prNumber,
       final boolean isCheckPrCreatedBeforeMerge) {
     log.info(
-        "Github Pull Request Merge: [{}] | [{}] | [{}] | [{}]",
+        "Github Pull Request Merge: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}] | IsCheckPrCreatedBeforeMerge=[{}]",
         repoName,
         branchDate,
         prNumber,
@@ -70,8 +79,8 @@ public class GithubService {
           ProcessUtils.getProcessedRepositoryFromMap(repoName);
 
       if (!processRepository.getUpdateBranchCreated()) {
-        log.debug(
-            "Github Pull Request NOT Merged, No Update Branch: [{}] | [{}] | [{}]",
+        log.info(
+            "Github Pull Request NOT Merged, No Update Branch: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}]",
             repoName,
             branchDate,
             prNumber);
@@ -80,7 +89,7 @@ public class GithubService {
 
       if (!processRepository.getPrCreated()) {
         log.info(
-            "Github Pull Request NOT Merged, No Pull Request: [{}] | [{}] | [{}]",
+            "Github Pull Request NOT Merged, No Pull Request: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}]",
             repoName,
             branchDate,
             prNumber);
@@ -92,17 +101,20 @@ public class GithubService {
         checkWorkflowRun(repoName, branchDate, "?event=pull_request");
 
     if (prNumberFromWorkflowRun == null) {
-      log.info("PR Number from Workflow Run NOT Found: [{}] | [{}]", repoName, branchDate);
+      log.info(
+          "PR Number from Workflow Run NOT Found: RepoName=[{}] | BranchDate=[{}]",
+          repoName,
+          branchDate);
     }
 
     if (prNumber == null && prNumberFromWorkflowRun == null) {
-      log.error("No PR Number to Merge: [{}] | [{}]", repoName, branchDate);
+      log.info("No PR Number to Merge: RepoName=[{}] | BranchDate=[{}]", repoName, branchDate);
       return;
     }
 
     if (prNumber != null && !Objects.equals(prNumber, prNumberFromWorkflowRun)) {
       log.error(
-          "PR Number Not Matched in Workflow Run: [{}] | [{}] | [{}] | [{}]",
+          "PR Number Not Matched in Workflow Run: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}] | PrNumberWorkflowRun=[{}]",
           repoName,
           branchDate,
           prNumber,
@@ -113,13 +125,21 @@ public class GithubService {
     final GithubApiModel.MergePullRequestResponse mergePullRequestResponse =
         githubConnector.mergePullRequest(repoName, prNumberFromWorkflowRun);
 
+    log.info(
+        "Github Pull Request Merge Response: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}] | PrNumberFromWorkflowRun=[{}] | [{}]",
+        repoName,
+        branchDate,
+        prNumber,
+        prNumberFromWorkflowRun,
+        mergePullRequestResponse);
+
     if (mergePullRequestResponse != null
         && mergePullRequestResponse.getMerged() != null
         && mergePullRequestResponse.getMerged()) {
       ProcessUtils.updateProcessedRepositoriesPrMerged(repoName);
     } else {
       log.error(
-          "PR Not Merged: [{}] | [{}] | [{}] | [{}] | [{}]",
+          "PR Not Merged: RepoName=[{}] | BranchDate=[{}] | PrNumber=[{}] | PrNumberFromWorkflowRun=[{}] | [{}]",
           repoName,
           branchDate,
           prNumber,
@@ -130,7 +150,11 @@ public class GithubService {
 
   public Integer checkWorkflowRun(
       final String repoName, final LocalDate branchDate, final String queryParams) {
-    log.info("Check Workflow Run: [{}] | [{}] | [{}]", repoName, branchDate, queryParams);
+    log.info(
+        "Check Workflow Run: RepoName=[{}] | BranchDate=[{}] | QueryParams=[{}]",
+        repoName,
+        branchDate,
+        queryParams);
 
     final String branchName = String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, branchDate);
     final GithubApiModel.ListWorkflowRunsResponse workflowRunsResponse =
@@ -139,7 +163,7 @@ public class GithubService {
     if (workflowRunsResponse == null
         || CommonUtilities.isEmpty(workflowRunsResponse.getWorkflowRuns())) {
       log.error(
-          "Workflow Runs Response IS null OR Workflow Runs IS empty: [{}] | [{}] | [{}]",
+          "Workflow Runs Response IS null OR Workflow Runs IS empty: RepoName=[{}] | BranchDate=[{}] | [{}]",
           repoName,
           branchDate,
           workflowRunsResponse);
@@ -156,9 +180,18 @@ public class GithubService {
 
     if (CommonUtilities.isEmpty(workflowRuns)) {
       log.error(
-          "Workflow Runs IS empty: [{}] | [{}] | [{}]", repoName, branchDate, workflowRunsResponse);
+          "Workflow Runs IS empty: RepoName=[{}] | BranchDate=[{}] | [{}]",
+          repoName,
+          branchDate,
+          workflowRunsResponse);
       return null;
     }
+
+    log.info(
+        "Check Workflow Run Response: RepoName=[{}] | BranchDate=[{}] | [{}]",
+        repoName,
+        branchDate,
+        workflowRuns);
 
     final boolean isWorkflowRunSuccessful =
         workflowRuns.stream()
@@ -171,7 +204,10 @@ public class GithubService {
 
     if (!isWorkflowRunSuccessful) {
       log.error(
-          "Workflow Run Not Successful: [{}] | [{}] | [{}]", repoName, branchName, workflowRuns);
+          "Workflow Run Not Successful: RepoName=[{}] | BranchDate=[{}] | [{}]",
+          repoName,
+          branchName,
+          workflowRuns);
       return null;
     }
 

@@ -30,7 +30,7 @@ public class UpdateNpmSnapshots {
   }
 
   private void executeUpdate(final AppDataRepository repository) {
-    log.info("Execute Update NPM Snapshots: [ {} ]", repository.getRepoName());
+    log.info("Execute Update NPM Snapshots: RepoName=[{}]", repository.getRepoName());
     List<String> arguments = new LinkedList<>();
     arguments.add(repository.getRepoPath().toString());
     arguments.add(branchName);

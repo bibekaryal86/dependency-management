@@ -36,7 +36,7 @@ public class NodeProjectUpdate {
   }
 
   public boolean execute() {
-    log.debug("Updating [{}]", this.repository.getRepoName());
+    log.debug("Updating RepoName=[{}]", this.repository.getRepoName());
     final boolean isPackageJsonUpdated = executePackageJsonUpdate();
     final boolean isGcpConfigUpdated =
         UpdateGcpConfigs.execute(
@@ -46,7 +46,7 @@ public class NodeProjectUpdate {
     final boolean isGithubWorkflowsUpdated =
         UpdateGithubWorkflows.execute(this.repository, this.latestVersions);
     log.info(
-        "Update Finished: [{}]--[{}-{}-{}-{}]",
+        "Update Finished: RepoName=[{}]--[isPackageJsonUpdated={}|isGcpConfigUpdated={}|isDockerfileUpdated={}|isGithubWorkflowsUpdated={}]",
         this.repository.getRepoName(),
         isPackageJsonUpdated,
         isGcpConfigUpdated,
@@ -71,7 +71,7 @@ public class NodeProjectUpdate {
     final JsonNode rootNode = readPackageJsonContents(packageJsonFile);
 
     if (rootNode == null) {
-      log.error("Root Node is NULL: [{}]", packageJsonPath);
+      log.error("Root Node is NULL: PackageJsonPath=[{}]", packageJsonPath);
       return false;
     }
 
@@ -99,7 +99,7 @@ public class NodeProjectUpdate {
     try {
       return CommonUtilities.objectMapperProvider().readTree(file);
     } catch (Exception ex) {
-      log.error("Get Package Json Contents: [{}]", file.getPath(), ex);
+      log.error("Get Package Json Contents: FilePath=[{}]", file.getPath(), ex);
       return null;
     }
   }
@@ -114,7 +114,7 @@ public class NodeProjectUpdate {
       Files.write(Paths.get(file.toURI()), jsonContent.getBytes());
       return true;
     } catch (Exception ex) {
-      log.error("Write Package Json Contents: [{}]", file.getPath(), ex);
+      log.error("Write Package Json Contents: FilePath=[{}]", file.getPath(), ex);
       return false;
     }
   }

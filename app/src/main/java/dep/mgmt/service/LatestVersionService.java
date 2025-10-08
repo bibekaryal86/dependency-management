@@ -98,6 +98,8 @@ public class LatestVersionService {
                 codeql == null ? latestVersionEntity.getCodeql() : codeql),
             new AppDataLatestVersions.LatestVersionLanguages(java, node, python));
 
+    log.debug("LatestVersionEntity:\n{}", latestVersionEntity);
+    log.debug("LatestVersions:\n{}", latestVersions);
     if (checkAndSaveLatestVersionEntity(latestVersionEntity, latestVersions)) {
       saveLatestVersion(latestVersions);
     }

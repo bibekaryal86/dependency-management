@@ -63,7 +63,7 @@ public class AppDataUtils {
             .filter(
                 key -> !ConstantUtils.ENV_SERVER_PORT.equals(key) && properties.get(key) == null)
             .toList();
-    log.info("Args Map After Conversion: [ {} ]", properties.size());
+    log.info("Args Map After Conversion: MapSize=[{}]", properties.size());
     if (errors.isEmpty()) {
       return properties;
     }
@@ -151,8 +151,8 @@ public class AppDataUtils {
     repositories.addAll(gradleWrapperRepositories);
     repositories.addAll(pythonRepositories);
 
-    log.info("Repository list: [ {} ]", repositories.size());
-    log.debug("Repository list: [ {} ]", repositories);
+    log.info("Repository list: ListSize=[{}]", repositories.size());
+    log.trace("Repository list: [{}]", repositories);
     return repositories;
   }
 
@@ -174,7 +174,7 @@ public class AppDataUtils {
           .filter(Objects::nonNull)
           .toList();
     } catch (IOException ex) {
-      log.error("Error in Read Gradle Modules: [ {} ]", settingsGradlePath, ex);
+      log.error("Error in Read Gradle Modules: SettingsGradlePath=[{}]", settingsGradlePath, ex);
       return Collections.singletonList(ConstantUtils.APP_MAIN_MODULE);
     }
   }
@@ -202,8 +202,8 @@ public class AppDataUtils {
         scriptFiles.add(new AppDataScriptFile(fileName));
       }
 
-      log.info("Script Files list: [ {} ]", scriptFiles.size());
-      log.debug("Script Files list: [ {} ]", scriptFiles);
+      log.info("Script Files list: ListSize=[{}]", scriptFiles.size());
+      log.trace("Script Files list: [{}]", scriptFiles);
 
       return scriptFiles;
     } catch (IOException ex) {
@@ -227,7 +227,7 @@ public class AppDataUtils {
         return parseDistributionUrlForGradleVersion(distributionUrl);
       }
     } catch (IOException e) {
-      log.error("Error reading gradle-wrapper.properties: [ {} ]", repository);
+      log.error("Error reading gradle-wrapper.properties: Repository=[{}]", repository);
     }
     return null;
   }
@@ -277,7 +277,7 @@ public class AppDataUtils {
         }
       }
     } catch (Exception ex) {
-      log.error("Validate Latest Version: [{}]", latestVersion, ex);
+      log.error("Validate Latest Version: LatestVersion[{}]", latestVersion, ex);
       throw new RuntimeException("Latest Version Value Check Exception");
     }
   }

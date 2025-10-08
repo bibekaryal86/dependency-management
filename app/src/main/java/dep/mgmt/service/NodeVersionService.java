@@ -39,8 +39,6 @@ public class NodeVersionService {
       return null;
     }
 
-    log.info("Latest Node Release: [ {} ]", latestNodeRelease);
-
     final String versionActual = latestNodeRelease.getVersion();
     final String versionFull = getVersionFull(versionActual);
     final String versionMajor = getVersionMajor(versionFull);

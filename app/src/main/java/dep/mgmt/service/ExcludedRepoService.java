@@ -26,7 +26,7 @@ public class ExcludedRepoService {
     Map<String, ExcludedRepoEntity> excludedReposMap = CacheConfig.getExcludedReposMap();
     if (CommonUtilities.isEmpty(excludedReposMap)) {
       final List<ExcludedRepoEntity> excludedRepos = excludedRepoRepository.findAll();
-      log.info("Excluded Repos List: [ {} ]", excludedRepos);
+      log.info("Excluded Repos List: [{}]", excludedRepos);
       excludedReposMap =
           excludedRepos.stream()
               .collect(Collectors.toMap(ExcludedRepoEntity::getName, excludedRepo -> excludedRepo));
@@ -36,14 +36,14 @@ public class ExcludedRepoService {
   }
 
   public void insertExcludedRepo(final String name) {
-    log.info("Insert Excluded Repo: [ {} ]", name);
+    log.info("Insert Excluded Repo: [{}]", name);
     CacheConfig.resetExcludedReposMap();
     final ExcludedRepoEntity excludedRepoEntity = new ExcludedRepoEntity(name);
     excludedRepoRepository.insert(excludedRepoEntity);
   }
 
   public void deleteExcludedRepo(final String name) {
-    log.info("Delete Excluded Repo: [ {} ]", name);
+    log.info("Delete Excluded Repo: [{}]", name);
     CacheConfig.resetExcludedReposMap();
     excludedRepoRepository.delete(ConstantUtils.MONGODB_COLUMN_NAME, name);
   }

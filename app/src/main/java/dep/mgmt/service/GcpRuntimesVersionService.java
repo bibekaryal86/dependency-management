@@ -38,7 +38,6 @@ public class GcpRuntimesVersionService {
     if (latestRuntimesMap.isEmpty()) {
       log.error("Latest GCP Runtimes Map is Empty...");
     } else {
-      log.info("Latest GCP Runtimes Map: {}]", latestRuntimesMap);
       return latestRuntimesMap.entrySet().stream()
           .filter(entry -> validKeys.contains(entry.getKey()))
           .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

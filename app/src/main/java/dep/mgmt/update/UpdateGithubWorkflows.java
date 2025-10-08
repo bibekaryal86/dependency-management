@@ -51,7 +51,10 @@ public class UpdateGithubWorkflows {
           .filter(path -> path.toString().endsWith(".yml"))
           .collect(Collectors.toList());
     } catch (IOException ex) {
-      log.error("Find Github Actions Files: [{}]", githubWorkflowsFolderPath, ex);
+      log.error(
+          "Find Github Actions Files: GithubWorkflowsFolderPath=[{}]",
+          githubWorkflowsFolderPath,
+          ex);
       return Collections.emptyList();
     }
   }

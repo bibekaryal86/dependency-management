@@ -38,7 +38,10 @@ public class ExecuteScriptFile {
 
     if (isRunAsync) {
       runAsync(scriptPath, repoName, type, arguments);
-      log.info("Script execution started asynchronously: [{}] | [{}]", scriptPath, repoName);
+      log.info(
+          "Script execution started asynchronously: ScriptPath=[{}] | RepoName=[{}]",
+          scriptPath,
+          repoName);
     } else {
       runSync(scriptPath, repoName, type, arguments);
     }
@@ -55,7 +58,11 @@ public class ExecuteScriptFile {
                 Process process = startProcess(scriptPath, arguments, Boolean.TRUE);
                 processOutput(process, scriptPath, repoName, type);
               } catch (Exception ex) {
-                log.error("Error in Execute Script (async): [{}] | [{}]", scriptPath, repoName, ex);
+                log.error(
+                    "Error in Execute Script (async): ScriptPath=[{}] | RepoName=[{}]",
+                    scriptPath,
+                    repoName,
+                    ex);
               }
             })
         .start();
@@ -70,14 +77,15 @@ public class ExecuteScriptFile {
       final Process process = startProcess(scriptPath, arguments, Boolean.FALSE);
       processOutput(process, scriptPath, repoName, type);
     } catch (Exception ex) {
-      log.error("Error in Execute Script: [{}] | [{}]", scriptPath, repoName, ex);
+      log.error(
+          "Error in Execute Script: ScriptPath=[{}] | RepoName=[{}]", scriptPath, repoName, ex);
     }
   }
 
   private static Process startProcess(
       final String scriptPath, final List<String> arguments, final boolean isRunAsync)
       throws IOException, InterruptedException {
-    log.debug("Starting: [{}] | [{}]", scriptPath, arguments);
+    log.debug("Starting: ScriptPath=[{}] | Arguments=[{}]", scriptPath, arguments);
     try {
       List<String> command = new LinkedList<>();
       command.add(ConstantUtils.COMMAND_PATH);
@@ -126,9 +134,17 @@ public class ExecuteScriptFile {
       }
 
       if (isError) {
-        log.info("ERROR in Process: [{}] | [{}]\n{}", scriptPath, repoName, stringBuilder);
+        log.info(
+            "ERROR in Process: ScriptPath=[{}] | RepoName=[{}]\n{}",
+            scriptPath,
+            repoName,
+            stringBuilder);
       } else {
-        log.debug("Process output: [{}] | [{}] \n{}", scriptPath, repoName, stringBuilder);
+        log.debug(
+            "Process output: ScriptPath=[{}] | RepoName=[{}] \n{}",
+            scriptPath,
+            repoName,
+            stringBuilder);
       }
 
       checkProcessedRepository(stringBuilder, scriptPath, repoName, type);
