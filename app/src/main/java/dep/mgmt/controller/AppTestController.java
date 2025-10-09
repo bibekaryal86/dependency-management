@@ -50,8 +50,10 @@ public class AppTestController {
         ServerUtils.sendResponse(ctx, rateLimitResponse, HttpResponseStatus.OK, null);
       }
       case Endpoints.APP_TESTS_TASKS -> {
+        final String isRemainingTasksOnlyStr =
+            ServerUtils.getQueryParam(fullHttpRequest.uri(), "remainingTasksOnly", "false");
         final Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> processTaskQueues =
-            updateRepoService.getAllProcessTaskQueues();
+            updateRepoService.getAllProcessTaskQueues("true".equals(isRemainingTasksOnlyStr));
         ServerUtils.sendResponse(ctx, processTaskQueues, HttpResponseStatus.OK, null);
       }
       case Endpoints.APP_TESTS_CLEAR -> {

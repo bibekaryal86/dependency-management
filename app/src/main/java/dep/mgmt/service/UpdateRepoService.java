@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +66,17 @@ public class UpdateRepoService {
     this.latestVersionService = new LatestVersionService();
   }
 
-  public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues() {
+  public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues(
+      final boolean isRemainingTasksOnly) {
+    Stream<ProcessSummaries.ProcessSummary.ProcessTask> processTaskStream =
+        ProcessUtils.getProcessedTasks().values().stream();
+
+    if (isRemainingTasksOnly) {
+      processTaskStream = processTaskStream.filter(task -> task.getEnded() == null);
+    }
+
     final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks =
-        ProcessUtils.getProcessedTasks().values().stream()
+        processTaskStream
             .sorted(Comparator.comparing(ProcessSummaries.ProcessSummary.ProcessTask::getAdded))
             .toList();
     return Map.of("processTasks", processTasks);
