@@ -10,6 +10,7 @@ import dep.mgmt.model.entity.LogEntryEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ConvertUtils {
@@ -28,6 +29,7 @@ public class ConvertUtils {
                     dependencyEntity.getSkipVersion(),
                     dependencyEntity.getLastCheckedDate(),
                     dependencyEntity.getLastUpdatedDate()))
+        .sorted(Comparator.comparing(Dependencies.Dependency::getName))
         .toList();
   }
 
