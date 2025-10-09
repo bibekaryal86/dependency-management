@@ -106,7 +106,7 @@ public class GradleDependencyVersionService {
     try {
       final String url = String.format(ConstantUtils.MAVEN_JSOUP_ENDPOINT, group, artifact);
       final Document document = Jsoup.connect(url).get();
-      log.info(
+      log.trace(
           "Maven Jsoup Document: Group=[{}] | Artifact=[{}] | Document={}",
           group,
           artifact,
