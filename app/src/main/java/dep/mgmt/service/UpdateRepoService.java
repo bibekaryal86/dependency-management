@@ -1,5 +1,7 @@
 package dep.mgmt.service;
 
+import static dep.mgmt.util.ProcessUtils.TASK_QUEUES;
+
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppData;
 import dep.mgmt.model.AppDataLatestVersions;
@@ -33,12 +35,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UpdateRepoService {
   private static final Logger log = LoggerFactory.getLogger(UpdateRepoService.class);
-  private static final TaskQueues taskQueues = new TaskQueues();
 
   private final GradleDependencyVersionService gradleDependencyVersionService;
   private final GradlePluginVersionService gradlePluginVersionService;
@@ -64,9 +66,17 @@ public class UpdateRepoService {
     this.latestVersionService = new LatestVersionService();
   }
 
-  public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues() {
+  public Map<String, List<ProcessSummaries.ProcessSummary.ProcessTask>> getAllProcessTaskQueues(
+      final boolean isRemainingTasksOnly) {
+    Stream<ProcessSummaries.ProcessSummary.ProcessTask> processTaskStream =
+        ProcessUtils.getProcessedTasks().values().stream();
+
+    if (isRemainingTasksOnly) {
+      processTaskStream = processTaskStream.filter(task -> task.getEnded() == null);
+    }
+
     final List<ProcessSummaries.ProcessSummary.ProcessTask> processTasks =
-        ProcessUtils.getProcessedTasks().values().stream()
+        processTaskStream
             .sorted(Comparator.comparing(ProcessSummaries.ProcessSummary.ProcessTask::getAdded))
             .toList();
     return Map.of("processTasks", processTasks);
@@ -74,20 +84,23 @@ public class UpdateRepoService {
 
   public void executeTaskQueues() {
     log.info("Execute Task Queues...");
-    if (!taskQueues.isProcessing()) {
-      taskQueues.processQueues();
+    if (!TASK_QUEUES.isProcessing()) {
+      TASK_QUEUES.processQueues();
     }
   }
 
   public void clearTaskQueues() {
     log.info("Clear Task Queues...");
-    taskQueues.clearQueue();
+    TASK_QUEUES.clearQueue();
     ProcessUtils.resetProcessedRepositoriesAndSummary();
   }
 
-  public void recreateLocalCaches() {
+  public void recreateLocalCaches(final boolean isExecuteTaskQueues) {
     resetCaches();
     setCaches();
+    if (isExecuteTaskQueues) {
+      executeTaskQueues();
+    }
   }
 
   public void scheduledUpdate(final RequestMetadata requestMetadata) {
@@ -246,7 +259,7 @@ public class UpdateRepoService {
     ProcessUtils.resetProcessedRepositoriesAndSummary();
 
     if (requestMetadata.getRecreateCaches()) {
-      recreateLocalCaches();
+      recreateLocalCaches(Boolean.FALSE);
     }
 
     if (requestMetadata.getRecreateScriptFiles()
@@ -263,7 +276,7 @@ public class UpdateRepoService {
               || requestMetadata.getUpdateType().equals(RequestParams.UpdateType.PULL)));
 
       if (requestMetadata.getRecreateCaches()) {
-        recreateLocalCaches();
+        recreateLocalCaches(Boolean.FALSE);
       }
     }
 
@@ -581,7 +594,7 @@ public class UpdateRepoService {
                     repository.getRepoName(),
                     requestMetadata.getBranchDate(),
                     isCheckUpdateBranchBeforeCreate),
-            ConstantUtils.TASK_DELAY_PULL_REQUEST);
+            ConstantUtils.TASK_DELAY_ZERO);
       }
     } else {
       final AppDataRepository repository = getRepository(requestRepoName);
@@ -615,9 +628,7 @@ public class UpdateRepoService {
                     requestMetadata.getBranchDate(),
                     null,
                     isCheckPrCreatedBeforeMerge),
-            i == 0
-                ? ConstantUtils.TASK_DELAY_PULL_REQUEST_TRY
-                : ConstantUtils.TASK_DELAY_PULL_REQUEST);
+            ConstantUtils.TASK_DELAY_ZERO);
       }
     } else {
       final AppDataRepository repository = getRepository(requestRepoName);
@@ -631,7 +642,7 @@ public class UpdateRepoService {
                   requestMetadata.getBranchDate(),
                   null,
                   isCheckPrCreatedBeforeMerge),
-          ConstantUtils.TASK_DELAY_PULL_REQUEST);
+          ConstantUtils.TASK_DELAY_DEFAULT);
     }
   }
 
@@ -661,11 +672,11 @@ public class UpdateRepoService {
         queueName,
         taskName,
         delayMillis);
-    TaskQueues.TaskQueue taskQueue = taskQueues.getQueueByName(queueName);
+    TaskQueues.TaskQueue taskQueue = TASK_QUEUES.getQueueByName(queueName);
     if (taskQueue == null) {
       taskQueue = new TaskQueues.TaskQueue(queueName);
       taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(taskName, action, delayMillis));
-      taskQueues.addQueue(taskQueue);
+      TASK_QUEUES.addQueue(taskQueue);
     } else {
       taskQueue.addTask(new TaskQueues.TaskQueue.OneTask(taskName, action, delayMillis));
     }
@@ -770,14 +781,14 @@ public class UpdateRepoService {
         () -> {
           logEntryService.saveLogEntry(null);
         },
-        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
+        ConstantUtils.TASK_DELAY_DEFAULT * 5);
 
     // stop log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
         ConstantUtils.TASK_LOG_CAPTURE_STOP,
         LogCaptureUtils::stop,
-        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
+        ConstantUtils.TASK_DELAY_DEFAULT * 5);
   }
 
   private AppDataScriptFile getScriptFile(final String scriptFileName) {

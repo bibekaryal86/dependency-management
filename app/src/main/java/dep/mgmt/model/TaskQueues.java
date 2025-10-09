@@ -37,6 +37,7 @@ public class TaskQueues {
 
   public void clearQueue() {
     nonEmptyQueueCount.set(0);
+    queueOfQueues.forEach(TaskQueue::clearQueue);
     queueOfQueues.clear();
   }
 
@@ -47,6 +48,24 @@ public class TaskQueues {
       }
     }
     return null;
+  }
+
+  public void updateOneTaskDelay(
+      final String queueName, final String taskName, final long newDelayMillis) {
+    for (final TaskQueue taskQueue : queueOfQueues) {
+      if (taskQueue.getName().equals(queueName)) {
+        for (final TaskQueue.OneTask task : taskQueue.getTaskQueue()) {
+          if (task.getName().equals(taskName)) {
+            task.setDelayMillis(newDelayMillis);
+            log.info(
+                "Updated Delay for Queue=[{}] Task=[{}] to [{}ms]",
+                queueName,
+                taskName,
+                newDelayMillis);
+          }
+        }
+      }
+    }
   }
 
   public Future<String> processQueues() {
@@ -178,6 +197,10 @@ public class TaskQueues {
 
       public String getName() {
         return name;
+      }
+
+      public void setDelayMillis(long newDelayMillis) {
+        delayMillis.set(newDelayMillis);
       }
 
       public Object execute() {
