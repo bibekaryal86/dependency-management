@@ -27,11 +27,12 @@ public class MongoDbConfig {
     CodecRegistry codecRegistry =
         CodecRegistries.fromRegistries(
             MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
-    MongoClient mongoClient = MongoClients.create(connectionString);
-    database =
-        mongoClient
-            .getDatabase(ConstantUtils.MONGODB_DATABASE_NAME)
-            .withCodecRegistry(codecRegistry);
+    try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+      database =
+          mongoClient
+              .getDatabase(ConstantUtils.MONGODB_DATABASE_NAME)
+              .withCodecRegistry(codecRegistry);
+    }
   }
 
   public static MongoDatabase getDatabase() {
