@@ -1,18 +1,10 @@
 package dep.mgmt.util;
 
-import dep.mgmt.model.TaskQueues;
 import dep.mgmt.model.enums.RequestParams;
 import io.netty.util.AttributeKey;
 import java.util.List;
 
 public class ConstantUtils {
-
-  public static final TaskQueues TASK_QUEUES;
-
-  static {
-    TASK_QUEUES = new TaskQueues();
-  }
-
   // provided at runtime
   public static final String ENV_SERVER_PORT = "PORT";
   public static final String ENV_SELF_USER = "SELF_USERNAME";
@@ -142,7 +134,7 @@ public class ConstantUtils {
   public static final long TASK_DELAY_ZERO = 0L;
   public static final long TASK_DELAY_DEFAULT = 1000; // 1 second
   public static final long TASK_DELAY_PULL_REQUEST = 1000 * 60; // 1 minute
-  public static final long TASK_DELAY_PULL_REQUEST_TRY = 1000 * 60 * 10; // 5 minutes
+  public static final long TASK_DELAY_PULL_REQUEST_TRY = 1000 * 60 * 5; // 5 minutes
   public static final long TASK_DELAY_PULL_REQUEST_RETRY = 1000 * 60 * 30; // 30 minutes
   public static final String DOCKER_JRE = "eclipse-temurin";
   public static final String DOCKER_ALPINE = "alpine";
@@ -204,14 +196,11 @@ public class ConstantUtils {
       "TASK_RESET_GRADLE_DEPENDENCIES_LOCAL";
   public static final String TASK_SET_GRADLE_DEPENDENCIES_LOCAL =
       "TASK_SET_GRADLE_DEPENDENCIES_LOCAL";
-  public static final String TASK_SET_GRADLE_DEPENDENCIES_REMOTE =
-      "TASK_SET_GRADLE_DEPENDENCIES_REMOTE";
   public static final String TASK_RESET_GRADLE_PLUGINS_LOCAL = "TASK_RESET_GRADLE_PLUGINS_LOCAL";
   public static final String TASK_SET_GRADLE_PLUGINS_LOCAL = "TASK_SET_GRADLE_PLUGINS_LOCAL";
   public static final String TASK_RESET_NODE_DEPENDENCIES_LOCAL =
       "TASK_RESET_NODE_DEPENDENCIES_LOCAL";
   public static final String TASK_SET_NODE_DEPENDENCIES_LOCAL = "TASK_SET_NODE_DEPENDENCIES_LOCAL";
-  public static final String TASK_UPDATE_NODE_DEPENDENCIES = "TASK_UPDATE_NODE_DEPENDENCIES";
   public static final String TASK_RESET_PYTHON_PACKAGES_LOCAL = "TASK_RESET_PYTHON_PACKAGES_LOCAL";
   public static final String TASK_SET_PYTHON_PACKAGES_LOCAL = "TASK_SET_PYTHON_PACKAGES_LOCAL";
   public static final String TASK_RESET_EXCLUDED_REPOS_LOCAL = "TASK_RESET_EXCLUDED_REPOS_LOCAL";

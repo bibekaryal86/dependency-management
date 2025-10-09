@@ -1,6 +1,6 @@
 package dep.mgmt.service;
 
-import static dep.mgmt.util.ConstantUtils.TASK_QUEUES;
+import static dep.mgmt.util.ProcessUtils.TASK_QUEUES;
 
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.model.AppData;
@@ -585,7 +585,7 @@ public class UpdateRepoService {
                     repository.getRepoName(),
                     requestMetadata.getBranchDate(),
                     isCheckUpdateBranchBeforeCreate),
-            ConstantUtils.TASK_DELAY_PULL_REQUEST);
+            ConstantUtils.TASK_DELAY_ZERO);
       }
     } else {
       final AppDataRepository repository = getRepository(requestRepoName);
@@ -619,9 +619,7 @@ public class UpdateRepoService {
                     requestMetadata.getBranchDate(),
                     null,
                     isCheckPrCreatedBeforeMerge),
-            i == 0
-                ? ConstantUtils.TASK_DELAY_PULL_REQUEST_TRY
-                : ConstantUtils.TASK_DELAY_PULL_REQUEST);
+            ConstantUtils.TASK_DELAY_ZERO);
       }
     } else {
       final AppDataRepository repository = getRepository(requestRepoName);
@@ -635,7 +633,7 @@ public class UpdateRepoService {
                   requestMetadata.getBranchDate(),
                   null,
                   isCheckPrCreatedBeforeMerge),
-          ConstantUtils.TASK_DELAY_PULL_REQUEST);
+          ConstantUtils.TASK_DELAY_DEFAULT);
     }
   }
 
@@ -774,14 +772,14 @@ public class UpdateRepoService {
         () -> {
           logEntryService.saveLogEntry(null);
         },
-        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
+        ConstantUtils.TASK_DELAY_DEFAULT * 5);
 
     // stop log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
         ConstantUtils.TASK_LOG_CAPTURE_STOP,
         LogCaptureUtils::stop,
-        isSendEmail ? ConstantUtils.TASK_DELAY_PULL_REQUEST : ConstantUtils.TASK_DELAY_DEFAULT);
+        ConstantUtils.TASK_DELAY_DEFAULT * 5);
   }
 
   private AppDataScriptFile getScriptFile(final String scriptFileName) {
