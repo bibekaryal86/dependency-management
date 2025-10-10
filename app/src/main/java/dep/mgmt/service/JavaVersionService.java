@@ -49,7 +49,7 @@ public class JavaVersionService {
   public List<JavaReleaseResponse.JavaVersion> getJavaReleaseVersions() {
     try {
       final String url = ConstantUtils.JAVA_RELEASES_ENDPOINT;
-      return Connector.sendRequest(
+      return Connector.sendRequestNoEx(
               ConstantUtils.JAVA_RELEASES_ENDPOINT,
               Enums.HttpMethod.GET,
               new TypeReference<JavaReleaseResponse>() {},

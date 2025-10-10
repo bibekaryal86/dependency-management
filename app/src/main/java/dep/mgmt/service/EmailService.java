@@ -28,7 +28,7 @@ public class EmailService {
     log.info("Sending email...");
     final EmailRequest emailRequest =
         buildEmailRequest(subject, html, attachmentFileName, attachment);
-    final EmailResponse emailResponse = email.sendEmailMailgun(emailRequest);
+    final EmailResponse emailResponse = email.sendEmailMailgunNoEx(emailRequest);
     log.info("Email Response: [{}]", emailResponse);
   }
 

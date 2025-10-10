@@ -48,7 +48,7 @@ public class PythonPackageVersionService {
   private PythonPackageSearchResponse getPythonPackageSearchResponse(final String name) {
     try {
       final String url = String.format(ConstantUtils.PYPI_SEARCH_ENDPOINT, name);
-      return Connector.sendRequest(
+      return Connector.sendRequestNoEx(
               url,
               Enums.HttpMethod.GET,
               new TypeReference<PythonPackageSearchResponse>() {},

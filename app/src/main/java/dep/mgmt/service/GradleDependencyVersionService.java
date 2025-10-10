@@ -79,7 +79,7 @@ public class GradleDependencyVersionService {
     try {
       final String url = String.format(ConstantUtils.MAVEN_SEARCH_ENDPOINT, group, artifact);
       final HttpResponse<MavenSearchResponse> mavenSearchResponseHttpResponse =
-          Connector.sendRequest(
+          Connector.sendRequestNoEx(
               url,
               Enums.HttpMethod.GET,
               new TypeReference<MavenSearchResponse>() {},

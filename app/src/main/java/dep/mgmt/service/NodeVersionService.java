@@ -49,7 +49,7 @@ public class NodeVersionService {
 
   private List<NodeReleaseResponse> getNodeReleases() {
     try {
-      return Connector.sendRequest(
+      return Connector.sendRequestNoEx(
               ConstantUtils.NODE_RELEASES_ENDPOINT,
               Enums.HttpMethod.GET,
               new TypeReference<List<NodeReleaseResponse>>() {},

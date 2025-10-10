@@ -23,7 +23,7 @@ public class GithubConnector {
         String.format(ConstantUtils.GITHUB_LIST_BRANCHES_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<List<GithubApiModel.ListBranchesResponse>> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.GET,
             new TypeReference<List<GithubApiModel.ListBranchesResponse>>() {},
@@ -56,7 +56,7 @@ public class GithubConnector {
             ConstantUtils.GITHUB_PR_BASE_BRANCH);
 
     HttpResponse<GithubApiModel.CreatePullRequestResponse> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.POST,
             new TypeReference<GithubApiModel.CreatePullRequestResponse>() {},
@@ -82,7 +82,7 @@ public class GithubConnector {
     final String url = String.format(ConstantUtils.GITHUB_LIST_PRS_ENDPOINT, repoOwner, repoName);
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<List<GithubApiModel.ListPullRequestsResponse>> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.GET,
             new TypeReference<List<GithubApiModel.ListPullRequestsResponse>>() {},
@@ -115,7 +115,7 @@ public class GithubConnector {
             ConstantUtils.GITHUB_PR_MERGE_METHOD);
 
     HttpResponse<GithubApiModel.MergePullRequestResponse> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.PUT,
             new TypeReference<GithubApiModel.MergePullRequestResponse>() {},
@@ -145,7 +145,7 @@ public class GithubConnector {
     }
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.ListWorkflowRunsResponse> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.GET,
             new TypeReference<GithubApiModel.ListWorkflowRunsResponse>() {},
@@ -170,7 +170,7 @@ public class GithubConnector {
     final String url = ConstantUtils.GITHUB_RATE_LIMIT_ENDPOINT;
     final Map<String, String> headers = getDefaultHeaders();
     HttpResponse<GithubApiModel.RateLimitResponse> response =
-        Connector.sendRequest(
+        Connector.sendRequestNoEx(
             url,
             Enums.HttpMethod.GET,
             new TypeReference<GithubApiModel.RateLimitResponse>() {},

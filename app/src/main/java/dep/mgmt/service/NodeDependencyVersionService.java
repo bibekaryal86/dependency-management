@@ -44,7 +44,7 @@ public class NodeDependencyVersionService {
   private NpmRegistryResponse getNpmRegistrySearchResponse(final String name) {
     try {
       final String url = String.format(ConstantUtils.NPM_REGISTRY_ENDPOINT, name);
-      return Connector.sendRequest(
+      return Connector.sendRequestNoEx(
               url,
               Enums.HttpMethod.GET,
               new TypeReference<NpmRegistryResponse>() {},
