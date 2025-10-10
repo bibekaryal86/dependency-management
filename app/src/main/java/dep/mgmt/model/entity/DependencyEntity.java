@@ -16,12 +16,12 @@ public class DependencyEntity implements Serializable {
   public DependencyEntity() {}
 
   public DependencyEntity(
-      ObjectId id,
-      String name,
-      String version,
-      Boolean skipVersion,
-      LocalDateTime lastCheckedDate,
-      LocalDateTime lastUpdatedDate) {
+      final ObjectId id,
+      final String name,
+      final String version,
+      final Boolean skipVersion,
+      final LocalDateTime lastCheckedDate,
+      final LocalDateTime lastUpdatedDate) {
     this.id = id;
     this.name = name;
     this.version = version;
@@ -67,7 +67,7 @@ public class DependencyEntity implements Serializable {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(final ObjectId id) {
     this.id = id;
   }
 
@@ -75,7 +75,7 @@ public class DependencyEntity implements Serializable {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 
@@ -83,7 +83,7 @@ public class DependencyEntity implements Serializable {
     return version;
   }
 
-  public void setVersion(String version) {
+  public void setVersion(final String version) {
     this.version = version;
   }
 
@@ -91,7 +91,7 @@ public class DependencyEntity implements Serializable {
     return skipVersion;
   }
 
-  public void setSkipVersion(Boolean skipVersion) {
+  public void setSkipVersion(final Boolean skipVersion) {
     this.skipVersion = skipVersion;
   }
 
@@ -99,7 +99,7 @@ public class DependencyEntity implements Serializable {
     return lastCheckedDate;
   }
 
-  public void setLastCheckedDate(LocalDateTime lastCheckedDate) {
+  public void setLastCheckedDate(final LocalDateTime lastCheckedDate) {
     this.lastCheckedDate = lastCheckedDate;
   }
 
@@ -107,7 +107,7 @@ public class DependencyEntity implements Serializable {
     return lastUpdatedDate;
   }
 
-  public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) {
+  public void setLastUpdatedDate(final LocalDateTime lastUpdatedDate) {
     this.lastUpdatedDate = lastUpdatedDate;
   }
 

@@ -323,9 +323,9 @@ public class ProcessSummaries implements Serializable {
       private final String queueName;
       private final String taskName;
       private final LocalDateTime added;
-
       private LocalDateTime started;
       private LocalDateTime ended;
+      private Long delayMills;
       private Boolean isTimedOut;
 
       @JsonCreator
@@ -335,26 +335,26 @@ public class ProcessSummaries implements Serializable {
           @JsonProperty("added") LocalDateTime added,
           @JsonProperty("started") LocalDateTime started,
           @JsonProperty("ended") LocalDateTime ended,
+          @JsonProperty("delayMillis") Long delayMills,
           @JsonProperty("isTimedOut") Boolean isTimedOut) {
         this.queueName = queueName;
         this.taskName = taskName;
         this.added = added;
         this.started = started;
         this.ended = ended;
+        this.delayMills = delayMills;
         this.isTimedOut = isTimedOut;
       }
 
-      public ProcessTask(final String queueName, final String taskName, final LocalDateTime added) {
+      public ProcessTask(
+          final String queueName,
+          final String taskName,
+          final LocalDateTime added,
+          final long delayMills) {
         this.queueName = queueName;
         this.taskName = taskName;
         this.added = added;
-        this.isTimedOut = Boolean.FALSE;
-      }
-
-      public ProcessTask(final String queueName, final String taskName) {
-        this.queueName = queueName;
-        this.taskName = taskName;
-        this.added = null;
+        this.delayMills = delayMills;
         this.isTimedOut = Boolean.FALSE;
       }
 
@@ -386,11 +386,19 @@ public class ProcessSummaries implements Serializable {
         this.ended = ended;
       }
 
+      public Long getDelayMills() {
+        return delayMills;
+      }
+
+      public void setDelayMills(final Long delayMills) {
+        this.delayMills = delayMills;
+      }
+
       public Boolean getTimedOut() {
         return isTimedOut;
       }
 
-      public void setTimedOut(final boolean isTimedOut) {
+      public void setTimedOut(final Boolean isTimedOut) {
         this.isTimedOut = isTimedOut;
       }
 
@@ -409,6 +417,8 @@ public class ProcessSummaries implements Serializable {
             + started
             + ", ended="
             + ended
+            + ", delayMills="
+            + delayMills
             + ", isTimedOut="
             + isTimedOut
             + '}';

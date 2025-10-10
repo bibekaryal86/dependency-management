@@ -12,7 +12,8 @@ public class LogEntryEntity implements Serializable {
 
   public LogEntryEntity() {}
 
-  public LogEntryEntity(ObjectId id, LocalDateTime updateDateTime, String logEntries) {
+  public LogEntryEntity(
+      final ObjectId id, final LocalDateTime updateDateTime, final String logEntries) {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.logEntries = logEntries;
@@ -22,7 +23,7 @@ public class LogEntryEntity implements Serializable {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(final ObjectId id) {
     this.id = id;
   }
 
@@ -30,7 +31,7 @@ public class LogEntryEntity implements Serializable {
     return updateDateTime;
   }
 
-  public void setUpdateDateTime(LocalDateTime updateDateTime) {
+  public void setUpdateDateTime(final LocalDateTime updateDateTime) {
     this.updateDateTime = updateDateTime;
   }
 
@@ -38,7 +39,7 @@ public class LogEntryEntity implements Serializable {
     return logEntries;
   }
 
-  public void setLogEntries(String logEntries) {
+  public void setLogEntries(final String logEntries) {
     this.logEntries = logEntries;
   }
 

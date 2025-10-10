@@ -96,6 +96,7 @@ public class ConvertUtils {
                     processTaskEntity.getAdded(),
                     processTaskEntity.getStarted(),
                     processTaskEntity.getEnded(),
+                    processTaskEntity.getDelayMillis(),
                     processTaskEntity.getTimedOut()))
         .toList();
   }
@@ -158,6 +159,7 @@ public class ConvertUtils {
                     processTask.getAdded(),
                     processTask.getStarted(),
                     processTask.getEnded(),
+                    processTask.getDelayMills(),
                     processTask.getTimedOut()))
         .toList();
   }

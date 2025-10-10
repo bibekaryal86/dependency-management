@@ -147,10 +147,12 @@ public class ProcessUtils {
     return processedRepositories;
   }
 
-  public static void addProcessedTasks(final String queueName, final String taskName) {
+  public static void addProcessedTasks(
+      final String queueName, final String taskName, final long delayMillis) {
     processedTasks.put(
         taskName,
-        new ProcessSummaries.ProcessSummary.ProcessTask(queueName, taskName, LocalDateTime.now()));
+        new ProcessSummaries.ProcessSummary.ProcessTask(
+            queueName, taskName, LocalDateTime.now(), delayMillis));
   }
 
   public static void updateProcessedTasksStarted(final String taskName) {
@@ -176,6 +178,16 @@ public class ProcessUtils {
         taskName,
         (key, processedTask) -> {
           processedTask.setTimedOut(Boolean.TRUE);
+          return processedTask;
+        });
+  }
+
+  public static void updateProcessedTasksDelayMillis(
+      final String taskName, final long newDelayMillis) {
+    processedTasks.computeIfPresent(
+        taskName,
+        (key, processedTask) -> {
+          processedTask.setDelayMills(newDelayMillis);
           return processedTask;
         });
   }
