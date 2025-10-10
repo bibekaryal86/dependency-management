@@ -62,6 +62,7 @@ public class TaskQueues {
                 queueName,
                 taskName,
                 newDelayMillis);
+            ProcessUtils.updateProcessedTasksDelayMillis(taskName, newDelayMillis);
           }
         }
       }
@@ -155,7 +156,7 @@ public class TaskQueues {
     }
 
     public void addTask(OneTask task) {
-      ProcessUtils.addProcessedTasks(name, task.getName());
+      ProcessUtils.addProcessedTasks(name, task.getName(), task.getDelayMillis());
       queue.offer(task);
     }
 
@@ -199,7 +200,11 @@ public class TaskQueues {
         return name;
       }
 
-      public void setDelayMillis(long newDelayMillis) {
+      public long getDelayMillis() {
+        return delayMillis.get();
+      }
+
+      public void setDelayMillis(final long newDelayMillis) {
         delayMillis.set(newDelayMillis);
       }
 

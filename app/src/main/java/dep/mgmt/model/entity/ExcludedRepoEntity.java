@@ -24,7 +24,7 @@ public class ExcludedRepoEntity implements Serializable {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(final ObjectId id) {
     this.id = id;
   }
 
@@ -32,7 +32,7 @@ public class ExcludedRepoEntity implements Serializable {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 

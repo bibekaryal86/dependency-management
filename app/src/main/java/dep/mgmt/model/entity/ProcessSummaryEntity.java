@@ -70,7 +70,7 @@ public class ProcessSummaryEntity implements Serializable {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(final ObjectId id) {
     this.id = id;
   }
 
@@ -78,7 +78,7 @@ public class ProcessSummaryEntity implements Serializable {
     return updateDateTime;
   }
 
-  public void setUpdateDateTime(LocalDateTime updateDateTime) {
+  public void setUpdateDateTime(final LocalDateTime updateDateTime) {
     this.updateDateTime = updateDateTime;
   }
 
@@ -86,7 +86,7 @@ public class ProcessSummaryEntity implements Serializable {
     return updateType;
   }
 
-  public void setUpdateType(String updateType) {
+  public void setUpdateType(final String updateType) {
     this.updateType = updateType;
   }
 
@@ -94,7 +94,7 @@ public class ProcessSummaryEntity implements Serializable {
     return gradlePluginsChecked;
   }
 
-  public void setGradlePluginsChecked(Integer gradlePluginsChecked) {
+  public void setGradlePluginsChecked(final Integer gradlePluginsChecked) {
     this.gradlePluginsChecked = gradlePluginsChecked;
   }
 
@@ -102,7 +102,7 @@ public class ProcessSummaryEntity implements Serializable {
     return gradleDependenciesChecked;
   }
 
-  public void setGradleDependenciesChecked(Integer gradleDependenciesChecked) {
+  public void setGradleDependenciesChecked(final Integer gradleDependenciesChecked) {
     this.gradleDependenciesChecked = gradleDependenciesChecked;
   }
 
@@ -110,7 +110,7 @@ public class ProcessSummaryEntity implements Serializable {
     return pythonPackagesChecked;
   }
 
-  public void setPythonPackagesChecked(Integer pythonPackagesChecked) {
+  public void setPythonPackagesChecked(final Integer pythonPackagesChecked) {
     this.pythonPackagesChecked = pythonPackagesChecked;
   }
 
@@ -118,7 +118,7 @@ public class ProcessSummaryEntity implements Serializable {
     return nodeDependenciesChecked;
   }
 
-  public void setNodeDependenciesChecked(Integer nodeDependenciesChecked) {
+  public void setNodeDependenciesChecked(final Integer nodeDependenciesChecked) {
     this.nodeDependenciesChecked = nodeDependenciesChecked;
   }
 
@@ -126,7 +126,7 @@ public class ProcessSummaryEntity implements Serializable {
     return gradlePluginsToUpdate;
   }
 
-  public void setGradlePluginsToUpdate(Integer gradlePluginsToUpdate) {
+  public void setGradlePluginsToUpdate(final Integer gradlePluginsToUpdate) {
     this.gradlePluginsToUpdate = gradlePluginsToUpdate;
   }
 
@@ -134,7 +134,7 @@ public class ProcessSummaryEntity implements Serializable {
     return gradleDependenciesToUpdate;
   }
 
-  public void setGradleDependenciesToUpdate(Integer gradleDependenciesToUpdate) {
+  public void setGradleDependenciesToUpdate(final Integer gradleDependenciesToUpdate) {
     this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
   }
 
@@ -142,7 +142,7 @@ public class ProcessSummaryEntity implements Serializable {
     return pythonPackagesToUpdate;
   }
 
-  public void setPythonPackagesToUpdate(Integer pythonPackagesToUpdate) {
+  public void setPythonPackagesToUpdate(final Integer pythonPackagesToUpdate) {
     this.pythonPackagesToUpdate = pythonPackagesToUpdate;
   }
 
@@ -150,7 +150,7 @@ public class ProcessSummaryEntity implements Serializable {
     return nodeDependenciesToUpdate;
   }
 
-  public void setNodeDependenciesToUpdate(Integer nodeDependenciesToUpdate) {
+  public void setNodeDependenciesToUpdate(final Integer nodeDependenciesToUpdate) {
     this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
   }
 
@@ -158,7 +158,7 @@ public class ProcessSummaryEntity implements Serializable {
     return totalPrCreatedCount;
   }
 
-  public void setTotalPrCreatedCount(Integer totalPrCreatedCount) {
+  public void setTotalPrCreatedCount(final Integer totalPrCreatedCount) {
     this.totalPrCreatedCount = totalPrCreatedCount;
   }
 
@@ -166,7 +166,7 @@ public class ProcessSummaryEntity implements Serializable {
     return totalPrMergedCount;
   }
 
-  public void setTotalPrMergedCount(Integer totalPrMergedCount) {
+  public void setTotalPrMergedCount(final Integer totalPrMergedCount) {
     this.totalPrMergedCount = totalPrMergedCount;
   }
 
@@ -174,7 +174,7 @@ public class ProcessSummaryEntity implements Serializable {
     return totalPrMergeErrorCount;
   }
 
-  public void setTotalPrMergeErrorCount(Integer totalPrMergeErrorCount) {
+  public void setTotalPrMergeErrorCount(final Integer totalPrMergeErrorCount) {
     this.totalPrMergeErrorCount = totalPrMergeErrorCount;
   }
 
@@ -182,7 +182,7 @@ public class ProcessSummaryEntity implements Serializable {
     return processRepositories;
   }
 
-  public void setProcessRepositories(List<ProcessRepositoryEntity> processRepositories) {
+  public void setProcessRepositories(final List<ProcessRepositoryEntity> processRepositories) {
     this.processRepositories = processRepositories;
   }
 
@@ -190,7 +190,7 @@ public class ProcessSummaryEntity implements Serializable {
     return isErrorsOrExceptions;
   }
 
-  public void setErrorsOrExceptions(Boolean errorsOrExceptions) {
+  public void setErrorsOrExceptions(final Boolean errorsOrExceptions) {
     isErrorsOrExceptions = errorsOrExceptions;
   }
 
@@ -198,7 +198,7 @@ public class ProcessSummaryEntity implements Serializable {
     return processTasks;
   }
 
-  public void setProcessTasks(List<ProcessTaskEntity> processTasks) {
+  public void setProcessTasks(final List<ProcessTaskEntity> processTasks) {
     this.processTasks = processTasks;
   }
 
@@ -254,12 +254,12 @@ public class ProcessSummaryEntity implements Serializable {
     public ProcessRepositoryEntity() {}
 
     public ProcessRepositoryEntity(
-        String repoName,
-        String repoType,
-        Boolean isUpdateBranchCreated,
-        Boolean isPrCreated,
-        Boolean isPrMerged,
-        Integer prNumber) {
+        final String repoName,
+        final String repoType,
+        final Boolean isUpdateBranchCreated,
+        final Boolean isPrCreated,
+        final Boolean isPrMerged,
+        final Integer prNumber) {
       this.repoName = repoName;
       this.repoType = repoType;
       this.isUpdateBranchCreated = isUpdateBranchCreated;
@@ -272,7 +272,7 @@ public class ProcessSummaryEntity implements Serializable {
       return repoName;
     }
 
-    public void setRepoName(String repoName) {
+    public void setRepoName(final String repoName) {
       this.repoName = repoName;
     }
 
@@ -280,7 +280,7 @@ public class ProcessSummaryEntity implements Serializable {
       return repoType;
     }
 
-    public void setRepoType(String repoType) {
+    public void setRepoType(final String repoType) {
       this.repoType = repoType;
     }
 
@@ -288,7 +288,7 @@ public class ProcessSummaryEntity implements Serializable {
       return isUpdateBranchCreated;
     }
 
-    public void setUpdateBranchCreated(Boolean updateBranchCreated) {
+    public void setUpdateBranchCreated(final Boolean updateBranchCreated) {
       this.isUpdateBranchCreated = updateBranchCreated;
     }
 
@@ -296,7 +296,7 @@ public class ProcessSummaryEntity implements Serializable {
       return isPrCreated;
     }
 
-    public void setPrCreated(Boolean prCreated) {
+    public void setPrCreated(final Boolean prCreated) {
       isPrCreated = prCreated;
     }
 
@@ -304,7 +304,7 @@ public class ProcessSummaryEntity implements Serializable {
       return isPrMerged;
     }
 
-    public void setPrMerged(Boolean prMerged) {
+    public void setPrMerged(final Boolean prMerged) {
       isPrMerged = prMerged;
     }
 
@@ -312,7 +312,7 @@ public class ProcessSummaryEntity implements Serializable {
       return prNumber;
     }
 
-    public void setPrNumber(Integer prNumber) {
+    public void setPrNumber(final Integer prNumber) {
       this.prNumber = prNumber;
     }
 
@@ -343,22 +343,25 @@ public class ProcessSummaryEntity implements Serializable {
     private LocalDateTime added;
     private LocalDateTime started;
     private LocalDateTime ended;
+    private Long delayMillis;
     private Boolean isTimedOut;
 
     public ProcessTaskEntity() {}
 
     public ProcessTaskEntity(
-        String queueName,
-        String taskName,
-        LocalDateTime added,
-        LocalDateTime started,
-        LocalDateTime ended,
-        Boolean isTimedOut) {
+        final String queueName,
+        final String taskName,
+        final LocalDateTime added,
+        final LocalDateTime started,
+        final LocalDateTime ended,
+        final Long delayMillis,
+        final Boolean isTimedOut) {
       this.queueName = queueName;
       this.taskName = taskName;
       this.added = added;
       this.started = started;
       this.ended = ended;
+      this.delayMillis = delayMillis;
       this.isTimedOut = isTimedOut;
     }
 
@@ -366,7 +369,7 @@ public class ProcessSummaryEntity implements Serializable {
       return queueName;
     }
 
-    public void setQueueName(String queueName) {
+    public void setQueueName(final String queueName) {
       this.queueName = queueName;
     }
 
@@ -374,7 +377,7 @@ public class ProcessSummaryEntity implements Serializable {
       return taskName;
     }
 
-    public void setTaskName(String taskName) {
+    public void setTaskName(final String taskName) {
       this.taskName = taskName;
     }
 
@@ -382,7 +385,7 @@ public class ProcessSummaryEntity implements Serializable {
       return added;
     }
 
-    public void setAdded(LocalDateTime added) {
+    public void setAdded(final LocalDateTime added) {
       this.added = added;
     }
 
@@ -390,7 +393,7 @@ public class ProcessSummaryEntity implements Serializable {
       return started;
     }
 
-    public void setStarted(LocalDateTime started) {
+    public void setStarted(final LocalDateTime started) {
       this.started = started;
     }
 
@@ -398,15 +401,23 @@ public class ProcessSummaryEntity implements Serializable {
       return ended;
     }
 
-    public void setEnded(LocalDateTime ended) {
+    public void setEnded(final LocalDateTime ended) {
       this.ended = ended;
+    }
+
+    public Long getDelayMillis() {
+      return delayMillis;
+    }
+
+    public void setDelayMillis(Long delayMillis) {
+      this.delayMillis = delayMillis;
     }
 
     public Boolean getTimedOut() {
       return isTimedOut;
     }
 
-    public void setTimedOut(Boolean timedOut) {
+    public void setTimedOut(final Boolean timedOut) {
       isTimedOut = timedOut;
     }
 
@@ -425,6 +436,8 @@ public class ProcessSummaryEntity implements Serializable {
           + started
           + ", ended="
           + ended
+          + ", delayMillis="
+          + delayMillis
           + ", isTimedOut="
           + isTimedOut
           + '}';

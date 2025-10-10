@@ -64,7 +64,7 @@ public class LatestVersionEntity implements Serializable {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(final ObjectId id) {
     this.id = id;
   }
 
@@ -72,7 +72,7 @@ public class LatestVersionEntity implements Serializable {
     return updateDateTime;
   }
 
-  public void setUpdateDateTime(LocalDateTime updateDateTime) {
+  public void setUpdateDateTime(final LocalDateTime updateDateTime) {
     this.updateDateTime = updateDateTime;
   }
 
@@ -80,7 +80,7 @@ public class LatestVersionEntity implements Serializable {
     return nginx;
   }
 
-  public void setNginx(LatestVersion nginx) {
+  public void setNginx(final LatestVersion nginx) {
     this.nginx = nginx;
   }
 
@@ -88,7 +88,7 @@ public class LatestVersionEntity implements Serializable {
     return gradle;
   }
 
-  public void setGradle(LatestVersion gradle) {
+  public void setGradle(final LatestVersion gradle) {
     this.gradle = gradle;
   }
 
@@ -96,7 +96,7 @@ public class LatestVersionEntity implements Serializable {
     return flyway;
   }
 
-  public void setFlyway(LatestVersion flyway) {
+  public void setFlyway(final LatestVersion flyway) {
     this.flyway = flyway;
   }
 
@@ -104,7 +104,7 @@ public class LatestVersionEntity implements Serializable {
     return checkout;
   }
 
-  public void setCheckout(LatestVersion checkout) {
+  public void setCheckout(final LatestVersion checkout) {
     this.checkout = checkout;
   }
 
@@ -112,7 +112,7 @@ public class LatestVersionEntity implements Serializable {
     return setupJava;
   }
 
-  public void setSetupJava(LatestVersion setupJava) {
+  public void setSetupJava(final LatestVersion setupJava) {
     this.setupJava = setupJava;
   }
 
@@ -120,7 +120,7 @@ public class LatestVersionEntity implements Serializable {
     return setupGradle;
   }
 
-  public void setSetupGradle(LatestVersion setupGradle) {
+  public void setSetupGradle(final LatestVersion setupGradle) {
     this.setupGradle = setupGradle;
   }
 
@@ -128,7 +128,7 @@ public class LatestVersionEntity implements Serializable {
     return setupNode;
   }
 
-  public void setSetupNode(LatestVersion setupNode) {
+  public void setSetupNode(final LatestVersion setupNode) {
     this.setupNode = setupNode;
   }
 
@@ -136,7 +136,7 @@ public class LatestVersionEntity implements Serializable {
     return setupPython;
   }
 
-  public void setSetupPython(LatestVersion setupPython) {
+  public void setSetupPython(final LatestVersion setupPython) {
     this.setupPython = setupPython;
   }
 
@@ -144,7 +144,7 @@ public class LatestVersionEntity implements Serializable {
     return codeql;
   }
 
-  public void setCodeql(LatestVersion codeql) {
+  public void setCodeql(final LatestVersion codeql) {
     this.codeql = codeql;
   }
 
@@ -152,7 +152,7 @@ public class LatestVersionEntity implements Serializable {
     return java;
   }
 
-  public void setJava(LatestVersion java) {
+  public void setJava(final LatestVersion java) {
     this.java = java;
   }
 
@@ -160,7 +160,7 @@ public class LatestVersionEntity implements Serializable {
     return node;
   }
 
-  public void setNode(LatestVersion node) {
+  public void setNode(final LatestVersion node) {
     this.node = node;
   }
 
@@ -168,7 +168,7 @@ public class LatestVersionEntity implements Serializable {
     return python;
   }
 
-  public void setPython(LatestVersion python) {
+  public void setPython(final LatestVersion python) {
     this.python = python;
   }
 

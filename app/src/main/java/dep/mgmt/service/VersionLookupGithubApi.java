@@ -37,7 +37,7 @@ public abstract class VersionLookupGithubApi {
               repo,
               isTags ? ConstantUtils.GITHUB_ENDPOINT_TAGS : ConstantUtils.GITHUB_ENDPOINT_RELEASES);
       final List<ApiReleaseResponse> apiReleaseResponses =
-          Connector.sendRequest(
+          Connector.sendRequestNoEx(
                   url,
                   Enums.HttpMethod.GET,
                   new TypeReference<List<ApiReleaseResponse>>() {},

@@ -20,7 +20,7 @@ public class DockerVersionService {
     final String url = String.format(ConstantUtils.DOCKER_TAG_LOOKUP_ENDPOINT, library, tag);
     try {
       ApiReleaseResponse apiReleaseResponse =
-          Connector.sendRequest(
+          Connector.sendRequestNoEx(
                   url,
                   Enums.HttpMethod.GET,
                   new TypeReference<ApiReleaseResponse>() {},
