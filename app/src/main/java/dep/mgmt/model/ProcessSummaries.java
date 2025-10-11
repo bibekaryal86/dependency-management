@@ -66,55 +66,31 @@ public class ProcessSummaries implements Serializable {
   public static class ProcessSummary implements Serializable {
     private final LocalDateTime updateDateTime;
     private final String updateType;
-    private final Integer gradlePluginsChecked;
-    private final Integer gradleDependenciesChecked;
-    private final Integer pythonPackagesChecked;
-    private final Integer nodeDependenciesChecked;
-    private final Integer gradlePluginsToUpdate;
-    private final Integer gradleDependenciesToUpdate;
-    private final Integer pythonPackagesToUpdate;
-    private final Integer nodeDependenciesToUpdate;
     private final Integer totalPrCreatedCount;
     private final Integer totalPrMergedCount;
-    private final Integer totalPrMergeErrorsCount;
-    private final List<ProcessRepository> processRepositories;
     private final Boolean isErrorsOrExceptions;
+    private final List<ProcessRepository> processRepositories;
     private final List<ProcessTask> processTasks;
+    private final List<ProcessDependency> processDependencies;
 
     @JsonCreator
     public ProcessSummary(
         @JsonProperty("updateDateTime") final LocalDateTime updateDateTime,
         @JsonProperty("updateType") final String updateType,
-        @JsonProperty("gradlePluginsChecked") final Integer gradlePluginsChecked,
-        @JsonProperty("gradleDependenciesChecked") final Integer gradleDependenciesChecked,
-        @JsonProperty("pythonPackagesChecked") final Integer pythonPackagesToChecked,
-        @JsonProperty("nodeDependenciesChecked") final Integer nodeDependenciesChecked,
-        @JsonProperty("gradlePluginsToUpdate") final Integer gradlePluginsToUpdate,
-        @JsonProperty("gradleDependenciesToUpdate") final Integer gradleDependenciesToUpdate,
-        @JsonProperty("pythonPackagesToUpdate") final Integer pythonPackagesToUpdate,
-        @JsonProperty("nodeDependenciesToUpdate") final Integer nodeDependenciesToUpdate,
         @JsonProperty("totalPrCreatedCount") final Integer totalPrCreatedCount,
         @JsonProperty("totalPrMergedCount") final Integer totalPrMergedCount,
-        @JsonProperty("totalPrMergeErrorsCount") final Integer totalPrMergeErrorsCount,
-        @JsonProperty("processRepositories") final List<ProcessRepository> processRepositories,
         @JsonProperty("isErrorsOrExceptions") final Boolean isErrorsOrExceptions,
-        @JsonProperty("processTasks") final List<ProcessTask> processTasks) {
+        @JsonProperty("processRepositories") final List<ProcessRepository> processRepositories,
+        @JsonProperty("processTasks") final List<ProcessTask> processTasks,
+        @JsonProperty("processDependencies") final List<ProcessDependency> processDependencies) {
       this.updateDateTime = updateDateTime;
       this.updateType = updateType;
-      this.gradlePluginsChecked = gradlePluginsChecked;
-      this.gradleDependenciesChecked = gradleDependenciesChecked;
-      this.nodeDependenciesChecked = nodeDependenciesChecked;
-      this.pythonPackagesChecked = pythonPackagesToChecked;
-      this.gradlePluginsToUpdate = gradlePluginsToUpdate;
-      this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
-      this.pythonPackagesToUpdate = pythonPackagesToUpdate;
-      this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
       this.totalPrCreatedCount = totalPrCreatedCount;
       this.totalPrMergedCount = totalPrMergedCount;
-      this.totalPrMergeErrorsCount = totalPrMergeErrorsCount;
-      this.processRepositories = processRepositories;
       this.isErrorsOrExceptions = isErrorsOrExceptions;
+      this.processRepositories = processRepositories;
       this.processTasks = processTasks;
+      this.processDependencies = processDependencies;
     }
 
     public LocalDateTime getUpdateDateTime() {
@@ -125,38 +101,6 @@ public class ProcessSummaries implements Serializable {
       return updateType;
     }
 
-    public Integer getGradlePluginsChecked() {
-      return gradlePluginsChecked;
-    }
-
-    public Integer getGradleDependenciesChecked() {
-      return gradleDependenciesChecked;
-    }
-
-    public Integer getPythonPackagesChecked() {
-      return pythonPackagesChecked;
-    }
-
-    public Integer getNodeDependenciesChecked() {
-      return nodeDependenciesChecked;
-    }
-
-    public Integer getGradlePluginsToUpdate() {
-      return gradlePluginsToUpdate;
-    }
-
-    public Integer getGradleDependenciesToUpdate() {
-      return gradleDependenciesToUpdate;
-    }
-
-    public Integer getPythonPackagesToUpdate() {
-      return pythonPackagesToUpdate;
-    }
-
-    public Integer getNodeDependenciesToUpdate() {
-      return nodeDependenciesToUpdate;
-    }
-
     public Integer getTotalPrCreatedCount() {
       return totalPrCreatedCount;
     }
@@ -165,20 +109,20 @@ public class ProcessSummaries implements Serializable {
       return totalPrMergedCount;
     }
 
-    public Integer getTotalPrMergeErrorsCount() {
-      return totalPrMergeErrorsCount;
+    public Boolean getErrorsOrExceptions() {
+      return isErrorsOrExceptions;
     }
 
     public List<ProcessRepository> getProcessRepositories() {
       return processRepositories;
     }
 
-    public Boolean getErrorsOrExceptions() {
-      return isErrorsOrExceptions;
-    }
-
     public List<ProcessTask> getProcessTasks() {
       return processTasks;
+    }
+
+    public List<ProcessDependency> getProcessDependencies() {
+      return processDependencies;
     }
 
     @Override
@@ -189,34 +133,18 @@ public class ProcessSummaries implements Serializable {
           + ", updateType='"
           + updateType
           + '\''
-          + ", gradlePluginsChecked="
-          + gradlePluginsChecked
-          + ", gradleDependenciesChecked="
-          + gradleDependenciesChecked
-          + ", pythonPackagesChecked="
-          + pythonPackagesChecked
-          + ", nodeDependenciesChecked="
-          + nodeDependenciesChecked
-          + ", gradlePluginsToUpdate="
-          + gradlePluginsToUpdate
-          + ", gradleDependenciesToUpdate="
-          + gradleDependenciesToUpdate
-          + ", pythonPackagesToUpdate="
-          + pythonPackagesToUpdate
-          + ", nodeDependenciesToUpdate="
-          + nodeDependenciesToUpdate
           + ", totalPrCreatedCount="
           + totalPrCreatedCount
           + ", totalPrMergedCount="
           + totalPrMergedCount
-          + ", totalPrMergeErrorsCount="
-          + totalPrMergeErrorsCount
-          + ", processRepositories="
-          + processRepositories
           + ", isErrorsOrExceptions="
           + isErrorsOrExceptions
+          + ", processRepositories="
+          + processRepositories
           + ", processTasks="
           + processTasks
+          + ", processDependencies="
+          + processDependencies
           + '}';
     }
 
@@ -421,6 +349,49 @@ public class ProcessSummaries implements Serializable {
             + delayMills
             + ", isTimedOut="
             + isTimedOut
+            + '}';
+      }
+    }
+
+    public static class ProcessDependency implements Serializable {
+      private final String type;
+      private final String name;
+      private final String version;
+
+      @JsonCreator
+      public ProcessDependency(
+          @JsonProperty("type") String type,
+          @JsonProperty("name") String name,
+          @JsonProperty("version") String version) {
+        this.type = type;
+        this.name = name;
+        this.version = version;
+      }
+
+      public String getType() {
+        return type;
+      }
+
+      public String getName() {
+        return name;
+      }
+
+      public String getVersion() {
+        return version;
+      }
+
+      @Override
+      public String toString() {
+        return "ProcessDependency{"
+            + "type='"
+            + type
+            + '\''
+            + ", name='"
+            + name
+            + '\''
+            + ", version='"
+            + version
+            + '\''
             + '}';
       }
     }

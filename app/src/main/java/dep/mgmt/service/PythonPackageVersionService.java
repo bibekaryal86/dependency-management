@@ -157,11 +157,7 @@ public class PythonPackageVersionService {
     }
   }
 
-  public int getCheckedCountInPastDay() {
-    return pythonPackageRepository.findBetweenDates("lastCheckedDate").size();
-  }
-
-  public int getUpdatedCountInPastDay() {
-    return pythonPackageRepository.findBetweenDates("lastUpdatedDate").size();
+  public List<DependencyEntity> getUpdatedInPastDay() {
+    return pythonPackageRepository.findBetweenDates("lastUpdatedDate");
   }
 }

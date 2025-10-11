@@ -44,21 +44,14 @@ public class ConvertUtils {
                 new ProcessSummaries.ProcessSummary(
                     processSummaryEntity.getUpdateDateTime(),
                     processSummaryEntity.getUpdateType(),
-                    processSummaryEntity.getGradlePluginsChecked(),
-                    processSummaryEntity.getGradleDependenciesChecked(),
-                    processSummaryEntity.getPythonPackagesChecked(),
-                    processSummaryEntity.getNodeDependenciesChecked(),
-                    processSummaryEntity.getGradlePluginsToUpdate(),
-                    processSummaryEntity.getGradleDependenciesToUpdate(),
-                    processSummaryEntity.getPythonPackagesToUpdate(),
-                    processSummaryEntity.getNodeDependenciesToUpdate(),
                     processSummaryEntity.getTotalPrCreatedCount(),
                     processSummaryEntity.getTotalPrMergedCount(),
-                    processSummaryEntity.getTotalPrMergeErrorCount(),
+                    processSummaryEntity.getErrorsOrExceptions(),
                     convertProcessSummaryRepositoryEntities(
                         processSummaryEntity.getProcessRepositories()),
-                    processSummaryEntity.getErrorsOrExceptions(),
-                    convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks())))
+                    convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks()),
+                    convertProcessSummaryDependencyEntities(
+                        processSummaryEntity.getProcessDependencies())))
         .toList();
   }
 
@@ -101,6 +94,22 @@ public class ConvertUtils {
         .toList();
   }
 
+  private static List<ProcessSummaries.ProcessSummary.ProcessDependency>
+      convertProcessSummaryDependencyEntities(
+          final List<ProcessSummaryEntity.ProcessDependencyEntity> processDependencyEntities) {
+    if (CommonUtilities.isEmpty(processDependencyEntities)) {
+      return Collections.emptyList();
+    }
+    return processDependencyEntities.stream()
+        .map(
+            processDependencyEntity ->
+                new ProcessSummaries.ProcessSummary.ProcessDependency(
+                    processDependencyEntity.getType(),
+                    processDependencyEntity.getName(),
+                    processDependencyEntity.getVersion()))
+        .toList();
+  }
+
   public static ProcessSummaryEntity convertProcessSummary(
       final ProcessSummaries.ProcessSummary processSummary) {
     if (processSummary == null) {
@@ -110,20 +119,12 @@ public class ConvertUtils {
         null,
         processSummary.getUpdateDateTime(),
         processSummary.getUpdateType(),
-        processSummary.getGradlePluginsChecked(),
-        processSummary.getGradleDependenciesChecked(),
-        processSummary.getPythonPackagesChecked(),
-        processSummary.getNodeDependenciesChecked(),
-        processSummary.getGradlePluginsToUpdate(),
-        processSummary.getGradleDependenciesToUpdate(),
-        processSummary.getPythonPackagesToUpdate(),
-        processSummary.getNodeDependenciesToUpdate(),
         processSummary.getTotalPrCreatedCount(),
         processSummary.getTotalPrMergedCount(),
-        processSummary.getTotalPrMergeErrorsCount(),
-        convertProcessSummaryRepositories(processSummary.getProcessRepositories()),
         processSummary.getErrorsOrExceptions(),
-        convertProcessSummaryTasks(processSummary.getProcessTasks()));
+        convertProcessSummaryRepositories(processSummary.getProcessRepositories()),
+        convertProcessSummaryTasks(processSummary.getProcessTasks()),
+        convertProcessSummaryDependencies(processSummary.getProcessDependencies()));
   }
 
   private static List<ProcessSummaryEntity.ProcessRepositoryEntity>
@@ -161,6 +162,22 @@ public class ConvertUtils {
                     processTask.getEnded(),
                     processTask.getDelayMills(),
                     processTask.getTimedOut()))
+        .toList();
+  }
+
+  private static List<ProcessSummaryEntity.ProcessDependencyEntity>
+      convertProcessSummaryDependencies(
+          final List<ProcessSummaries.ProcessSummary.ProcessDependency> processDependencies) {
+    if (CommonUtilities.isEmpty(processDependencies)) {
+      return Collections.emptyList();
+    }
+    return processDependencies.stream()
+        .map(
+            processDependency ->
+                new ProcessSummaryEntity.ProcessDependencyEntity(
+                    processDependency.getType(),
+                    processDependency.getName(),
+                    processDependency.getVersion()))
         .toList();
   }
 

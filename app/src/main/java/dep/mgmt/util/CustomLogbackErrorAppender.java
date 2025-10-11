@@ -8,7 +8,7 @@ public class CustomLogbackErrorAppender extends AppenderBase<ILoggingEvent> {
   @Override
   protected void append(ILoggingEvent eventObject) {
     if (eventObject.getLevel().toString().equals("ERROR")) {
-      ProcessUtils.setErrorsOrExceptions(true);
+      ProcessUtils.setIsErrorsOrExceptions(true);
     }
   }
 }

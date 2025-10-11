@@ -294,11 +294,7 @@ public class GradleDependencyVersionService {
     }
   }
 
-  public int getCheckedCountInPastDay() {
-    return gradleDependencyRepository.findBetweenDates("lastCheckedDate").size();
-  }
-
-  public int getUpdatedCountInPastDay() {
-    return gradleDependencyRepository.findBetweenDates("lastUpdatedDate").size();
+  public List<DependencyEntity> getUpdatedInPastDay() {
+    return gradleDependencyRepository.findBetweenDates("lastUpdatedDate");
   }
 }
