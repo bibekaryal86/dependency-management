@@ -1,5 +1,6 @@
 package dep.mgmt.model.entity;
 
+import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -11,20 +12,12 @@ public class ProcessSummaryEntity implements Serializable {
   @BsonId private ObjectId id;
   private LocalDateTime updateDateTime;
   private String updateType;
-  private Integer gradlePluginsChecked;
-  private Integer gradleDependenciesChecked;
-  private Integer pythonPackagesChecked;
-  private Integer nodeDependenciesChecked;
-  private Integer gradlePluginsToUpdate;
-  private Integer gradleDependenciesToUpdate;
-  private Integer pythonPackagesToUpdate;
-  private Integer nodeDependenciesToUpdate;
   private Integer totalPrCreatedCount;
   private Integer totalPrMergedCount;
-  private Integer totalPrMergeErrorCount;
-  private List<ProcessRepositoryEntity> processRepositories;
   private Boolean isErrorsOrExceptions;
+  private List<ProcessRepositoryEntity> processRepositories;
   private List<ProcessTaskEntity> processTasks;
+  private List<ProcessDependencyEntity> processDependencies;
 
   public ProcessSummaryEntity() {}
 
@@ -32,45 +25,35 @@ public class ProcessSummaryEntity implements Serializable {
       final ObjectId id,
       final LocalDateTime updateDateTime,
       final String updateType,
-      final Integer gradlePluginsChecked,
-      final Integer gradleDependenciesChecked,
-      final Integer pythonPackagesChecked,
-      final Integer nodeDependenciesChecked,
-      final Integer gradlePluginsToUpdate,
-      final Integer gradleDependenciesToUpdate,
-      final Integer pythonPackagesToUpdate,
-      final Integer nodeDependenciesToUpdate,
       final Integer totalPrCreatedCount,
       final Integer totalPrMergedCount,
-      final Integer totalPrMergeErrorCount,
-      final List<ProcessRepositoryEntity> processRepositories,
       final Boolean isErrorsOrExceptions,
-      final List<ProcessTaskEntity> processTasks) {
+      final List<ProcessRepositoryEntity> processRepositories,
+      final List<ProcessTaskEntity> processTasks,
+      final List<ProcessDependencyEntity> processDependencies) {
     this.id = id;
     this.updateDateTime = updateDateTime;
     this.updateType = updateType;
-    this.gradlePluginsChecked = gradlePluginsChecked;
-    this.gradleDependenciesChecked = gradleDependenciesChecked;
-    this.nodeDependenciesChecked = nodeDependenciesChecked;
-    this.pythonPackagesChecked = pythonPackagesChecked;
-    this.gradlePluginsToUpdate = gradlePluginsToUpdate;
-    this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
-    this.pythonPackagesToUpdate = pythonPackagesToUpdate;
-    this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
     this.totalPrCreatedCount = totalPrCreatedCount;
     this.totalPrMergedCount = totalPrMergedCount;
-    this.totalPrMergeErrorCount = totalPrMergeErrorCount;
-    this.processRepositories =
-        processRepositories == null ? Collections.emptyList() : processRepositories;
     this.isErrorsOrExceptions = isErrorsOrExceptions;
-    this.processTasks = processTasks == null ? Collections.emptyList() : processTasks;
+    this.processRepositories =
+        CommonUtilities.isEmpty(processRepositories)
+            ? Collections.emptyList()
+            : processRepositories;
+    this.processTasks =
+        CommonUtilities.isEmpty(processTasks) ? Collections.emptyList() : processTasks;
+    this.processDependencies =
+        CommonUtilities.isEmpty(processDependencies)
+            ? Collections.emptyList()
+            : processDependencies;
   }
 
   public ObjectId getId() {
     return id;
   }
 
-  public void setId(final ObjectId id) {
+  public void setId(ObjectId id) {
     this.id = id;
   }
 
@@ -78,7 +61,7 @@ public class ProcessSummaryEntity implements Serializable {
     return updateDateTime;
   }
 
-  public void setUpdateDateTime(final LocalDateTime updateDateTime) {
+  public void setUpdateDateTime(LocalDateTime updateDateTime) {
     this.updateDateTime = updateDateTime;
   }
 
@@ -86,79 +69,15 @@ public class ProcessSummaryEntity implements Serializable {
     return updateType;
   }
 
-  public void setUpdateType(final String updateType) {
+  public void setUpdateType(String updateType) {
     this.updateType = updateType;
-  }
-
-  public Integer getGradlePluginsChecked() {
-    return gradlePluginsChecked;
-  }
-
-  public void setGradlePluginsChecked(final Integer gradlePluginsChecked) {
-    this.gradlePluginsChecked = gradlePluginsChecked;
-  }
-
-  public Integer getGradleDependenciesChecked() {
-    return gradleDependenciesChecked;
-  }
-
-  public void setGradleDependenciesChecked(final Integer gradleDependenciesChecked) {
-    this.gradleDependenciesChecked = gradleDependenciesChecked;
-  }
-
-  public Integer getPythonPackagesChecked() {
-    return pythonPackagesChecked;
-  }
-
-  public void setPythonPackagesChecked(final Integer pythonPackagesChecked) {
-    this.pythonPackagesChecked = pythonPackagesChecked;
-  }
-
-  public Integer getNodeDependenciesChecked() {
-    return nodeDependenciesChecked;
-  }
-
-  public void setNodeDependenciesChecked(final Integer nodeDependenciesChecked) {
-    this.nodeDependenciesChecked = nodeDependenciesChecked;
-  }
-
-  public Integer getGradlePluginsToUpdate() {
-    return gradlePluginsToUpdate;
-  }
-
-  public void setGradlePluginsToUpdate(final Integer gradlePluginsToUpdate) {
-    this.gradlePluginsToUpdate = gradlePluginsToUpdate;
-  }
-
-  public Integer getGradleDependenciesToUpdate() {
-    return gradleDependenciesToUpdate;
-  }
-
-  public void setGradleDependenciesToUpdate(final Integer gradleDependenciesToUpdate) {
-    this.gradleDependenciesToUpdate = gradleDependenciesToUpdate;
-  }
-
-  public Integer getPythonPackagesToUpdate() {
-    return pythonPackagesToUpdate;
-  }
-
-  public void setPythonPackagesToUpdate(final Integer pythonPackagesToUpdate) {
-    this.pythonPackagesToUpdate = pythonPackagesToUpdate;
-  }
-
-  public Integer getNodeDependenciesToUpdate() {
-    return nodeDependenciesToUpdate;
-  }
-
-  public void setNodeDependenciesToUpdate(final Integer nodeDependenciesToUpdate) {
-    this.nodeDependenciesToUpdate = nodeDependenciesToUpdate;
   }
 
   public Integer getTotalPrCreatedCount() {
     return totalPrCreatedCount;
   }
 
-  public void setTotalPrCreatedCount(final Integer totalPrCreatedCount) {
+  public void setTotalPrCreatedCount(Integer totalPrCreatedCount) {
     this.totalPrCreatedCount = totalPrCreatedCount;
   }
 
@@ -166,40 +85,40 @@ public class ProcessSummaryEntity implements Serializable {
     return totalPrMergedCount;
   }
 
-  public void setTotalPrMergedCount(final Integer totalPrMergedCount) {
+  public void setTotalPrMergedCount(Integer totalPrMergedCount) {
     this.totalPrMergedCount = totalPrMergedCount;
-  }
-
-  public Integer getTotalPrMergeErrorCount() {
-    return totalPrMergeErrorCount;
-  }
-
-  public void setTotalPrMergeErrorCount(final Integer totalPrMergeErrorCount) {
-    this.totalPrMergeErrorCount = totalPrMergeErrorCount;
-  }
-
-  public List<ProcessRepositoryEntity> getProcessRepositories() {
-    return processRepositories;
-  }
-
-  public void setProcessRepositories(final List<ProcessRepositoryEntity> processRepositories) {
-    this.processRepositories = processRepositories;
   }
 
   public Boolean getErrorsOrExceptions() {
     return isErrorsOrExceptions;
   }
 
-  public void setErrorsOrExceptions(final Boolean errorsOrExceptions) {
+  public void setErrorsOrExceptions(Boolean errorsOrExceptions) {
     isErrorsOrExceptions = errorsOrExceptions;
+  }
+
+  public List<ProcessRepositoryEntity> getProcessRepositories() {
+    return processRepositories;
+  }
+
+  public void setProcessRepositories(List<ProcessRepositoryEntity> processRepositories) {
+    this.processRepositories = processRepositories;
   }
 
   public List<ProcessTaskEntity> getProcessTasks() {
     return processTasks;
   }
 
-  public void setProcessTasks(final List<ProcessTaskEntity> processTasks) {
+  public void setProcessTasks(List<ProcessTaskEntity> processTasks) {
     this.processTasks = processTasks;
+  }
+
+  public List<ProcessDependencyEntity> getProcessDependencies() {
+    return processDependencies;
+  }
+
+  public void setProcessDependencies(List<ProcessDependencyEntity> processDependencies) {
+    this.processDependencies = processDependencies;
   }
 
   @Override
@@ -212,34 +131,18 @@ public class ProcessSummaryEntity implements Serializable {
         + ", updateType='"
         + updateType
         + '\''
-        + ", gradlePluginsChecked="
-        + gradlePluginsChecked
-        + ", gradleDependenciesChecked="
-        + gradleDependenciesChecked
-        + ", pythonPackagesChecked="
-        + pythonPackagesChecked
-        + ", nodeDependenciesChecked="
-        + nodeDependenciesChecked
-        + ", gradlePluginsToUpdate="
-        + gradlePluginsToUpdate
-        + ", gradleDependenciesToUpdate="
-        + gradleDependenciesToUpdate
-        + ", pythonPackagesToUpdate="
-        + pythonPackagesToUpdate
-        + ", nodeDependenciesToUpdate="
-        + nodeDependenciesToUpdate
         + ", totalPrCreatedCount="
         + totalPrCreatedCount
         + ", totalPrMergedCount="
         + totalPrMergedCount
-        + ", totalPrMergeErrorCount="
-        + totalPrMergeErrorCount
-        + ", processRepositories="
-        + processRepositories
         + ", isErrorsOrExceptions="
         + isErrorsOrExceptions
+        + ", processRepositories="
+        + processRepositories
         + ", processTasks="
         + processTasks
+        + ", processDependencies="
+        + processDependencies
         + '}';
   }
 
@@ -440,6 +343,59 @@ public class ProcessSummaryEntity implements Serializable {
           + delayMillis
           + ", isTimedOut="
           + isTimedOut
+          + '}';
+    }
+  }
+
+  public static class ProcessDependencyEntity {
+    private String type;
+    private String name;
+    private String version;
+
+    public ProcessDependencyEntity() {}
+
+    public ProcessDependencyEntity(final String type, final String name, final String version) {
+      this.type = type;
+      this.name = name;
+      this.version = version;
+    }
+
+    public String getType() {
+      return type;
+    }
+
+    public void setType(String type) {
+      this.type = type;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getVersion() {
+      return version;
+    }
+
+    public void setVersion(String version) {
+      this.version = version;
+    }
+
+    @Override
+    public String toString() {
+      return "ProcessDependencyEntity{"
+          + "type='"
+          + type
+          + '\''
+          + ", name='"
+          + name
+          + '\''
+          + ", version='"
+          + version
+          + '\''
           + '}';
     }
   }

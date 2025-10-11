@@ -3,10 +3,11 @@ package dep.mgmt.util;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.TaskQueues;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProcessUtils {
 
@@ -16,98 +17,26 @@ public class ProcessUtils {
     TASK_QUEUES = new TaskQueues();
   }
 
-  private static final AtomicBoolean errorsOrExceptions = new AtomicBoolean(Boolean.FALSE);
+  private static final AtomicBoolean isErrorsOrExceptions = new AtomicBoolean(Boolean.FALSE);
   private static final AtomicBoolean isFirstPullRequestMerge = new AtomicBoolean(Boolean.TRUE);
-
-  private static final AtomicInteger mongoGradlePluginsChecked = new AtomicInteger(0);
-  private static final AtomicInteger mongoGradleDependenciesChecked = new AtomicInteger(0);
-  private static final AtomicInteger mongoPythonPackagesChecked = new AtomicInteger(0);
-  private static final AtomicInteger mongoNodeDependenciesChecked = new AtomicInteger(0);
-
-  private static final AtomicInteger mongoGradlePluginsToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoGradleDependenciesToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoPythonPackagesToUpdate = new AtomicInteger(0);
-  private static final AtomicInteger mongoNodeDependenciesToUpdate = new AtomicInteger(0);
 
   private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessTask> processedTasks =
       new ConcurrentHashMap<>();
   private static ConcurrentMap<String, ProcessSummaries.ProcessSummary.ProcessRepository>
       processedRepositories = new ConcurrentHashMap<>();
+  private static CopyOnWriteArrayList<ProcessSummaries.ProcessSummary.ProcessDependency>
+      processedDependencies = new CopyOnWriteArrayList<>();
 
-  public static void setErrorsOrExceptions(final boolean value) {
-    errorsOrExceptions.set(value);
+  public static boolean getIsErrorsOrExceptions() {
+    return isErrorsOrExceptions.get();
+  }
+
+  public static void setIsErrorsOrExceptions(final boolean value) {
+    isErrorsOrExceptions.set(value);
   }
 
   public static void setIsFirstPullRequestMerge(final boolean value) {
     isFirstPullRequestMerge.set(value);
-  }
-
-  public static void setMongoGradlePluginsChecked(final int count) {
-    mongoGradlePluginsChecked.set(count);
-  }
-
-  public static void setMongoGradleDependenciesChecked(final int count) {
-    mongoGradleDependenciesChecked.set(count);
-  }
-
-  public static void setMongoPythonPackagesChecked(final int count) {
-    mongoPythonPackagesChecked.set(count);
-  }
-
-  public static void setMongoNodeDependenciesChecked(final int count) {
-    mongoNodeDependenciesChecked.set(count);
-  }
-
-  public static void setMongoGradlePluginsToUpdate(final int count) {
-    mongoGradlePluginsToUpdate.set(count);
-  }
-
-  public static void setMongoGradleDependenciesToUpdate(final int count) {
-    mongoGradleDependenciesToUpdate.set(count);
-  }
-
-  public static void setMongoPythonPackagesToUpdate(final int count) {
-    mongoPythonPackagesToUpdate.set(count);
-  }
-
-  public static void setMongoNodeDependenciesToUpdate(final int count) {
-    mongoNodeDependenciesToUpdate.set(count);
-  }
-
-  public static boolean getErrorsOrExceptions() {
-    return errorsOrExceptions.get();
-  }
-
-  public static int getMongoGradlePluginsChecked() {
-    return mongoGradlePluginsChecked.get();
-  }
-
-  public static int getMongoGradleDependenciesChecked() {
-    return mongoGradleDependenciesChecked.get();
-  }
-
-  public static int getMongoPythonPackagesChecked() {
-    return mongoPythonPackagesChecked.get();
-  }
-
-  public static int getMongoNodeDependenciesChecked() {
-    return mongoNodeDependenciesChecked.get();
-  }
-
-  public static int getMongoGradlePluginsToUpdate() {
-    return mongoGradlePluginsToUpdate.get();
-  }
-
-  public static int getMongoGradleDependenciesToUpdate() {
-    return mongoGradleDependenciesToUpdate.get();
-  }
-
-  public static int getMongoPythonPackagesToUpdate() {
-    return mongoPythonPackagesToUpdate.get();
-  }
-
-  public static int getMongoNodeDependenciesToUpdate() {
-    return mongoNodeDependenciesToUpdate.get();
   }
 
   public static void addProcessedRepositories(
@@ -197,18 +126,24 @@ public class ProcessUtils {
     return processedTasks;
   }
 
+  public static void addProcessedDependencies(
+      final List<ProcessSummaries.ProcessSummary.ProcessDependency> processDependencies) {
+    processedDependencies.addAll(processDependencies);
+  }
+
+  public static void updateProcessedDependencies(
+      ProcessSummaries.ProcessSummary.ProcessDependency dependency) {
+    processedDependencies.addIfAbsent(dependency);
+  }
+
+  public static List<ProcessSummaries.ProcessSummary.ProcessDependency> getProcessedDependencies() {
+    return processedDependencies.stream().toList();
+  }
+
   public static void resetProcessedRepositoriesAndSummary() {
     processedRepositories = new ConcurrentHashMap<>();
     processedTasks = new ConcurrentHashMap<>();
-    setMongoGradlePluginsChecked(0);
-    setMongoGradleDependenciesChecked(0);
-    setMongoPythonPackagesChecked(0);
-    setMongoNodeDependenciesChecked(0);
-    setMongoGradlePluginsToUpdate(0);
-    setMongoGradleDependenciesToUpdate(0);
-    setMongoPythonPackagesToUpdate(0);
-    setMongoNodeDependenciesToUpdate(0);
-    setErrorsOrExceptions(Boolean.FALSE);
+    processedDependencies = new CopyOnWriteArrayList<>();
     setIsFirstPullRequestMerge(Boolean.TRUE);
   }
 

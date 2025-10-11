@@ -158,11 +158,7 @@ public class NodeDependencyVersionService {
     }
   }
 
-  public int getCheckedCountInPastDay() {
-    return nodeDependencyRepository.findBetweenDates("lastCheckedDate").size();
-  }
-
-  public int getUpdatedCountInPastDay() {
-    return nodeDependencyRepository.findBetweenDates("lastUpdatedDate").size();
+  public List<DependencyEntity> getUpdatedInPastDay() {
+    return nodeDependencyRepository.findBetweenDates("lastUpdatedDate");
   }
 }

@@ -9,48 +9,46 @@ public class ProcessSummaryEmailUtils {
 
   public static synchronized String getProcessSummaryContent(
       ProcessSummaries.ProcessSummary processSummary) {
-    List<ProcessSummaries.ProcessSummary.ProcessTask> allProcessedTasks =
+    final List<ProcessSummaries.ProcessSummary.ProcessTask> allProcessedTasks =
         processSummary.getProcessTasks();
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> allProcessedRepositories =
+    final List<ProcessSummaries.ProcessSummary.ProcessRepository> allProcessedRepositories =
         processSummary.getProcessRepositories();
+    final List<ProcessSummaries.ProcessSummary.ProcessDependency> allUpdatedDependencies =
+        processSummary.getProcessDependencies();
 
-    Set<String> pullRequestCreatedRepoNames =
+    final Set<String> pullRequestCreatedRepoNames =
         allProcessedRepositories.stream()
             .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrCreated)
             .map(ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName)
             .collect(Collectors.toSet());
 
-    Set<String> pullRequestMergedRepoNames =
+    final Set<String> pullRequestMergedRepoNames =
         allProcessedRepositories.stream()
             .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrMerged)
             .map(ProcessSummaries.ProcessSummary.ProcessRepository::getRepoName)
             .collect(Collectors.toSet());
 
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchPullRequestCreatedMerged =
+    final List<ProcessSummaries.ProcessSummary.ProcessRepository> branchPullRequestCreatedMerged =
         allProcessedRepositories.stream()
             .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getUpdateBranchCreated)
             .filter(repo -> pullRequestCreatedRepoNames.contains(repo.getRepoName()))
             .filter(repo -> pullRequestMergedRepoNames.contains(repo.getRepoName()))
             .toList();
 
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchCreatedPullRequestNotCreated =
-        allProcessedRepositories.stream()
-            .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getUpdateBranchCreated)
-            .filter(repo -> !pullRequestCreatedRepoNames.contains(repo.getRepoName()))
-            .toList();
+    final List<ProcessSummaries.ProcessSummary.ProcessRepository>
+        branchCreatedPullRequestNotCreated =
+            allProcessedRepositories.stream()
+                .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getUpdateBranchCreated)
+                .filter(repo -> !pullRequestCreatedRepoNames.contains(repo.getRepoName()))
+                .toList();
 
-    List<ProcessSummaries.ProcessSummary.ProcessRepository> pullRequestCreatedNotMerged =
+    final List<ProcessSummaries.ProcessSummary.ProcessRepository> pullRequestCreatedNotMerged =
         allProcessedRepositories.stream()
             .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrCreated)
             .filter(repo -> !pullRequestMergedRepoNames.contains(repo.getRepoName()))
             .toList();
 
-    // Repositories with NO Updates
-    //    List<ProcessSummaries.ProcessSummary.ProcessRepository> branchNotCreated =
-    //        allProcessedRepositories.stream().filter(repo ->
-    // !repo.getUpdateBranchCreated()).toList();
-
-    StringBuilder html = new StringBuilder();
+    final StringBuilder html = new StringBuilder();
     html.append(
         """
               <html>
@@ -87,38 +85,6 @@ public class ProcessSummaryEmailUtils {
                   <th>Value</th>
                 </tr>
                 <tr>
-                  <td>Gradle Plugins Checked</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Gradle Dependencies Checked</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Python Packages Checked</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Node Dependencies Checked</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Gradle Plugins To Update</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Gradle Dependencies To Update</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Python Packages To Update</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Node Dependencies To Update</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
                   <td>Total PR Created Count</td>
                   <td>%d</td>
                 </tr>
@@ -126,25 +92,12 @@ public class ProcessSummaryEmailUtils {
                   <td>Total PR Merged Count</td>
                   <td>%d</td>
                 </tr>
-                <tr>
-                  <td>Total PR Merge Errors Count</td>
-                  <td>%d</td>
-                </tr>
               </table>
             """
             .formatted(
                 processSummary.getUpdateType(),
-                processSummary.getGradlePluginsChecked(),
-                processSummary.getGradleDependenciesChecked(),
-                processSummary.getPythonPackagesChecked(),
-                processSummary.getNodeDependenciesChecked(),
-                processSummary.getGradlePluginsToUpdate(),
-                processSummary.getGradleDependenciesToUpdate(),
-                processSummary.getPythonPackagesToUpdate(),
-                processSummary.getNodeDependenciesToUpdate(),
                 processSummary.getTotalPrCreatedCount(),
-                processSummary.getTotalPrMergedCount(),
-                processSummary.getTotalPrMergeErrorsCount()));
+                processSummary.getTotalPrMergedCount()));
 
     html.append(
         """
@@ -234,27 +187,33 @@ public class ProcessSummaryEmailUtils {
       processedRepositoryTable(pullRequestCreatedNotMerged, html);
     }
 
-    html.append(
-        """
-              <br />
-              <p style='font-size: 14px; font-weight: bold;'>All Repositories</p>
-              <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Updated</th>
-                  <th>PR Created</th>
-                  <th>PR Number</th>
-                  <th>PR Merged</th>
-                </tr>
-            """);
+    if (allUpdatedDependencies.isEmpty()) {
+      html.append(
+          """
+                        <br />
+                        <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated: N/A</p>
+                        <br />
+                      """);
+    } else {
+      html.append(
+          """
+                        <br />
+                        <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated</p>
+                        <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+                          <tr>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Version</th>
+                          </tr>
+                      """);
 
-    processedRepositoryTable(allProcessedRepositories, html);
+      processedDependencyTable(allUpdatedDependencies, html);
+    }
 
     html.append(
         """
                   <br />
-                  <p style='font-size: 14px; font-weight: bold;'>All Process Tasks</p>
+                  <p style='font-size: 14px; font-weight: bold;'>Process Task Details</p>
                   <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
                     <tr>
                       <th>Queue</th>
@@ -278,8 +237,8 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedRepositoryTable(
-      List<ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories,
-      StringBuilder html) {
+      final List<ProcessSummaries.ProcessSummary.ProcessRepository> processedRepositories,
+      final StringBuilder html) {
     for (ProcessSummaries.ProcessSummary.ProcessRepository processedRepository :
         processedRepositories) {
       html.append("<tr>");
@@ -301,7 +260,8 @@ public class ProcessSummaryEmailUtils {
   }
 
   private static void processedTaskTable(
-      List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks, StringBuilder html) {
+      final List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks,
+      final StringBuilder html) {
     for (ProcessSummaries.ProcessSummary.ProcessTask processedTask : processedTasks) {
       html.append("<tr>");
       html.append("<td>").append(processedTask.getQueueName()).append("</td>");
@@ -317,5 +277,23 @@ public class ProcessSummaryEmailUtils {
         """
             </table>
           """);
+  }
+
+  private static void processedDependencyTable(
+      final List<ProcessSummaries.ProcessSummary.ProcessDependency> processedDependencies,
+      final StringBuilder html) {
+    for (ProcessSummaries.ProcessSummary.ProcessDependency processedDependency :
+        processedDependencies) {
+      html.append("<tr>");
+      html.append("<td>").append(processedDependency.getType()).append("</td>");
+      html.append("<td>").append(processedDependency.getName()).append("</td>");
+      html.append("<td>").append(processedDependency.getVersion()).append("</td>");
+      html.append("</tr>");
+    }
+
+    html.append(
+        """
+                </table>
+              """);
   }
 }

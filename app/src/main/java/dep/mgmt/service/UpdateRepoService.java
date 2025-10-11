@@ -10,6 +10,7 @@ import dep.mgmt.model.AppDataScriptFile;
 import dep.mgmt.model.ProcessSummaries;
 import dep.mgmt.model.RequestMetadata;
 import dep.mgmt.model.TaskQueues;
+import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.entity.ProcessSummaryEntity;
 import dep.mgmt.model.enums.RequestParams;
 import dep.mgmt.update.GradleProjectUpdate;
@@ -731,7 +732,6 @@ public class UpdateRepoService {
             processedRepositories.stream()
                 .filter(ProcessSummaries.ProcessSummary.ProcessRepository::getPrMerged)
                 .count();
-    final Integer totalPrMergeErrorCount = totalPrCreatedCount - totalPrMergedCount;
 
     List<ProcessSummaries.ProcessSummary.ProcessTask> processedTasks =
         ProcessUtils.getProcessedTasks().values().stream()
@@ -741,20 +741,12 @@ public class UpdateRepoService {
         new ProcessSummaries.ProcessSummary(
             LocalDateTime.now(),
             updateType.name(),
-            ProcessUtils.getMongoGradlePluginsChecked(),
-            ProcessUtils.getMongoGradleDependenciesChecked(),
-            ProcessUtils.getMongoPythonPackagesChecked(),
-            ProcessUtils.getMongoNodeDependenciesChecked(),
-            ProcessUtils.getMongoGradlePluginsToUpdate(),
-            ProcessUtils.getMongoGradleDependenciesToUpdate(),
-            ProcessUtils.getMongoPythonPackagesToUpdate(),
-            ProcessUtils.getMongoNodeDependenciesToUpdate(),
             totalPrCreatedCount,
             totalPrMergedCount,
-            totalPrMergeErrorCount,
+            ProcessUtils.getIsErrorsOrExceptions(),
             processedRepositories,
-            ProcessUtils.getErrorsOrExceptions(),
-            processedTasks);
+            processedTasks,
+            ProcessUtils.getProcessedDependencies());
 
     // save to repository
     final ProcessSummaryEntity processSummaryEntity =
@@ -772,8 +764,6 @@ public class UpdateRepoService {
   }
 
   private void saveStopLogCapture() {
-    boolean isSendEmail =
-        "true".equals(AppDataUtils.getAppData().getArgsMap().get(ConstantUtils.ENV_SEND_EMAIL));
     // save log capture
     addTaskToQueue(
         ConstantUtils.QUEUE_LOG_CAPTURE,
@@ -807,21 +797,53 @@ public class UpdateRepoService {
   }
 
   private void getMongoRepoCheckedUpdated() {
-    ProcessUtils.setMongoGradlePluginsChecked(
-        gradlePluginVersionService.getCheckedCountInPastDay());
-    ProcessUtils.setMongoGradlePluginsToUpdate(
-        gradlePluginVersionService.getUpdatedCountInPastDay());
-    ProcessUtils.setMongoGradleDependenciesChecked(
-        gradleDependencyVersionService.getCheckedCountInPastDay());
-    ProcessUtils.setMongoGradleDependenciesToUpdate(
-        gradleDependencyVersionService.getUpdatedCountInPastDay());
-    ProcessUtils.setMongoPythonPackagesChecked(
-        pythonPackageVersionService.getCheckedCountInPastDay());
-    ProcessUtils.setMongoPythonPackagesToUpdate(
-        pythonPackageVersionService.getUpdatedCountInPastDay());
-    ProcessUtils.setMongoNodeDependenciesChecked(
-        nodeDependencyVersionService.getCheckedCountInPastDay());
-    ProcessUtils.setMongoNodeDependenciesToUpdate(
-        nodeDependencyVersionService.getUpdatedCountInPastDay());
+    final List<DependencyEntity> gradlePlugins = gradlePluginVersionService.getUpdatedInPastDay();
+    final List<DependencyEntity> gradleDependencies =
+        gradleDependencyVersionService.getUpdatedInPastDay();
+    final List<DependencyEntity> nodeDependencies =
+        nodeDependencyVersionService.getUpdatedInPastDay();
+    final List<DependencyEntity> pythonPackages = pythonPackageVersionService.getUpdatedInPastDay();
+
+    final List<ProcessSummaries.ProcessSummary.ProcessDependency> processDependencies =
+        new ArrayList<>(
+            gradlePlugins.stream()
+                .map(
+                    gradlePlugin ->
+                        new ProcessSummaries.ProcessSummary.ProcessDependency(
+                            ConstantUtils.MONGODB_COLLECTION_GRADLE_PLUGIN,
+                            gradlePlugin.getName(),
+                            gradlePlugin.getVersion()))
+                .toList());
+
+    processDependencies.addAll(
+        gradleDependencies.stream()
+            .map(
+                gradleDependency ->
+                    new ProcessSummaries.ProcessSummary.ProcessDependency(
+                        ConstantUtils.MONGODB_COLLECTION_GRADLE_DEPENDENCY,
+                        gradleDependency.getName(),
+                        gradleDependency.getVersion()))
+            .toList());
+
+    processDependencies.addAll(
+        nodeDependencies.stream()
+            .map(
+                nodeDependency ->
+                    new ProcessSummaries.ProcessSummary.ProcessDependency(
+                        ConstantUtils.MONGODB_COLLECTION_NODE_DEPENDENCY,
+                        nodeDependency.getName(),
+                        nodeDependency.getVersion()))
+            .toList());
+
+    processDependencies.addAll(
+        pythonPackages.stream()
+            .map(
+                pythonPackage ->
+                    new ProcessSummaries.ProcessSummary.ProcessDependency(
+                        ConstantUtils.MONGODB_COLLECTION_PYTHON_PACKAGE,
+                        pythonPackage.getName(),
+                        pythonPackage.getVersion()))
+            .toList());
+    ProcessUtils.addProcessedDependencies(processDependencies);
   }
 }
