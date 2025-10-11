@@ -9,6 +9,7 @@
     <import class="ch.qos.logback.core.ConsoleAppender"/>
 
     <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ, America/Denver}][depmgmt][%thread][%level][%c{1}] --- %msg%n"/>
+    <appender name="ERROR_APPENDER" class="dep.mgmt.util.CustomLogbackErrorAppender" />
 
     <if condition='property("LOG_TO_FILE").equals("TRUE")'>
         <then>
@@ -39,26 +40,31 @@
             <logger name="io.github.bibekaryal86" level="INFO" additivity="false">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <logger name="org.mongodb.driver" level="WARN" additivity="false">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <logger name="org.quartz.core" level="INFO" additivity="false">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <logger name="io.netty" level="WARN" additivity="false">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <root level="DEBUG">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="FILELOG"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </root>
         </then>
         <else>
@@ -71,14 +77,17 @@
 
             <logger name="io.github.bibekaryal86" level="INFO" additivity="false">
                 <appender-ref ref="STDOUT"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <logger name="org.mongodb.driver" level="WARN" additivity="false">
                 <appender-ref ref="STDOUT"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </logger>
 
             <root level="INFO">
                 <appender-ref ref="STDOUT"/>
+                <appender-ref ref="ERROR_APPENDER"/>
             </root>
         </else>
     </if>
