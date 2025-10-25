@@ -41,7 +41,7 @@ dependencies {
     implementation 'org.codehaus.janino:janino:3.1.12'
     implementation 'org.quartz-scheduler:quartz:2.5.0'
     implementation 'org.mongodb:mongodb-driver-sync:5.6.1'
-    implementation 'com.mailjet:mailjet-client:6.0.0'
+    implementation 'com.mailjet:mailjet-client:6.0.1'
     implementation 'org.jsoup:jsoup:1.21.2'
 }
 
