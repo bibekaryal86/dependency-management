@@ -51,7 +51,7 @@ public class LatestVersionService {
         gcpRuntimesVersionService.getGcpRuntimesVersions();
     final String latestGcpVersionPython = latestGcpRuntimesVersions.get(ConstantUtils.PYTHON_NAME);
     final String latestGcpVersionJava = latestGcpRuntimesVersions.get(ConstantUtils.JAVA_NAME);
-    final String latestGcpVersionNode = latestGcpRuntimesVersions.get(ConstantUtils.NODE_NAME);
+    final String latestGcpVersionNode = latestGcpRuntimesVersions.get(ConstantUtils.NODEJS_NAME);
     final String currentDockerVersionPython = latestVersionEntity.getPython().getVersionDocker();
     final String currentDockerVersionJava = latestVersionEntity.getJava().getVersionDocker();
     final String currentDockerVersionNode = latestVersionEntity.getNode().getVersionDocker();
