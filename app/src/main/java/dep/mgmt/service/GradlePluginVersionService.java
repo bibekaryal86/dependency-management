@@ -64,7 +64,7 @@ public class GradlePluginVersionService {
     String[] latestVersionTextArray = latestVersionText.split(" ");
     if (latestVersionTextArray.length == 3) {
       String version = latestVersionTextArray[1];
-      if (VersionUtils.isCheckPreReleaseVersion(version)) {
+      if (!VersionUtils.isCheckPreReleaseVersion(version)) {
         log.debug("Get Gradle Plugin Version Latest: Group=[{}] | Version=[{}]", group, version);
         return version;
       }

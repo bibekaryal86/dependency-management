@@ -180,7 +180,7 @@ public class GradleDependencyVersionService {
     // the search returns sorted list already, but need to filter and get max after
     MavenSearchResponse.MavenResponse mavenResponse = mavenSearchResponse.getResponse();
     return mavenResponse.getDocs().stream()
-        .filter(mavenDoc -> VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
+        .filter(mavenDoc -> !VersionUtils.isCheckPreReleaseVersion(mavenDoc.getV()))
         .max(
             Comparator.comparing(
                 MavenSearchResponse.MavenResponse.MavenDoc::getV,
