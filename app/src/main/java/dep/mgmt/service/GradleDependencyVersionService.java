@@ -243,7 +243,7 @@ public class GradleDependencyVersionService {
                     gradleDependency.getId(),
                     gradleDependency.getName(),
                     latestVersion,
-                    Boolean.FALSE,
+                    gradleDependency.getSkipVersion(),
                     gradleDependency.getLastUpdatedDate()));
           }
         });

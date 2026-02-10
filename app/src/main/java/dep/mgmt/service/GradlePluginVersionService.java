@@ -126,7 +126,7 @@ public class GradlePluginVersionService {
                     gradlePlugin.getId(),
                     gradlePlugin.getName(),
                     latestVersion,
-                    Boolean.FALSE,
+                    gradlePlugin.getSkipVersion(),
                     gradlePlugin.getLastUpdatedDate()));
           }
         });

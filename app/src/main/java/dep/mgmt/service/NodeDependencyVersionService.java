@@ -111,7 +111,7 @@ public class NodeDependencyVersionService {
                     nodeDependency.getId(),
                     nodeDependency.getName(),
                     latestVersion,
-                    Boolean.FALSE,
+                    nodeDependency.getSkipVersion(),
                     nodeDependency.getLastUpdatedDate()));
           }
         });
