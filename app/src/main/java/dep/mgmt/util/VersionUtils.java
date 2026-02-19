@@ -8,22 +8,23 @@ import java.util.stream.Stream;
 public class VersionUtils {
 
   public static boolean isCheckPreReleaseVersion(final String version) {
-    String versionLowercase = version.toLowerCase();
-    if (versionLowercase.contains("release")) {
-      // eg: nginx
-      versionLowercase = versionLowercase.replace("release", "");
+    String v = version.toLowerCase().replace("release", "");
+
+    if (v.contains("alpha") || v.contains("beta") || v.contains("rc") || v.contains("snapshot")) {
+      return true;
     }
 
-    return versionLowercase.contains("alpha")
-        || versionLowercase.contains("beta")
-        || versionLowercase.contains("rc")
-        || versionLowercase.contains("snapshot")
-        || versionLowercase.matches(".*[._-]a[._-].*") // "a" as separate segment
-        || versionLowercase.matches(".*[._-]a\\d+$") // "a" followed by digits at end
-        || versionLowercase.matches(".*[._-]b[._-].*") // "b" as separate segment
-        || versionLowercase.matches(".*[._-]b\\d+$") // "b" followed by digits at end
-        || versionLowercase.matches(".*[._-]m\\d+$"); // "m" followed by digits (Maven milestones)
+    if (v.matches(".*[._-]?[abm]\\d+$")) {
+      return true;
+    }
+
+    if (v.matches(".*[._-][ab][._-].*")) {
+      return true;
+    }
+
+    return false;
   }
+
 
   public static String getVersionToCompare(final String version) {
     List<String> strList = Stream.of(version.split("\\.")).limit(3).toList();
