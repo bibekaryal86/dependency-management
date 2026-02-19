@@ -25,7 +25,6 @@ public class VersionUtils {
     return false;
   }
 
-
   public static String getVersionToCompare(final String version) {
     List<String> strList = Stream.of(version.split("\\.")).limit(3).toList();
     StringBuilder sb = new StringBuilder();
