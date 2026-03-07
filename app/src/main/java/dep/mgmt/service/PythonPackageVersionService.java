@@ -111,7 +111,7 @@ public class PythonPackageVersionService {
                     pythonPackage.getId(),
                     pythonPackage.getName(),
                     latestVersion,
-                    Boolean.FALSE,
+                    pythonPackage.getSkipVersion(),
                     pythonPackage.getLastUpdatedDate()));
           }
         });

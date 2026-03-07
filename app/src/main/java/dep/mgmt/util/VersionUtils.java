@@ -8,18 +8,21 @@ import java.util.stream.Stream;
 public class VersionUtils {
 
   public static boolean isCheckPreReleaseVersion(final String version) {
-    String versionLowercase = version.toLowerCase();
-    if (versionLowercase.contains("release")) {
-      // eg: nginx
-      versionLowercase = versionLowercase.replace("release", "");
+    String v = version.toLowerCase().replace("release", "");
+
+    if (v.contains("alpha") || v.contains("beta") || v.contains("rc") || v.contains("snapshot")) {
+      return true;
     }
-    return !versionLowercase.contains("alpha")
-        && !versionLowercase.contains("a")
-        && !versionLowercase.contains("beta")
-        && !versionLowercase.contains("b")
-        && !versionLowercase.contains("rc")
-        && !versionLowercase.contains("m")
-        && !versionLowercase.contains("snapshot");
+
+    if (v.matches(".*[._-]?[abm]\\d+$")) {
+      return true;
+    }
+
+    if (v.matches(".*[._-][ab][._-].*")) {
+      return true;
+    }
+
+    return false;
   }
 
   public static String getVersionToCompare(final String version) {
