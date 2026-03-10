@@ -8,7 +8,7 @@
 
 buildscript {
     dependencies {
-        classpath 'org.yaml:snakeyaml:2.5'
+        classpath 'org.yaml:snakeyaml:2.6'
     }
 }
 
