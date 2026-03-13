@@ -158,6 +158,6 @@ public class PythonPackageVersionService {
   }
 
   public List<DependencyEntity> getUpdatedInPastDay() {
-    return pythonPackageRepository.findBetweenDates("lastUpdatedDate");
+    return pythonPackageRepository.getUpdatedInPastDay();
   }
 }

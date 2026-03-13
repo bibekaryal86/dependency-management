@@ -173,6 +173,6 @@ public class GradlePluginVersionService {
   }
 
   public List<DependencyEntity> getUpdatedInPastDay() {
-    return gradlePluginRepository.findBetweenDates("lastUpdatedDate");
+    return gradlePluginRepository.getUpdatedInPastDay();
   }
 }

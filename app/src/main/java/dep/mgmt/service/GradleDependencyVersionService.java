@@ -3,6 +3,7 @@ package dep.mgmt.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import dep.mgmt.config.CacheConfig;
 import dep.mgmt.config.MongoDbConfig;
+import dep.mgmt.model.MongoQueryParams;
 import dep.mgmt.model.entity.DependencyEntity;
 import dep.mgmt.model.web.MavenSearchResponse;
 import dep.mgmt.repository.GradleDependencyRepository;
@@ -12,6 +13,7 @@ import io.github.bibekaryal86.shdsvc.Connector;
 import io.github.bibekaryal86.shdsvc.dtos.Enums;
 import io.github.bibekaryal86.shdsvc.dtos.HttpResponse;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -295,6 +297,6 @@ public class GradleDependencyVersionService {
   }
 
   public List<DependencyEntity> getUpdatedInPastDay() {
-    return gradleDependencyRepository.findBetweenDates("lastUpdatedDate");
+    return gradleDependencyRepository.getUpdatedInPastDay();
   }
 }

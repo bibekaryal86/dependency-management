@@ -1,15 +1,14 @@
 package dep.mgmt.repository;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import dep.mgmt.model.MongoQueryParams;
 import dep.mgmt.util.ConstantUtils;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 public class MongoRepository<T> {
@@ -26,30 +25,40 @@ public class MongoRepository<T> {
   }
 
   // READ
+  public List<T> find(final MongoQueryParams params) {
+    FindIterable<T> iterable = collection.find(params.getFilter());
+
+    if (params.getSort() != null) {
+      iterable = iterable.sort(params.getSort());
+    }
+    if (params.getSkip() > 0) {
+      iterable = iterable.skip(params.getSkip());
+    }
+    if (params.getLimit() > 0) {
+      iterable = iterable.limit(params.getLimit());
+    }
+
+    return iterable.into(new ArrayList<>());
+  }
+
   public List<T> findAll() {
-    return collection.find().into(new ArrayList<>());
+    return find(MongoQueryParams.builder().build());
   }
 
   public T findById(final ObjectId id) {
-    return collection.find(Filters.eq(ConstantUtils.MONGODB_COLUMN_ID, id)).first();
+    return find(MongoQueryParams.builder().id(id).limit(1).build()).stream()
+        .findFirst()
+        .orElse(null);
   }
 
-  public T findByAttribute(final String attributeName, final String attributeValue) {
-    return collection.find(Filters.eq(attributeName, attributeValue)).first();
+  public T findByAttribute(final String field, final Object value) {
+    return find(MongoQueryParams.builder().eq(field, value).limit(1).build()).stream()
+        .findFirst()
+        .orElse(null);
   }
 
-  public List<T> findBetweenDates(final String fieldName, LocalDateTime start, LocalDateTime end) {
-    final Date startDate = Date.from(start.toInstant(ZoneOffset.UTC));
-    final Date endDate = Date.from(end.toInstant(ZoneOffset.UTC));
-    final Bson filter =
-        Filters.and(Filters.gte(fieldName, startDate), Filters.lte(fieldName, endDate));
-    return collection.find(filter).into(new ArrayList<>());
-  }
-
-  public List<T> findBetweenDates(final String fieldName) {
-    final LocalDateTime end = LocalDateTime.now();
-    final LocalDateTime start = end.minusHours(24L);
-    return findBetweenDates(fieldName, start, end);
+  public long count(final MongoQueryParams params) {
+    return collection.countDocuments(params.getFilter());
   }
 
   // UPDATE
@@ -68,5 +77,20 @@ public class MongoRepository<T> {
 
   public long deleteAll() {
     return collection.deleteMany(Filters.empty()).getDeletedCount();
+  }
+
+  // UTILITIES
+  public List<T> getUpdatedInPastDay() {
+    final LocalDateTime end = LocalDateTime.now();
+    final LocalDateTime start = end.minusHours(24L);
+    return find(
+        MongoQueryParams.builder()
+            .dateRange(
+                "lastUpdatedDate",
+                start,
+                MongoQueryParams.Bound.INCLUSIVE,
+                end,
+                MongoQueryParams.Bound.INCLUSIVE)
+            .build());
   }
 }

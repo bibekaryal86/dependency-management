@@ -159,6 +159,6 @@ public class NodeDependencyVersionService {
   }
 
   public List<DependencyEntity> getUpdatedInPastDay() {
-    return nodeDependencyRepository.findBetweenDates("lastUpdatedDate");
+    return nodeDependencyRepository.getUpdatedInPastDay();
   }
 }
