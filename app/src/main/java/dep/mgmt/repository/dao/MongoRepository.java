@@ -1,4 +1,4 @@
-package dep.mgmt.repository;
+package dep.mgmt.repository.dao;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;

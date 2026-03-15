@@ -4,6 +4,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import dep.mgmt.model.entity.LatestVersionEntity;
+import dep.mgmt.repository.dao.MongoRepository;
 import dep.mgmt.util.ConstantUtils;
 import java.time.LocalDateTime;
 import org.bson.conversions.Bson;

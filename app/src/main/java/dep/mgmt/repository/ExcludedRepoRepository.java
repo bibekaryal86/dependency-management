@@ -2,6 +2,7 @@ package dep.mgmt.repository;
 
 import com.mongodb.client.MongoDatabase;
 import dep.mgmt.model.entity.ExcludedRepoEntity;
+import dep.mgmt.repository.dao.MongoRepository;
 import dep.mgmt.util.ConstantUtils;
 
 public class ExcludedRepoRepository extends MongoRepository<ExcludedRepoEntity> {
