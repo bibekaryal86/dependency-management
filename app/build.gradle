@@ -36,7 +36,7 @@ dependencies {
     implementation 'io.github.bibekaryal86:shdsvc:1.0.12'
     implementation 'io.netty:netty-all:4.2.12.Final'
 
-    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'org.slf4j:slf4j-api:2.0.18'
     implementation 'ch.qos.logback:logback-classic:1.5.32'
     implementation 'org.codehaus.janino:janino:3.1.12'
     implementation 'org.quartz-scheduler:quartz:2.5.2'
