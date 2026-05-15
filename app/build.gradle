@@ -16,7 +16,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
-    id 'com.diffplug.spotless' version '8.4.0'
+    id 'com.diffplug.spotless' version '8.5.0'
 }
 
 java {
@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     implementation 'io.github.bibekaryal86:shdsvc:1.0.12'
-    implementation 'io.netty:netty-all:4.2.12.Final'
+    implementation 'io.netty:netty-all:4.2.13.Final'
 
     implementation 'org.slf4j:slf4j-api:2.0.18'
     implementation 'ch.qos.logback:logback-classic:1.5.32'
