@@ -105,12 +105,11 @@ public class AppDataUtils {
         gradleRepositories.addAll(
             pathStream
                 .filter(stream -> "settings.gradle".equals(stream.getFileName().toString()))
-                .map(
-                    mapper -> {
-                      List<String> gradleModules = readGradleModules(mapper);
-                      return new AppDataRepository(
-                          path, RequestParams.UpdateType.GRADLE, gradleModules);
-                    })
+                .map(mapper -> {
+                  List<String> gradleModules = readGradleModules(mapper);
+                  return new AppDataRepository(
+                      path, RequestParams.UpdateType.GRADLE, gradleModules);
+                })
                 .toList());
       } catch (Exception ex) {
         throw new RuntimeException("Gradle Repositories not found in the repo path provided!", ex);
@@ -120,12 +119,11 @@ public class AppDataUtils {
         pythonRepositories.addAll(
             pathStream
                 .filter(stream -> "pyproject.toml".equals(stream.getFileName().toString()))
-                .map(
-                    mapper -> {
-                      List<String> requirementsTxts = readRequirementsTxts(path);
-                      return new AppDataRepository(
-                          path, RequestParams.UpdateType.PYTHON, requirementsTxts);
-                    })
+                .map(mapper -> {
+                  List<String> requirementsTxts = readRequirementsTxts(path);
+                  return new AppDataRepository(
+                      path, RequestParams.UpdateType.PYTHON, requirementsTxts);
+                })
                 .toList());
       } catch (Exception ex) {
         throw new RuntimeException("Python Files not found in the repo path provided!", ex);
@@ -135,15 +133,14 @@ public class AppDataUtils {
     // add gradle wrapper version data
     List<AppDataRepository> gradleWrapperRepositories =
         gradleRepositories.stream()
-            .map(
-                repository -> {
-                  String currentGradleVersion = getCurrentGradleVersionInRepo(repository);
-                  return new AppDataRepository(
-                      repository.getRepoPath(),
-                      repository.getType(),
-                      repository.getGradleModules(),
-                      currentGradleVersion);
-                })
+            .map(repository -> {
+              String currentGradleVersion = getCurrentGradleVersionInRepo(repository);
+              return new AppDataRepository(
+                  repository.getRepoPath(),
+                  repository.getType(),
+                  repository.getGradleModules(),
+                  currentGradleVersion);
+            })
             .toList();
 
     List<AppDataRepository> repositories = new ArrayList<>();
@@ -163,14 +160,13 @@ public class AppDataUtils {
 
       return allLines.stream()
           .filter(line -> line.contains("include"))
-          .map(
-              line -> {
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                  return matcher.group().replace(":", "");
-                }
-                return null;
-              })
+          .map(line -> {
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+              return matcher.group().replace(":", "");
+            }
+            return null;
+          })
           .filter(Objects::nonNull)
           .toList();
     } catch (IOException ex) {
@@ -247,10 +243,9 @@ public class AppDataUtils {
   private static List<String> readRequirementsTxts(final Path path) {
     try (Stream<Path> pathStream = Files.list(path)) {
       return pathStream
-          .filter(
-              stream ->
-                  stream.getFileName().toString().startsWith("requirements")
-                      && stream.getFileName().toString().contains(".txt"))
+          .filter(stream ->
+              stream.getFileName().toString().startsWith("requirements")
+                  && stream.getFileName().toString().contains(".txt"))
           .map(stream -> stream.getFileName().toString())
           .toList();
     } catch (Exception ex) {

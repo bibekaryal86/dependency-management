@@ -110,26 +110,25 @@ public class GradlePluginVersionService {
     List<DependencyEntity> gradlePluginsChecked = new ArrayList<>();
     List<DependencyEntity> gradlePluginsToUpdate = new ArrayList<>();
 
-    gradlePlugins.forEach(
-        gradlePlugin -> {
-          String group = gradlePlugin.getName();
-          String currentVersion = gradlePlugin.getVersion();
-          String latestVersion = getGradlePluginVersion(group);
+    gradlePlugins.forEach(gradlePlugin -> {
+      String group = gradlePlugin.getName();
+      String currentVersion = gradlePlugin.getVersion();
+      String latestVersion = getGradlePluginVersion(group);
 
-          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-            gradlePluginsToUpdate.add(
-                new DependencyEntity(
-                    gradlePlugin.getId(), gradlePlugin.getName(), latestVersion, Boolean.FALSE));
-          } else {
-            gradlePluginsChecked.add(
-                new DependencyEntity(
-                    gradlePlugin.getId(),
-                    gradlePlugin.getName(),
-                    latestVersion,
-                    gradlePlugin.getSkipVersion(),
-                    gradlePlugin.getLastUpdatedDate()));
-          }
-        });
+      if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+        gradlePluginsToUpdate.add(
+            new DependencyEntity(
+                gradlePlugin.getId(), gradlePlugin.getName(), latestVersion, Boolean.FALSE));
+      } else {
+        gradlePluginsChecked.add(
+            new DependencyEntity(
+                gradlePlugin.getId(),
+                gradlePlugin.getName(),
+                latestVersion,
+                gradlePlugin.getSkipVersion(),
+                gradlePlugin.getLastUpdatedDate()));
+      }
+    });
 
     log.info("Gradle Plugins to Update: ListSize=[{}]", gradlePluginsToUpdate.size());
     log.info("Gradle Plugins Checked: ListSize=[{}]", gradlePluginsChecked.size());

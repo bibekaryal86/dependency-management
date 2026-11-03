@@ -92,29 +92,25 @@ public class NodeDependencyVersionService {
     List<DependencyEntity> nodeDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> nodeDependenciesToUpdate = new ArrayList<>();
 
-    nodeDependencies.forEach(
-        nodeDependency -> {
-          String name = nodeDependency.getName();
-          String currentVersion = nodeDependency.getVersion();
-          String latestVersion = getNodeDependencyVersion(name);
+    nodeDependencies.forEach(nodeDependency -> {
+      String name = nodeDependency.getName();
+      String currentVersion = nodeDependency.getVersion();
+      String latestVersion = getNodeDependencyVersion(name);
 
-          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-            nodeDependenciesToUpdate.add(
-                new DependencyEntity(
-                    nodeDependency.getId(),
-                    nodeDependency.getName(),
-                    latestVersion,
-                    Boolean.FALSE));
-          } else {
-            nodeDependenciesChecked.add(
-                new DependencyEntity(
-                    nodeDependency.getId(),
-                    nodeDependency.getName(),
-                    latestVersion,
-                    nodeDependency.getSkipVersion(),
-                    nodeDependency.getLastUpdatedDate()));
-          }
-        });
+      if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+        nodeDependenciesToUpdate.add(
+            new DependencyEntity(
+                nodeDependency.getId(), nodeDependency.getName(), latestVersion, Boolean.FALSE));
+      } else {
+        nodeDependenciesChecked.add(
+            new DependencyEntity(
+                nodeDependency.getId(),
+                nodeDependency.getName(),
+                latestVersion,
+                nodeDependency.getSkipVersion(),
+                nodeDependency.getLastUpdatedDate()));
+      }
+    });
 
     log.info("Node Dependencies to Update: ListSize=[{}]", nodeDependenciesToUpdate.size());
     log.info("Node Dependencies Checked: ListSize=[{}]", nodeDependenciesChecked.size());

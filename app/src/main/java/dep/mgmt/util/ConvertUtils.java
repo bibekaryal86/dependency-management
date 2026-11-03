@@ -21,14 +21,13 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return dependencyEntities.stream()
-        .map(
-            dependencyEntity ->
-                new Dependencies.Dependency(
-                    dependencyEntity.getName(),
-                    dependencyEntity.getVersion(),
-                    dependencyEntity.getSkipVersion(),
-                    dependencyEntity.getLastCheckedDate(),
-                    dependencyEntity.getLastUpdatedDate()))
+        .map(dependencyEntity ->
+            new Dependencies.Dependency(
+                dependencyEntity.getName(),
+                dependencyEntity.getVersion(),
+                dependencyEntity.getSkipVersion(),
+                dependencyEntity.getLastCheckedDate(),
+                dependencyEntity.getLastUpdatedDate()))
         .sorted(Comparator.comparing(Dependencies.Dependency::getName))
         .toList();
   }
@@ -39,19 +38,18 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processSummaryEntities.stream()
-        .map(
-            processSummaryEntity ->
-                new ProcessSummaries.ProcessSummary(
-                    processSummaryEntity.getUpdateDateTime(),
-                    processSummaryEntity.getUpdateType(),
-                    processSummaryEntity.getTotalPrCreatedCount(),
-                    processSummaryEntity.getTotalPrMergedCount(),
-                    processSummaryEntity.getErrorsOrExceptions(),
-                    convertProcessSummaryRepositoryEntities(
-                        processSummaryEntity.getProcessRepositories()),
-                    convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks()),
-                    convertProcessSummaryDependencyEntities(
-                        processSummaryEntity.getProcessDependencies())))
+        .map(processSummaryEntity ->
+            new ProcessSummaries.ProcessSummary(
+                processSummaryEntity.getUpdateDateTime(),
+                processSummaryEntity.getUpdateType(),
+                processSummaryEntity.getTotalPrCreatedCount(),
+                processSummaryEntity.getTotalPrMergedCount(),
+                processSummaryEntity.getErrorsOrExceptions(),
+                convertProcessSummaryRepositoryEntities(
+                    processSummaryEntity.getProcessRepositories()),
+                convertProcessSummaryTaskEntities(processSummaryEntity.getProcessTasks()),
+                convertProcessSummaryDependencyEntities(
+                    processSummaryEntity.getProcessDependencies())))
         .toList();
   }
 
@@ -62,15 +60,14 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processRepositoryEntities.stream()
-        .map(
-            processRepositoryEntity ->
-                new ProcessSummaries.ProcessSummary.ProcessRepository(
-                    processRepositoryEntity.getRepoName(),
-                    processRepositoryEntity.getRepoType(),
-                    processRepositoryEntity.getUpdateBranchCreated(),
-                    processRepositoryEntity.getPrCreated(),
-                    processRepositoryEntity.getPrMerged(),
-                    processRepositoryEntity.getPrNumber()))
+        .map(processRepositoryEntity ->
+            new ProcessSummaries.ProcessSummary.ProcessRepository(
+                processRepositoryEntity.getRepoName(),
+                processRepositoryEntity.getRepoType(),
+                processRepositoryEntity.getUpdateBranchCreated(),
+                processRepositoryEntity.getPrCreated(),
+                processRepositoryEntity.getPrMerged(),
+                processRepositoryEntity.getPrNumber()))
         .toList();
   }
 
@@ -81,16 +78,15 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processTaskEntities.stream()
-        .map(
-            processTaskEntity ->
-                new ProcessSummaries.ProcessSummary.ProcessTask(
-                    processTaskEntity.getQueueName(),
-                    processTaskEntity.getTaskName(),
-                    processTaskEntity.getAdded(),
-                    processTaskEntity.getStarted(),
-                    processTaskEntity.getEnded(),
-                    processTaskEntity.getDelayMillis(),
-                    processTaskEntity.getTimedOut()))
+        .map(processTaskEntity ->
+            new ProcessSummaries.ProcessSummary.ProcessTask(
+                processTaskEntity.getQueueName(),
+                processTaskEntity.getTaskName(),
+                processTaskEntity.getAdded(),
+                processTaskEntity.getStarted(),
+                processTaskEntity.getEnded(),
+                processTaskEntity.getDelayMillis(),
+                processTaskEntity.getTimedOut()))
         .toList();
   }
 
@@ -101,12 +97,11 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processDependencyEntities.stream()
-        .map(
-            processDependencyEntity ->
-                new ProcessSummaries.ProcessSummary.ProcessDependency(
-                    processDependencyEntity.getType(),
-                    processDependencyEntity.getName(),
-                    processDependencyEntity.getVersion()))
+        .map(processDependencyEntity ->
+            new ProcessSummaries.ProcessSummary.ProcessDependency(
+                processDependencyEntity.getType(),
+                processDependencyEntity.getName(),
+                processDependencyEntity.getVersion()))
         .toList();
   }
 
@@ -134,15 +129,14 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processRepositories.stream()
-        .map(
-            processRepository ->
-                new ProcessSummaryEntity.ProcessRepositoryEntity(
-                    processRepository.getRepoName(),
-                    processRepository.getRepoType(),
-                    processRepository.getUpdateBranchCreated(),
-                    processRepository.getPrCreated(),
-                    processRepository.getPrMerged(),
-                    processRepository.getPrNumber()))
+        .map(processRepository ->
+            new ProcessSummaryEntity.ProcessRepositoryEntity(
+                processRepository.getRepoName(),
+                processRepository.getRepoType(),
+                processRepository.getUpdateBranchCreated(),
+                processRepository.getPrCreated(),
+                processRepository.getPrMerged(),
+                processRepository.getPrNumber()))
         .toList();
   }
 
@@ -152,16 +146,15 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processTasks.stream()
-        .map(
-            processTask ->
-                new ProcessSummaryEntity.ProcessTaskEntity(
-                    processTask.getQueueName(),
-                    processTask.getTaskName(),
-                    processTask.getAdded(),
-                    processTask.getStarted(),
-                    processTask.getEnded(),
-                    processTask.getDelayMills(),
-                    processTask.getTimedOut()))
+        .map(processTask ->
+            new ProcessSummaryEntity.ProcessTaskEntity(
+                processTask.getQueueName(),
+                processTask.getTaskName(),
+                processTask.getAdded(),
+                processTask.getStarted(),
+                processTask.getEnded(),
+                processTask.getDelayMills(),
+                processTask.getTimedOut()))
         .toList();
   }
 
@@ -172,12 +165,11 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return processDependencies.stream()
-        .map(
-            processDependency ->
-                new ProcessSummaryEntity.ProcessDependencyEntity(
-                    processDependency.getType(),
-                    processDependency.getName(),
-                    processDependency.getVersion()))
+        .map(processDependency ->
+            new ProcessSummaryEntity.ProcessDependencyEntity(
+                processDependency.getType(),
+                processDependency.getName(),
+                processDependency.getVersion()))
         .toList();
   }
 
@@ -197,9 +189,8 @@ public class ConvertUtils {
       return Collections.emptyList();
     }
     return logEntryEntities.stream()
-        .map(
-            logEntryEntity ->
-                new LogEntry(logEntryEntity.getUpdateDateTime(), logEntryEntity.getLogEntries()))
+        .map(logEntryEntity ->
+            new LogEntry(logEntryEntity.getUpdateDateTime(), logEntryEntity.getLogEntries()))
         .toList();
   }
 }

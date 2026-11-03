@@ -95,26 +95,25 @@ public class PythonPackageVersionService {
     List<DependencyEntity> pythonPackagesChecked = new ArrayList<>();
     List<DependencyEntity> pythonPackagesToUpdate = new ArrayList<>();
 
-    pythonPackages.forEach(
-        pythonPackage -> {
-          String name = pythonPackage.getName();
-          String currentVersion = pythonPackage.getVersion();
-          String latestVersion = getPythonPackageVersion(name);
+    pythonPackages.forEach(pythonPackage -> {
+      String name = pythonPackage.getName();
+      String currentVersion = pythonPackage.getVersion();
+      String latestVersion = getPythonPackageVersion(name);
 
-          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-            pythonPackagesToUpdate.add(
-                new DependencyEntity(
-                    pythonPackage.getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
-          } else {
-            pythonPackagesChecked.add(
-                new DependencyEntity(
-                    pythonPackage.getId(),
-                    pythonPackage.getName(),
-                    latestVersion,
-                    pythonPackage.getSkipVersion(),
-                    pythonPackage.getLastUpdatedDate()));
-          }
-        });
+      if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+        pythonPackagesToUpdate.add(
+            new DependencyEntity(
+                pythonPackage.getId(), pythonPackage.getName(), latestVersion, Boolean.FALSE));
+      } else {
+        pythonPackagesChecked.add(
+            new DependencyEntity(
+                pythonPackage.getId(),
+                pythonPackage.getName(),
+                latestVersion,
+                pythonPackage.getSkipVersion(),
+                pythonPackage.getLastUpdatedDate()));
+      }
+    });
 
     log.info("Python Packages to Update: ListSize=[{}]", pythonPackagesToUpdate.size());
     log.info("Python Packages Checked: ListSize=[{}]", pythonPackagesChecked.size());

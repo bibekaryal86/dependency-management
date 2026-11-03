@@ -50,16 +50,15 @@ public class LogCaptureUtils {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.systemDefault());
     List<String> logs =
         listAppender.list.stream()
-            .map(
-                event ->
-                    String.format(
-                        "[%s][%s][%s][%s][%s] --- %s",
-                        formatter.format(Instant.ofEpochMilli(event.getTimeStamp())),
-                        event.getLoggerContextVO().getName(),
-                        event.getThreadName(),
-                        event.getLevel(),
-                        event.getLoggerName(),
-                        event.getFormattedMessage()))
+            .map(event ->
+                String.format(
+                    "[%s][%s][%s][%s][%s] --- %s",
+                    formatter.format(Instant.ofEpochMilli(event.getTimeStamp())),
+                    event.getLoggerContextVO().getName(),
+                    event.getThreadName(),
+                    event.getLevel(),
+                    event.getLoggerName(),
+                    event.getFormattedMessage()))
             .toList();
     return String.join(System.lineSeparator(), logs);
   }

@@ -172,10 +172,9 @@ public class GithubService {
 
     List<GithubApiModel.ListWorkflowRunsResponse.WorkflowRun> workflowRuns =
         workflowRunsResponse.getWorkflowRuns().stream()
-            .filter(
-                wr ->
-                    wr.getHeadBranch().equals(branchName)
-                        && !CommonUtilities.isEmpty(wr.getPullRequests()))
+            .filter(wr ->
+                wr.getHeadBranch().equals(branchName)
+                    && !CommonUtilities.isEmpty(wr.getPullRequests()))
             .toList();
 
     if (CommonUtilities.isEmpty(workflowRuns)) {
@@ -195,12 +194,11 @@ public class GithubService {
 
     final boolean isWorkflowRunSuccessful =
         workflowRuns.stream()
-            .allMatch(
-                run ->
-                    Objects.equals(branchName, run.getHeadBranch())
-                        && Objects.equals("pull_request", run.getEvent())
-                        && Objects.equals("completed", run.getStatus())
-                        && Objects.equals("success", run.getConclusion()));
+            .allMatch(run ->
+                Objects.equals(branchName, run.getHeadBranch())
+                    && Objects.equals("pull_request", run.getEvent())
+                    && Objects.equals("completed", run.getStatus())
+                    && Objects.equals("success", run.getConclusion()));
 
     if (!isWorkflowRunSuccessful) {
       log.error(
