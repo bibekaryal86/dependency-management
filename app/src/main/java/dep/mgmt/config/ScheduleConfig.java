@@ -36,14 +36,13 @@ public class ScheduleConfig {
   public static void init() throws SchedulerException {
     Runtime.getRuntime()
         .addShutdownHook(
-            new Thread(
-                () -> {
-                  log.info("Shutting down scheduler...");
-                  try {
-                    scheduler.shutdown(Boolean.FALSE);
-                  } catch (SchedulerException ignored) {
-                  }
-                }));
+            new Thread(() -> {
+              log.info("Shutting down scheduler...");
+              try {
+                scheduler.shutdown(Boolean.FALSE);
+              } catch (SchedulerException ignored) {
+              }
+            }));
 
     scheduler.start();
 

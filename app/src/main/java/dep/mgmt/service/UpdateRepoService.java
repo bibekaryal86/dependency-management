@@ -309,14 +309,13 @@ public class UpdateRepoService {
     List<AppDataRepository> repositories =
         appData.getRepositories().stream()
             .filter(repository -> repository.getType().equals(RequestParams.UpdateType.NODE))
-            .filter(
-                repository -> {
-                  if (CommonUtilities.isEmpty(repoName)) {
-                    return true;
-                  } else {
-                    return repository.getRepoName().equals(repoName);
-                  }
-                })
+            .filter(repository -> {
+              if (CommonUtilities.isEmpty(repoName)) {
+                return true;
+              } else {
+                return repository.getRepoName().equals(repoName);
+              }
+            })
             .toList();
 
     addTaskToQueue(
@@ -335,14 +334,13 @@ public class UpdateRepoService {
     List<AppDataRepository> repositories =
         appData.getRepositories().stream()
             .filter(repository -> repository.getType().equals(RequestParams.UpdateType.GRADLE))
-            .filter(
-                repository -> {
-                  if (CommonUtilities.isEmpty(repoName)) {
-                    return true;
-                  } else {
-                    return repository.getRepoName().equals(repoName);
-                  }
-                })
+            .filter(repository -> {
+              if (CommonUtilities.isEmpty(repoName)) {
+                return true;
+              } else {
+                return repository.getRepoName().equals(repoName);
+              }
+            })
             .toList();
 
     addTaskToQueue(
@@ -437,9 +435,8 @@ public class UpdateRepoService {
 
     final List<AppDataRepository> repositories =
         appData.getRepositories().stream()
-            .filter(
-                repository ->
-                    CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
+            .filter(repository ->
+                CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
             .toList();
     if (!CommonUtilities.isEmpty(repoName) && CommonUtilities.isEmpty(repositories)) {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
@@ -447,22 +444,21 @@ public class UpdateRepoService {
 
     final AppDataScriptFile scriptFileInitExit = getScriptFile(ConstantUtils.SCRIPT_UPDATE_INIT);
 
-    repositories.forEach(
-        repository -> {
-          addTaskToQueue(
-              isInit
-                  ? ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_INIT
-                  : ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXIT,
-              isInit
-                  ? String.format(
-                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_INIT,
-                      repository.getRepoName().toUpperCase())
-                  : String.format(
-                      ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXIT,
-                      repository.getRepoName().toUpperCase()),
-              () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
-              ConstantUtils.TASK_DELAY_ZERO);
-        });
+    repositories.forEach(repository -> {
+      addTaskToQueue(
+          isInit
+              ? ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_INIT
+              : ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXIT,
+          isInit
+              ? String.format(
+                  ConstantUtils.TASK_UPDATE_DEPENDENCIES_INIT,
+                  repository.getRepoName().toUpperCase())
+              : String.format(
+                  ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXIT,
+                  repository.getRepoName().toUpperCase()),
+          () -> UpdateDependencies.execute(repository, scriptFileInitExit, null, isInit),
+          ConstantUtils.TASK_DELAY_ZERO);
+    });
   }
 
   private void executeUpdateDependenciesExec(final RequestMetadata requestMetadata) {
@@ -471,9 +467,8 @@ public class UpdateRepoService {
 
     final List<AppDataRepository> repositories =
         appData.getRepositories().stream()
-            .filter(
-                repository ->
-                    CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
+            .filter(repository ->
+                CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
             .toList();
     if (!CommonUtilities.isEmpty(repoName) && CommonUtilities.isEmpty(repositories)) {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
@@ -481,20 +476,16 @@ public class UpdateRepoService {
 
     final AppDataScriptFile scriptFileExec = getScriptFile(ConstantUtils.SCRIPT_UPDATE_EXEC);
 
-    repositories.forEach(
-        repository -> {
-          final String branchName =
-              String.format(
-                  ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, requestMetadata.getBranchDate());
-          addTaskToQueue(
-              ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXEC,
-              String.format(
-                  ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXEC,
-                  repository.getRepoName().toUpperCase()),
-              () ->
-                  UpdateDependencies.execute(repository, scriptFileExec, branchName, Boolean.FALSE),
-              ConstantUtils.TASK_DELAY_ZERO);
-        });
+    repositories.forEach(repository -> {
+      final String branchName =
+          String.format(ConstantUtils.BRANCH_UPDATE_DEPENDENCIES, requestMetadata.getBranchDate());
+      addTaskToQueue(
+          ConstantUtils.QUEUE_UPDATE_DEPENDENCIES_EXEC,
+          String.format(
+              ConstantUtils.TASK_UPDATE_DEPENDENCIES_EXEC, repository.getRepoName().toUpperCase()),
+          () -> UpdateDependencies.execute(repository, scriptFileExec, branchName, Boolean.FALSE),
+          ConstantUtils.TASK_DELAY_ZERO);
+    });
   }
 
   private void executeUpdateDependencies(final RequestMetadata requestMetadata) {
@@ -503,9 +494,8 @@ public class UpdateRepoService {
 
     final List<AppDataRepository> repositories =
         appData.getRepositories().stream()
-            .filter(
-                repository ->
-                    CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
+            .filter(repository ->
+                CommonUtilities.isEmpty(repoName) || repoName.equals(repository.getRepoName()))
             .toList();
     if (!CommonUtilities.isEmpty(repoName) && CommonUtilities.isEmpty(repositories)) {
       throw new IllegalArgumentException("Repo Not Found by Repo Name ['" + repoName + "']");
@@ -517,9 +507,8 @@ public class UpdateRepoService {
           repositories.stream()
               .filter(repository -> repository.getType().equals(RequestParams.UpdateType.GRADLE))
               .toList();
-      gradleRepositories.forEach(
-          gradleRepository ->
-              executeUpdateGradleProjects(appData.getLatestVersions(), gradleRepository));
+      gradleRepositories.forEach(gradleRepository ->
+          executeUpdateGradleProjects(appData.getLatestVersions(), gradleRepository));
     }
 
     if (requestMetadata.getUpdateType().equals(RequestParams.UpdateType.ALL)
@@ -538,9 +527,8 @@ public class UpdateRepoService {
           repositories.stream()
               .filter(repository -> repository.getType().equals(RequestParams.UpdateType.PYTHON))
               .toList();
-      pythonRepositories.forEach(
-          pythonRepository ->
-              executeUpdatePythonProjects(appData.getLatestVersions(), pythonRepository));
+      pythonRepositories.forEach(pythonRepository ->
+          executeUpdatePythonProjects(appData.getLatestVersions(), pythonRepository));
     }
   }
 
@@ -807,42 +795,38 @@ public class UpdateRepoService {
     final List<ProcessSummaries.ProcessSummary.ProcessDependency> processDependencies =
         new ArrayList<>(
             gradlePlugins.stream()
-                .map(
-                    gradlePlugin ->
-                        new ProcessSummaries.ProcessSummary.ProcessDependency(
-                            ConstantUtils.MONGODB_COLLECTION_GRADLE_PLUGIN,
-                            gradlePlugin.getName(),
-                            gradlePlugin.getVersion()))
+                .map(gradlePlugin ->
+                    new ProcessSummaries.ProcessSummary.ProcessDependency(
+                        ConstantUtils.MONGODB_COLLECTION_GRADLE_PLUGIN,
+                        gradlePlugin.getName(),
+                        gradlePlugin.getVersion()))
                 .toList());
 
     processDependencies.addAll(
         gradleDependencies.stream()
-            .map(
-                gradleDependency ->
-                    new ProcessSummaries.ProcessSummary.ProcessDependency(
-                        ConstantUtils.MONGODB_COLLECTION_GRADLE_DEPENDENCY,
-                        gradleDependency.getName(),
-                        gradleDependency.getVersion()))
+            .map(gradleDependency ->
+                new ProcessSummaries.ProcessSummary.ProcessDependency(
+                    ConstantUtils.MONGODB_COLLECTION_GRADLE_DEPENDENCY,
+                    gradleDependency.getName(),
+                    gradleDependency.getVersion()))
             .toList());
 
     processDependencies.addAll(
         nodeDependencies.stream()
-            .map(
-                nodeDependency ->
-                    new ProcessSummaries.ProcessSummary.ProcessDependency(
-                        ConstantUtils.MONGODB_COLLECTION_NODE_DEPENDENCY,
-                        nodeDependency.getName(),
-                        nodeDependency.getVersion()))
+            .map(nodeDependency ->
+                new ProcessSummaries.ProcessSummary.ProcessDependency(
+                    ConstantUtils.MONGODB_COLLECTION_NODE_DEPENDENCY,
+                    nodeDependency.getName(),
+                    nodeDependency.getVersion()))
             .toList());
 
     processDependencies.addAll(
         pythonPackages.stream()
-            .map(
-                pythonPackage ->
-                    new ProcessSummaries.ProcessSummary.ProcessDependency(
-                        ConstantUtils.MONGODB_COLLECTION_PYTHON_PACKAGE,
-                        pythonPackage.getName(),
-                        pythonPackage.getVersion()))
+            .map(pythonPackage ->
+                new ProcessSummaries.ProcessSummary.ProcessDependency(
+                    ConstantUtils.MONGODB_COLLECTION_PYTHON_PACKAGE,
+                    pythonPackage.getName(),
+                    pythonPackage.getVersion()))
             .toList());
     ProcessUtils.addProcessedDependencies(processDependencies);
   }

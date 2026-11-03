@@ -341,13 +341,12 @@ public class GradleProjectUpdate {
         Stream<MatchResult> matcherResultStream = matcher.results();
         List<String> artifactVersion =
             matcherResultStream
-                .map(
-                    matchResult -> {
-                      if (!matchResult.group().contains(",")) {
-                        return matchResult.group().trim();
-                      }
-                      return null;
-                    })
+                .map(matchResult -> {
+                  if (!matchResult.group().contains(",")) {
+                    return matchResult.group().trim();
+                  }
+                  return null;
+                })
                 .filter(Objects::nonNull)
                 .toList();
         return getGradleDependency(group, artifactVersion, original);

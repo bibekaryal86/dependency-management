@@ -51,49 +51,49 @@ public class ProcessSummaryEmailUtils {
     final StringBuilder html = new StringBuilder();
     html.append(
         """
-              <html>
-                <head>
-                  <style>
-                    th {
-                        border-bottom: 2px solid #9e9e9e;
-                        position: sticky;
-                        top: 0;
-                        background-color: lightgrey;
-                      }
-                    td {
-                      padding: 5px;
-                      text-align: left;
-                      border-bottom: 1px solid #9e9e9e;
-                    }
-                    td:first-child {
-                       text-align: left;
-                     }
-                     td:not(:first-child) {
-                       text-align: center;
-                     }
-                  </style>
-                </head>
-                <body>
-              """);
+        <html>
+          <head>
+            <style>
+              th {
+                  border-bottom: 2px solid #9e9e9e;
+                  position: sticky;
+                  top: 0;
+                  background-color: lightgrey;
+                }
+              td {
+                padding: 5px;
+                text-align: left;
+                border-bottom: 1px solid #9e9e9e;
+              }
+              td:first-child {
+                 text-align: left;
+               }
+               td:not(:first-child) {
+                 text-align: center;
+               }
+            </style>
+          </head>
+          <body>
+        """);
 
     html.append(
         """
-              <p style='font-size: 14px; font-weight: bold;'>App Dependency Update Process Summary: %s</p>
-              <table cellpadding='10' cellspacing='0' style='font-size: 12px; border-collapse: collapse;'>
-                <tr>
-                  <th>Item</th>
-                  <th>Value</th>
-                </tr>
-                <tr>
-                  <td>Total PR Created Count</td>
-                  <td>%d</td>
-                </tr>
-                <tr>
-                  <td>Total PR Merged Count</td>
-                  <td>%d</td>
-                </tr>
-              </table>
-            """
+          <p style='font-size: 14px; font-weight: bold;'>App Dependency Update Process Summary: %s</p>
+          <table cellpadding='10' cellspacing='0' style='font-size: 12px; border-collapse: collapse;'>
+            <tr>
+              <th>Item</th>
+              <th>Value</th>
+            </tr>
+            <tr>
+              <td>Total PR Created Count</td>
+              <td>%d</td>
+            </tr>
+            <tr>
+              <td>Total PR Merged Count</td>
+              <td>%d</td>
+            </tr>
+          </table>
+        """
             .formatted(
                 processSummary.getUpdateType(),
                 processSummary.getTotalPrCreatedCount(),
@@ -101,10 +101,10 @@ public class ProcessSummaryEmailUtils {
 
     html.append(
         """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;%s'>Exception Caught in the Update Process: %s</p>
-                <br />
-              """
+          <br />
+          <p style='font-size: 14px; font-weight: bold;%s'>Exception Caught in the Update Process: %s</p>
+          <br />
+        """
             .formatted(
                 processSummary.getErrorsOrExceptions() ? " color: red;" : "",
                 processSummary.getErrorsOrExceptions()));
@@ -112,25 +112,25 @@ public class ProcessSummaryEmailUtils {
     if (branchPullRequestCreatedMerged.isEmpty()) {
       html.append(
           """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged: N/A</p>
-                <br />
-              """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged: N/A</p>
+            <br />
+          """);
     } else {
       html.append(
           """
-                <br />
-                <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged</p>
-                <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                  <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Updated</th>
-                    <th>PR Created</th>
-                    <th>PR Number</th>
-                    <th>PR Merged</th>
-                  </tr>
-              """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch Pull Request Created and Merged</p>
+            <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Updated</th>
+                <th>PR Created</th>
+                <th>PR Number</th>
+                <th>PR Merged</th>
+              </tr>
+          """);
 
       processedRepositoryTable(branchPullRequestCreatedMerged, html);
     }
@@ -138,25 +138,25 @@ public class ProcessSummaryEmailUtils {
     if (branchCreatedPullRequestNotCreated.isEmpty()) {
       html.append(
           """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created: N/A</p>
-                    <br />
-                  """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created: N/A</p>
+            <br />
+          """);
     } else {
       html.append(
           """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created</p>
-                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                      <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Updated</th>
-                        <th>PR Created</th>
-                        <th>PR Number</th>
-                        <th>PR Merged</th>
-                      </tr>
-                  """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Update Branch but Pull Request NOT Created</p>
+            <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Updated</th>
+                <th>PR Created</th>
+                <th>PR Number</th>
+                <th>PR Merged</th>
+              </tr>
+          """);
 
       processedRepositoryTable(branchCreatedPullRequestNotCreated, html);
     }
@@ -164,25 +164,25 @@ public class ProcessSummaryEmailUtils {
     if (pullRequestCreatedNotMerged.isEmpty()) {
       html.append(
           """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged: N/A</p>
-                    <br />
-                  """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged: N/A</p>
+            <br />
+          """);
     } else {
       html.append(
           """
-                    <br />
-                    <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged</p>
-                    <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                      <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Updated</th>
-                        <th>PR Created</th>
-                        <th>PR Number</th>
-                        <th>PR Merged</th>
-                      </tr>
-                  """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Repositories with Pull Request Created but NOT Merged</p>
+            <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Updated</th>
+                <th>PR Created</th>
+                <th>PR Number</th>
+                <th>PR Merged</th>
+              </tr>
+          """);
 
       processedRepositoryTable(pullRequestCreatedNotMerged, html);
     }
@@ -190,40 +190,40 @@ public class ProcessSummaryEmailUtils {
     if (allUpdatedDependencies.isEmpty()) {
       html.append(
           """
-                        <br />
-                        <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated: N/A</p>
-                        <br />
-                      """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated: N/A</p>
+            <br />
+          """);
     } else {
       html.append(
           """
-                        <br />
-                        <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated</p>
-                        <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                          <tr>
-                            <th>Type</th>
-                            <th>Name</th>
-                            <th>Version</th>
-                          </tr>
-                      """);
+            <br />
+            <p style='font-size: 14px; font-weight: bold;'>Dependencies Updated</p>
+            <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+              <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Version</th>
+              </tr>
+          """);
 
       processedDependencyTable(allUpdatedDependencies, html);
     }
 
     html.append(
         """
-                  <br />
-                  <p style='font-size: 14px; font-weight: bold;'>Process Task Details</p>
-                  <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-                    <tr>
-                      <th>Queue</th>
-                      <th>Task</th>
-                      <th>Added</th>
-                      <th>Started</th>
-                      <th>Ended</th>
-                      <th>TimedOut?</th>
-                    </tr>
-                """);
+          <br />
+          <p style='font-size: 14px; font-weight: bold;'>Process Task Details</p>
+          <table border='1' cellpadding='10' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+            <tr>
+              <th>Queue</th>
+              <th>Task</th>
+              <th>Added</th>
+              <th>Started</th>
+              <th>Ended</th>
+              <th>TimedOut?</th>
+            </tr>
+        """);
 
     processedTaskTable(allProcessedTasks, html);
 
@@ -255,8 +255,8 @@ public class ProcessSummaryEmailUtils {
 
     html.append(
         """
-        </table>
-      """);
+          </table>
+        """);
   }
 
   private static void processedTaskTable(
@@ -275,8 +275,8 @@ public class ProcessSummaryEmailUtils {
 
     html.append(
         """
-            </table>
-          """);
+          </table>
+        """);
   }
 
   private static void processedDependencyTable(
@@ -293,7 +293,7 @@ public class ProcessSummaryEmailUtils {
 
     html.append(
         """
-                </table>
-              """);
+          </table>
+        """);
   }
 }

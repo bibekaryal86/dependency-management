@@ -80,37 +80,36 @@ public class TaskQueues {
     }
 
     isProcessing.set(true);
-    return executor.submit(
-        () -> {
-          StringBuilder result = new StringBuilder();
-          while (!Thread.currentThread().isInterrupted()) {
-            try {
-              TaskQueue taskQueue = queueOfQueues.poll(1, TimeUnit.SECONDS);
+    return executor.submit(() -> {
+      StringBuilder result = new StringBuilder();
+      while (!Thread.currentThread().isInterrupted()) {
+        try {
+          TaskQueue taskQueue = queueOfQueues.poll(1, TimeUnit.SECONDS);
 
-              if (taskQueue == null && areAllQueuesEmpty()) {
-                break;
-              }
-
-              if (taskQueue != null) {
-                while (!taskQueue.isEmpty()) {
-                  TaskQueue.OneTask oneTask = taskQueue.pollTask();
-                  if (oneTask != null) {
-                    Object object = oneTask.execute();
-                    if (object != null) {
-                      result.append(object);
-                    }
-                  }
-                }
-                nonEmptyQueueCount.decrementAndGet();
-              }
-            } catch (InterruptedException e) {
-              Thread.currentThread().interrupt();
-              break;
-            }
+          if (taskQueue == null && areAllQueuesEmpty()) {
+            break;
           }
-          isProcessing.set(false);
-          return result.toString();
-        });
+
+          if (taskQueue != null) {
+            while (!taskQueue.isEmpty()) {
+              TaskQueue.OneTask oneTask = taskQueue.pollTask();
+              if (oneTask != null) {
+                Object object = oneTask.execute();
+                if (object != null) {
+                  result.append(object);
+                }
+              }
+            }
+            nonEmptyQueueCount.decrementAndGet();
+          }
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
+        }
+      }
+      isProcessing.set(false);
+      return result.toString();
+    });
   }
 
   private boolean areAllQueuesEmpty() {
@@ -218,13 +217,12 @@ public class TaskQueues {
 
         try {
           future =
-              singleTaskExecutor.submit(
-                  () -> {
-                    if (delayMillisGet > 0) {
-                      Thread.sleep(delayMillisGet);
-                    }
-                    return action.call();
-                  });
+              singleTaskExecutor.submit(() -> {
+                if (delayMillisGet > 0) {
+                  Thread.sleep(delayMillisGet);
+                }
+                return action.call();
+              });
 
           result = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {

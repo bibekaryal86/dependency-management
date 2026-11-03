@@ -223,30 +223,29 @@ public class GradleDependencyVersionService {
     List<DependencyEntity> gradleDependenciesChecked = new ArrayList<>();
     List<DependencyEntity> gradleDependenciesToUpdate = new ArrayList<>();
 
-    gradleDependencies.forEach(
-        gradleDependency -> {
-          String[] mavenIdArray = gradleDependency.getName().split(":");
-          String currentVersion = gradleDependency.getVersion();
-          String latestVersion =
-              getGradleDependencyVersion(mavenIdArray[0], mavenIdArray[1], currentVersion);
+    gradleDependencies.forEach(gradleDependency -> {
+      String[] mavenIdArray = gradleDependency.getName().split(":");
+      String currentVersion = gradleDependency.getVersion();
+      String latestVersion =
+          getGradleDependencyVersion(mavenIdArray[0], mavenIdArray[1], currentVersion);
 
-          if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
-            gradleDependenciesToUpdate.add(
-                new DependencyEntity(
-                    gradleDependency.getId(),
-                    gradleDependency.getName(),
-                    latestVersion,
-                    Boolean.FALSE));
-          } else {
-            gradleDependenciesChecked.add(
-                new DependencyEntity(
-                    gradleDependency.getId(),
-                    gradleDependency.getName(),
-                    latestVersion,
-                    gradleDependency.getSkipVersion(),
-                    gradleDependency.getLastUpdatedDate()));
-          }
-        });
+      if (VersionUtils.isRequiresUpdate(currentVersion, latestVersion)) {
+        gradleDependenciesToUpdate.add(
+            new DependencyEntity(
+                gradleDependency.getId(),
+                gradleDependency.getName(),
+                latestVersion,
+                Boolean.FALSE));
+      } else {
+        gradleDependenciesChecked.add(
+            new DependencyEntity(
+                gradleDependency.getId(),
+                gradleDependency.getName(),
+                latestVersion,
+                gradleDependency.getSkipVersion(),
+                gradleDependency.getLastUpdatedDate()));
+      }
+    });
 
     log.info("Gradle Dependencies to Update: ListSize=[{}]", gradleDependenciesToUpdate.size());
     log.info("Gradle Dependencies Checked: ListSize=[{}]", gradleDependenciesChecked.size());
