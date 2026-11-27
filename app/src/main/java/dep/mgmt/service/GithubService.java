@@ -192,15 +192,16 @@ public class GithubService {
         branchDate,
         workflowRuns);
 
-    final boolean isWorkflowRunSuccessful =
-        workflowRuns.stream()
-            .allMatch(run ->
-                Objects.equals(branchName, run.getHeadBranch())
-                    && Objects.equals("pull_request", run.getEvent())
-                    && Objects.equals("completed", run.getStatus())
-                    && Objects.equals("success", run.getConclusion()));
+    final GithubApiModel.ListWorkflowRunsResponse.WorkflowRun successfulWorkflowRun = workflowRuns.stream()
+            .filter(run ->
+                    Objects.equals(branchName, run.getHeadBranch())
+                            && Objects.equals("pull_request", run.getEvent())
+                            && Objects.equals("completed", run.getStatus())
+                            && Objects.equals("success", run.getConclusion()))
+            .findFirst()
+            .orElse(null);
 
-    if (!isWorkflowRunSuccessful) {
+    if (successfulWorkflowRun == null) {
       log.error(
           "Workflow Run Not Successful: RepoName=[{}] | BranchDate=[{}] | [{}]",
           repoName,
@@ -209,7 +210,7 @@ public class GithubService {
       return null;
     }
 
-    return workflowRuns.getFirst().getPullRequests().getFirst().getNumber();
+    return successfulWorkflowRun.getPullRequests().getFirst().getNumber();
   }
 
   public GithubApiModel.RateLimitResponse getCurrentGithubRateLimits() {
