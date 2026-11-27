@@ -192,12 +192,13 @@ public class GithubService {
         branchDate,
         workflowRuns);
 
-    final GithubApiModel.ListWorkflowRunsResponse.WorkflowRun successfulWorkflowRun = workflowRuns.stream()
+    final GithubApiModel.ListWorkflowRunsResponse.WorkflowRun successfulWorkflowRun =
+        workflowRuns.stream()
             .filter(run ->
-                    Objects.equals(branchName, run.getHeadBranch())
-                            && Objects.equals("pull_request", run.getEvent())
-                            && Objects.equals("completed", run.getStatus())
-                            && Objects.equals("success", run.getConclusion()))
+                Objects.equals(branchName, run.getHeadBranch())
+                    && Objects.equals("pull_request", run.getEvent())
+                    && Objects.equals("completed", run.getStatus())
+                    && Objects.equals("success", run.getConclusion()))
             .findFirst()
             .orElse(null);
 
