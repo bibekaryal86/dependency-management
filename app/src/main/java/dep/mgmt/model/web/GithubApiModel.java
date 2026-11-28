@@ -205,6 +205,7 @@ public class GithubApiModel implements Serializable {
 
     public static class WorkflowRun implements Serializable {
       private final String headBranch;
+      private final String name;
       private final String event;
       private final String status;
       private final String conclusion;
@@ -214,11 +215,13 @@ public class GithubApiModel implements Serializable {
       @JsonCreator
       public WorkflowRun(
           @JsonProperty("head_branch") String headBranch,
+          @JsonProperty("name") String name,
           @JsonProperty("event") String event,
           @JsonProperty("status") String status,
           @JsonProperty("conclusion") String conclusion,
           @JsonProperty("pull_requests") List<CreatePullRequestResponse> pullRequests) {
         this.headBranch = headBranch;
+        this.name = name;
         this.event = event;
         this.status = status;
         this.conclusion = conclusion;
@@ -227,6 +230,10 @@ public class GithubApiModel implements Serializable {
 
       public String getHeadBranch() {
         return headBranch;
+      }
+
+      public String getName() {
+        return name;
       }
 
       public String getEvent() {
@@ -250,6 +257,9 @@ public class GithubApiModel implements Serializable {
         return "WorkflowRun{"
             + "headBranch='"
             + headBranch
+            + '\''
+            + ", name='"
+            + name
             + '\''
             + ", event='"
             + event

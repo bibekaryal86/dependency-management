@@ -8,7 +8,9 @@ import dep.mgmt.util.ProcessUtils;
 import io.github.bibekaryal86.shdsvc.helpers.CommonUtilities;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,26 +194,37 @@ public class GithubService {
         branchDate,
         workflowRuns);
 
-    final GithubApiModel.ListWorkflowRunsResponse.WorkflowRun successfulWorkflowRun =
-        workflowRuns.stream()
-            .filter(run ->
-                Objects.equals(branchName, run.getHeadBranch())
-                    && Objects.equals("pull_request", run.getEvent())
-                    && Objects.equals("completed", run.getStatus())
-                    && Objects.equals("success", run.getConclusion()))
-            .findFirst()
-            .orElse(null);
+    final Map<String, List<GithubApiModel.ListWorkflowRunsResponse.WorkflowRun>>
+        workflowRunsByName =
+            workflowRuns.stream()
+                .filter(run ->
+                    Objects.equals(branchName, run.getHeadBranch())
+                        && Objects.equals("pull_request", run.getEvent())
+                        && Objects.equals("completed", run.getStatus()))
+                .collect(
+                    Collectors.groupingBy(
+                        GithubApiModel.ListWorkflowRunsResponse.WorkflowRun::getName));
 
-    if (successfulWorkflowRun == null) {
+    final boolean allWorkflowsSuccessful =
+        workflowRunsByName.values().stream()
+            .allMatch(runs ->
+                runs.stream().anyMatch(run -> Objects.equals("success", run.getConclusion())));
+
+    if (!allWorkflowsSuccessful || workflowRunsByName.isEmpty()) {
       log.error(
-          "Workflow Run Not Successful: RepoName=[{}] | BranchDate=[{}] | [{}]",
+          "Workflow Run Not Successful: RepoName=[{}] | BranchName=[{}] | [{}]",
           repoName,
           branchName,
           workflowRuns);
       return null;
     }
 
-    return successfulWorkflowRun.getPullRequests().getFirst().getNumber();
+    return workflowRunsByName.values().stream()
+        .flatMap(List::stream)
+        .filter(run -> Objects.equals("success", run.getConclusion()))
+        .findFirst()
+        .map(run -> run.getPullRequests().getFirst().getNumber())
+        .orElse(null);
   }
 
   public GithubApiModel.RateLimitResponse getCurrentGithubRateLimits() {
